@@ -1,0 +1,112 @@
+/* 
+    Document   : estilo-1
+    Created on : 10-ago-2010, 21:58:58
+    Author     : omendoza
+    Updated    : Formal style with black and gray theme
+*/
+
+/* General Root Styles */
+root { 
+    display: block;
+}
+
+body {
+    font-family: Tahoma, "Trebuchet MS", Arial, sans-serif;
+    font-size: 12px;
+    color: #000; /* Black text */
+    background-color: #f8f8f8; /* Subtle gray background */
+}
+
+div.fechahora {
+    text-align: right;
+    font-family: Tahoma, sans-serif;
+    font-size: 12px;
+    color: #666; /* Dark gray for less emphasis */
+}
+
+table.impresionhora tr td {    
+    font-size: 11px;
+    color: #000; /* Black text for formal appearance */
+}
+
+/* Report Table Styles */
+table.reporte {
+    border: solid 1px #000; /* Black border */
+    border-spacing: 4px;
+    font-size: 12px;
+    color: #333; /* Dark gray for subtle text */
+    width: 100%; /* Ensure table spans full width */
+    background-color: #fff; /* White background */
+}
+
+tr.trencabezado td {
+    padding: 10px;
+    color: #fff; /* White text */
+    background-color: #000; /* Black background */
+    border: solid 1px #555; /* Subtle gray border */
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+tr.trencabezadosub td {
+    padding: 10px;
+    color: #000; /* Black text */
+    background-color: #ccc; /* Light gray background */
+    border: solid 1px #555; /* Subtle gray border */
+    text-align: center;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+tr.trcontenido:hover {
+    background-color: #e0e0e0; /* Light gray hover effect */
+    color: #000; /* Black text on hover */
+    height: 10px;
+    font-size: 9pt;
+}
+
+tr.trsubtotal {
+    vertical-align: top;    
+    border: none;
+    color: #000; /* Black text */
+    font-weight: bold;
+    height: 20px;
+    background-color: #ddd; /* Light gray background */
+}
+
+table.reporte tr td {
+    padding: 3px;
+    border: solid 1px #666; /* Medium gray borders */
+    color: #000; /* Black text */
+    font-size: 11px;
+}
+
+td.tdmoneda {
+    text-align: right;
+    font-weight: bold; /* Emphasize monetary values */
+}
+
+/* Input Styles */
+input {
+    font-family: Tahoma, "Trebuchet MS", Arial, sans-serif;
+    font-size: 11px;
+    border: thin solid #999; /* Medium gray border */
+    border-radius: 4px; /* Rounded corners for modern look */
+    padding: 5px;
+    color: #000; /* Black text */
+    background-color: #f9f9f9; /* Light gray background */
+}
+
+input:focus {
+    background: #eaeaea; /* Slightly darker gray on focus */
+    outline: none; /* Remove default focus outline */
+    border-color: #555; /* Darker gray border on focus */
+}
+
+/* Additional Improvements */
+body, input, table {
+    margin: 0;
+    padding: 0;
+}
+

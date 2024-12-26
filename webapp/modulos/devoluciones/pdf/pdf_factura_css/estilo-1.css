@@ -1,0 +1,102 @@
+/* 
+    Document   : estilo-1
+    Created on : 10-ago-2010, 21:58:58
+    Author     : omendoza
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+body{
+	font-family: Tahoma,"Trebuchet MS", Arial;
+	font-size:12px;
+	margin-right:20px;
+}
+
+div.fechahora{
+    text-align:right;
+    font-family: tahoma;
+    font-size:12px;
+    color:black;
+}
+
+table.impresionhora tr td {    
+    font-size:11px;
+}
+
+table.reporte{
+	border:none;
+	color:black;
+	font-size:12px;
+        border:2px;
+	border-spacing:2px;
+}
+
+tr.trencabezado td{
+    border-padding:0px;
+	color:black;        
+	background-color: white;
+	border:solid #555555;
+	border-width:2px;
+	text-align:center;
+    font-size:6pt;
+}
+
+tr.trcontenido:hover{
+	background-color: black;	
+	background-image: url('estilo-1/listado.gif');
+	background-repeat: repeat-x;
+	color:black;
+	height:20px;
+        font-size:8pt;
+}
+
+tr.trsubtotal{
+    vertical-align: top;	
+    border:none;
+	color:#555555;
+    font-weight:bold;
+	height:20px;
+	background-color: gray;	
+	background-image: url('estilo-1/listado.gif');
+	background-repeat: repeat-x;		
+}
+
+table.reporte tr td{
+	padding:5px;
+	border:solid gray;
+	border-width:1px;
+        font-size:8pt;color:black;
+}
+
+td.tdmoneda{
+    text-align:right;
+}
+
+/*BORDES INPUT*/
+input{
+	font-family: Tahoma,"Trebuchet MS", Arial;
+	font-size:12px;
+	border: thin solid silver;
+        background:lightgray;
+
+	/*Solo Safari, Firefox, Chrome*/
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+textarea{
+    background:lightgray;
+}
+input:focus{
+	background:lightgray;
+}
+

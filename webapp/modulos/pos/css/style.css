@@ -1,0 +1,160 @@
+/* The containerCheckBox */
+.containerCheckBox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.containerCheckBox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.containerCheckBox:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.containerCheckBox input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.containerCheckBox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.containerCheckBox .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+.centerTd{
+  text-align: center;
+}
+.centerRow{
+  text-align: center;
+}
+
+.md-chip {
+  margin-bottom: 2px;
+  margin-right: 2px;
+  display: inline-block;
+  background: #e0e0e0;
+  padding: 0 12px;
+  border-radius: 32px;
+  font-size: 13px;
+}
+.md-chip.md-chip-hover:hover {
+  background: #ccc;
+}
+
+.md-chip-clickable {
+  cursor: pointer;
+}
+
+.md-chip, .md-chip-icon {
+  height: 32px;
+  line-height: 32px;
+}
+
+.md-chip-icon {
+  display: block;
+  float: left;
+  background: #009587;
+  width: 32px;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  margin: 0 8px 0 -12px;
+}
+
+.md-chip-remove {
+  display: inline-block;
+  background: #aaa;
+  border: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0 -4px 0 4px;
+  cursor: pointer;
+  font: inherit;
+  line-height: 20px;
+}
+.md-chip-remove:after {
+  color: #e0e0e0;
+  content: 'x';
+}
+.md-chip-remove:hover {
+  background: #999;
+}
+.md-chip-remove:active {
+  background: #777;
+}
+
+.md-chips {
+  padding: 12px 0;
+}
+.md-chips .md-chip {
+  margin: 0 5px 3px 0;
+}
+
+.md-chip-raised {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+
+section {
+  background: white;
+  margin: 0 auto;
+  padding: 4em;
+  max-width: 800px;
+}
+section h1 {
+  margin: 0 0 2em;
+}
+
+.modal { overflow-y: auto !important; }

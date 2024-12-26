@@ -1,0 +1,21 @@
+textarea
+{
+  resize: none !important;
+}
+
+td.dt-body-center
+{
+  text-align: center !important;
+}
+
+#mapa
+{
+	height: 200px;
+}
+
+#scorm
+{
+	width: 100% !important;
+	border: none !important;
+	height: 450px;
+}

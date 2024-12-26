@@ -1,0 +1,47 @@
+LICENCIA DE USO DE SOFTWARE
+
+AVISO IMPORTANTE
+La presente licencia de uso del software ("LICENCIA") es un acuerdo que rige el uso del software de PLAN B (“LICENCIANTE) que se puede descargar desde este sitio, incluido el software informático y la documentación adjunta ("SOFTWARE"). El hecho de descargar, instalar, copiar o utilizar el SOFTWARE, implica que usted acepta las condiciones de esta LICENCIA. Si no acepta las condiciones de esta LICENCIA, no descargue el SOFTWARE.
+
+
+CONSIDERACIONES PRELIMINARES
+El SOFTWARE está protegido por leyes y tratados internacionales relativos al derecho de propiedad, y por otras leyes y tratados de propiedad intelectual. El SOFTWARE no se vende, sino que su uso únicamente se autoriza mediante licencia, de estricta conformidad con el presente documento. El presente acuerdo establece únicamente las condiciones de la LICENCIA DEL SOFTWARE.
+
+1. DEFINICIONES
+
+1.1 Usuario.
+El Usuario es el particular o la entidad comercial que utiliza el SOFTWARE.
+
+2. CONCESIÓN DE LA LICENCIA
+
+2.1 Derechos y limitaciones de la concesión.
+El LICENCIANTE concede al Usuario el derecho no exclusivo e intransferible de utilizar el SOFTWARE, teniendo en cuenta las limitaciones siguientes:
+
+2.1.1 Derechos.
+El Usuario podrá instalar o utilizar una copia del SOFTWARE en un solo ordenador, y no realizará ninguna copia del SOFTWARE, salvo una copia de seguridad. La presente LICENCIA de SOFTWARE no podrá ser compartida ni utilizada al mismo tiempo en distintos ordenadores.
+
+2.1.2 Limitaciones.
+Queda prohibida la ingeniería inversa. El Usuario no podrá aplicar técnicas de ingeniería inversa, descompilar o desensamblar el SOFTWARE, ni realizar cualquier otra operación que tienda a descubrir el código fuente.
+
+Queda prohibida la separación de los componentes. Se autoriza el uso del SOFTWARE como un producto único. Las partes que lo componen no se podrán separar para utilizarlas en más de un ordenador, ni hacer uso de ellas por separado.
+
+Queda prohibido el arrendamiento. El Usuario no arrendará ni alquilará el SOFTWARE a otra persona.
+
+3. ANULACIÓN
+
+La licencia quedará automáticamente anulada si el Usuario no cumple las condiciones establecidas. En tal caso, el Usuario destruirá todas las copias del SOFTWARE y sus componentes.
+
+4. DERECHOS DE PROPIEDAD
+
+Todos los derechos de propiedad intelectual del SOFTWARE (todos los elementos que forman parte del SOFTWARE), la documentación adjunta y todas las copias del SOFTWARE corresponden al LICENCIANTE o a sus proveedores. El SOFTWARE está protegido por las leyes y tratados internacionales relativos al derecho de propiedad. Por consiguiente, el Usuario deberá utilizar el SOFTWARE como cualquier otro material protegido por las leyes de propiedad intelectual, salvo que se disponga lo contrario en virtud de la presente LICENCIA, y con la excepción de que podrá realizar una copia del SOFTWARE únicamente como copia de seguridad o archivo.
+
+5. EXENCIÓN DE GARANTÍAS Y LIMITACIÓN DE RESPONSABILIDADES
+
+EL SOFTWARE SE FACILITA "TAL CUAL" Y NI EL LICENCIANTE NI SUS PROVEEDORES OFRECEN NINGUNA GARANTÍA, EXPLÍCITA NI IMPLÍCITA, INCLUYENDO LAS GARANTÍAS IMPLÍCITAS DE COMERCIABILIDAD Y ADECUACIÓN A UN FIN PARTICULAR.
+
+EN NINGÚN CASO SE PODRÁ CONSIDERAR AL LICENCIANTE O SUS PROVEEDORES RESPONSABLES DE CUALESQUIERA DAÑOS YA SEAN ESPECIALES, DIRECTOS O INDIRECTOS (INCLUIDOS, A TÍTULO INFORMATIVO PERO NO LIMITATIVO, LOS DE LUCRO CESANTE, INTERRUPCIÓN DE LAS ACTIVIDADES COMERCIALES O PÉRDIDA DE INFORMACIÓN) DERIVADOS DEL USO O LA IMPOSIBILIDAD DE USO DE LOS MATERIALES, INCLUSO AUNQUE EL LICENCIANTE HAYA RECIBIDO AVISO DE LA POSIBILIDAD DE ESTE TIPO DE DAÑOS.
+
+6. OTRAS CONSIDERACIONES
+
+El Usuario se compromete a no enviar, transferir o exportar el SOFTWARE a ningún país, ni utilizar el SOFTWARE de ningún modo. Sólo se podrá modificar la presente licencia mediante un escrito firmado por una persona autorizada por el LICENCIANTE.
+

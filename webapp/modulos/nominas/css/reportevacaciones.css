@@ -1,0 +1,12 @@
+
+
+@media print{
+ .ocultos{
+      display: none !important;
+   }
+
+}
+
+@page {size: A4 landscape}
+
+

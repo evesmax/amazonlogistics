@@ -1,0 +1,45 @@
+
+@media print{
+ .ocultarfiltros{
+  display: none !important;
+}
+
+.mostrar {
+  display:inline !important;
+}
+
+.muestra {
+  display:inline !important;
+}
+.basu {
+  display:none !important;
+}
+
+.ocultos{
+ display:none !important;
+
+
+}
+.saltopagina{
+
+  display:block;
+  page-break-before:always;
+}
+
+}
+
+
+th {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+   /*border: 1px solid black;*/
+}
+
+.tdtab{
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+
+
+
+
