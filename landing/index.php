@@ -7,7 +7,7 @@
 		<link rel="apple-touch-icon" sizes="120x120" href="http://www.netwarmonitor.mx/assets/img/ico120px.png">
 		<link rel="apple-touch-icon" sizes="152x152" href="http://www.netwarmonitor.mx/assets/img/ico152px.png">
 
-		<title>Netwarmonitor | High Innovation Technology</title>
+		<title>QSS | High Innovation Technology</title>
 		<style>
 
 			html {
