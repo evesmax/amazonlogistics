@@ -66,7 +66,7 @@
 	<head>
 
                 <!--CSS-->
-                <!--LINK href="../utilerias/css_repolog/estilo-1; ?>.css" title="estilo" rel="stylesheet" type="text/css"-->
+                <LINK href="../utilerias/css_repolog/estilo-1; ?>.css" title="estilo" rel="stylesheet" type="text/css">
                 <!--LINK href="<?php echo $url_catalog; ?>/css/view.css" title="estilo" rel="stylesheet" type="text/css" /-->
         <!--LINK href="../design/<?php echo $strGNetwarlogCSS;?>/netwarlog.css" title="estilo" rel="stylesheet" type="text/css" /--> <!--NETWARLOG CSS-->                
 

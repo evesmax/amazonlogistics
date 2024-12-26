@@ -1,112 +1,196 @@
 /* 
-    Document   : estilo-1
-    Created on : 10-ago-2010, 21:58:58
-    Author     : omendoza
-    Updated    : Formal style with black and gray theme
+   Document   : estilo-1
+   Created on : 10-ago-2010, 21:58:58
+   Author     : omendoza
+   Updated    : Formal style with black and gray theme
 */
 
-/* General Root Styles */
-root { 
-    display: block;
-}
+/* 
+  ========================================
+  General Styles
+  ========================================
+*/
 
 body {
-    font-family: Tahoma, "Trebuchet MS", Arial, sans-serif;
+    font-family: "Times New Roman", serif;
+    /* More formal font */
     font-size: 12px;
-    color: #000; /* Black text */
-    background-color: #f8f8f8; /* Subtle gray background */
+    line-height: 1.5;
+    /* Improved readability */
+    color: #222;
+    /* Dark gray for body text */
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 20px;
+    /* Add some spacing around the content */
 }
 
-div.fechahora {
-    text-align: right;
-    font-family: Tahoma, sans-serif;
-    font-size: 12px;
-    color: #666; /* Dark gray for less emphasis */
+/* 
+  ========================================
+  Headings
+  ========================================
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Times New Roman", serif;
+    font-weight: bold;
+    color: #000;
 }
 
-table.impresionhora tr td {    
-    font-size: 11px;
-    color: #000; /* Black text for formal appearance */
+h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
 }
 
-/* Report Table Styles */
+h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+/* 
+  ========================================
+  Table Styles
+  ========================================
+*/
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Collapse borders for a cleaner look */
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    /* Light gray borders */
+}
+
+th {
+    background-color: #f0f0f0;
+    /* Light gray background for headers */
+    font-weight: bold;
+}
+
+/* Striped table rows */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 
+  ========================================
+  Specific Table Styles
+  ========================================
+*/
+
 table.reporte {
-    border: solid 1px #000; /* Black border */
-    border-spacing: 4px;
-    font-size: 12px;
-    color: #333; /* Dark gray for subtle text */
-    width: 100%; /* Ensure table spans full width */
-    background-color: #fff; /* White background */
+    border: 2px solid #000;
+    /* Thicker border */
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
 }
 
 tr.trencabezado td {
-    padding: 10px;
-    color: #fff; /* White text */
-    background-color: #000; /* Black background */
-    border: solid 1px #555; /* Subtle gray border */
-    text-align: center;
-    font-size: 10pt;
+    background-color: #000;
+    color: #fff;
     font-weight: bold;
+    text-align: center;
 }
 
 tr.trencabezadosub td {
-    padding: 10px;
-    color: #000; /* Black text */
-    background-color: #ccc; /* Light gray background */
-    border: solid 1px #555; /* Subtle gray border */
-    text-align: center;
-    font-size: 10pt;
+    background-color: #ccc;
+    color: #000;
     font-weight: bold;
+    text-align: center;
 }
 
 tr.trcontenido:hover {
-    background-color: #e0e0e0; /* Light gray hover effect */
-    color: #000; /* Black text on hover */
-    height: 10px;
-    font-size: 9pt;
+    background-color: #e0e0e0;
 }
 
 tr.trsubtotal {
-    vertical-align: top;    
-    border: none;
-    color: #000; /* Black text */
+    background-color: #ddd;
     font-weight: bold;
-    height: 20px;
-    background-color: #ddd; /* Light gray background */
-}
-
-table.reporte tr td {
-    padding: 3px;
-    border: solid 1px #666; /* Medium gray borders */
-    color: #000; /* Black text */
-    font-size: 11px;
 }
 
 td.tdmoneda {
     text-align: right;
-    font-weight: bold; /* Emphasize monetary values */
+    font-weight: bold;
 }
 
-/* Input Styles */
-input {
-    font-family: Tahoma, "Trebuchet MS", Arial, sans-serif;
-    font-size: 11px;
-    border: thin solid #999; /* Medium gray border */
-    border-radius: 4px; /* Rounded corners for modern look */
-    padding: 5px;
-    color: #000; /* Black text */
-    background-color: #f9f9f9; /* Light gray background */
+/* 
+  ========================================
+  Input Styles
+  ========================================
+*/
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+    font-family: "Times New Roman", serif;
+    font-size: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
 }
 
-input:focus {
-    background: #eaeaea; /* Slightly darker gray on focus */
-    outline: none; /* Remove default focus outline */
-    border-color: #555; /* Darker gray border on focus */
+input[type="submit"],
+button {
+    background-color: #007bff;
+    /* Blue button */
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-/* Additional Improvements */
-body, input, table {
-    margin: 0;
-    padding: 0;
+/* 
+  ========================================
+  Utility Classes
+  ========================================
+*/
+
+.text-center {
+    text-align: center;
 }
 
+.text-right {
+    text-align: right;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+/* 
+  ========================================
+  Print Styles
+  ========================================
+*/
+
+@media print {
+    body {
+        background-color: #fff;
+        /* White background for printing */
+    }
+
+    /* Hide elements not needed for printing */
+    .no-print {
+        display: none;
+    }
+}
