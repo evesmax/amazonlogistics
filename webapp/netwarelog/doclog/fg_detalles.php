@@ -40,8 +40,9 @@
 	//Inicia en uno por que la fila 0 es la fila de los encabezados de la tabla
 	for($fila=1;$fila<=$filas;$fila++){		
 				
-		//echo "<br><br>".$fila."<br>";		
-		
+		echo "<br><br>".$fila."<br>";		
+		echo "fg_detalles 44";
+		exit();	
 		// inicio recorriendo los campos por fila
 		
 			$sqlcampos = "";
@@ -110,8 +111,7 @@
 	                        }
 							*/
 
-							echo "fg_detalles 113";
-							exit();	
+
 							
 							
 	                        if($utilizaidorganizacion){
