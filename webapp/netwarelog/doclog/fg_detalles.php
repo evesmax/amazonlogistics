@@ -72,10 +72,7 @@
                                             $brincarcampo = true;									
                                     }
 
-							echo "<br><br>".$fila."<br>";		
-							echo "fg_detalles 76";
-							exit();	
-																		
+									
 																		//$accelog_access->nmerror_log("\nENTRE | VALIDA PARCIALLOG: ".$nombrecampo." - ".$idcampo."=".$_REQUEST["i".$idcampo."_2"]."\n");
 
                                } else { //if(!isset($_REQUEST["i".$idcampo]))
@@ -99,6 +96,11 @@
                                     }                                        
                                         
                                 }
+
+							echo "<br><br>".$fila."<br>";		
+							echo "fg_detalles 100";
+							exit();	
+									
 
 																$accelog_access->nmerror_log("\n>>>".$nombrecampo." BRINCAR:".$brincarcampo."\n");
                                 //if($brincarcampo){ echo " |BRINCADO| "; }
