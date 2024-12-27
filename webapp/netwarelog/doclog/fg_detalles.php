@@ -1,5 +1,7 @@
 <?php
 
+echo "fg_detalles 3";
+exit();
 
         //PARCIALLOG
         $parciallog_detalle = new clparciallog($_SESSION['nombreestructuradetalle'],$_SESSION["accelog_idperfil"],$conexion);        
