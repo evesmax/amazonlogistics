@@ -218,8 +218,6 @@
         <tr>            
                         <td width=16 align=right>
                             <a href="javascript:window.print();"><img src="img/impresora.png" border="0"></a>
-                        </td>
-                        <td width=16  align=right>
 							<a href="repolog.php?i=<?php  echo $_SESSION['repolog_idreporte'] ?>" onclick="$('#nmloader_div',window.parent.document).show();"> <img src="img/filtros.png"
 								title ="Haga clic aqui para cambiar filtros..." border="0"> </a>
 						</td>                        
