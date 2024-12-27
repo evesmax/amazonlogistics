@@ -103,7 +103,7 @@
 							exit();	
 
 
-																$accelog_access->nmerror_log("\n>>>".$nombrecampo." BRINCAR:".$brincarcampo."\n");
+							//$accelog_access->nmerror_log("\n>>>".$nombrecampo." BRINCAR:".$brincarcampo."\n");
                                 //if($brincarcampo){ echo " |BRINCADO| "; }
 
 
