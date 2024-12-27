@@ -200,34 +200,6 @@
 				</tr>
 			</table>
 
-			<!-- //////////////////////////////////////////////////////  -->
-			<!-- BARRA DE HERRAMIENTAS DEL REPOLOG  -->
-            <div class="bh">
-                <table class="bh" align="right" border="0">
-                    <tr>            
-                        <td width=16 align=right>
-                            <a href="javascript:window.print();"><img src="img/impresora.png" border="0"></a>
-                        </td>
-                        <td width=16  align=right>
-							<a href="repolog.php?i=<?php  echo $_SESSION['repolog_idreporte'] ?>" onclick="$('#nmloader_div',window.parent.document).show();"> <img src="img/filtros.png"
-								title ="Haga clic aqui para cambiar filtros..." border="0"> </a>
-						</td>                        
-						<td width=16 align=right>
-							<a href="javascript:mail();"> <img src="img/email.png"  
-							   title ="Enviar reporte por correo electrónico" border="0"> 
-							</a>
-						</td>
-						<td width=16 align=right>
-							<a href="javascript:pdf();"> <img src="img/pdf.gif"  
-							   title ="Generar reporte en PDF" border="0"> 
-							</a>
-						</td>																				
-                    </tr>
-                </table>
-            </div>			
-			<!-- //////////////////////////////////////////////////////  -->    
-
-     
 					<br>
 
             <?php
@@ -241,9 +213,17 @@
 
 					<br>
 
-
 					<!-- FILTROS -->
-          <table style="width:100%;border:none;">
+        <table style="width:100%;border:none;">
+        <tr>            
+                        <td width=16 align=right>
+                            <a href="javascript:window.print();"><img src="img/impresora.png" border="0"></a>
+                        </td>
+                        <td width=16  align=right>
+							<a href="repolog.php?i=<?php  echo $_SESSION['repolog_idreporte'] ?>" onclick="$('#nmloader_div',window.parent.document).show();"> <img src="img/filtros.png"
+								title ="Haga clic aqui para cambiar filtros..." border="0"> </a>
+						</td>                        
+          </tr>
           <tr>
               	<td class="nmrepologtitle">
                     <span><?php echo $descripcion; ?></span><br><br><?php echo $filtros_seleccionados_tit; ?>
