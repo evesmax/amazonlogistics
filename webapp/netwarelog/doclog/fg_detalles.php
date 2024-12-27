@@ -3,9 +3,6 @@
         //PARCIALLOG
         $parciallog_detalle = new clparciallog($_SESSION['nombreestructuradetalle'],$_SESSION["accelog_idperfil"],$conexion);        
 
-echo "fg_detalles 3";
-exit();
-
 
 	//Obtiene los controles utilizados en la captura
 	$controlesd = $_SESSION['controlesd'];
@@ -37,6 +34,9 @@ exit();
 		$conexion->consultar($sql);					
 	} 
 	
+	echo "fg_detalles 37";
+exit();
+
 	
 	//Recorriendo las filas
 	//Inicia en uno por que la fila 0 es la fila de los encabezados de la tabla
