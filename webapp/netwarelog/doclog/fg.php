@@ -27,9 +27,6 @@
         include("../catalog/clases/clparciallog.php");
         $parciallog = new clparciallog($_SESSION['nombreestructura'],$_SESSION["accelog_idperfil"],$conexion);
         
-echo "Linea 30";
-exit();
-        
 	$a = $_SESSION['catalog_nuevo'];
 	$nombreestructura = $_SESSION['nombreestructura'];
 	$controles = $_SESSION['controles'];
@@ -41,6 +38,9 @@ exit();
         $linkproceso = $_SESSION["linkproceso"];
 	
 	$sql="";
+
+echo "Linea 30";
+exit();
 	
 	//NUEVO
 	if($a==1){
