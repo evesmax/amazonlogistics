@@ -97,6 +97,12 @@
                                         
                                 }
 
+								                                
+							echo "<br><br>".$fila."<br>";		
+							echo "fg_detalles 102";
+							exit();	
+
+
 																$accelog_access->nmerror_log("\n>>>".$nombrecampo." BRINCAR:".$brincarcampo."\n");
                                 //if($brincarcampo){ echo " |BRINCADO| "; }
 
@@ -118,14 +124,7 @@
 	                        }
 	                        //echo $nombrecampo." ".$brincarcampo."  --".$campo_idorganizacion."   ---".$utilizaidorganizacion."  <br>";
 
-
-                                
-							echo "<br><br>".$fila."<br>";		
-							echo "fg_detalles 124";
-							exit();	
-                                
-                                
-                                
+                                                                
 
 
 				if(!$brincarcampo){ //Esto quiere decir que no se detectara desde el request
