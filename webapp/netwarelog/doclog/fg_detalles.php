@@ -98,11 +98,6 @@
                                 }
 
 								                                
-							echo "<br><br>".$fila."<br>";		
-							echo "fg_detalles 102";
-							exit();	
-
-
 							//$accelog_access->nmerror_log("\n>>>".$nombrecampo." BRINCAR:".$brincarcampo."\n");
                                 //if($brincarcampo){ echo " |BRINCADO| "; }
 
