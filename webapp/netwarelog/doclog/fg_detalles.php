@@ -34,8 +34,6 @@
 		$conexion->consultar($sql);					
 	} 
 	
-	echo "fg_detalles 37";
-exit();
 
 	
 	//Recorriendo las filas
@@ -51,8 +49,7 @@ exit();
 			$brincarfila = true;
 			foreach ($nombrescamposd as $nombrecampo => $idcampo){
 
-																$brincarcampo = false;
-
+								$brincarcampo = false;
                                 $idcampo = $idcampo."_".$fila;
 
                                 
@@ -112,6 +109,9 @@ exit();
 	                            $brincarcampo=true;
 	                        }
 							*/
+
+							echo "fg_detalles 113";
+							exit();	
 							
 							
 	                        if($utilizaidorganizacion){
