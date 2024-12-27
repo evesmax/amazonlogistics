@@ -53,11 +53,6 @@
 
                                 $para_grabar=$controlesd->getgrabar($nombrecampo);						
 
-
-							echo "<br><br>".$fila."<br>";		
-							echo "fg_detalles 57";
-							exit();	
-
                                 //echo "entre ".$nombrecampo." ".(!isset($_REQUEST["i".$idcampo]))." <br> ";
                                 //Esto por que la fila se pudo haber eliminado
                                 if(!isset($_REQUEST["i".$idcampo])){
@@ -76,6 +71,10 @@
                                 	} else {
                                             $brincarcampo = true;									
                                     }
+
+							echo "<br><br>".$fila."<br>";		
+							echo "fg_detalles 76";
+							exit();	
 																		
 																		//$accelog_access->nmerror_log("\nENTRE | VALIDA PARCIALLOG: ".$nombrecampo." - ".$idcampo."=".$_REQUEST["i".$idcampo."_2"]."\n");
 
