@@ -142,135 +142,11 @@
 
         <!--PLUG IN CATALOG-->
         <script type="text/javascript" src="../catalog/js/jquery.js"></script>		
-
-		<script type="text/javascript">
-			
-			function pdf(){
-				/*	
-				var anchopadre = document.getElementById("tabla_reporte").parent.style.width;
-				alert(anchopadre);
-				var anchotabla = document.getElementById("tabla_reporte").style.width;
-			  var pleft = (anchopadre / 2)+(anchotabla/2);
-				alert(pleft);
-				*/
-				
-
-				var contenido_html = $("#idcontenido_reporte").html();
-				//contenido_html = contenido_html.replace(/\"/g,"\\\"");
-				$("#contenido").attr("value",contenido_html);
-				$("#divpanelpdf").fadeIn(500);
-			}
-			function generar_pdf(){
-				$("#divpanelpdf").fadeOut();
-				//$("#loading").fadeIn(500);
-			}
-			function cancelar_pdf(){
-				$("#divpanelpdf").fadeOut();
-			}
-
-			function pdf_generado(){
-				alert("OK");
-			}
-			//$('#frpdf').load(function() {
-  		//	alert("the iframe has been loaded");
-			//});	
-			//document.getElementById("frpdf").onload = function() {
-  		//	alert("myframe is loaded");
-			//};
-	
-			//$('#frpdf').ready(function () {
-			//  alert("perfecto");
-			//});
-
-			function mail(){
-				var msg = "Registre el correo electrónico a quién desea enviarle el reporte:";
-				var a = prompt(msg,"@netwaremonitor.com");
-				if(a!=null){
-					var html_contenido_reporte;
-					html_contenido_reporte = $("#idcontenido_reporte").html();
-					$("#loading").fadeIn(500);
-					$("#divmsg").load("mail.php?a="+a, {reporte:html_contenido_reporte});
-				}
-			}	
-		</script>
+		
 	</head>
 
 	<body>
-			<!-- PDF -->
-			<!--<iframe name="frpdf" style="width:600px;height:400px;"
-onload="pdf_generado()"></iframe>-->
-			
-			<div 
-				id="divpanelpdf"
-				style="
-					position: absolute; top:30%; left: 40%;
-					opacity:0.9;
-					padding: 20px;
-					-webkit-border-radius: 20px;
-    			border-radius: 10px;
-					background-color:#000;
-					color:white;
-				  display:none;	
-				">
-				<form id="formpdf" action="pdf.php" method="post" target="_blank" onsubmit="generar_pdf()">
-					<center>
-					<b> Generar PDF </b>
-					<br><br>
 
-					<table style="border:none;">
-						<tbody>
-							<tr>
-								<td style="color:white;font-size:13px;">Escala:</td>
-								<td style="color:white;font-size:13px;">
-									<select id="cmbescala" name="cmbescala">
-									<?php 
-										for($p=100;$p>=1;$p--){
-											echo "<option value=".$p.">".$p."</option>\n";
-										}
-									?>
-									</select> %
-								</td>
-							</tr>
-							<tr>
-								<td style="color:white;font-size:13px;">Orientación:</td>
-								<td style="color:white;">
-									<select id="cmborientacion" name="cmborientacion">
-										<option value='P'>Vertical</option>
-										<option value='L'>Horizontal</option>
-									</select>
-								</td>
-							</tr>
-					</tbody>
-				</table>
-				<br>
-					
-				<textarea id="contenido" name="contenido" style="display:none"></textarea>
-				<input type="submit" value="Crear PDF" autofocus >
-				<input type="button" value="Cancelar" onclick="cancelar_pdf()">
-				
-				</center>
-				</form>
-			</div>
-
-			<!-- MAIL -->
-			<div id="loading" style="position: absolute; top:30%; left: 50%;display:none;">
-			<div 
-				id="divmsg"
-				style="
-					opacity:0.8;
-					position:relative;
-					background-color:#000;
-					color:white;
-					padding: 20px;
-					-webkit-border-radius: 20px;
-    				border-radius: 10px;
-					left:-50%;
-					top:-30%
-				">
-				<center><img src='img/loading-black.gif' width='50'><br>Cargando...
-				</center>
-			</div>
-			</div>
 			<script>
 				function cerrarloading(){
 					$("#loading").fadeOut(0);
@@ -279,35 +155,7 @@ onload="pdf_generado()"></iframe>-->
 				}
 			</script>
 
-		
-			<!-- //////////////////////////////////////////////////////  -->
-			<!-- BARRA DE HERRAMIENTAS DEL REPOLOG  -->
-            <div class="bh">
-                <table class="bh" align="right" border="0">
-                    <tr>            
-                        <td width=16 align=right>
-                            <a href="javascript:window.print();"><img src="img/impresora.png" border="0"></a>
-                        </td>
-                        <td width=16  align=right>
-							<a href="repolog.php?i=<?php  echo $_SESSION['repolog_idreporte'] ?>" onclick="$('#nmloader_div',window.parent.document).show();"> <img src="img/filtros.png"
-								title ="Haga clic aqui para cambiar filtros..." border="0"> </a>
-						</td>                        
-						<td width=16 align=right>
-							<a href="javascript:mail();"> <img src="img/email.png"  
-							   title ="Enviar reporte por correo electrónico" border="0"> 
-							</a>
-						</td>
-						<td width=16 align=right>
-							<a href="javascript:pdf();"> <img src="img/pdf.gif"  
-							   title ="Generar reporte en PDF" border="0"> 
-							</a>
-						</td>																				
-                    </tr>
-                </table>
-            </div>			
-			<!-- //////////////////////////////////////////////////////  -->            
-
-
+		    
 <FORM id="reporte" name="reporte"  method="post" action="redirecciona.php">
 <center>
 <div id="idcontenido_reporte">
@@ -351,6 +199,33 @@ onload="pdf_generado()"></iframe>-->
 					</td>
 				</tr>
 			</table>
+
+			<!-- //////////////////////////////////////////////////////  -->
+			<!-- BARRA DE HERRAMIENTAS DEL REPOLOG  -->
+            <div class="bh">
+                <table class="bh" align="right" border="0">
+                    <tr>            
+                        <td width=16 align=right>
+                            <a href="javascript:window.print();"><img src="img/impresora.png" border="0"></a>
+                        </td>
+                        <td width=16  align=right>
+							<a href="repolog.php?i=<?php  echo $_SESSION['repolog_idreporte'] ?>" onclick="$('#nmloader_div',window.parent.document).show();"> <img src="img/filtros.png"
+								title ="Haga clic aqui para cambiar filtros..." border="0"> </a>
+						</td>                        
+						<td width=16 align=right>
+							<a href="javascript:mail();"> <img src="img/email.png"  
+							   title ="Enviar reporte por correo electrónico" border="0"> 
+							</a>
+						</td>
+						<td width=16 align=right>
+							<a href="javascript:pdf();"> <img src="img/pdf.gif"  
+							   title ="Generar reporte en PDF" border="0"> 
+							</a>
+						</td>																				
+                    </tr>
+                </table>
+            </div>			
+			<!-- //////////////////////////////////////////////////////  -->    
 
      
 					<br>
