@@ -40,9 +40,6 @@
 	//Inicia en uno por que la fila 0 es la fila de los encabezados de la tabla
 	for($fila=1;$fila<=$filas;$fila++){		
 				
-		echo "<br><br>".$fila."<br>";		
-		echo "fg_detalles 44";
-		exit();	
 		// inicio recorriendo los campos por fila
 		
 			$sqlcampos = "";
@@ -52,10 +49,14 @@
 
 								$brincarcampo = false;
                                 $idcampo = $idcampo."_".$fila;
-
-                                
+	
 
                                 $para_grabar=$controlesd->getgrabar($nombrecampo);						
+
+
+							echo "<br><br>".$fila."<br>";		
+							echo "fg_detalles 57";
+							exit();	
 
                                 //echo "entre ".$nombrecampo." ".(!isset($_REQUEST["i".$idcampo]))." <br> ";
                                 //Esto por que la fila se pudo haber eliminado
