@@ -528,7 +528,7 @@
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>OBS. ENVIO:</td>
-                                                            <td align=left><b><input type=text id='txtobsenvio' name='txtobsenvio' value='' Size=100></b>
+                                                            <td align=left><b><input type=text id='txtobsenvio' name='txtobsenvio' value='' Size=20></b>
                                                         </tr>";                                                
                                                
                                         $html.="</table>";
@@ -679,8 +679,8 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td align=right>".$cantidad1."<input ".$inv." type=hidden value=".$cantidad1." id='txtcantenv1' name='txtcantenv1' size=20></td>";
-					$html.="<td align=right>".$cantidad2."<input ".$inv." type=hidden value=".$cantidad2." id='txtcantenv2' name='txtcantenv2' size=20></td>";			
+                                        $html.="<td align=right><input ".$inv." type=text value=".$cantidad1." id='txtcantenv1' name='txtcantenv1' size=20></td>";
+					$html.="<td align=right><input ".$inv." type=text value=".$cantidad2." id='txtcantenv2' name='txtcantenv2' size=20></td>";			
                                         $html.="<td align=right><input type=text value=".$cantidad1." id='txtcantrec1' name='txtcantrec1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=".$cantidad2." id='txtcantrec2' name='txtcantrec2' size=20 ".$politica."></td>";			
 					$html.="<td align=right><input ".$inv." type=text value=0.00 id='txtcantdif1' name='txtcantdif1' size=20></td>";
