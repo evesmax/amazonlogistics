@@ -898,11 +898,13 @@
 
                 
                 echo $html_funcionesjavascript;  
-                echo $html_busqueda; 
                 
                 $html.="<tr><td>"; //Mega tabla
                     $html.= "<center><table><tr><td>".$html_botones."</td></tr></table></center>";
                 $html.="</tr></td>"; //Mega tabla
+
+                echo $html_busqueda; 
+
                 
 		//FIN MEGATABLA
 		$html.="</table>";
