@@ -285,7 +285,7 @@
             }
 
             $conexion->cerrar_consulta($result);
-            $cmbtransportista .= "</select>"                    
+            $cmbtransportista.= "</select>";                    
 
 
          //Genera  empleado
