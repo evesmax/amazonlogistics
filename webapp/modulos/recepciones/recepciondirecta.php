@@ -837,8 +837,7 @@
                                                                                     jsaldo2=jsaldo;
                                                                                     scant1=valor(document.getElementById('txtcantenv1').value);
                                                                                     scant2=valor(document.getElementById('txtcantenv2').value);
-                                                                                    cant1=valor(document.getElementById('txtcantrec1').value);
-                                                                                    cant2=cant1*jfactor; 
+                                                                                    scant2=scant1*jfactor;
                                                                                     cant1=valor(document.getElementById('txtcantrec1').value);
                                                                                     cant2=cant1*jfactor;
                                                                                     document.envio.txtcantrec2.value=format_number(cant2,2);                                                                                        
