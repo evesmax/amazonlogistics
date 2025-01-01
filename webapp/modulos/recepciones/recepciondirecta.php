@@ -299,6 +299,7 @@
                         Where b.idbodega=$idbodegadestino or 
                             b.idbodega in (select idbodegadestino from logistica_desviosautorizados where idbodega=$idbodegadestino and activo=-1)
                         order by b.nombrebodega";
+            $sqlbod="Select b.idbodega, b.nombrebodega from operaciones_bodegas b";
             $result = $conexion->consultar($sqlbod);
 
             // Almacena las opciones del combo en un array para usarlas en la búsqueda
