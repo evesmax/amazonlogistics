@@ -313,6 +313,9 @@
             $conexion->cerrar_consulta($result);
             $cmbbodega .= "</select>";
 
+            echo var_dump($opcionesBodegas);
+            exit();
+
             //Busqueda Bodega
             $html_busquedabodega="<script> 
                                 // Obtiene el elemento del combo 
