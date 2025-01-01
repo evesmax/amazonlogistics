@@ -903,7 +903,6 @@
                     $html.= "<center><table><tr><td>".$html_botones."</td></tr></table></center>";
                 $html.="</tr></td>"; //Mega tabla
 
-                echo $html_busqueda; 
 
                 
 		//FIN MEGATABLA
@@ -911,9 +910,8 @@
                 $html.="</body></form>";
                 $html.="</html>";
                 
-                
-                   
-                
+        $html.=$html_busqueda; 
+                           
 //Depuracion
 echo $html;
 
