@@ -342,7 +342,7 @@
                                 });
                             </script>";
 
-    $cmbbodega.=html_busquedabodega;
+    $cmbbodega.=$html_busquedabodega;
                             
     //INICIA DIBUJANDO DATOS
 	
