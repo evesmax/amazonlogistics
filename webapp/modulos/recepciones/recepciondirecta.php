@@ -278,8 +278,6 @@
                     }
                     $conexion->cerrar_consulta($result);    
           
-		
-		  
          //Genera  empleado
             $nombrecapturista="";
             $txtcapturista="<input type=hidden id='txtcapturista' name='txtcapturista' value='".$capturista."'>";
@@ -315,7 +313,38 @@
             $conexion->cerrar_consulta($result);
             $cmbbodega .= "</select>";
 
-        //INICIA DIBUJANDO DATOS
+            //Busqueda Bodega
+            $html_busquedabodega="<script>
+                                // Obtiene el elemento del combo
+                                const cmbBodega = document.getElementById('cmbbodega');
+                                // Obtiene las opciones del combo del array PHP (convertido a JSON)
+                                const opcionesBodegas = <?php echo json_encode($opcionesBodegas); ?>;
+
+                                // Agrega un event listener para el evento 'input' (cuando el usuario escribe)
+                                cmbBodega.addEventListener('input', function() {
+                                    const textoBusqueda = this.value.toLowerCase();
+
+                                    // Filtra las opciones del combo
+                                    const opcionesFiltradas = opcionesBodegas.filter(opcion => {
+                                        return opcion.nombre.toLowerCase().includes(textoBusqueda);
+                                    });
+
+                                    // Limpia las opciones actuales del combo
+                                    cmbBodega.innerHTML = '';
+
+                                    // Agrega las opciones filtradas al combo
+                                    opcionesFiltradas.forEach(opcion => {
+                                        const option = document.createElement('option');
+                                        option.value = opcion.id;
+                                        option.text = opcion.nombre;
+                                        cmbBodega.add(option);
+                                    });
+                                });
+                            </script>";
+
+    $cmbbodega.=html_busquedabodega;
+                            
+    //INICIA DIBUJANDO DATOS
 	
 	
 	$html="<html>";
@@ -867,35 +896,6 @@
 		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
-
-                $html_busqueda="<script>
-                                // Obtiene el elemento del combo
-                                const cmbBodega = document.getElementById('cmbbodega');
-                                // Obtiene las opciones del combo del array PHP (convertido a JSON)
-                                const opcionesBodegas = <?php echo json_encode($opcionesBodegas); ?>;
-
-                                // Agrega un event listener para el evento 'input' (cuando el usuario escribe)
-                                cmbBodega.addEventListener('input', function() {
-                                    const textoBusqueda = this.value.toLowerCase();
-
-                                    // Filtra las opciones del combo
-                                    const opcionesFiltradas = opcionesBodegas.filter(opcion => {
-                                        return opcion.nombre.toLowerCase().includes(textoBusqueda);
-                                    });
-
-                                    // Limpia las opciones actuales del combo
-                                    cmbBodega.innerHTML = '';
-
-                                    // Agrega las opciones filtradas al combo
-                                    opcionesFiltradas.forEach(opcion => {
-                                        const option = document.createElement('option');
-                                        option.value = opcion.id;
-                                        option.text = opcion.nombre;
-                                        cmbBodega.add(option);
-                                    });
-                                });
-                            </script>";
-
                 
                 echo $html_funcionesjavascript;  
                 
@@ -903,15 +903,12 @@
                     $html.= "<center><table><tr><td>".$html_botones."</td></tr></table></center>";
                 $html.="</tr></td>"; //Mega tabla
 
-
                 
 		//FIN MEGATABLA
 		$html.="</table>";
                 $html.="</body></form>";
                 $html.="</html>";
-                
-        $html.=$html_busqueda; 
-                           
+                                           
 //Depuracion
 echo $html;
 
