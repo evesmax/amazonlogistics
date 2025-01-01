@@ -294,26 +294,27 @@
          //Genera Combo Bodegas
          //Verifica Politica para Seleccionar a otras bodegas
             $sel="";
-            $cmbbodega="<select id=cmbbodega name=cmbbodega>";
-                    //$sqlbod="Select idbodega, nombrebodega from operaciones_bodegas order by nombrebodega";
-					$sqlbod="Select b.idbodega, b.nombrebodega from operaciones_bodegas b
-							Where b.idbodega=$idbodegadestino or 
-								b.idbodega in (select idbodegadestino from logistica_desviosautorizados where idbodega=$idbodegadestino and activo=-1)
-							order by b.nombrebodega";
-                    $result = $conexion->consultar($sqlbod);
-                    while($rs = $conexion->siguiente($result)){
-                            if($rs{"idbodega"}==$idbodegadestino){
-                                $sel=" SELECTED ";
-                            }
-                            $cmbbodega.="<Option value=".$rs{"idbodega"}." ".$sel.">".$rs{"nombrebodega"}."</option>";
-                            $sel="";
-                    }
-                    $conexion->cerrar_consulta($result);  
-            $cmbbodega.="</select>";  
+            $cmbbodega = "<select id='cmbbodega' name='cmbbodega'>";
+            $sqlbod = "Select b.idbodega, b.nombrebodega from operaciones_bodegas b
+                        Where b.idbodega=$idbodegadestino or 
+                            b.idbodega in (select idbodegadestino from logistica_desviosautorizados where idbodega=$idbodegadestino and activo=-1)
+                        order by b.nombrebodega";
+            $result = $conexion->consultar($sqlbod);
+
+            // Almacena las opciones del combo en un array para usarlas en la búsqueda
+            $opcionesBodegas = array();
+
+            while ($rs = $conexion->siguiente($result)) {
+                $sel = ($rs{"idbodega"} == $idbodegadestino) ? " SELECTED " : "";
+                $cmbbodega .= "<option value='" . $rs{"idbodega"} . "' " . $sel . ">" . $rs{"nombrebodega"} . "</option>";
+                // Guarda la opción en el array
+                $opcionesBodegas[] = array("id" => $rs{"idbodega"}, "nombre" => $rs{"nombrebodega"});
+            }
+
+            $conexion->cerrar_consulta($result);
+            $cmbbodega .= "</select>";
 
         //INICIA DIBUJANDO DATOS
-
-
 	
 	
 	$html="<html>";
@@ -866,9 +867,37 @@
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
 
+                $html_busqueda="<script>
+                                // Obtiene el elemento del combo
+                                const cmbBodega = document.getElementById('cmbbodega');
+                                // Obtiene las opciones del combo del array PHP (convertido a JSON)
+                                const opcionesBodegas = <?php echo json_encode($opcionesBodegas); ?>;
+
+                                // Agrega un event listener para el evento 'input' (cuando el usuario escribe)
+                                cmbBodega.addEventListener('input', function() {
+                                    const textoBusqueda = this.value.toLowerCase();
+
+                                    // Filtra las opciones del combo
+                                    const opcionesFiltradas = opcionesBodegas.filter(opcion => {
+                                        return opcion.nombre.toLowerCase().includes(textoBusqueda);
+                                    });
+
+                                    // Limpia las opciones actuales del combo
+                                    cmbBodega.innerHTML = '';
+
+                                    // Agrega las opciones filtradas al combo
+                                    opcionesFiltradas.forEach(opcion => {
+                                        const option = document.createElement('option');
+                                        option.value = opcion.id;
+                                        option.text = opcion.nombre;
+                                        cmbBodega.add(option);
+                                    });
+                                });
+                            </script>";
 
                 
                 echo $html_funcionesjavascript;  
+                echo $html_busqueda; 
                 
                 $html.="<tr><td>"; //Mega tabla
                     $html.= "<center><table><tr><td>".$html_botones."</td></tr></table></center>";
