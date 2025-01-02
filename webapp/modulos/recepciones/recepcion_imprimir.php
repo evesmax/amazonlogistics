@@ -865,11 +865,6 @@
                         <td width=16 align=right>
                             <a href='javascript:printSelec();'><img src='../../netwarelog/repolog/img/impresora.png' border='0'></a>
                         </td>
-                        <td width=16 align=right>
-                                <a href='javascript:pdf(".$idenvio.");'> <img src='../../netwarelog/repolog/img/pdf.gif'  
-                                   title ='Generar reporte en PDF' border='0'> 
-                                </a>
-                        </td>
                         <td width=16  align=right>
                                 <a href='../../netwarelog/repolog/reporte.php'> <img src='../../netwarelog/repolog/img/filtros.png' 
                                         title ='Haga clic aqui para cambiar filtros...' border='0'> </a>
