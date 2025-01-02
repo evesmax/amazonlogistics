@@ -341,7 +341,7 @@
         
         $html.=$htmlpoliticas;	
 
-        $html.=" <FORM id='envio' name='envio' method='post' action='recepcion_grabar.php'>
+        $html.=" <FORM id='envio' name='envio' method='post' action='recepciondirecta_grabar.php'>
                     <input type=hidden id='txtidtraslado' name='txtidtraslado' value='".$idtraslado."'>
                     <input type=hidden id='txtidenvio' name='txtidenvio' value='".$idenvio."'>";
 		$html.=$txtcapturista;
