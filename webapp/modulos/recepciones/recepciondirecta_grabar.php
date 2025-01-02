@@ -5,7 +5,7 @@
 
 //Recuperando Variables y Grabando Envio
             $idtransportista=$_REQUEST["cmbtransportista"]; 
-            $cartaoporte=$_REQUEST["txtcartaporte"];
+            $cartaporte=$_REQUEST["txtcartaporte"];
             $nombreoperador=$_REQUEST["txtnombreoperador"]; 
             $licenciaoperador=$_REQUEST["txtlicencia"];  
             $placastractor=$_REQUEST["txtplacastractor"]; 
