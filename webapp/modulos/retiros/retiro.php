@@ -149,8 +149,8 @@ $htmlpoliticas="
                                     $placastractor=$rs{"placastractor"};
                                     $placasremolque=$rs{"placasremolque"};
                                     $referenciacliente=$rs{"referenciacliente"}; 
-                                    $catidad1=$rs{"cantidad1"};
-                                    $catidad2=$rs{"cantidad2"}; 
+                                    $cantidad1=$rs{"cantidad1"};
+                                    $cantidad2=$rs{"cantidad2"}; 
 		}
 		$conexion->cerrar_consulta($result);                        
                         
@@ -487,7 +487,12 @@ $htmlpoliticas="
 						$html.="<tr>
                                                             <td>FOLIOS:</td>
                                                             <td align=left><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
-                                                        </tr>";	                                                
+                                                        </tr>";	
+                        
+                        $html.="<tr>
+                                                            <td>SELLOS:</td>
+                                                            <td align=left><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
+                                                        </tr>";	
 						                                                 
 
 						$html.="<tr>
