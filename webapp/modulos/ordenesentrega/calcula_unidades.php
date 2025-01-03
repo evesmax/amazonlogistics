@@ -30,7 +30,8 @@
                                     $('#i654').val(0);
                                     $('#i654').focus();
                                     console.log("Duplicada");
-                               } 
+                               }
+                               console.log(info[4]+$('#i654').val()+$('#select2-i653-container').val());
                             }
                         );           
                 });
