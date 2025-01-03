@@ -491,7 +491,7 @@ $htmlpoliticas="
                         
                         $html.="<tr>
                                                             <td>SELLOS:</td>
-                                                            <td align=left><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
+                                                            <td align=left><textarea type=text id='txtsellos' name='txtsellos' rows=2 cols=45  title='Escriba los sellos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";	
 						                                                 
 

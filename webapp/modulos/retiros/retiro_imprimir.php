@@ -66,10 +66,10 @@
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, lo.idproducto,
                                 lr.fechasalida,lr.idtransportista,lr.cartaporte,lr.nombreoperador,lr.placastractor,
                                 lr.placasremolque,lr.referencia1 refcliente,lr.ticketbascula,lr.banco, lr.estiba, 
-                                    format(lr.cantidad1,2) cantidad1, 
-									format(lr.cantidad2,2) cantidad2, lr.folios,
-									lr.observaciones,lr.licenciaoperador,ob.responsable,
-									concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca 
+                                format(lr.cantidad1,2) cantidad1, 
+                                format(lr.cantidad2,2) cantidad2, lr.folios,
+                                lr.observaciones,lr.licenciaoperador,ob.responsable,
+                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos 
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -87,8 +87,8 @@
                 
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
-									$cancelado=$rs{"cancelado"};
-									$devuelto=$rs{"devuelto"};
+                                        $cancelado=$rs{"cancelado"};
+                                        $devuelto=$rs{"devuelto"};
                                     $otfc=$rs{"oefc"};
                                     $fechaoefc=$rs{"fecha"}; 
                                     $nombreingenio=$rs{"nombreingenio"};
@@ -127,6 +127,7 @@
 									$licenciaoperador=$rs{"licenciaoperador"};
 									$responsable=$rs{"responsable"};
 									$nombremarca=$rs{"nombremarca"};
+                                    $sellos=$rs["sellos"];
 									
 		}
             
@@ -367,7 +368,7 @@
 				$html.="<table class='reporte' width='100%'>";
 										
 					//Obteniendo los datos de aprobación de la remesa de folios...
-					$html.="<tr class='trencabezado' style='font-size:13pt'><td>OE: <b>".$otfc."</b></td></tr>";
+					$html.="<tr class='trencabezado' style='font-size:13pt'><td>REFERENCIA: <b>".$otfc."</b></td></tr>";
 					$html.="<tr><td align=left>
                                                    INICIAL: <b>".$saldoinicial." TM</b><br>
                                                    ENVIADO: <b>".$retirada." TM</b><br>
@@ -457,6 +458,10 @@
                                                             <td align=left>".$folios."</td>
                                                         </tr>";	                                                
 						                                                 
+						$html.="<tr>
+                                                            <td>SELLOS:</td>
+                                                            <td align=left>".$sellos."</td>
+                                                        </tr>";	
 
 						$html.="<tr>
                                                             <td>OBSERVACIONES:</td>
