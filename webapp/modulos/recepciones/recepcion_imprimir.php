@@ -529,15 +529,7 @@
 						$html.="<tr>
                                                             <td>OBSERVACIONES:</td>
                                                             <td align=left>".$observacionesr."</td>
-                                                        </tr>";
-														
-						$html.="<tr align=left>
-                                                            <td colspan=2>
-                                                                VALOR DECLARADO POR BULTO:<b>$ ".number_format($preciobulto,2)."</b><br>
-                                                                VALOR TOTAL DE LA CARGA:<b>$ ".number_format($importetotal,2)."</b><br><br>
-																*De acuerdo con lo establecido en el contrato celebrado entre la almacenadora y el fideicomiso
-                                                            </td>
-                                                        </tr>"; 								
+                                                        </tr>";							
 							
 					$html.="</table>";
 				$html.="</td>";
