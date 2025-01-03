@@ -34,8 +34,21 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result);
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
-                
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|";
+               
+                          $duplicada=0;
+            if(isset($_GET["cartaporte"])){
+                $cartaporte=$_GET["cartaporte"];
+                $idtransportista=$_GET["idtransportista"];
+                $duplicada=0;
+                $sQuery = "Select count(cartaporte) cuantas from logistica_ordenesentrega where idtransportista=".$idtransportista." and cartaporte='".$cartaporte."'";
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $duplicada = $rs["cuantas"];
+                }
+                $conexion->cerrar_consulta($result); 
+            } 
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."hola||";
+            //echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|";
         }
 }
 
