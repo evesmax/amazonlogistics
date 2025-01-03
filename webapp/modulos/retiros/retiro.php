@@ -107,7 +107,7 @@ $htmlpoliticas="
                                         where idbodega=lo.idbodega) then 'a' else 'i' end 'logo',
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, 
 								lo.idproducto,ob.responsable, vm.nombremarca, 
-                                lo.idtransporttista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,lo.cantidad1,lo.cantidad2
+                                lo.idtransportista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,lo.cantidad1,lo.cantidad2
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
