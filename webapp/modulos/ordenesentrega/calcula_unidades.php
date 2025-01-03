@@ -28,7 +28,7 @@
                                 }
                                if(info[4]>0){
                                     $('#i654').val(0);
-                                    alert('Carta Porte Duplicada');
+                                    alert("Carta Porte Duplicada");
                                     $('#i654').focus(); 
                                } 
                             }
