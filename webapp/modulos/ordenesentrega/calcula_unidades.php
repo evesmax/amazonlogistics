@@ -14,6 +14,7 @@
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
                             {
                                 var info = datos.split("|");
+                                console.log(datos);
                                 $('#lbl389').text(info[0]);
                                 $('#lbl390').text(info[1]);
                                 $('#i390').val(info[2]);
