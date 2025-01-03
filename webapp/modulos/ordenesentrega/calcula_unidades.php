@@ -31,7 +31,7 @@
                                     $('#i654').focus();
                                     console.log("Duplicada");
                                }
-                               console.log(info[4]+$('#i654').val()+$('#select2-i653-container').val());
+                               console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#select2-i653-container').val());
                             }
                         );           
                 });
