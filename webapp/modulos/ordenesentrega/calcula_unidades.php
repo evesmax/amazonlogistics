@@ -10,8 +10,8 @@
             
             $(document).ready(function(){
                 $('#i389').bind('blur', function() {  
-                        //Agrega nombre de unidad principal
-                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()},function(datos)
+                        //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1},function(datos)
                             {
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
