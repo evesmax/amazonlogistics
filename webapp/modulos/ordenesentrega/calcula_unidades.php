@@ -11,7 +11,7 @@
             $(document).ready(function(){
                 $('#i389').bind('blur', function() {  
                         //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
-                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()},function(datos)
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
                             {
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
@@ -31,7 +31,7 @@
                                     $('#i654').focus();
                                     console.log("Duplicada");
                                }
-                               console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#select2-i653-container').val());
+                               console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#i653').val());
                             }
                         );           
                 });

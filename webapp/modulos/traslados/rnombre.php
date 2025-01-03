@@ -47,9 +47,6 @@ if(isset($_GET["producto"])){
                         $duplicada = $rs["cuantas"];
                 }
                 $conexion->cerrar_consulta($result); 
-                echo $duplicada;
-                exit(); 
-
             } 
             echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|";
         }
