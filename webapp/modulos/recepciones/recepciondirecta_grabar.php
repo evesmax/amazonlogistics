@@ -256,6 +256,7 @@ $fechaenvio=$fecharecepcion;
                                 $cantdev2 . "','" . $folios . "','" . $observaciones . "','0','0','".
                                 $cantdev1."','".$cantdev2."','1',".$idestadoproducto.")";
 
+                        echo $sql;
                         $conexion->consultar($sql);
                         $iddevolucion = $conexion->insert_id();
             } 
@@ -297,6 +298,6 @@ $fechaenvio=$fecharecepcion;
     
                 
                 
-                header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
+                //header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
          
 ?>
