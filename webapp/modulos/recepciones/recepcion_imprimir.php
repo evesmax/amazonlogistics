@@ -682,14 +682,18 @@
 		$html.="<tr><td>"; //Mega tabla
 		$html.="<right><div id=devfalt><table class='reporte' width='40%' align=right>";
 			//Armando encabezado
-			$html.="
-                                <tr class='trencabezado'>
-                                    <td colspan=6 align=right>DIFERENCIA</td>
-                                </tr>";
+
+			
                                 
                                 
 			//Obteniendo los datos
                                 if($cantdev1>0){
+
+                                $html.="
+                                <tr class='trencabezado'>
+                                    <td colspan=6 align=right>DIFERENCIA</td>
+                                </tr>";
+                                
                                     $html.="<tr class=trcontenido>";
                                             $html.="<td colspan=3><b>Folio Diferencia:$iddevolucion</b></td>";
                                             $html.="<td align=right><b>Estado Producto:$descripcionestado</b></td>";
