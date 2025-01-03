@@ -294,7 +294,7 @@ $fechaenvio=$fecharecepcion;
 				$conexion->consultar($sqlafecta);
                 //echo "Proceso Finalizado con Exito";
                 
-
+    
                 
                 
                 header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
