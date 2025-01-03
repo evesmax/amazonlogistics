@@ -28,8 +28,8 @@
                                 }
                                if(info[4]>0){
                                     $('#i654').val(0);
-                                    alert("Carta Porte Duplicada");
-                                    $('#i654').focus(); 
+                                    $('#i654').focus();
+                                    console.log("Carta Duplicada");
                                } 
                             }
                         );           
