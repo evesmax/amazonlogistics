@@ -255,8 +255,6 @@ $fechaenvio=$fecharecepcion;
                                 $cartaporte . "','" . $nombreoperador . "','" . $placastractor . "','" . $placasremolque . "','" . $cantdev1 . "','" .
                                 $cantdev2 . "','" . $folios . "','" . $observaciones . "','0','0','".
                                 $cantdev1."','".$cantdev2."','1',".$idestadoproducto.")";
-
-                        echo $sql;
                         $conexion->consultar($sql);
                         $iddevolucion = $conexion->insert_id();
             } 
@@ -275,7 +273,7 @@ $fechaenvio=$fecharecepcion;
 						//Consecutivo Interno Bodega 
 				$consecutivobodega=-1;
 				//Afecta Folio Interno
-				$sqlcon="select ifnull(consecutivobodega,0) consecutivobodega from logistica_consecutivosbodega where idbodega=$bodega";
+				$sqlcon="select ifnull(consecutivobodega,0) consecutivobodega from logistica_consecutivosbodega where idbodega=$idbodega";
 				$result = $conexion->consultar($sqlcon);
 				while ($rs = $conexion->siguiente($result)) {
 					$consecutivobodega = $rs{"consecutivobodega"};
@@ -283,11 +281,11 @@ $fechaenvio=$fecharecepcion;
 				$conexion->cerrar_consulta($result);
 
 				if($consecutivobodega>0){
-					$sqlafecta="Update logistica_consecutivosbodega set consecutivobodega=($consecutivobodega+1) where idbodega=$bodega";
+					$sqlafecta="Update logistica_consecutivosbodega set consecutivobodega=($consecutivobodega+1) where idbodega=$idbodega";
 					$consecutivobodega++;
 				}else{
 					$consecutivobodega=1;
-					$sqlafecta="Insert Into logistica_consecutivosbodega (idbodega,doctoorigen,consecutivobodega) Values ('$bodega','0',1)";
+					$sqlafecta="Insert Into logistica_consecutivosbodega (idbodega,doctoorigen,consecutivobodega) Values ('$idbodega','0',1)";
 				}
 				$conexion->consultar($sqlafecta);
 			
