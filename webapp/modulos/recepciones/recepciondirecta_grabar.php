@@ -60,7 +60,7 @@
                     $cantfalt2=$_REQUEST["txtcantfalt2"];
                     $estatus1=$_REQUEST["txtestatus1"]*1;
                     $estatus2=$_REQUEST["txtestatus2"]*1; 
-                    $idestadoproducto=$_REQUEST["cmbestado"];                 
+                    $idestadoproducto=$_REQUEST["cmbestados"];                 
             }
             
 
