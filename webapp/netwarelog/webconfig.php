@@ -188,7 +188,7 @@
     global $accelog_salt_perfil;
     $accelog_salt_perfil = $accelog_salt;
     
-    $url_dominio="https://qsoftwaresolutions.net/clientes/amazon/";
+    $url_dominio="https://qsoftwaresolutions.net/clientes/amazon/webapp/";
 
     // configuracion
     //if((!isset($_REQUEST["netwarstore"]) && !isset($_REQUEST["_tipo"])) || (isset($_REQUEST["_tipo"]) && $_REQUEST["_tipo"] != "api")) include "accelog.php";
