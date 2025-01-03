@@ -1,7 +1,4 @@
 <?php
-
-exit();
-
 include("bd.php");
 
 if(isset($_GET["producto"])){   
@@ -22,7 +19,6 @@ if(isset($_GET["producto"])){
                         $desc1 = $rs["descripcionunidad"];
                 }
                 $conexion->cerrar_consulta($result);
-                $desc1.=" Editado"; 
                 //Asignacion de Etiqueta Cantidad Secundaria
                 $edita=0;
                 $desc2="Cantidad";

@@ -1,7 +1,7 @@
 <?php
 	ini_set ('error_reporting', E_ALL);
         $urlapp=$url_dominio."modulos/traslados/rnombre.php";
-        echo $urlapp; 
+        //echo $urlapp; 
      
 ?>
 <html >
@@ -14,7 +14,7 @@
                         //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
                             {
-                                console.log(datos);
+                                //console.log(datos);
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
                                 $('#lbl390').text(info[1]);
@@ -30,10 +30,10 @@
                                 }
                                if(info[4]>0){
                                     $('#i654').val(0);
+                                    alert("Carta Porte Duplicada");
                                     $('#i654').focus();
-                                    console.log("Duplicada");
                                }
-                               console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#i653').val());
+                               //console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#i653').val());
                             }
                         );           
                 });
