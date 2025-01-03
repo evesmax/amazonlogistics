@@ -1,4 +1,7 @@
 <?php
+
+exit();
+
 include("bd.php");
 
 if(isset($_GET["producto"])){   
