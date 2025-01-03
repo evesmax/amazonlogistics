@@ -118,7 +118,7 @@ $htmlpoliticas="
                                 inner join inventarios_lotes il on il.idloteproducto=lo.idloteproducto
                              Where lo.idordenentrega=".$idordenentrega;
                 
-				//echo $sqlestatus;
+				echo $sqlestatus;
                 
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
@@ -567,8 +567,8 @@ $htmlpoliticas="
 					$html.="<td align=center>".$zafra."</td>";
                                         $html.="<td align=center>".$nombreproducto."</td>";
                                         $html.="<td align=center>".$nombreestado."</td>";
-                                        $html.="<td align=right><input type=text value=0 id='txtcantidad1' name='txtcantidad1' size=30 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
-					$html.="<td align=right><input type=text value=0 id='txtcantidad2' name='txtcantidad2' size=30 ".$politica."></td>";			
+                                        $html.="<td align=right><input readonly type=text value=0 id='txtcantidad1' name='txtcantidad1' size=30 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")' value='".$cantidad2."'></td>";
+					$html.="<td align=right><input readonly type=text value=0 id='txtcantidad2' name='txtcantidad2' size=30 ".$politica." value='".$cantidad2."'></td>";			
 				$html.="</tr>";				
 			$html.="</table></center>";	
 		$html.="</td></tr>"; //Mega tabla
