@@ -703,6 +703,20 @@
                 //Finaliza sección de Cantidades        
                 
     //Inicia Seccion de Devoluciones y Faltantes
+                
+                 //Verifica Politica para Seleccionar a otras bodegas
+            $sel="";
+            $cmbestados = "<select id='cmbestados' name='cmbestados'>";
+            $sqlest = "Select idestadoproducto,descripcionestado from inventarios_estados where espnc=-1";
+            $result = $conexion->consultar($sqlest);
+
+            while ($rs = $conexion->siguiente($result)) {
+                $cmbestados.= "<option value='" . $rs{"idestadoproducto"} . "'>" . $rs{"descripcionestado"} . "</option>";
+            }
+            $conexion->cerrar_consulta($result);
+            $cmbestados.= "</select>";
+
+
                 $investatus=" readonly style='text-align:right;color:red;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
 		$html.="<tr><td>"; //Mega tabla
 		$html.="<right><div id=devfalt style='display:none;'><table class='reporte' width='40%' align=right>";
@@ -723,16 +737,16 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Devolución</b></td>";
+                                        $html.="<td colspan=4><b>".$cmbestados."</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
 				$html.="</tr>";
                                 
-                                $html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Faltante</b></td>";
-                                        $html.="<td align=right><input type=text value=0 id='txtcantfalt1' name='txtcantfalt1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
-					$html.="<td align=right><input type=text value=0 id='txtcantfalt2' name='txtcantfalt2' size=20 ".$politica."></td>";			
-				$html.="</tr>";
+                                //$html.="<tr class=trcontenido>";
+                                //        $html.="<td colspan=4><b>Faltante</b></td>";
+                                //        $html.="<td align=right><input type=text value=0 id='txtcantfalt1' name='txtcantfalt1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+					//$html.="<td align=right><input type=text value=0 id='txtcantfalt2' name='txtcantfalt2' size=20 ".$politica."></td>";			
+				//$html.="</tr>";
                                 
                                 
 			$html.="</table></div></right>";
