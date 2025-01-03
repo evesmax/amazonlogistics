@@ -29,6 +29,7 @@
                                if(info[4]>0){
                                     $('#i654').val(0);
                                     $('#i654').focus();
+                                    console.log("Duplicada");
                                } 
                             }
                         );           
