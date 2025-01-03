@@ -59,7 +59,8 @@
                     $cantfalt1=$_REQUEST["txtcantfalt1"];
                     $cantfalt2=$_REQUEST["txtcantfalt2"];
                     $estatus1=$_REQUEST["txtestatus1"]*1;
-                    $estatus2=$_REQUEST["txtestatus2"]*1;                  
+                    $estatus2=$_REQUEST["txtestatus2"]*1; 
+                    $idestadoproducto=$_REQUEST["cmbestado"];                 
             }
             
 
@@ -130,8 +131,6 @@ $fechaenvio=$fecharecepcion;
                                             ('".$idtraslado."','".$fechaenvio."','".$idtransportista."','".$cartaporte."','".$nombreoperador."','".
                                             $placastractor."','".$placasremolque."','".$horallegada."','".$ticketbascula."','".$banco."','".
                                             $estiba."','".$cantenv1."','".$cantenv2."','0','".$folios."','".$obsenvio."','".$licenciaoperador."','".$capturista."',2)";
-
-
 
 		$conexion->consultar($sql);
         $idenvio=$conexion->insert_id();
@@ -204,6 +203,13 @@ $fechaenvio=$fecharecepcion;
 
                         //Agrega Movimiento Almacen
                                     $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidadrecibida1,$cantidadrecibida2,$fecharecepcion,$doctoorigen,$idrecepcion,$conexion);
+
+                        if ($cantdev1*1>0){
+                       //Agrega Movimiento Almacen Producto No Conforme
+                                    $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$idestadoproducto,$cantdev1,$cantdev2,$fecharecepcion,$doctoorigen,$idrecepcion,$conexion);
+                        }
+
+
                         //Afecta Cantidades en Traslados
                                     $sqlafecta="UPDATE logistica_traslados set cantidadrecibida1=".$scantidadrecibida1.",cantidadrecibida2=".$scantidadrecibida2." Where idtraslado=".$idtraslado;
                                     echo $sqlafecta;

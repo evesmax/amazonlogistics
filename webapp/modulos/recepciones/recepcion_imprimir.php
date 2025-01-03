@@ -659,12 +659,15 @@
                 $cantfalt1=0;
                 $cantfalt2=0;
                 //Obtiene Devoluciones
-                $sqlenv="select * from logistica_devoluciones where idrecepcion=$idrecepcion";
+                $sqlenv="select * from logistica_faltantestraslados lf 
+                                inner join inventarios_estados oe on lf.idestadodocumento=oe.idestadoproducto 
+                                where idrecepcion=$idrecepcion";
                 $result = $conexion->consultar($sqlenv);
                 while($rs = $conexion->siguiente($result)){
                     $iddevolucion=$rs{"iddevolucion"};
                     $cantdev1=$rs{"cantidad1"};
                     $cantdev2=$rs{"cantidad2"};
+                    $descripcionestado=$rs{"descripcionestado"};
                 }
                 $conexion->cerrar_consulta($result); 
                 //Obtiene Faltantes
@@ -683,14 +686,15 @@
 			//Armando encabezado
 			$html.="
                                 <tr class='trencabezado'>
-                                    <td colspan=6 align=right>ACLARACION DIFERENCIA</td>
+                                    <td colspan=6 align=right>DIFERENCIA</td>
                                 </tr>";
                                 
                                 
 			//Obteniendo los datos
                                 if($cantdev1>0){
                                     $html.="<tr class=trcontenido>";
-                                            $html.="<td colspan=4><b>Devolución Folio:$iddevolucion</b></td>";
+                                            $html.="<td colspan=3><b>Folio Diferencia:$iddevolucion</b></td>";
+                                            $html.="<td align=right><b>Estado Producto:$descripcionestado</b></td>";
                                             $html.="<td align=right><b>$cantdev1</b>   $unidad1</td>";
                                             $html.="<td align=right><b>".number_format($cantdev2,3)."</b>   $unidad2</td>";			
                                     $html.="</tr>";                                   
