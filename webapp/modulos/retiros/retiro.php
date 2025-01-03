@@ -567,6 +567,10 @@ $htmlpoliticas="
 				if($nombreingenio==$nombremarca){
 					$temp="$nombreingenio - Propia";
 				}
+
+                echo "Cantidades ".$cantidad1." - ".$cantidad2;
+
+
 				$html.="<tr class=trcontenido>";
                                         $html.="<td align=center>".$temp."</td>";
 					$html.="<td align=center>".$zafra."</td>";
@@ -579,8 +583,8 @@ $htmlpoliticas="
 		$html.="</td></tr>"; //Mega tabla
 		//Finaliza sección de conceptos
 			
-                
-                
+               
+
                 
                 //Inicia sección de FIRMAS
 		$html.="<tr><td>"; //Mega tabla
