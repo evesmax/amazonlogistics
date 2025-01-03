@@ -36,7 +36,7 @@ if(isset($_GET["producto"])){
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
            
-            $duplicada=0;
+            $duplicada=-1;
             if(isset($_GET["cartaporte"])){
                 $cartaporte=$_GET["cartaporte"];
                 $idtransportista=$_GET["idtransportista"];
@@ -47,6 +47,8 @@ if(isset($_GET["producto"])){
                         $duplicada = $rs["cuantas"];
                 }
                 $conexion->cerrar_consulta($result); 
+                echo $duplicada;
+                exit(); 
 
             }      
 

@@ -11,7 +11,7 @@
             $(document).ready(function(){
                 $('#i389').bind('blur', function() {  
                         //Agrega nombre de unidad principal
-                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1,cartaporte:$('#i654').val(),idtransportista:$('#select2-i653-container').val()},function(datos)
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()},function(datos)
                             {
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
@@ -26,11 +26,10 @@
                                     $('#i390').removeAttr("disabled");
                                     $('#i390').focus();
                                 }
-                               if(info[4]>0){
-                                    $('#i654').val(0);
-                                    $('#i654').focus();
-                                    console.log("Carta Duplicada");
-                               } 
+                               //if(info[4]>0){
+                               //     $('#i654').val(0);
+                               //     $('#i654').focus();
+                               //} 
                             }
                         );           
                 });
