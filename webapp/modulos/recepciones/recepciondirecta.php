@@ -270,7 +270,7 @@
          //Genera Combo Transportista
             $cmbtransportista="";
             $cmbtransportista = "<select id='cmbtransportista' name='cmbtransportista'>";
-            $sqltrans="Select idtransportista, concat(rfc,' ',razonsocial) razonsocial from operaciones_transportistas 
+            $sqltrans="Select idtransportista, razonsocial from operaciones_transportistas 
                         order by razonsocial ";
             $result = $conexion->consultar($sqltrans);
 
