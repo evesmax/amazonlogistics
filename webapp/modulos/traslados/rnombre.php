@@ -48,7 +48,7 @@ if(isset($_GET["producto"])){
                 }
                 $conexion->cerrar_consulta($result); 
             } 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."hola||";
+            echo $desc1."desdetraslados|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."hola||";
         }
 }
 

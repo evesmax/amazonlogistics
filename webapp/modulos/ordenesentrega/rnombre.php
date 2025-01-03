@@ -47,7 +47,7 @@ if(isset($_GET["producto"])){
                 }
                 $conexion->cerrar_consulta($result); 
             } 
-            echo $desc1."holarnombre|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|";
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|";
         }
 }
 
