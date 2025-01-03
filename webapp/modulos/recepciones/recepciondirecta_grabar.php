@@ -249,12 +249,12 @@ $fechaenvio=$fecharecepcion;
                         $sql = "Insert Into logistica_devoluciones (idtraslado,idenvio,idrecepcion,fechadevolucion,idtransportista,
                                                 cartaporte,operador,placastractor,placasremolque,cantidad1,
                                                 cantidad2,folios,observaciones,cantidadrecibida1,cantidadrecibida2,
-                                                diferencia1,diferencia2,idestadodocumento
+                                                diferencia1,diferencia2,idestadodocumento,idestadoproducto
                                             ) VALUES 
                                 ('" . $idtraslado . "','" . $idenvio . "','" . $idrecepcion . "','" . $fecharecepcion . "','" . $idtransportista . "','" .
                                 $cartaporte . "','" . $nombreoperador . "','" . $placastractor . "','" . $placasremolque . "','" . $cantdev1 . "','" .
                                 $cantdev2 . "','" . $folios . "','" . $observaciones . "','0','0','".
-                                $cantdev1."','".$cantdev2."','1')";
+                                $cantdev1."','".$cantdev2."','1',".$idestadoproducto.")";
 
                         $conexion->consultar($sql);
                         $iddevolucion = $conexion->insert_id();

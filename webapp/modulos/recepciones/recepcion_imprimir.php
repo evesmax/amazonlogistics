@@ -659,9 +659,7 @@
                 $cantfalt1=0;
                 $cantfalt2=0;
                 //Obtiene Devoluciones
-                $sqlenv="select * from logistica_faltantestraslados lf 
-                                inner join inventarios_estados oe on lf.idestadodocumento=oe.idestadoproducto 
-                                where idrecepcion=$idrecepcion";
+                $sqlenv="select * from logistica_devoluciones lf inner join inventarios_estados oe on lf.idestadoproducto=oe.idestadoproducto where lf.idrecepcion=$idrecepcion";
                 $result = $conexion->consultar($sqlenv);
                 while($rs = $conexion->siguiente($result)){
                     $iddevolucion=$rs{"iddevolucion"};
