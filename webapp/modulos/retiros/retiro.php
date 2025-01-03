@@ -106,7 +106,8 @@ $htmlpoliticas="
                                         inner join relaciones_almacenadoras_bodegas_detalle d on t.idalmacenadorabodega=d.idalmacenadorabodega 
                                         where idbodega=lo.idbodega) then 'a' else 'i' end 'logo',
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, 
-								lo.idproducto,ob.responsable, vm.nombremarca
+								lo.idproducto,ob.responsable, vm.nombremarca, 
+                                lo.idtransporttista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,lo.cantidad1,lo.cantidad2
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -141,6 +142,15 @@ $htmlpoliticas="
                                     $tipoimagen=$rs{"logo"};
 									$responsable=$rs{"responsable"};
 									$nombremarca=$rs{"nombremarca"};
+                                    $idtransportista=$rs{"idtransportista"};
+                                    $cartaporte=$rs{"cartaporte"};
+                                    $nombreoperador=$rs{"nombreoperador"}; 
+                                    $licenciaoperador=$rs{"licenciaoperador"};
+                                    $placastractor=$rs{"placastractor"};
+                                    $placasremolque=$rs{"placasremolque"};
+                                    $referenciacliente=$rs{"referenciacliente"}; 
+                                    $catidad1=$rs{"cantidad1"};
+                                    $catidad2=$rs{"cantidad2"}; 
 		}
 		$conexion->cerrar_consulta($result);                        
                         
@@ -232,7 +242,7 @@ $htmlpoliticas="
             $sel="";
             $cmbtransportista="<select id=cmbtransportista name=cmbtransportista>";
                     $sqltrans="Select idtransportista, razonsocial 
-					from operaciones_transportistas order by razonsocial";
+					from operaciones_transportistas where idtransportista=".$idtransportista." order by razonsocial";
 
                     $result = $conexion->consultar($sqltrans);
                     while($rs = $conexion->siguiente($result)){
@@ -429,27 +439,27 @@ $htmlpoliticas="
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>CARTA PORTE:</td>
-                                                            <td align=left><input type=text id='txtcartaporte' name='txtcartaporte' value='' Size=20></td>
+                                                            <td align=left><input readonly type=text id='txtcartaporte' name='txtcartaporte' value='".$cartaporte."' Size=20></td>
                                                         </tr>";	
 						$html.="<tr>
                                                             <td width=30%>NOMBRE OPERADOR:</td>
-                                                            <td align=left><input type=text id='txtoperador' name='txtoperador' value='' Size=60></td>
+                                                            <td align=left><input readonly type=text id='txtoperador' name='txtoperador' value='".$nombreoperador."' Size=60></td>
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>LICENCIA OPERADOR:</td>
-                                                            <td align=left><input type=text id='txtlicencia' name='txtlicencia' value='' Size=60></td>
+                                                            <td align=left><input readonly type=text id='txtlicencia' name='txtlicencia' value='".$licenciaoperador."' Size=60></td>
                                                         </tr>";
 														
                                                 $html.="<tr>
                                                             <td colspan=2 align=left width=30%>
-                                                                PLACAS TRACTOR:<input type=text id='txtplacastractor' name='txtplacastractor' value='' Size=20>
-                                                                PLACAS REMOLQUE:<input type=text id='txtplacasremolque' name='txtplacasremolque' value='' Size=20>
+                                                                PLACAS TRACTOR:<input readonly type=text id='txtplacastractor' name='txtplacastractor' value='".$placastractor."' Size=20>
+                                                                PLACAS REMOLQUE:<input readonly type=text id='txtplacasremolque' name='txtplacasremolque' value='".$placasremolque."' Size=20>
                                                             </td>
                                                         </tr>";
 	                                                   
 						$html.="<tr>
                                                             <td width=30%>REFERENCIA CLIENTE:</td>
-                                                            <td align=left><input type=text id='txtrefcliente' name='txtrefcliente' value='' Size=30></td>
+                                                            <td align=left><input readonly type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
                                                         </tr>";
                                                
                                         $html.="</table>";
