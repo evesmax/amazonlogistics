@@ -14,6 +14,7 @@ if(isset($_GET["producto"])){
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
+                echo $sQuery."<br>";  
                     $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
@@ -25,6 +26,7 @@ if(isset($_GET["producto"])){
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
+                echo $sQuery."<br>";
                     $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc2 = $rs["descripcionunidad"];
