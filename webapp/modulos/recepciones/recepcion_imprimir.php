@@ -662,7 +662,7 @@
                 $sqlenv="select * from logistica_devoluciones lf inner join inventarios_estados oe on lf.idestadoproducto=oe.idestadoproducto where lf.idrecepcion=$idrecepcion";
                 $result = $conexion->consultar($sqlenv);
                 while($rs = $conexion->siguiente($result)){
-                    $iddevolucion=$rs{"iddevolucion"};
+                    $iddevolucion=$rs{"id"};
                     $cantdev1=$rs{"cantidad1"};
                     $cantdev2=$rs{"cantidad2"};
                     $descripcionestado=$rs{"descripcionestado"};
