@@ -296,6 +296,6 @@ $fechaenvio=$fecharecepcion;
     
                 
                 
-                //header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
+                header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
          
 ?>
