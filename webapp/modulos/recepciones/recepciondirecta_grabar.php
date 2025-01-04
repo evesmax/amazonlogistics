@@ -184,7 +184,7 @@ $fechaenvio=$fecharecepcion;
                                 ifnull(b.cantidadretirada1,0) 'cantidadretirada1',
                                 ifnull(b.cantidadretirada2,0) 'cantidadretirada2',
                                 ifnull(b.cantidadrecibida1,0) 'cantidadrecibida1',
-                                ifnull(b.cantidadrecibida2,0) 'cantidadrecibida2'
+                                ifnull(b.cantidadrecibida2,0) 'cantidadrecibida2',b.idmarca
                             from logistica_traslados b 
                                 inner join logistica_envios a on a.idtraslado=b.idtraslado
                             Where b.idtraslado=".$idtraslado." And a.idenvio=".$idenvio;
@@ -192,7 +192,7 @@ $fechaenvio=$fecharecepcion;
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"fabricante"};
-                        $marca=$rs{"fabricante"};
+                        $marca=$rs{"idmarca"};
                         //$bodega=$rs{"bodega"};
                         $producto=$rs{"producto"};
                         $lote=$rs{"lote"};
