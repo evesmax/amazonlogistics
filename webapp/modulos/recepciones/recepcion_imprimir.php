@@ -85,9 +85,10 @@
                                     lr.referencia 'referenciar',lr.almacenista,lr.supervisor,lr.cabocuadrilla,
                                     lr.cantidadrecibida1,lr.cantidadrecibida2,lr.diferencia1,lr.diferencia2,
                                     lr.folios 'foliosr', lr.observaciones 'observacionesr',
-									le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega
+                                    le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca
                              From logistica_traslados lt 
                                 inner join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                                inner join vista_marcas vm on lt.idmarca=vm.idmarca
                                 inner join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
                                 inner join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
                                 inner join inventarios_productos ip on ip.idproducto=lt.idproducto
@@ -162,6 +163,7 @@
 					$licenciaoperador=$rs{"licenciaoperador"};
 					$responsable=$rs{"responsable"};	
 					$nombrecapturista=$rs{"capturista"};
+                                    $marca=$rs{"nombremarca"};
 									
 									
 		}
@@ -339,8 +341,8 @@
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organización
-					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>".$nombreorganizacion."</b><br>";
+                                        $html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
+						$html.="<b>Propietario: ".$nombreorganizacion."<br> Marca: ".$marca."</b><br>";
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
 						$html.="<br> <strong>C.P.</strong> ".$cp;
@@ -595,7 +597,7 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td align=center>".$nombreingenio."</td>";
+                                        $html.="<td align=center>".$marca."</td>";
 					$html.="<td align=center>".$zafra."</td>";
                                         $html.="<td align=center>".$nombreproducto."</td>";
                                         $html.="<td align=center>".$nombreestado."</td>";			
