@@ -115,9 +115,10 @@
                                     '' placasremolque,'' horallegada,'' ticketbascula,'' banco, '' estiba, 
                                     format(0,2) cantidad1, format(0,2) cantidad2, 
 									'' consecutivobodega, '' folios, '' observaciones,
-									obd.responsable, '' licenciaoperador
+									obd.responsable, '' licenciaoperador, vm.nombremarca
                              From logistica_traslados lt 
                                 inner join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                                inner join vista_marcas vm lt.idmarca=vm.idmarca
                                 inner join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
                                 inner join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
                                 inner join inventarios_productos ip on ip.idproducto=lt.idproducto
@@ -167,7 +168,8 @@
                                     $observaciones=$rs{"observaciones"};
                                     $responsable=$rs{"responsable"};
 									$licenciaoperador=$rs{"licenciaoperador"};
-		}
+                                    $marca=$rs{"nombremarca"};
+        }
 		$conexion->cerrar_consulta($result);                        
                         
                 
@@ -649,7 +651,7 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td align=center>".$nombreingenio."</td>";
+                                        $html.="<td align=center>".$marca."</td>";
 					$html.="<td align=center>".$zafra."</td>";
                                         $html.="<td align=center>".$nombreproducto."</td>";
                                         $html.="<td align=center>".$nombreestado."</td>";			

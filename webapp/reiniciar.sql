@@ -58,8 +58,21 @@ VALUES
 (1,'ADA SARAI','',1),
 (1,'TIUSA','',1);
 
+truncate operaciones_fabricantes;
 
-TRUNCATE operaciones_fabricantes;
+
+truncate relaciones_almacenadoras_bodegas;
+truncate relaciones_almacenadoras_bodegas_detalle;
+truncate relaciones_ingenios_bodegas;
+truncate relaciones_ingenios_bodegas_detalle;
+truncate relaciones_ingenios_productos;
+truncate relaciones_ingenios_productos_detalle;
+truncate relaciones_mercadocontrato;
+truncate relaciones_segmentoscontratos;
+truncate relaciones_usuariosbodegas;
+truncate relaciones_usuariosfabricantes;
+
+
 truncate logistica_cancelacionordenesentrega;
 truncate logistica_certificados;
 truncate logistica_consecutivosbodega;
@@ -79,16 +92,6 @@ truncate logistica_tipoendoso;
 truncate logistica_tiposenlace;
 truncate logistica_tiposoperacion;
 truncate logistica_traslados;
-truncate relaciones_almacenadoras_bodegas;
-truncate relaciones_almacenadoras_bodegas_detalle;
-truncate relaciones_ingenios_bodegas;
-truncate relaciones_ingenios_bodegas_detalle;
-truncate relaciones_ingenios_productos;
-truncate relaciones_ingenios_productos_detalle;
-truncate relaciones_mercadocontrato;
-truncate relaciones_segmentoscontratos;
-truncate relaciones_usuariosbodegas;
-truncate relaciones_usuariosfabricantes;
 truncate inventarios_movimientos;
 truncate inventarios_movimientosdetalle;
 truncate inventarios_movimientostitulo;
@@ -97,9 +100,49 @@ truncate inventarios_saldos;
 
 
 
+select of.idfabricante, vm.idmarca, ip.idproducto,il.idloteproducto,ob.idbodega,
+                                re.saldosecundario 'existenciafisica',
+                                re.entradassecundario 'entradasacumuladas', re.salidassecundario 'salidasacumuladas',
+                                (
+                    select sum(md.cantidadsecundaria) from inventarios_movimientos md
+                        left join inventarios_tiposmovimiento tm on tm.idtipomovimiento=md.idtipomovimiento
+                    where tm.efectoinventario=1
+                        and md.idfabricante=re.idfabricante
+						and md.idmarca=re.idmarca
+                        and md.idbodega=re.idbodega
+                        and md.idproducto=re.idproducto
+                        and md.idloteproducto=re.idloteproducto
+                        and md.idestadoproducto=re.idestadoproducto
+                        and md.fecha between '2025-01-03 00:00:00' and '2025-01-03 23:59:59'
+                    ) entradasdeldia,
+                                (
+                    select sum(md.cantidadsecundaria) from inventarios_movimientos md
+                        left join inventarios_tiposmovimiento tm on tm.idtipomovimiento=md.idtipomovimiento
+                    where tm.efectoinventario=-1
+                        and md.idfabricante=re.idfabricante
+						and md.idmarca=re.idmarca
+                        and md.idbodega=re.idbodega
+                        and md.idproducto=re.idproducto
+                        and md.idloteproducto=re.idloteproducto
+                        and md.idestadoproducto=re.idestadoproducto
+                        and md.fecha between '2025-01-03 00:00:00' and '2025-01-03 23:59:59'
+                    ) salidasdeldia,
+                                ie.idestadoproducto,ip.idfamilia
+                        from inventarios_saldos re
+                            left join operaciones_fabricantes of on of.idfabricante=re.idfabricante
+                            left join vista_marcas vm on vm.idmarca=re.idmarca
+                            left join inventarios_productos ip on ip.idproducto=re.idproducto
+                            left join inventarios_lotes il on il.idloteproducto=re.idloteproducto
+                            left join operaciones_bodegas ob on ob.idbodega =re.idbodega
+                            left join inventarios_estados ie on ie.idestadoproducto=re.idestadoproducto
+                            left join inventarios_familias ifa on ifa.idfamilia=ip.idfamilia where (re.idbodega in (select idbodega from relaciones_usuariosbodegas where idempleado=2) 
+ OR NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado=2)) and
+(of.nombrefabricante like "%%") and (vm.nombremarca like "%%") 
+and (ifa.nombrefamilia like "%%") and (ip.nombreproducto like "%%") 
+and (ie.descripcionestado like "%%") and (il.descripcionlote like "%%") 
+and (ob.nombrebodega like "%%")   order by of.nombrefabricante, ip.nombreproducto, ie.idestadoproducto, il.descripcionlote, ob.nombrebodega 
 
 
 
-
-
-
+select * from inventarios_saldos
+select * from inventarios_movimientos
