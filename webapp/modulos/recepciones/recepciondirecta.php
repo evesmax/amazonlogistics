@@ -370,7 +370,7 @@
 				
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>Propietario: ".$nombreorganizacion."<br> Ingenio".$marca."</b><br>";
+						$html.="<b>Propietario: ".$nombreorganizacion."<br> Ingenio: ".$marca."</b><br>";
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
 						$html.="<br> <strong>C.P.</strong> ".$cp;
