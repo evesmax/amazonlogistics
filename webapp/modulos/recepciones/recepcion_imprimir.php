@@ -483,17 +483,17 @@
  						$html.="<tr>
                                                             <td width=30%>LICENCIA OPERADOR:</td>
                                                             <td align=left><b>".$licenciaoperador."</b></td>
-                                                        </tr>";
- 						$html.="<tr>
-                                                            <td width=30%>OBSERVACIONES ENVIO:</td>
-                                                            <td align=left><b>".$observacionesEnv."</b></td>
-                                                        </tr>";  
+                                                        </tr>"; 
                                                 $html.="<tr>
                                                             <td colspan=2 align=left width=30%>
                                                                 PLACAS TRACTOR:<b>".$placastractor."</b>
                                                                 PLACAS REMOLQUE:<b>".$placasremolque."</b>
                                                             </td>
-                                                        </tr>";                                              
+                                                        </tr>";
+ 						$html.="<tr>
+                                                            <td width=30%>OBSERVACIONES ENVIO:</td>
+                                                            <td align=left><b>".$observacionesEnv."</b></td>
+                                                        </tr>"; 
                                                
                                         $html.="</table>";
 				$html.="</td>";
