@@ -141,7 +141,7 @@
                                     $cantidad2=$rs{"cantidad2"};
                                     $consecutivobodega=$rs{"consecutivobodega"};
                                     $folios=$rs{"foliosr"};
-                                    $observacionesr=$rs{"observacionesr"};
+                                    $observacionesEnv=$rs{"observaciones"};
                         //Agregando Valores de Recepcion
                                     $fecharecepcion=$rs{"fecharecepcion"};
                                     $bancor=$rs{"bancor"};
@@ -164,6 +164,8 @@
 					$responsable=$rs{"responsable"};	
 					$nombrecapturista=$rs{"capturista"};
                                     $marca=$rs{"nombremarca"};
+                                    $observacionesr=$rs{"observacionesr"};
+
 									
 									
 		}
@@ -481,7 +483,11 @@
  						$html.="<tr>
                                                             <td width=30%>LICENCIA OPERADOR:</td>
                                                             <td align=left><b>".$licenciaoperador."</b></td>
-                                                        </tr>";                                               
+                                                        </tr>";
+ 						$html.="<tr>
+                                                            <td width=30%>OBSERVACIONES ENVIO:</td>
+                                                            <td align=left><b>".$observacionesEnv."</b></td>
+                                                        </tr>";  
                                                 $html.="<tr>
                                                             <td colspan=2 align=left width=30%>
                                                                 PLACAS TRACTOR:<b>".$placastractor."</b>
