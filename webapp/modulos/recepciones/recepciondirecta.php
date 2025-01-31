@@ -469,13 +469,14 @@
 				$html.="<table class='reporte' width='100%'>";
 										
 					//Obteniendo los datos de aprobación de la remesa de folios...
-					$html.="<tr class='trencabezado'><td>OTFC: <b>".$otfc."</b></td></tr>";
+					/*
+                    $html.="<tr class='trencabezado'><td>OTFC: <b>".$otfc."</b></td></tr>";
 					$html.="<tr><td align=left>
                                                    INICIAL: <b>".$saldoinicial." TM</b><br>
                                                    ENVIADO: <b>".$retirada." TM</b><br>
                                                    SALDO: <b>".$saldo." TM</b><br>    
                                                 </td></tr>";																			
-																			
+					*/														
 
 				$html.="</table>";								
 			$html.="</td>";
