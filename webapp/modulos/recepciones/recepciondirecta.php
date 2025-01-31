@@ -886,9 +886,14 @@
                                                                                         ref=idenvio;
                                                                                         document.location = 'pdf.php?idenvio='+ref;
                                                                                 }
+                                                                                function deshabilitarBoton() {
+                                                                                    document.getElementById('btngrabar').disabled = true;
+                                                                                    // Puedes agregar un mensaje al usuario, por ejemplo:
+                                                                                    document.getElementById('btngrabar').value = 'Procesando...'; 
+                                                                                }
 									</script>";
 		//Botones							
-		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
+		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar' onclick='deshabilitarBoton()>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
                 
