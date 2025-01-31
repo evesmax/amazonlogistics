@@ -343,7 +343,7 @@
         
         $html.=$htmlpoliticas;	
 
-        $html.=" <FORM id='envio' name='envio' method='post' action='recepciondirecta_grabar.php'>
+        $html.=" <FORM id='envio' name='envio' method='post' action='recepciondirecta_grabar.php' onsubmit='deshabilitarBoton()'>
                     <input type=hidden id='txtidtraslado' name='txtidtraslado' value='".$idtraslado."'>
                     <input type=hidden id='txtidenvio' name='txtidenvio' value='".$idenvio."'>";
 		$html.=$txtcapturista;
@@ -893,8 +893,12 @@
                                                                                 }
 									</script>";
 		//Botones							
-		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar' onclick='deshabilitarBoton()'>
+		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+
+                                
+  
+
      
                 
                 echo $html_funcionesjavascript;  
