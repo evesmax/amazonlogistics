@@ -12,7 +12,7 @@
                     });
                 //VALIDANDO ACLARACIONES
                     $('#txtcantrec1').bind('focusout', function() {  
-                        if($('#txtcantrec1').val()==0 || $('#txtcantrec1').val()==''){
+                        if($('#txtcantrec1').val()==0 || $('#txtcantrec2').val()==''){
                             alert('Debe escribir una cantidad mayor a cero');
                             $('#txtcantrec1').focus();
                         }
