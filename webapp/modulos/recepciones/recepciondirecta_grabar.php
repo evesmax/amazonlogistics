@@ -140,8 +140,8 @@ $fechaenvio=$fecharecepcion;
         $sqlafecta="UPDATE logistica_traslados 
                         set cantidad1=(cantidad1+".$cantenv1."),
                         cantidad2=(cantidad2+".$cantenv2."), 
-                        cantidadretirada1=".$cantidadretirada1.",
-                        cantidadretirada2=".$cantidadretirada2." 
+                        cantidadretirada1=(cantidadretirada1+".$cantenv1."),
+                        cantidadretirada2=(cantidadretirada2+".$cantenv2."), 
                         Where idtraslado=".$idtraslado;
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);
