@@ -893,7 +893,7 @@
                                                                                 }
 									</script>";
 		//Botones							
-		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar' onclick='deshabilitarBoton()>
+		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar' onclick='deshabilitarBoton()'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
                 
