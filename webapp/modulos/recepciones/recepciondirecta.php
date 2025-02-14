@@ -53,15 +53,13 @@
                     $('#btngrabar').click(function() {
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
-
-                        $('input[type=text]').each(function() {
-                        if ($(this).val() === '') {
-                            camposValidos = false;
-                            alert('Por favor, complete todos los campos.');
-                            $(this).focus(); // Enfocar el campo vacío
-                            return false; // Salir del bucle.each()
+                        if($('#txtcantrec1').val()*1=0  || $('#txtcantrec1').val()*1=0 ){
+                            camposValidos= false
+                            alert('Debe escribir una cantidad mayor a cero');
+                            $('#txtcantrec1').val()=0;
+                            $('#txtcantrec1').focus(); 
                         }
-                        });
+
 
                         // Si todos los campos son válidos, permite el envío del formulario
                         if (camposValidos) {
