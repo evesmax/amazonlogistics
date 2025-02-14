@@ -53,11 +53,11 @@
                     $('#btngrabar').click(function() {
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
-                        
-                        $('input[type="text"]').each(function() {
-                        if ($(this).val() === "") {
+
+                        $('input[type='text']').each(function() {
+                        if ($(this).val() === '') {
                             camposValidos = false;
-                            alert("Por favor, complete todos los campos.");
+                            alert('Por favor, complete todos los campos.');
                             $(this).focus(); // Enfocar el campo vacío
                             return false; // Salir del bucle.each()
                         }
@@ -70,6 +70,7 @@
                         return false; // Detiene el envío del formulario
                         }
                     });
+                    
             });
         </script>";	
 
