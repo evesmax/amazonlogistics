@@ -80,7 +80,7 @@
                             $politica=1;
                             $msg="Falto aclarar la diferencia de envio con recepcion";
             }
-			if($cantidadrecibida1==0){
+			if($cantidadrecibida1==0 or $cantidadrecibida2==0){
 				$politica=1;
 				$msg=" Falto escribir una cantidad valida";
 			}
