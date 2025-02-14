@@ -20,10 +20,6 @@
                             $('#devfalt').css('display', 'block');
                             $('#txtestatus1').val($('#txtcantdif1').val());
                             $('#txtestatus2').val($('#txtcantdif2').val());
-                           if($('#txtcantdev1').val()<$('#txtcantdif1').val()){
-                            alert('Debe escribir una cantidad mayor a cero para aclarar la diferencia');
-                            $('#txtcantdev1').focus(); 
-                           }
                         }else{
                             $('#devfalt').css('display', 'none');
                         }                        
