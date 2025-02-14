@@ -54,7 +54,7 @@
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
 
-                        $('input[type='text']').each(function() {
+                        $('input[type=text]').each(function() {
                         if ($(this).val() === '') {
                             camposValidos = false;
                             alert('Por favor, complete todos los campos.');
