@@ -23,7 +23,7 @@ if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matche
 
 // Expresión regular para extraer otros filtros
 $filtros = [];
-if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $cadena, $matches)) {
+if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $sqlwhere, $matches)) {
     foreach ($matches[1] as $index => $nombreFiltro) {
         $filtros[$nombreFiltro] = $matches[2][$index];
     }
