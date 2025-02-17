@@ -101,7 +101,6 @@
                              Where lr.idrecepcion=".$idrecepcion;
               //echo $sqlestatus;
 
-                
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
