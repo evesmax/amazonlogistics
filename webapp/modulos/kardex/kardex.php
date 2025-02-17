@@ -40,7 +40,8 @@ $idbodega="NULL";
 
 $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
-    echo $nombre."=".$valor. "/n";
+    echo $nombre."=".$valor. "<br>";
+    $sqlAux="";
     if ($nombre="of.nombrefabricante") {
         if ($valor<>"%%"){
             $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
@@ -100,29 +101,9 @@ foreach ($filtros as $nombre => $valor) {
             }
             $conexion->cerrar_consulta($resultado);
         }
-    }      
+    }    
+    echo $sqlAux."<br>";  
 }
-
-// Formar filtro para obtener claves
-
-/*
-echo "Fecha Inicial: " . $fechainicial . "\n";
-echo "Fecha Final: " . $fechafinal . "\n";
-echo "idfabricante: ". $idfabricante . "\n";
-echo "idmarca: ". $idfabricante . "\n";
-echo "idloteproducto: ". $idloteproducto . "\n";
-echo "idproducto: ". $idproducto . "\n";
-echo "idestado: ". $idestado . "\n";
-echo "idbodega: ". $idbodega . "\n";
-*/
-	
-    //RECUPERANDO VARIABLES        
-         //LLamar SP
-        // $sqlsp="call cancelacion_recepciones($idrecepcion);";
-        // $resultado=$conexion->consultar($sqlsp);
-        
-
-
 
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
