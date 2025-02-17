@@ -40,6 +40,7 @@ $idbodega="NULL";
 
 $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
+    echo $nombre."=".$valor. "/n";
     if ($nombre="of.nombrefabricante") {
         if ($valor<>"%%"){
             $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
