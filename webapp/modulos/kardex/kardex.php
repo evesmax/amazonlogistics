@@ -119,8 +119,7 @@ echo "idbodega: ". $idbodega . "\n";
         $resultado = $conexion->consultar($sql);
 
         //LLamar SP
-        $sqlsp="call generaKardex($fechainicial,$fechafinal,$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado = $conexion->consultar($sqlsp); 
         echo $sqlsp;
-        exit();
 ?>
