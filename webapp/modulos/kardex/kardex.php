@@ -1,6 +1,6 @@
 <?php
 
-include("../../netwarelog/webconfig.php");
+//include("../../netwarelog/webconfig.php");
 include("../../netwarelog/catalog/conexionbd.php");
 
 set_time_limit($tiempo_timeout);
@@ -128,4 +128,6 @@ echo "idbodega: ". $idbodega . "\n";
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
+        echo $sqlsp;
+
 ?>
