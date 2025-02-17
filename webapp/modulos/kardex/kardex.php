@@ -7,6 +7,9 @@ set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
 
+//Elimina datos previos
+$sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
+$resultado = $conexion->consultar($sql);
 
 //Recupera Filtros
 $sql = $_SESSION["sequel"];
@@ -121,14 +124,12 @@ echo "idbodega: ". $idbodega . "\n";
         // $resultado=$conexion->consultar($sqlsp);
         
 
-        //Elimina datos previos
-        //$sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
-        //$resultado = $conexion->consultar($sql);
+
 
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
-        echo $sqlsp;
+        //echo $sqlsp;
 
         // Manejo de errores
         if ($resultado) {
