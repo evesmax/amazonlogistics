@@ -9,6 +9,7 @@ $usuario=$_SESSION["accelog_idempleado"];
 //Recupera Filtros
  
 $sql = $_SESSION["sequel"];
+echo "Sql: " . $sql . "<br>";
 
 // Expresión regular para extraer las condiciones del WHERE
 $regex = '/WHERE\s+(.*?)\s+ORDER BY/si'; // Modificado para soportar 'OR NOT EXISTS'
