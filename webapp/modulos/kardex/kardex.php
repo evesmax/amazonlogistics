@@ -7,73 +7,34 @@ $usuario=$_SESSION["accelog_idempleado"];
 
 
 //Recupera Filtros
- $sql = $_SESSION["sequel"];
-echo "Consulta SQL Original:<pre>" . $sql . "</pre>"; // <--- IMPRIME LA CONSULTA ORIGINAL
+$sql = $_SESSION["sequel"];
+$uw=strpos($sql,'where');
+$ct=strlen($sql);
+$sqlwhere=substr($sql,$uw);
 
-$regex = '/WHERE\s+(.*?)(?:\s+GROUP BY|\s+ORDER BY|\s+LIMIT|$)/si';
-
-if (preg_match($regex, $sql, $matches)) {
-    echo "Coincidencias de la expresión regular principal:<br>";
-    var_dump($matches);
-
-    $condiciones = $matches[1];
-    $condiciones_array = preg_split('/(?<!\'[^\\\]*)\bAND\b(?![^\\\]*\')/i', $condiciones);
-
-    $filtros = array();
-
-    foreach ($condiciones_array as $condicion) {
-        $condicion = trim($condicion);
-        echo "Condición actual: <pre>" . $condicion . "</pre><br>"; // <--- IMPRIME CADA CONDICIÓN INDIVIDUALMENTE
-
-        // Expresión regular para filtros (BETWEEN, LIKE, =, <, >, etc.)
-        $regex_filtro = '/([\w\.]+)\s*([<>=!]{0,2}LIKE|BETWEEN|=|<|>|<=|>=|IS NULL|IS NOT NULL)\s*(.*?)(?:\s*OR NOT EXISTS)?$/si';
-
-        if (preg_match($regex_filtro, $condicion, $match_filtro)) {
-            echo "Coincidencias de la expresión regular del filtro (normal):<br>";
-            var_dump($match_filtro); // Imprime coincidencias
-            // ... (código para procesar $match_filtro)
-        } else {
-            echo "Error en preg_match (normal).<br>"; // Indica error en la expresión normal.
-             if (preg_last_error() !== PREG_NO_ERROR) {
-                echo "Error de PCRE: " . preg_last_error_msg() . "<br>";
-            }
-
-        }
-
-        // Expresión regular para IN
-        $regex_in = '/([\w\.]+)\s*IN\s*\((.*?)\)/si';
-
-        if (preg_match($regex_in, $condicion, $match_in)) {
-            echo "Coincidencias de la expresión regular del filtro (IN):<br>";
-            var_dump($match_in);
-            // ... (código para procesar $match_in)
-        } else {
-            echo "Error en preg_match (IN).<br>"; // Indica error en la expresión IN.
-             if (preg_last_error() !== PREG_NO_ERROR) {
-                echo "Error de PCRE: " . preg_last_error_msg() . "<br>";
-            }
-        }
-           // Expresión regular para NOT EXISTS
-        $regex_not_exists = '/NOT EXISTS\s*\((.*?)\)/si';
-
-        if (preg_match($regex_not_exists, $condicion, $match_not_exists)) {
-            echo "Coincidencias de la expresión regular del filtro (NOT EXISTS):<br>";
-            var_dump($match_not_exists);
-            // ... (código para procesar $match_not_exists)
-        } else {
-             echo "Error en preg_match (NOT EXISTS).<br>"; // Indica error en la expresión NOT EXISTS.
-             if (preg_last_error() !== PREG_NO_ERROR) {
-                echo "Error de PCRE: " . preg_last_error_msg() . "<br>";
-            }
-        }
-
-    } // Fin del bucle foreach
-
-    echo "Array de filtros:<br>";
-    print_r($filtros);
-
+// Expresión regular para extraer fechainicial y fechafinal
+if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matches)) {
+    $fechainicial = $matches[1]; // 2025-02-01 00:00:00
+    $fechafinal = $matches[2];   // 2025-02-17 23:59:59
 } else {
-    echo "Error: No se encontró la cláusula WHERE. Consulta original:<pre>" . $sql . "</pre>";
+    $fechainicial = null;
+    $fechafinal = null;
+}
+
+// Expresión regular para extraer otros filtros
+$filtros = [];
+if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $cadena, $matches)) {
+    foreach ($matches[1] as $index => $nombreFiltro) {
+        $filtros[$nombreFiltro] = $matches[2][$index];
+    }
+}
+
+// Imprimir resultados
+echo "Fecha Inicial: " . $fechainicial . "\n";
+echo "Fecha Final: " . $fechafinal . "\n";
+echo "Filtros:\n";
+foreach ($filtros as $nombre => $valor) {
+    echo "$nombre: $valor\n";
 }
 
 // ... tu código posterior ...
