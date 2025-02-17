@@ -29,8 +29,6 @@ if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $sqlwhere, $matches)) {
     }
 }
 
-
-
 $idfabricante="NULL";
 $idmarca="NULL";
 $idproducto="NULL";
@@ -116,7 +114,6 @@ echo "idbodega: ". $idbodega . "\n";
 */
 
 
-
         //Elimina datos previos
         $sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
         $resultado = $conexion->consultar($sql);
@@ -124,5 +121,6 @@ echo "idbodega: ". $idbodega . "\n";
         //LLamar SP
         $sqlsp="call generaKardex($fechainicial,$fechafinal,$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado = $conexion->consultar($sqlsp); 
- 
+        echo $sqlsp;
+        exit();
 ?>
