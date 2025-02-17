@@ -8,14 +8,14 @@ set_time_limit($tiempo_timeout);
 $usuario=$_SESSION["accelog_idempleado"];
 
 //Elimina datos previos
-$sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
-$resultado = $conexion->consultar($sql);
+$sqlAux="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
+$resultado = $conexion->consultar($sqlAux);
 
 //Recupera Filtros
-$sql = $_SESSION["sequel"];
-$uw=strpos($sql,'where');
-$ct=strlen($sql);
-$sqlwhere=substr($sql,$uw);
+$sqlAux = $_SESSION["sequel"];
+$uw=strpos($sqlAux,'where');
+$ct=strlen($sqlAux);
+$sqlwhere=substr($sqlAux,$uw);
 
 // Expresión regular para extraer fechainicial y fechafinal
 if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matches)) {
@@ -45,8 +45,8 @@ $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
     if ($nombre="of.nombrefabricante") {
         if ($valor<>"%%"){
-            $sql="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idfabricante=$rs{"id"};
             }
@@ -55,8 +55,8 @@ foreach ($filtros as $nombre => $valor) {
     }
     if ($nombre="vm.nombremarca") {
         if ($valor<>"%%"){
-            $sql="Select idmarca id from vista_marcas where nombremarca like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="Select idmarca id from vista_marcas where nombremarca like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idmarca=$rs{"id"};
             }
@@ -65,8 +65,8 @@ foreach ($filtros as $nombre => $valor) {
     }
     if ($nombre="ip.nombreproducto") {
         if ($valor<>"%%"){
-            $sql="select idproducto id from inventarios_productos where nombreproducto like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="select idproducto id from inventarios_productos where nombreproducto like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idproducto=$rs{"id"};
             }
@@ -75,8 +75,8 @@ foreach ($filtros as $nombre => $valor) {
     }
     if ($nombre="il.descripcionlote") {
         if ($valor<>"%%"){
-            $sql="select idloteproducto id from inventarios_lotes where descripcionlote like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="select idloteproducto id from inventarios_lotes where descripcionlote like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idloteproducto=$rs{"id"};
             }
@@ -85,8 +85,8 @@ foreach ($filtros as $nombre => $valor) {
     }
     if ($nombre="ie.descripcionestado") {
         if ($valor<>"%%"){
-            $sql="select idestadoproducto id from inventarios_estados where descripcionestado like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="select idestadoproducto id from inventarios_estados where descripcionestado like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idestado=$rs{"id"};
             }
@@ -95,8 +95,8 @@ foreach ($filtros as $nombre => $valor) {
     }    
     if ($nombre="ob.nombrebodega") {
         if ($valor<>"%%"){
-            $sql="select idbodega id from operaciones_bodegas where nombrebodega like '".$valor."' limit 1";
-            $resultado = $conexion->consultar($sql);
+            $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sqlAux);
             while($rs = $conexion->siguiente($resultado)){
                 $idbodega=$rs{"id"};
             }
