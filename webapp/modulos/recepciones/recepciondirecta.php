@@ -49,7 +49,25 @@
                             $('#txtestatus2').css('color', 'red');
                             $('#divestatus').css('display', 'none');
                         }
-                    });                    
+                    });
+                    $('#btngrabar').click(function() {
+                        // Validar que todos los campos de texto tengan valor
+                        var camposValidos = true;
+                        if($('#txtcantrec1').val()*1==0 || $('#txtcantrec1').val()*1==0 ){
+                            camposValidos= false
+                            alert('Debe escribir una cantidad mayor a cero');
+                            $('#txtcantrec1').val()=0;
+                            $('#txtcantrec1').focus(); 
+                        }
+                            
+                        // Si todos los campos son válidos, permite el envío del formulario
+                        if (camposValidos) {
+                        return true;
+                        } else {
+                        return false; // Detiene el envío del formulario
+                        }
+                    });
+                    
             });
         </script>";	
 

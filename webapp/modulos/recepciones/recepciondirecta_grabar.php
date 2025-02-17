@@ -36,6 +36,10 @@
 			
             $cantidadrecibida2=$_REQUEST["txtcantrec2"];
             $idbodega=$_REQUEST["cmbbodega"];   //Bodega Real
+            
+            $difestatus1=$_REQUEST["txtestatus1"];
+            $difestatus2=$_REQUEST["txtestatus2"];
+ 
             $diferencia1=$_REQUEST["txtcantdif1"];
             $diferencia2=$_REQUEST["txtcantdif2"];
             $folios=$_REQUEST["txtfolios"];
@@ -53,7 +57,7 @@
 
             
             //Esto es si existen diferencias
-            if($diferencia1>0){
+            if($diferencia1>0) {
                     $cantdev1=$_REQUEST["txtcantdev1"];
                     $cantdev2=$_REQUEST["txtcantdev2"];
                     $cantfalt1=$_REQUEST["txtcantfalt1"];
@@ -72,11 +76,11 @@
 			$msg="";
             
 
-			if(($diferencia1*1>0 && $estatus1*1<>0)){
+			if(($difestatus1*1>0)){
                             $politica=1;
                             $msg="Falto aclarar la diferencia de envio con recepcion";
-                        }
-			if($cantidadrecibida1==0){
+            }
+			if($cantidadrecibida1==0 or $cantidadrecibida2==0){
 				$politica=1;
 				$msg=" Falto escribir una cantidad valida";
 			}
