@@ -9,6 +9,7 @@ $usuario=$_SESSION["accelog_idempleado"];
 
 $sqlAux = "Delete From iventario_kardex where idempleado=".$usuario;
 $resultado = $conexion->consultar($sqlAux);
+echo $sqlAux;
 
 //Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
