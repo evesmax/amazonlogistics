@@ -9,17 +9,17 @@ $usuario=$_SESSION["accelog_idempleado"];
 //Recupera Filtros
  
 $sql = $_SESSION["sequel"];
-echo "Sql: " . $sql . "<br>";
+//echo "Sql: " . $sql . "<br>";
 
 // Expresión regular para extraer las condiciones del WHERE
-$regex = '/WHERE\s+(.*?)\s+ORDER BY/si'; // Modificado para soportar 'OR NOT EXISTS'
+$regex = '/where\s+(.*?)\s+order by/si'; // Modificado para soportar 'OR NOT EXISTS'
 
 // Buscar las coincidencias
 if (preg_match($regex, $sql, $matches)) {
     $condiciones = $matches[1];
 
     // Dividir las condiciones por "AND" (manejar paréntesis y comillas)
-    $condiciones_array = preg_split('/(?<!\'[^\\\]*)\bAND\b(?![^\\\]*\')/i', $condiciones); // Mejora para AND
+    $condiciones_array = preg_split('/(?<!\'[^\\\]*)\bAnd\b(?![^\\\]*\')/i', $condiciones); // Mejora para AND
 
     // Inicializar el array para los filtros
     $filtros = array();
@@ -29,7 +29,7 @@ if (preg_match($regex, $sql, $matches)) {
         $condicion = trim($condicion); // Limpiar espacios en blanco
 
         // Expresión regular para extraer el campo, operador y valor
-        $regex_filtro = '/([\w\.]+)\s*([<>=!]{0,2}LIKE|BETWEEN|=|<|>|<=|>=|IS NULL|IS NOT NULL)\s*(.*?)(?:\s*OR NOT EXISTS)?$/si'; // Maneja BETWEEN, LIKE, =, <, >, etc.
+        $regex_filtro = '/([\w\.]+)\s*([<>=!]{0,2}like|between|=|<|>|<=|>=|IS NULL|IS NOT NULL)\s*(.*?)(?:\s*OR NOT EXISTS)?$/si'; // Maneja BETWEEN, LIKE, =, <, >, etc.
 
         if (preg_match($regex_filtro, $condicion, $match_filtro)) {
 
