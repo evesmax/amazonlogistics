@@ -7,7 +7,7 @@
          $idrecepcion=$_GET["idrecepcion"];
         
          /LLamar SP
-         $sqlsp="call cancelacion_recepciones($idrecepcion);"
+         $sqlsp="call cancelacion_recepciones($idrecepcion);";
          $resultado=$conexion->consultar($sqlsp);
         
         echo "$sqlsp";
