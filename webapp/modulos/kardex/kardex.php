@@ -42,7 +42,7 @@ $idbodega="NULL";
 
 $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
-    echo $nombre."=".$valor. "<br>";
+    //echo $nombre."=".$valor. "<br>";
     $sqlAux="";
     if ($nombre=="of.nombrefabricante") {
         if ($valor<>"%%"){
@@ -104,22 +104,13 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }    
-    echo $sqlAux."<br>";  
+    //echo $sqlAux."<br>";  
 }
 
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
-        echo $sqlsp;
-
-        // Manejo de errores
-        if ($resultado) {
-        // El procedimiento se ejecutó correctamente
-        echo "Kardex generado correctamente.";
-        } else {
-        // Hubo un error al ejecutar el procedimiento
-        echo "Error al generar el kardex: " . $mysqli->error;
-        }
+        //echo $sqlsp;
 
 
 ?>
