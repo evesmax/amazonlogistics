@@ -130,4 +130,14 @@ echo "idbodega: ". $idbodega . "\n";
         $resultado=$conexion->consultar($sqlsp);
         echo $sqlsp;
 
+        // Manejo de errores
+        if ($resultado) {
+        // El procedimiento se ejecutó correctamente
+        echo "Kardex generado correctamente.";
+        } else {
+        // Hubo un error al ejecutar el procedimiento
+        echo "Error al generar el kardex: " . $mysqli->error;
+        }
+
+
 ?>
