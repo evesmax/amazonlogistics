@@ -59,8 +59,7 @@
                             $('#txtcantrec1').val()=0;
                             $('#txtcantrec1').focus(); 
                         }
-
-
+                            
                         // Si todos los campos son válidos, permite el envío del formulario
                         if (camposValidos) {
                         return true;
