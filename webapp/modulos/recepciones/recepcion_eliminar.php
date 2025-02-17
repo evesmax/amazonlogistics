@@ -6,7 +6,7 @@
     //RECUPERANDO VARIABLES
          $idrecepcion=$_GET["idrecepcion"];
         
-         /LLamar SP
+         //LLamar SP
          $sqlsp="call cancelacion_recepciones($idrecepcion);";
          $resultado=$conexion->consultar($sqlsp);
         
