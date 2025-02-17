@@ -29,13 +29,34 @@ if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $sqlwhere, $matches)) {
     }
 }
 
-// Imprimir resultados
-echo "Fecha Inicial: " . $fechainicial . "\n";
-echo "Fecha Final: " . $fechafinal . "\n";
-echo "Filtros:\n";
+
+
+$idfabricante=-1;
+$idproducto=-1;
+$idloteproducto=-1;
+$idestado=-1;
+$idbodega=-1;
+
+$sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
     echo "$nombre: $valor\n";
+    if ($nombre="of.nombrefabricante") {
+        if ($valor<>"%%"){
+            $sql="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idfabricante=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }
 }
+
+// Formar filtro para obtener claves
+echo "Fecha Inicial: " . $fechainicial . "\n";
+echo "Fecha Final: " . $fechafinal . "\n";
+echo "idfabricante: ".$idfabricante . "\n";
+
 
 // ... tu código posterior ...
 
