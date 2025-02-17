@@ -42,7 +42,7 @@ $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
     echo $nombre."=".$valor. "<br>";
     $sqlAux="";
-    if ($nombre="of.nombrefabricante") {
+    if ($nombre=="of.nombrefabricante") {
         if ($valor<>"%%"){
             $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -52,7 +52,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }
-    if ($nombre="vm.nombremarca") {
+    if ($nombre=="vm.nombremarca") {
         if ($valor<>"%%"){
             $sqlAux="Select idmarca id from vista_marcas where nombremarca like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -62,7 +62,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }
-    if ($nombre="ip.nombreproducto") {
+    if ($nombre=="ip.nombreproducto") {
         if ($valor<>"%%"){
             $sqlAux="select idproducto id from inventarios_productos where nombreproducto like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -72,7 +72,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }
-    if ($nombre="il.descripcionlote") {
+    if ($nombre=="il.descripcionlote") {
         if ($valor<>"%%"){
             $sqlAux="select idloteproducto id from inventarios_lotes where descripcionlote like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -82,7 +82,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }
-    if ($nombre="ie.descripcionestado") {
+    if ($nombre=="ie.descripcionestado") {
         if ($valor<>"%%"){
             $sqlAux="select idestadoproducto id from inventarios_estados where descripcionestado like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -92,7 +92,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }    
-    if ($nombre="ob.nombrebodega") {
+    if ($nombre=="ob.nombrebodega") {
         if ($valor<>"%%"){
             $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '".$valor."' limit 1";
             $resultado = $conexion->consultar($sqlAux);
@@ -102,7 +102,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }    
-    echo $sqlAux."<br>";  
+    //echo $sqlAux."<br>";  
 }
 
         //LLamar SP
