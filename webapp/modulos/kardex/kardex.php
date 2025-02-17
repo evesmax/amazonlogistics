@@ -32,6 +32,7 @@ if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $sqlwhere, $matches)) {
 
 
 $idfabricante=-1;
+$idmarca=-1;
 $idproducto=-1;
 $idloteproducto=-1;
 $idestado=-1;
@@ -45,6 +46,16 @@ foreach ($filtros as $nombre => $valor) {
             $resultado = $conexion->consultar($sql);
             while($rs = $conexion->siguiente($resultado)){
                 $idfabricante=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }
+    if ($nombre="vm.nombremarca") {
+        if ($valor<>"%%"){
+            $sql="Select idmarca id from vista_marcas where nombremarca like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idmarca=$rs{"id"};
             }
             $conexion->cerrar_consulta($resultado);
         }
@@ -106,20 +117,11 @@ echo "idbodega: ". $idbodega . "\n";
 
             exit();
 //SQL'S ___
-
-        /*
-        $sqlfechacorte=" And (re.fecha<='".$fechacorte." 23:59:59') "; //El movimiento del ultimo segundo
-        $sqlclaves="";
-        $resultado = $conexion->consultar($sqlclaves);
-        while($rs = $conexion->siguiente($resultado)){
-            $ingenio=$rs{"idfabricante"};
-        
-        }
-        $conexion->cerrar_consulta($resultado);
-        */
+        $sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
+        $resultado = $conexion->consultar($sql);
 
         //LLamar SP
-        $sqlsp="call generaKardex('2025-01-01 23:59:59','2025-02-16 23:59:59',3,16,NULL,NULL,NULL,NULL,1);";
+        $sqlsp="call generaKardex($fechainicial,$fechafinal,$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestadoproducto,$usuario);";
         $resultado = $conexion->consultar($sqlsp);
 
         
