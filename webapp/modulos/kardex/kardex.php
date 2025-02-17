@@ -23,23 +23,24 @@ $usuario=$_SESSION["accelog_idempleado"];
 
         $ct=strlen($_SESSION["sequel"]); //Ancho Cadena Total
         $td=($ct-($uo-8))*-1;
-            $sfechacorte=substr($_SESSION["sequel"],$uw+10,$td);
+            $sfechainicio=substr($_SESSION["sequel"],$uw+10,$td+8);
+            $sfechafin=substr($_SESSION["sequel"],$uw+15,$td);
+
             //echo $sfechacorte;
 
         //Fecha de Corte
-            $fecha = new DateTime($sfechacorte);
-            $fechacorte = $fecha->format('Y-m-d');
+            //$fecha = new DateTime($sfechacorte);
+            //$fechacorte = $fecha->format('Y-m-d');
 
         //Fecha del Dia
-            $sfechadia =$fecha=date("Y-m-d");
+            //$sfechadia =$fecha=date("Y-m-d");
 
-            $fecha = new DateTime($sfechadia);
-            $fechadia = $fecha->format('Y-m-d');
+            //$fecha = new DateTime($sfechadia);
+            //$fechadia = $fecha->format('Y-m-d');
 
             echo "<br> Desde Linea 39 de kardex.php <br>";
-            echo $_SESSION["filtros"]."<br>";
-            echo $fechacorte."<br>";
-
+            echo "Fecha Inicio: ".$sfechainicio."<br>";
+            echo "Fecha".$sfechafin."<br>";
             exit();
 //SQL'S ___
 
