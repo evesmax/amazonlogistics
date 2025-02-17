@@ -31,12 +31,12 @@ if (preg_match_all('/and (\w+\.\w+) like "([^"]*)"/', $sqlwhere, $matches)) {
 
 
 
-$idfabricante=NULL;
-$idmarca=NULL;
-$idproducto=NULL;
-$idloteproducto=NULL;
-$idestado=NULL;
-$idbodega=NULL;
+$idfabricante="NULL";
+$idmarca="NULL";
+$idproducto="NULL";
+$idloteproducto="NULL";
+$idestado="NULL";
+$idbodega="NULL";
 
 $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
