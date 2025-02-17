@@ -1,6 +1,8 @@
 <?php
 
 include("../../netwarelog/webconfig.php");
+include("../../netwarelog/catalog/conexionbd.php");
+
 set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
@@ -112,13 +114,20 @@ echo "idproducto: ". $idproducto . "\n";
 echo "idestado: ". $idestado . "\n";
 echo "idbodega: ". $idbodega . "\n";
 */
-
+	
+    //RECUPERANDO VARIABLES
+         $idrecepcion=$_GET["idrecepcion"];
+        
+         //LLamar SP
+        // $sqlsp="call cancelacion_recepciones($idrecepcion);";
+        // $resultado=$conexion->consultar($sqlsp);
+        
 
         //Elimina datos previos
         $sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
         $resultado = $conexion->consultar($sql);
 
         //LLamar SP
-        $sqlsp="CALL generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
 ?>
