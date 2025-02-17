@@ -122,8 +122,8 @@ echo "idbodega: ". $idbodega . "\n";
         
 
         //Elimina datos previos
-        $sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
-        $resultado = $conexion->consultar($sql);
+        //$sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
+        //$resultado = $conexion->consultar($sql);
 
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
