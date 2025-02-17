@@ -7,7 +7,7 @@ set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
 
-$sqlAux = "Delete From inventario_kardex where idempleado=".$usuario;
+$sqlAux = "inventarios_kardex where idempleado=".$usuario;
 $resultado = $conexion->consultar($sqlAux);
 //echo $sqlAux;
 
