@@ -102,7 +102,7 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }    
-    //echo $sqlAux."<br>";  
+    echo $sqlAux."<br>";  
 }
 
         //LLamar SP
