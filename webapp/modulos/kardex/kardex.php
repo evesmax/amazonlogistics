@@ -1,7 +1,7 @@
 <?php
 
-//include("../../netwarelog/webconfig.php");
-include("../../netwarelog/catalog/conexionbd.php");
+include("../../netwarelog/webconfig.php");
+//include("../../netwarelog/catalog/conexionbd.php");
 
 set_time_limit($tiempo_timeout);
 //Obtiene usuario
@@ -130,5 +130,4 @@ echo "idbodega: ". $idbodega . "\n";
         $resultado=$conexion->consultar($sqlsp);
         echo $sqlsp;
 
-        exit();
 ?>
