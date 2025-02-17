@@ -39,7 +39,6 @@ $idbodega=-1;
 
 $sqlfiltroslike="";
 foreach ($filtros as $nombre => $valor) {
-    echo "$nombre: $valor\n";
     if ($nombre="of.nombrefabricante") {
         if ($valor<>"%%"){
             $sql="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
@@ -50,13 +49,56 @@ foreach ($filtros as $nombre => $valor) {
             $conexion->cerrar_consulta($resultado);
         }
     }
+    if ($nombre="ip.nombreproducto") {
+        if ($valor<>"%%"){
+            $sql="select idproducto id from inventarios_productos where nombreproducto like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idproducto=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }
+    if ($nombre="il.descripcionlote") {
+        if ($valor<>"%%"){
+            $sql="select idloteproducto id from inventarios_lotes where descripcionlote like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idloteproducto=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }
+    if ($nombre="ie.descripcionestado") {
+        if ($valor<>"%%"){
+            $sql="select idestadoproducto id from inventarios_estados where descripcionestado like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idestado=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }    
+    if ($nombre="ob.nombrebodega") {
+        if ($valor<>"%%"){
+            $sql="select idbodega id from operaciones_bodegas where nombrebodega like '".$valor."' limit 1";
+            $resultado = $conexion->consultar($sql);
+            while($rs = $conexion->siguiente($resultado)){
+                $idbodega=$rs{"id"};
+            }
+            $conexion->cerrar_consulta($resultado);
+        }
+    }      
 }
 
 // Formar filtro para obtener claves
 echo "Fecha Inicial: " . $fechainicial . "\n";
 echo "Fecha Final: " . $fechafinal . "\n";
-echo "idfabricante: ".$idfabricante . "\n";
-
+echo "idfabricante: ". $idfabricante . "\n";
+echo "idloteproducto: ". $idloteproducto . "\n";
+echo "idproducto: ". $idproducto . "\n";
+echo "idestado: ". $idestado . "\n";
+echo "idbodega: ". $idbodega . "\n";
 
 // ... tu código posterior ...
 
