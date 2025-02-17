@@ -115,9 +115,7 @@ echo "idestado: ". $idestado . "\n";
 echo "idbodega: ". $idbodega . "\n";
 */
 	
-    //RECUPERANDO VARIABLES
-         $idrecepcion=$_GET["idrecepcion"];
-        
+    //RECUPERANDO VARIABLES        
          //LLamar SP
         // $sqlsp="call cancelacion_recepciones($idrecepcion);";
         // $resultado=$conexion->consultar($sqlsp);
