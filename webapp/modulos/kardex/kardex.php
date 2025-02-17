@@ -130,4 +130,5 @@ echo "idbodega: ". $idbodega . "\n";
         $resultado=$conexion->consultar($sqlsp);
         echo $sqlsp;
 
+        exit();
 ?>
