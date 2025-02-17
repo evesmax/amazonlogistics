@@ -36,6 +36,7 @@ $usuario=$_SESSION["accelog_idempleado"];
             $fecha = new DateTime($sfechadia);
             $fechadia = $fecha->format('Y-m-d');
 
+            echo "Desde Linea 39 de kardex.php";
             echo $_SESSION["sequel"]."<br>";
             echo $_SESSION["filtros"]."<br>";
             exit();
