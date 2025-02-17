@@ -103,27 +103,21 @@ foreach ($filtros as $nombre => $valor) {
 }
 
 // Formar filtro para obtener claves
+/*
 echo "Fecha Inicial: " . $fechainicial . "\n";
 echo "Fecha Final: " . $fechafinal . "\n";
 echo "idfabricante: ". $idfabricante . "\n";
+echo "idmarca: ". $idfabricante . "\n";
 echo "idloteproducto: ". $idloteproducto . "\n";
 echo "idproducto: ". $idproducto . "\n";
 echo "idestado: ". $idestado . "\n";
 echo "idbodega: ". $idbodega . "\n";
+*/
 
-// ... tu código posterior ...
-
-
-
-            exit();
-//SQL'S ___
         $sql="DELETE FROM inventarios_kardex WHERE idempleado = $usuario;"; 
         $resultado = $conexion->consultar($sql);
 
         //LLamar SP
         $sqlsp="call generaKardex($fechainicial,$fechafinal,$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestadoproducto,$usuario);";
-        $resultado = $conexion->consultar($sqlsp);
-
-        
-
+        $resultado = $conexion->consultar($sqlsp);  
 ?>
