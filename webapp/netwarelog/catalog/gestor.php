@@ -6,7 +6,7 @@
 	if(session_id()=='') {
     session_start();
 	}
-		
+
 	$_SESSION['idestructura']=$_GET['idestructura'];
 	
 	//Obtiene la descripción de la estructura
@@ -40,7 +40,7 @@
 
 
 
-	
+
 	//Checando si tiene tabla física
 	if(isset($_SESSION['nombreestructura'])){
 		if(!$conexion->existetabla($_SESSION['nombreestructura'])){
