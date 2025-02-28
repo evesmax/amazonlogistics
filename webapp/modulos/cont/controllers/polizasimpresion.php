@@ -29,25 +29,21 @@ class polizasImpresion extends Common
 	}
 	function VerReporte()
 	{
-		$pol_id = $_GET['pol_id'];
+		
 		$fecha_normal = explode('-',$_POST['fecha_ini']);
 		$inicio = $fecha_normal[2]."/".$fecha_normal[1]."/".$fecha_normal[0];
+
 		$fecha_normal = explode('-',$_POST['fecha_fin']);
 		$fin = $fecha_normal[2]."/".$fecha_normal[1]."/".$fecha_normal[0];
-		$p13 = 0;
-		if(isset($_POST['saldos'])) $p13=1;
-		if(intval($pol_id)){
-			$datos = $this->polizasImpresion->obtenerPoliza($pol_id);
-			$imprimirPoliza = true;
-		} else {
-			$datos = $this->polizasImpresion->obtenerDatos($_POST['fecha_ini'], $_POST['fecha_fin'], $_POST['tipo'], $p13, $_POST['pol_ini'], $_POST['pol_fin']);
-		}
+
+		$datos = $this->polizasImpresion->obtenerDatos($_POST['fecha_ini'],$_POST['fecha_fin'],$_POST['tipo']);
+
 		$empresa = $this->polizasImpresion->empresa();
 		$logo = $this->polizasImpresion->logo();
 		require('views/captpolizas/polizasImpresionReporte.php');
 	}
 
-	//Nuevo Commit
+	
 }
 
 ?>
