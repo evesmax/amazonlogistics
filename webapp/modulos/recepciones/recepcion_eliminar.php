@@ -11,5 +11,11 @@
          $resultado=$conexion->consultar($sqlsp);
         
         echo "$sqlsp";
+
+        echo'<script type="text/javascript">
+    alert("Tarea Guardada");
+    window.location.href="index.php";
+    </script>';
+
         
 ?>
