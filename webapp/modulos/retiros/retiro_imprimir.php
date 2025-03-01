@@ -518,7 +518,7 @@
                                 $html.="<td>INGENIO-MARCA</td>";
 				$html.="<td>ZAFRA</td>";
 				$html.="<td>PRODUCTO</td>";
-				$html.="<td>ESTADO PRODUCTO</td>";
+				//$html.="<td>ESTADO PRODUCTO</td>";
 				$html.="<td>".$unidad1."</td>";
 				$html.="<td>".$unidad2."</td>";				
 			$html.="</tr>";
@@ -539,7 +539,7 @@
                                         $html.="<td align=center>".$temp."</td>";
 					$html.="<td align=center>".$zafra."</td>";
                                         $html.="<td align=center>".$nombreproducto."</td>";
-                                        $html.="<td align=center>".$nombreestado."</td>";
+                                        //$html.="<td align=center>".$nombreestado."</td>";
                                         $html.="<td align=right>".$cantidad1."</td>";
 					$html.="<td align=right>".$cantidad2."</td>";			
 				$html.="</tr>";				
