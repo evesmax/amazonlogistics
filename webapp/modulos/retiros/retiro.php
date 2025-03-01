@@ -281,7 +281,7 @@ $htmlpoliticas="
 	//Escribe Politicas
 	$html.=$htmlpoliticas;	
 	$html.= "<body style='font-family:helvetica'>
-                    <FORM id=envio name=envio method=post action=retiro_grabar.php>
+                    <FORM id=envio name=envio method=post action='retiro_grabar.php' onsubmit='deshabilitarBoton()'>
                         <input type=hidden id='txtidordenentrega' name='txtidordenentrega' value='".$idordenentrega."'>";                
 
 	$html.=$txtcapturista;
@@ -697,6 +697,11 @@ $htmlpoliticas="
                                                                                         document.envio.txtcantidad1.value=format_number(0,2);
                                                                                         document.envio.txtcantidad2.value=format_number(0,2);
                                                                                     }
+                                                                                }
+                                                                                function deshabilitarBoton() {
+                                                                                    document.getElementById('btngrabar').disabled = true;
+                                                                                    // Puedes agregar un mensaje al usuario, por ejemplo:
+                                                                                    document.getElementById('btngrabar').value = 'Procesando...'; 
                                                                                 }
 									</script>";
 		//Botones							
