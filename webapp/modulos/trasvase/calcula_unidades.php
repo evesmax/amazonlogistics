@@ -12,6 +12,7 @@
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
+                                alert($('#i664').val());
                                 var info = datos.split("|");
                                 $('#lbl667').text(info[0]);
                                 $('#lbl668').text(info[1]);
@@ -34,6 +35,7 @@
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
+                                alert($('#i669').val());
                                 var info = datos.split("|");
                                 $('#lbl670').text(info[0]);
                                 $('#lbl671').text(info[1]);
