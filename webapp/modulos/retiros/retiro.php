@@ -706,7 +706,7 @@ $htmlpoliticas="
                                                                                 }
 									</script>";
 		//Botones							
-		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
+		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
 
