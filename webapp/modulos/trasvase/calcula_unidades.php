@@ -11,7 +11,7 @@
             $(document).ready(function(){
                 $('#i667').bind('blur', function() {  
                         //Agrega nombre de unidad principal
-                        $.get('<?php echo $urlapp; ?>',{producto:$('#i265').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
                                 var info = datos.split("|");
                                 $('#lbl667').text(info[0]);
