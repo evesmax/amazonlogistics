@@ -40,12 +40,12 @@
                                 $('#i671').val(info[2]);
 
                                 if(info[3]==1){
-                                    $('#i670').attr("disabled", true);
-                                    $('#i671').focus();
+                                    $('#i671').attr("disabled", true);
+                                    $('#i673').focus();
                                 }
                                 if(info[3]==2){
-                                    $('#i670').removeAttr("disabled");
-                                    $('#i671').focus();
+                                    $('#i671').removeAttr("disabled");
+                                    $('#i673').focus();
                                 }
                             }
                         );
