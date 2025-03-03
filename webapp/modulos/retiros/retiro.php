@@ -701,6 +701,7 @@ $htmlpoliticas="
                                                                                 function deshabilitarBoton() {
                                                                                     document.getElementById('btngrabar').disabled = true;
                                                                                     // Puedes agregar un mensaje al usuario, por ejemplo:
+                                                                                    alert('Procesando...');
                                                                                     document.getElementById('btngrabar').value = 'Procesando...'; 
                                                                                 }
 									</script>";
