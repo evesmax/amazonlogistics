@@ -47,7 +47,6 @@
                                     $('#i670').removeAttr("disabled");
                                     $('#i671').focus();
                                 }
-                                
                             }
                         );
                                         
