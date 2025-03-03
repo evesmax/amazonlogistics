@@ -279,7 +279,7 @@ $htmlpoliticas="
 	$html.= "</style>";
 	$html.= "</head>";
 	//Escribe Politicas
-	$html.=$htmlpoliticas;	
+    $html.=$htmlpoliticas;	
 	$html.= "<body style='font-family:helvetica'>
                     <FORM id=envio name=envio method=post action='retiro_grabar.php' onsubmit='deshabilitarBoton()'>
                         <input type=hidden id='txtidordenentrega' name='txtidordenentrega' value='".$idordenentrega."'>";                
@@ -706,7 +706,7 @@ $htmlpoliticas="
                                                                                 }
 									</script>";
 		//Botones							
-		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
+		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
 
 
