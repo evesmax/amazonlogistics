@@ -1,12 +1,15 @@
 <?php
 include("bd.php");
 
+            $desc1="";
+            $desc2="";
+            $cantidadconversion=0; 
+
 if(isset($_GET["producto"])){   
         $desc="Cantidad";
         $producto=$_GET["producto"];
         $cantidadp=$_GET["cantidadp"];  //Cantidad Principal
         $tipo=$_GET["tipo"];
-        $cartaporte=$_GET["cartaporte"];
         //Asignacion de Etiqueta Cantidad Principal
         if ($tipo==1){
                 //Obtiene Etiqueta Descripcion Cantidad principal
@@ -36,20 +39,8 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result);
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
-           
-            $duplicada=0;
-            if(isset($_GET["cartaporte"])){
-                $cartaporte=$_GET["cartaporte"];
-                $idtransportista=$_GET["idtransportista"];
-                $duplicada=0;
-                $sQuery = "Select count(cartaporte) cuantas from logistica_ordenesentrega where idtransportista=".$idtransportista." and cartaporte='".$cartaporte."'";
-                $result = $conexion->consultar($sQuery);
-                while($rs = $conexion->siguiente($result)){
-                        $duplicada = $rs["cuantas"];
-                }
-                $conexion->cerrar_consulta($result); 
-            } 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|";
+
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|";
         }
 }
 
