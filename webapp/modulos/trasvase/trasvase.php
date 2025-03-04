@@ -247,8 +247,7 @@
         $html.=$htmlpoliticas;	
 
         $html.=" <FORM id='envio' name='envio' method='post' action='recepcion_grabar.php'>
-                    <input type=hidden id='txtidtraslado' name='txtidtraslado' value='".$idtraslado."'>
-                    <input type=hidden id='txtidenvio' name='txtidenvio' value='".$idenvio."'>";
+                    <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>
 		$html.=$txtcapturista;
 
         $html.= "<BODY style='font-family:helvetica'>
@@ -273,8 +272,8 @@
 				
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>".$nombreorganizacion."</b><br>";
-						
+						$html.="<b>Propietario: ".$nombreorganizacion."</b><br>";
+						$html.="<b>Marca: ".$marca."</b><br>";
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
 						$html.="<br> <strong>C.P.</strong> ".$cp;
 						$html.="<br> ".$municipio;
