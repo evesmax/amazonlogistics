@@ -57,115 +57,59 @@
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
     //RECUPERANDO VARIABLES
-         $idenvio=$_GET["idenvio"];
+         $idtrasvase=$_GET["idtrasvase"];
         
     //OBTENIENDO INFORMACION BASICA DE TRASLADOS
-                    $otfc="";
-                    $fecha=date("d-m-Y H:i:s");
-                    $nombreingenio="";
-                    $idfabricante="";
-                    $bodegaorigen="";
-                    $idbodegaorigen="";
-                    $bodegadestino="";
+                    $fecha="";
+                    $propietario="";
+                    $marca="";
+                    $bodega="";
                     $zafra="";
-                    $nombreproducto="";
+                    $Productoorigen="";
                     $nombreestado="";
-                    $saldoinicial=0;
-                    $retirada=0;
-                    $recibida=0;
-                    $saldo=0;
-                    $tipoimagen="";
-                    $transportista="";
-                    $fechaotfc="";
-                    
-   //VARIABLES DEL ENVIO
-                    
-                    $fechaenvio="";
-                    $idtransportista=0;
-                    $cartaporte=0;
-                    $nombreoperador=0;
-                    $placastractor=0;
-                    $placasremolque=0;
-                    $horallegada=0;
-                    $ticketbascula=0;
-                    $banco=0;
-                    $estiba=0;
                     $cantidad1=0;
                     $cantidad2=0;
-                    $consecutivobodega=0;
-                    $folios="";
-                    $observaciones="";
-					$capturista=$usuario;
-					$responsable="";
-					$licenciaoperador="";
-		$sqlestatus="Select lt.idtraslado,lt.referencia1 otfc, lt.fecha,  
-                                of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
-                                obd.nombrebodega 'bodegadestino', il.descripcionlote 'zafra', 
-                                ip.nombreproducto 'producto', ie.descripcionestado 'estado', 
-                                format(lt.cantidad2,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada2,0),3) 'retirada'
-                                ,format(IFNULL(lt.cantidadrecibida2,0),3) 'recibida', 
-                                format(lt.cantidad2-IFNULL(lt.cantidadretirada2,0),3) 'saldo', 
-                                    case when obd.idbodega in (select idbodega from relaciones_almacenadoras_bodegas t 
-                                        inner join relaciones_almacenadoras_bodegas_detalle d on t.idalmacenadorabodega=d.idalmacenadorabodega 
-                                        where idbodega=lt.idbodegadestino) then 'a' else 'i' end 'logo', ot.razonsocial transportista,
-                                of.idfabricante, obo.idbodega, obd.idbodega idbodegadestino, ot.idtransportista, lt.idproducto,
-                                    le.fechaenvio,le.idtransportista,le.cartaporte,le.nombreoperador,le.placastractor,
-                                    le.placasremolque,le.horallegada,le.ticketbascula,le.banco, le.estiba, 
-                                    format(le.cantidad1,2) cantidad1, format(le.cantidad2,2) cantidad2, 
-									le.consecutivobodega, le.folios,le.observaciones,
-									obd.responsable,le.licenciaoperador
-                             From logistica_traslados lt 
-                                inner join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
-                                inner join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
-                                inner join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
-                                inner join inventarios_productos ip on ip.idproducto=lt.idproducto
-                                inner join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
-                                inner join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
-                                inner join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista 
-                                inner join logistica_envios le on le.idtraslado=lt.idtraslado
-                             Where le.idenvio=".$idenvio;
+                    $productodestino="";
+                    $cantidaddestino1=0;
+                    $cantidaddestino2=0;
+                    $tipoimagen="i";
+                    $idbodega="";
+                    $idfabricante=""; 
+
+		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
+                    of.nombrefabricante 'propietario', vm.nombremarca 'marca',
+                    obo.nombrebodega 'bodega', il.descripcionlote 'zafra', 
+                    ip1.nombreproducto 'Productoorigen', ie.descripcionestado 'nombreestado', 
+                    lt.cantidad1 'cantidad1', lt.cantidad2 'cantidad2', 
+                    ip2.nombreproducto 'productodestino',
+                    lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
+                    lt.observaciones, lt.idbodega, lt.idfabricante from inventarios_trasvase lt 
+                    left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                    left join vista_marcas vm on vm.idmarca=lt.idmarca
+                    left join operaciones_bodegas obo on obo.idbodega=lt.idbodega
+                    left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
+                    left join inventarios_productos ip2 on ip1.idproducto=lt.idproductodestino
+                    left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
+                    left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
+                    Where lt.idtrasvase=".$idtrasvase;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
-                                    $idtraslado=$rs{"idtraslado"};
-                                    $otfc=$rs{"otfc"};
-                                    $fechaotfc=$rs{"fecha"}; 
-                                    $nombreingenio=$rs{"nombreingenio"};
-                                    $idfabricante=$rs{"idfabricante"};
-                                    $bodegaorigen=$rs{"bodegaorigen"};
-                                    $idbodegaorigen=$rs{"idbodega"};
-                                    $bodegadestino= $rs{"bodegadestino"};
-                                    $idbodegadestino= $rs{"idbodegadestino"};
-                                    $zafra= $rs{"zafra"};
-                                    $nombreproducto= $rs{"producto"};
-                                    $idproducto=$rs{"idproducto"};
-                                    $nombreestado= $rs{"estado"};
-                                    $saldoinicial= $rs{"saldoinicial"};
-                                    $retirada= $rs{"retirada"};
-                                    $recibida= $rs{"recibida"};
-                                    $saldo=$rs{"saldo"};
-                                    $tipoimagen=$rs{"logo"};
-                                    $transportista=$rs{"transportista"};
-                                    $idtransportista=$rs{"idtransportista"};
-                        //Asignando Valores del Envio Procesado
-                                    $fechaenvio=$rs{"fechaenvio"};
-                                    $idtransportista=$rs{"idtransportista"};
-                                    $cartaporte=$rs{"cartaporte"};
-                                    $nombreoperador=$rs{"nombreoperador"};
-                                    $placastractor=$rs{"placastractor"};
-                                    $placasremolque=$rs{"placasremolque"};
-                                    $horallegada=$rs{"horallegada"};
-                                    $ticketbascula=$rs{"ticketbascula"};
-                                    $banco=$rs{"banco"};
-                                    $estiba=$rs{"estiba"};
-                                    $cantidad1=$rs{"cantidad1"};
-                                    $cantidad2=$rs{"cantidad2"};
-                                    $consecutivobodega=$rs{"consecutivobodega"};
-                                    $folios=$rs{"folios"};
-                                    $observaciones=$rs{"observaciones"};
-                                    $responsable=$rs{"responsable"};
-									$licenciaoperador=$rs{"licenciaoperador"};
+                    $fecha=$rs{"fecha"};
+                    $propietario=$rs{"propietario"};
+                    $marca=$rs{"marca"};
+                    $bodega=$rs{"bodega"};
+                    $zafra=$rs{"zafra"};
+                    $Productoorigen=$rs{"Productoorigen"};
+                    $nombreestado=$rs{"nombreestado"};
+                    $cantidad1=$rs{"cantidad1"};
+                    $cantidad2=$rs{"cantidad2"};
+                    $productodestino=$rs{"productodestino"};
+                    $cantidaddestino1=$rs{"cantidaddestino1"};
+                    $cantidaddestino2=$rs{"cantidaddestino2"};
+                    $idbodega=$rs{"idbodega"};
+                    $idfabricante=$rs{"idfabricante"};
 		}
 		$conexion->cerrar_consulta($result);                        
                         
@@ -195,7 +139,7 @@
                                         left join operaciones_almacenadoras a on a.idalmacenadora=t.idalmacenadora
                                         left join general_estados es on es.idestado=a.idestado
                                         left join general_municipios mu on mu.idmunicipio=a.idmunicipio
-                                        left join operaciones_bodegas o on d.idbodega=o.idbodega Where d.idbodega=".$idbodegadestino;
+                                        left join operaciones_bodegas o on d.idbodega=o.idbodega Where d.idbodega=".$idbodega;
                         $carpeta="../../netwarelog/archivos/1/operaciones_almacenadoras/";
                 }
                 //Obtiene Nombre de la Imagen
@@ -228,7 +172,7 @@
                     $imgtitulo.="<img src='".$carpeta.$logotipo."' width=150>";
                 }	
                 $nombreorganizacion=$nombre;
-				
+				              
             //Genera Domicilios Bodega Origen y Destino
                 $sqlbodega="select concat(a.calle,' ', 
                                         case when (a.noexterior is null or a.noexterior='') then '' else concat(' No. ',a.noexterior) end,
@@ -240,24 +184,7 @@
                                 from operaciones_bodegas a
                                 inner join general_estados es on es.idestado=a.idestado
                                 inner join general_municipios mu on mu.idmunicipio=a.idmunicipio
-                                Where a.idbodega=".$idbodegaorigen;
-                $result = $conexion->consultar($sqlbodega);
-                while($rs = $conexion->siguiente($result)){
-                        $domiciliobodegaorigen=$rs{"domicilio"}." ".$rs{"codigopostal"}." ".$rs{"telefonos"}." ".$rs{"municipio"}." ".$rs{"estado"};
-                }
-                $conexion->cerrar_consulta($result);               
-            //Genera Domicilios Bodega Origen y Destino
-                $sqlbodega="select concat(a.calle,' ', 
-                                        case when (a.noexterior is null or a.noexterior='') then '' else concat(' No. ',a.noexterior) end,
-                                        case when (a.nointerior is null or a.nointerior='') then '' else concat(' No. Int. ',a.nointerior) end
-                                    ,' ',a.colonia) 'domicilio', 
-                                mu.nombremunicipio municipio, es.nombreestado estado, 
-                                case when (a.codigopostal is null or a.codigopostal='') then '' else concat('CP: ',a.codigopostal) end codigopostal, a.responsable, 
-                                case when (a.telefonos is null or a.telefonos='') then '' else concat(' Tels: ',a.telefonos) end telefonos
-                                from operaciones_bodegas a
-                                inner join general_estados es on es.idestado=a.idestado
-                                inner join general_municipios mu on mu.idmunicipio=a.idmunicipio
-                                Where a.idbodega=".$idbodegadestino;
+                                Where a.idbodega=".$idbodega;
                 $result = $conexion->consultar($sqlbodega);
                 while($rs = $conexion->siguiente($result)){
                         $domiciliobodegadestino=$rs{"domicilio"}." ".$rs{"codigopostal"}." ".$rs{"telefonos"}." ".$rs{"municipio"}." ".$rs{"estado"};
@@ -266,17 +193,6 @@
                 
                 
 	
-         //Genera Combo Transportista
-                    $cmbtransportista="";
-                    $sqltrans="Select idtransportista, concat(rfc,' ',razonsocial) razonsocial from operaciones_transportistas 
-                                Where idtransportista=".$idtransportista."
-                                order by razonsocial ";
-                    $result = $conexion->consultar($sqltrans);
-                    while($rs = $conexion->siguiente($result)){
-                            $cmbtransportista="<strong>".$rs{"razonsocial"}."</strong>";
-                    }
-                    $conexion->cerrar_consulta($result);    
-          
 		
 		  
          //Genera  empleado
@@ -296,12 +212,12 @@
             $cmbbodega="<select id=cmbbodega name=cmbbodega>";
                     //$sqlbod="Select idbodega, nombrebodega from operaciones_bodegas order by nombrebodega";
 					$sqlbod="Select b.idbodega, b.nombrebodega from operaciones_bodegas b
-							Where b.idbodega=$idbodegadestino or 
-								b.idbodega in (select idbodegadestino from logistica_desviosautorizados where idbodega=$idbodegadestino and activo=-1)
+							Where b.idbodega=$idbodega or 
+								b.idbodega in (select idbodegadestino from logistica_desviosautorizados where idbodega=$idbodega and activo=-1)
 							order by b.nombrebodega";
                     $result = $conexion->consultar($sqlbod);
                     while($rs = $conexion->siguiente($result)){
-                            if($rs{"idbodega"}==$idbodegadestino){
+                            if($rs{"idbodega"}==$idbodega){
                                 $sel=" SELECTED ";
                             }
                             $cmbbodega.="<Option value=".$rs{"idbodega"}." ".$sel.">".$rs{"nombrebodega"}."</option>";
