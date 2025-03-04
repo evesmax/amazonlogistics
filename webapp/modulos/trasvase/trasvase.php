@@ -75,6 +75,7 @@
                     $tipoimagen="i";
                     $idbodega="";
                     $idfabricante=""; 
+                    $observaciones="";
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
                     of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -110,6 +111,7 @@
                     $cantidaddestino2=$rs{"cantidaddestino2"};
                     $idbodega=$rs{"idbodega"};
                     $idfabricante=$rs{"idfabricante"};
+                    $observaciones=$rs{"observaciones"};
 		}
 		$conexion->cerrar_consulta($result);                        
                         
@@ -420,8 +422,8 @@
                                                         </tr>";  
 						
 						$html.="<tr>
-                                                            <td>Folios:</td>
-                                                            <td align=left><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
+                                                            <td>Observaciones:</td>
+                                                            <td align=left>$observaciones</td>
                                                         </tr>";
 							
 					$html.="</table>";
