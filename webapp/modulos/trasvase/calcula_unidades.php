@@ -37,7 +37,7 @@
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
                                 console.log("Producto:", $('#i669').val(), "Cantidad:", $('#i670').val());
-                                alert($('#i669').val());
+                                alert($('669'+'#i669').val());
                                 var info = datos.split("|");
                                 $('#lbl670').text(info[0]);
                                 $('#lbl671').text(info[1]);
