@@ -370,46 +370,30 @@
 				
 					
 					$html.="<table class='reporte' width='100%'>";
-                                        $html.="<tr class='trencabezado'><td>DATOS ENVIO</td></tr>";
+                                        $html.="<tr class='trencabezado'><td>Producto a trasvasar</td></tr>";
 					$html.="</table>";
 					$html.="<table class='reporte' width='100%'>";
                                                 $html.="<tr>
-                                                            <td width=30%>REMISION ENVIO:</td>
-                                                            <td align=left>".$idenvio."</td>
+                                                            <td width=30%>Zafra:</td>
+                                                            <td align=left>".$zafra."</td>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td width=30%>TRANSPORTISTA:</td>
-                                                            <td align=left>".$cmbtransportista."</td>
+                                                            <td width=30%>Producto Origen:</td>
+                                                            <td align=left>".$Productoorigen."</td>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td width=30%>CARTA PORTE:</td>
-                                                            <td align=left><b>".$cartaporte."</b></td>
+                                                            <td width=30%>Estado Producto Origen:</td>
+                                                            <td align=left><b>".$nombreestado."</b></td>
                                                         </tr>";	
 						$html.="<tr>
-                                                            <td width=30%>NOMBRE OPERADOR:</td>
-                                                            <td align=left><b>".$nombreoperador."</b></td>
-                                                        </tr>";
- 						$html.="<tr>
-                                                            <td width=30%>LICENCIA OPERADOR:</td>
-                                                            <td align=left><b>".$licenciaoperador."</b></td>
+                                                            <td width=30%>Cantidad a trasvasar:</td>
+                                                            <td align=left><b>".$cantidad1." Bultos </b></td>
                                                         </tr>";                                               
-                                                $html.="<tr>
-                                                            <td colspan=2 align=left width=30%>
-                                                                PLACAS TRACTOR:<b>".$placastractor."</b>
-                                                                PLACAS REMOLQUE:<b>".$placasremolque."</b>
-                                                            </td>
-                                                        </tr>";
-	                                                   
-						$html.="<tr>
-                                                            <td width=30%>LLEGADA APROXIMADA:</td>
-                                                            <td align=left><b>".$horallegada."</b>
-                                                        </tr>";
-						$html.="<tr>
-                                                            <td width=30%>OBS. ENVIO:</td>
-                                                            <td align=left><b>".$observaciones."</b>
-                                                        </tr>";                                                
-                                               
-                                        $html.="</table>";
+                        $html.="<tr>
+                                                            <td width=30%>Cantidad a trasvasar:</td>
+                                                            <td align=left><b>".$cantidad2." Toneladas </b></td>
+                                                        </tr>";                     
+                        $html.="</table>";
 				$html.="</td>";
 				
 				
@@ -418,38 +402,25 @@
 				
 					
 					$html.="<table class='reporte' width='100%'>";
-                                        $html.="<tr class='trencabezado'><td>DATOS RECEPCION</td></tr>";
+                                        $html.="<tr class='trencabezado'><td>Resultado esperado trasvase</td></tr>";
 					$html.="</table>";
 					$html.="<table class='reporte' width='100%'>";
  						$html.="<tr>
-                                                            <td width=30%>BODEGA DESTINO REAL:</td>
-                                                            <td align=left>".$cmbbodega."</td>
+                                                            <td width=30%>Producto Esperado:</td>
+                                                            <td align=left>".$productodestino."</td>
                                                         </tr>";                                       
-                                        
-						$html.="<tr align=left>
-                                                            <td colspan=2>
-                                                                # BANCO:<input type=text id='txtbanco' name='txtbanco' value='' Size=20>
-                                                                # ESTIBA:<input type=text id='txtestiba' name='txtestiba' value='' Size=20>
-                                                            </td>
-                                                        </tr>";
-						$html.="<tr align=left>
-                                                            <td colspan=2 align=left>
-                                                                REFERENCIA:<input type=text id='txtreferencia' name='txtreferencia' value='' Size=20>
-                                                                TICKET BASCULA:<input type=text id='txtticketbascula' name='txtticketbascula' value='' Size=20>
-                                                            </td>       
+                        $html.="<tr>
+                                                            <td width=30%>Cantidad Esperada:</td>
+                                                            <td align=left><b>".$cantidaddestino1." Bultos </b></td>
+                                                        </tr>";                  
+
+                        $html.="<tr>
+                                                            <td width=30%>Cantidad Esperada:</td>
+                                                            <td align=left><b>".$cantidaddestino2." Toneladas </b></td>
                                                         </tr>";  
-
+						
 						$html.="<tr>
-                                                            <td width=30%>CUADRILLA:</td>
-                                                            <td align=left><input type=text id='txtcabocuadrilla' name='txtcabocuadrilla' value='' Size=60></td>
-                                                        </tr>";                                                
-						$html.="<tr>
-                                                            <td>FOLIOS:</td>
-                                                            <td align=left><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
-                                                        </tr>";	                                                
-
-						$html.="<tr>
-                                                            <td>OBSERVACIONES:</td>
+                                                            <td>Folios:</td>
                                                             <td align=left><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";
 							
