@@ -8,7 +8,7 @@
 	<title></title>
 	<script language="javascript">
             $(document).ready(function(){
-                $('#i667').bind('blur', function() {  
+                $('#i667').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
@@ -32,7 +32,7 @@
                         );
                                         
                 });
-                $('#i670').bind('blur', function() {  
+                $('#i670').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
@@ -55,7 +55,7 @@
                         );
                                         
                 });     
-                $('#i664').bind('blur', function() {  
+                $('#i664').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
@@ -79,7 +79,7 @@
                         );
                                         
                 });
-                $('#i669').bind('blur', function() {  
+                $('#i669').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
