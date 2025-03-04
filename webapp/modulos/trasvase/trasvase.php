@@ -356,7 +356,6 @@
 		$html.="</tr>";
 		$html.="</table>";
 		$html.="</td></tr>"; //Mega tabla
-        exit();
 
 		//Fin sección del receptor y info de folios y certificado digital
 		
