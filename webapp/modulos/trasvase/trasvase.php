@@ -193,7 +193,6 @@
                 
                 
 	
-		
 		  
          //Genera  empleado
             $nombrecapturista="";
@@ -228,7 +227,6 @@
 
         //INICIA DIBUJANDO DATOS
 
-
 	
 	
 	$html="<html>";
@@ -243,11 +241,10 @@
 	$html.= "  td{font-size:7pt}";
 	$html.= "</style>";
 	$html.= "</head>";
-        
         $html.=$htmlpoliticas;	
 
         $html.=" <FORM id='envio' name='envio' method='post' action='recepcion_grabar.php'>
-                    <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>
+                    <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>";
 		$html.=$txtcapturista;
 
         $html.= "<BODY style='font-family:helvetica'>
@@ -272,20 +269,19 @@
 				
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>Propietario: ".$nombreorganizacion."</b><br>";
-						$html.="<b>Marca: ".$marca."</b><br>";
+						$html.="<b>Propietario: ".$nombreorganizacion."</b>";
+						$html.="<b>Marca: ".$marca."</b>";
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
 						$html.="<br> <strong>C.P.</strong> ".$cp;
 						$html.="<br> ".$municipio;
 						$html.=" ".$estado;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
-                                                }
+                        if($telefonos<>''){
+                            $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                        }
 						$html.="<br>";					
 					$html.="</td>";
 				
-                                $rn=$idenvio;
-				//Datos de Facturación
+                //Datos de Facturación
 				$html.="<td width='30%' align=right>";
 						
 					$html.="<table class='reporte' width='100%'>";
@@ -295,7 +291,7 @@
 					$html.="<tr>";
 					$html.="<td align=center>";
 					$html.="	<b>Folio:</b> <font color=blue>Nuevo</font> 
-                                                    -   <b>Folio Interno:</b> <font  color=blue> Nuevo";
+                                                    -   <b>Folio:</b> <font  color=blue> Nuevo";
 					$html.="	</font>";
 					$html.="</td>";
 					$html.="</tr>";
@@ -344,50 +340,26 @@
                             //INFORMACION DEL EMISOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>BODEGA ORIGEN</td></tr>";
+                                            $html.="<tr class='trencabezado'><td>BODEGA</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                     $html.="<td>";
-                                                            $html.="<b>".$bodegaorigen."</b><br>".$domiciliobodegaorigen."<br>";
+                                                            $html.="<b>".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
                                                     $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";																
                             $html.="</td>";
-                            //INFORMACION DEL RECEPTOR
-                            $html.="<td width='20%'>";
-                                    $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>BODEGA DESTINO</td></tr>";
-                                            $html.="<tr height='55' valign='top'>";
-                                                    $html.="<td>";
-                                                            $html.="<b>".$bodegadestino."</b><br>".$domiciliobodegadestino."<br>";
-                                                    $html.="</td>";																															
-                                            $html.="</tr>";
-                                    $html.="</table>";																
-                            $html.="</td>";								
 			
 
                         
 			//INFORMACION DEL CERTIFICADO DE LA EMPRESA
-			$html.="<td width='20%'>";
-				$html.="<table class='reporte' width='100%'>";
-										
-					//Obteniendo los datos de aprobación de la remesa de folios...
-					$html.="<tr class='trencabezado'><td>OTFC: <b>".$otfc."</b></td></tr>";
-					$html.="<tr><td align=left>
-                                                   INICIAL: <b>".$saldoinicial." TM</b><br>
-                                                   ENVIADO: <b>".$retirada." TM</b><br>
-                                                   SALDO: <b>".$saldo." TM</b><br>    
-                                                </td></tr>";																			
-																			
-
-				$html.="</table>";								
-			$html.="</td>";
 																						
 		$html.="</tr>";
 		$html.="</table>";
 		$html.="</td></tr>"; //Mega tabla
+        exit();
+
 		//Fin sección del receptor y info de folios y certificado digital
 		
-                
  //INICIAN DATOS DE CAPTURA 
                 
                 //Inicia sección de forma de pago e impuestos...
