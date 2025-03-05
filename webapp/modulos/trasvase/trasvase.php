@@ -539,7 +539,7 @@
                             //INFORMACION OPERADOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>FIRMA OPERADOR</td></tr>";
+                                            $html.="<tr class='trencabezado'><td>FIRMA AUDITOR</td></tr>";
                                             $html.="<tr height='60' width=20 valign='top'>";
                                                     $html.="<td>";
                                                             $html.="<center><b>".$nombreoperador."</b></center><br>";
