@@ -76,22 +76,29 @@
                     $idbodega="";
                     $idfabricante=""; 
                     $observaciones="";
+                    $idproducto="";
+                    $idproductodestino=""
+                    $cantidadpnc1=0;
+                    $cantidadpnc2=0;
+                    $cantidadmerma1=0;
+                    $cantidadmerma2=0;
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
-                    of.nombrefabricante 'propietario', vm.nombremarca 'marca',
-                    obo.nombrebodega 'bodega', il.descripcionlote 'zafra', 
-                    ip1.nombreproducto 'Productoorigen', ie.descripcionestado 'nombreestado', 
-                    lt.cantidad1 'cantidad1', lt.cantidad2 'cantidad2', 
-                    ip2.nombreproducto 'productodestino',
-                    lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
-                    lt.observaciones, lt.idbodega, lt.idfabricante from inventarios_trasvase lt 
-                    left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
-                    left join vista_marcas vm on vm.idmarca=lt.idmarca
-                    left join operaciones_bodegas obo on obo.idbodega=lt.idbodega
-                    left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
-                    left join inventarios_productos ip2 on ip1.idproducto=lt.idproductodestino
-                    left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
-                    left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
+                        of.nombrefabricante 'propietario', vm.nombremarca 'marca',
+                        obo.nombrebodega 'bodega', il.descripcionlote 'zafra', 
+                        ip1.nombreproducto 'Productoorigen', ie.descripcionestado 'nombreestado', 
+                        lt.cantidad1 'cantidad1', lt.cantidad2 'cantidad2', 
+                        ip2.nombreproducto 'productodestino',
+                        lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
+                        lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino 
+                    from inventarios_trasvase lt 
+                        left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                        left join vista_marcas vm on vm.idmarca=lt.idmarca
+                        left join operaciones_bodegas obo on obo.idbodega=lt.idbodega
+                        left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
+                        left join inventarios_productos ip2 on ip1.idproducto=lt.idproductodestino
+                        left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
+                        left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
                     Where lt.idtrasvase=".$idtrasvase;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
@@ -112,7 +119,10 @@
                     $idbodega=$rs{"idbodega"};
                     $idfabricante=$rs{"idfabricante"};
                     $observaciones=$rs{"observaciones"};
-		}
+                    $idproducto=$rs{"idproducto"};
+                    $idproductodestino=$rs{"idproductodestino"};
+
+        }
 		$conexion->cerrar_consulta($result);                        
                         
                 
@@ -272,7 +282,7 @@
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
 						$html.="<b>Propietario: ".$nombreorganizacion."</b>";
-						$html.="<b>Marca: ".$marca."</b>";
+						$html.="<br><b>Marca: ".$marca."</b>";
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
 						$html.="<br> <strong>C.P.</strong> ".$cp;
 						$html.="<br> ".$municipio;
@@ -409,7 +419,7 @@
 					$html.="<table class='reporte' width='100%'>";
  						$html.="<tr>
                                                             <td width=30%>Producto Esperado:</td>
-                                                            <td align=left>".$productodestino."</td>
+                                                            <td align=left><b>".$productodestino."</b></td>
                                                         </tr>";                                       
                         $html.="<tr>
                                                             <td width=30%>Cantidad Esperada:</td>
@@ -468,48 +478,16 @@
                 $unidad1=$desc1;
                 $unidad2=$desc2;
                 
-            //Inicia sección de conceptos
-		$html.="<tr><td>"; //Mega tabla
-		$html.="<center><table class='reporte' width='100%'>";
-
-			//Armando encabezado
-			$html.="
-                                <tr class='trencabezado'><td colspan=6>DATOS DEL PRODUCTO</td></tr>
-                                <tr class='trencabezado'>";
-                                $html.="<td>MARCA</td>";
-				$html.="<td>ZAFRA</td>";
-				$html.="<td>PRODUCTO</td>";
-				$html.="<td>ESTADO PRODUCTO</td>";			
-			$html.="</tr>";
-
-			//Obteniendo los datos
-                                //#Politica de Registro adicional
-                                $politica="";
-                                if($edita==1){
-                                    $politica= " readonly onChange='recalcula(".$factor.",".$edita.")'";
-                                }
-                                
-				$html.="<tr class=trcontenido>";
-                                        $html.="<td align=center>".$nombreingenio."</td>";
-					$html.="<td align=center>".$zafra."</td>";
-                                        $html.="<td align=center>".$nombreproducto."</td>";
-                                        $html.="<td align=center>".$nombreestado."</td>";			
-				$html.="</tr>";				
-			$html.="</table></center>";	
-		$html.="</td></tr>"; //Mega tabla
-		//Finaliza sección de conceptos
-		
-                $inv=" readonly style='text-align:right;color:#707070;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
                 
-                //Inicia sección de Cantidades
+        //Inicia sección de Cantidades
 		$html.="<tr><td>"; //Mega tabla
 		$html.="<center><table class='reporte' width='100%'>";
 			//Armando encabezado
 			$html.="
                                 <tr class='trencabezado'>
-                                    <td colspan=2>ENVIO</td>
-                                    <td colspan=2>RECEPCION</td>
-                                    <td colspan=2>DIFERENCIA</td>
+                                    <td colspan=2>RESULTADO</td>
+                                    <td colspan=2>PNC</td>
+                                    <td colspan=2>MERMA</td>
                                 </tr>";
                                 
                         $html.="
@@ -530,56 +508,16 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td align=right>".$cantidad1."<input ".$inv." type=hidden value=".$cantidad1." id='txtcantenv1' name='txtcantenv1' size=20></td>";
-					$html.="<td align=right>".$cantidad2."<input ".$inv." type=hidden value=".$cantidad2." id='txtcantenv2' name='txtcantenv2' size=20></td>";			
-                                        $html.="<td align=right><input type=text value=".$cantidad1." id='txtcantrec1' name='txtcantrec1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidad2." id='txtcantrec2' name='txtcantrec2' size=20 ".$politica."></td>";			
-					$html.="<td align=right><input ".$inv." type=text value=0.00 id='txtcantdif1' name='txtcantdif1' size=20></td>";
-					$html.="<td align=right><input ".$inv." type=text value=0.00 id='txtcantdif2' name='txtcantdif2' size=20></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
 				$html.="</tr>";	
-                                
+                              
 			$html.="</table></center>";
                         
-		$html.="</td></tr>"; //Mega tabla
-                //Finaliza sección de Cantidades        
-                
-    //Inicia Seccion de Devoluciones y Faltantes
-                $investatus=" readonly style='text-align:right;color:red;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
-		$html.="<tr><td>"; //Mega tabla
-		$html.="<right><div id=devfalt style='display:none;'><table class='reporte' width='40%' align=right>";
-			//Armando encabezado
-			$html.="
-                                <tr class='trencabezado'>
-                                    <td colspan=4 align=right>ACLARACION<div id=divestatus style='display:none;'><img src=validado.png></div></td>
-                                    <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus1' name='txtestatus1' size=20></td>
-                                    <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus2' name='txtestatus2' size=20></td>
-                                </tr>";
-                                
-                                
-			//Obteniendo los datos
-                                //#Politica de Registro adicional
-                                $politica="";
-                                if($edita==1){
-                                    $politica= " readonly onChange='recalcula(".$factor.",".$edita.")'";
-                                }
-                                
-				$html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Devolución</b></td>";
-                                        $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
-					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
-				$html.="</tr>";
-                                
-                                $html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Faltante</b></td>";
-                                        $html.="<td align=right><input type=text value=0 id='txtcantfalt1' name='txtcantfalt1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
-					$html.="<td align=right><input type=text value=0 id='txtcantfalt2' name='txtcantfalt2' size=20 ".$politica."></td>";			
-				$html.="</tr>";
-                                
-                                
-			$html.="</table></div></right>";
-                        
-		$html.="</td></tr>"; //Mega tabla                
-    //Finaliza Devoluciones y Faltantes
                 
                 //Inicia sección de FIRMAS
 		$html.="<tr><td>"; //Mega tabla
