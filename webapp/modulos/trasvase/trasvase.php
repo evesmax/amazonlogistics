@@ -56,6 +56,7 @@
 	include("../../netwarelog/catalog/conexionbd.php");
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
+    $capturista=$usuario;
     //RECUPERANDO VARIABLES
          $idtrasvase=$_GET["idtrasvase"];
         
