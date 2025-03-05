@@ -77,7 +77,7 @@
                     $idfabricante=""; 
                     $observaciones="";
                     $idproducto="";
-                    $idproductodestino=""
+                    $idproductodestino="";
                     $cantidadpnc1=0;
                     $cantidadpnc2=0;
                     $cantidadmerma1=0;
@@ -506,8 +506,8 @@
                                 if($edita==1){
                                     $politica= " readonly onChange='recalcula(".$factor.",".$edita.")'";
                                 }
-                                
-				$html.="<tr class=trcontenido>";
+				
+                    $html.="<tr class=trcontenido>";
                     $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
                     $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
@@ -565,11 +565,6 @@
 		$html.="</table>";
                 $html.="</tr></td>"; //Mega tabla
                 
-
-
-
-
-
 
 
 
