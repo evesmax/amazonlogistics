@@ -558,9 +558,6 @@
                                             $html.="</tr>";
                                     $html.="</table>";																
                             $html.="</td></table>";                              
-
-
-
                 
                 $html.="</tr>";				
 		$html.="</table>";

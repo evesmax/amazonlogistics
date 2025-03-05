@@ -103,7 +103,7 @@
                                         
                 });
                 $('#send').bind('click', function() {  
-                    $('#i669').removeAttr("disabled");  
+                    $('#i668').removeAttr("disabled");  
                     $('#i671').removeAttr("disabled");              
                 });
             });
