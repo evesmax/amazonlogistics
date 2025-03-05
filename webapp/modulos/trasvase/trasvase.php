@@ -454,7 +454,7 @@
                 $desc1="Cantidad";
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
-                    where i.idproducto=".$idproducto;
+                    where i.idproducto=".$idproductodestino." Limit 1";
                     $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
