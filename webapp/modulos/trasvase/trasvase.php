@@ -605,43 +605,38 @@
                                                                                     }
                                                                                     return result;
                                                                                 }
-                                                                                function recalcula(factor,edita,saldo) {
-                                                                                    var jfactor=0,jfactord=0,jedita=0,jsaldo1=0,jsaldo2=0, 
-                                                                                        cant1=0, cant2=0,scant1,scant2,jsaldo=0;
+                                                                                function recalcula(factor,edita,canttotal1) {
+
+                                                                                    var cantdestino1=0,cantdestino2=0
+                                                                                        cantpnc1=0,cantpnc2=0,
+                                                                                        cantmerma1=0,cantmerma2=0
+                                                                                        scanttotal1=0,scanttotal2=0,jfactor=0,suma=0;
+
+                                                                                    scanttotal1=canttotal1;
+                                                                                    scanttotal2=canttotal2;
                                                                                     jfactor=factor;
-                                                                                    jedita=edita;
-                                                                                    jfactord=jfactor;
-                                                                                    jsaldo=saldo;
+
                                                                                     if(jfactor==0){
                                                                                         jfactord=1;
                                                                                     }
-                                                                                    jsaldo1=jsaldo/jfactor;
-                                                                                    jsaldo2=jsaldo;
-                                                                                    scant1=valor(document.getElementById('txtcantenv1').value);
-                                                                                    scant2=valor(document.getElementById('txtcantenv2').value);
-                                                                                    cant1=valor(document.getElementById('txtcantrec1').value);
-                                                                                    cant2=cant1*jfactor; 
-                                                                                    if((cant1<=jsaldo1) && (cant2<=jsaldo2)){
-                                                                                        cant1=valor(document.getElementById('txtcantrec1').value);
-                                                                                        cant2=cant1*jfactor;
-                                                                                        document.envio.txtcantrec2.value=format_number(cant2,2);                                                                                        
-                                                                                    }else{ 
+
+                                                                                    cantdestino1=valor(document.getElementById('txtcantidaddestino1').value);
+                                                                                    cantdestino2=valor(cantdestino1*jfactor);
+                                                                                    cantpnc1=valor(document.getElementById('txtcantidadpnc1').value);
+                                                                                    cantpnc2=valor(cantpnc1*jfactor);
+                                                                                    cantmerma1=valor(document.getElementById('txtcantidadmerma1').value);
+                                                                                    cantmerma2=valor(cantmerma1*jfactor);
+
+                                                                                    document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
+                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantdestino2,2);
+                                                                                    document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
+                                                                                    
+                                                                                    suma=cantdestino1+cantpnc1+cantmerma2;
+
+                                                                                    if((scanttotal1<>total)){
                                                                                         alert('Las cantidades Exeden el Saldo de la Instruccion');
-                                                                                        document.envio.txtcantrec1.value=format_number(0,2);
-                                                                                        document.envio.txtcantrec2.value=format_number(0,2);
-                                                                                    }
-                                                                                    document.envio.txtcantdif1.value=format_number(scant1-cant1,2);
-                                                                                    document.envio.txtcantdif2.value=format_number(scant2-cant2,3); 
-                                                                                    cant1=0;
-                                                                                    cant2=0;
-                                                                                    cant1=valor(document.getElementById('txtcantdev1').value);
-                                                                                    cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantdev2.value=format_number(cant2,2); 
-                                                                                    cant1=0;
-                                                                                    cant2=0;
-                                                                                    cant1=valor(document.getElementById('txtcantfalt1').value);
-                                                                                    cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantfalt2.value=format_number(cant2,2);                                                                                    
+                                                                                        
+                                                                                    }                                                                                 
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
