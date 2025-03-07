@@ -577,8 +577,8 @@
                                                                                         num = num.toString();
                                                                                     }
                                                                                     var numerostring='', numero=0;
-                                                                                    numero=num.replace(/,/,'');
-                                                                                    return numero;
+                                                                                    numero=num.replace(/,/g,'');
+                                                                                    return parseFloat(numero);
                                                                                 }
                                                                                 function format_number(pnumber,decimals){
                                                                                     if (isNaN(pnumber)) { return 0};
@@ -610,10 +610,10 @@
                                                                                 }
                                                                                 function recalcula(factor, edita, canttotal1) {
                                                                                     var canttotal2 = 0; // Define canttotal2
-                                                                                    var cantdestino1=0,cantdestino2=0
+                                                                                    var cantdestino1=0, cantdestino2=0,
                                                                                         cantpnc1=0,cantpnc2=0,
-                                                                                        cantmerma1=0,cantmerma2=0
-                                                                                        scanttotal1=0,scanttotal2=0,jfactor=0,suma=0;
+                                                                                        cantmerma1=0,cantmerma2=0,
+                                                                                        scanttotal1=0, scanttotal2=0, jfactor=0, suma=0, total=0;
 
                                                                                     scanttotal1=canttotal1;
                                                                                     scanttotal2=canttotal2;
@@ -631,14 +631,14 @@
                                                                                     cantmerma2=valor(cantmerma1*jfactor);
 
                                                                                     document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
-                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantdestino2,2);
+                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantpnc2,2);
                                                                                     document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
                                                                                     
-                                                                                    suma=cantdestino1+cantpnc1+cantmerma2;
+                                                                                    suma=cantdestino1+cantpnc1+cantmerma1;
+                                                                                    total=scanttotal1;
 
-                                                                                    if((scanttotal1 != total)){
+                                                                                    if(scanttotal1 != suma){
                                                                                         alert('Las cantidades Exeden el Saldo de la Instruccion');
-
                                                                                     }                                                                                 
                                                                                 }
                                                                                 function pdf(idenvio){
