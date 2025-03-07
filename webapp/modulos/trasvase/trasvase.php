@@ -640,9 +640,11 @@
                                                                                     if(scanttotal1 < suma){
                                                                                         alert('Las suma de las cantidades exceden la cantidad esperada total');
                                                                                         document.envio.txtcantidadpnc1.value=0;
+                                                                                        document.envio.txtcantidadpnc2.value=0;
                                                                                         document.envio.txtcantidadmerma1.value=0;
+                                                                                        document.envio.txtcantidadmerma2.value=0;
                                                                                         document.envio.txtcantidaddestino1.focus();
-                                                                                    }                                                                                 
+                                                                                    }                                                                                   
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
