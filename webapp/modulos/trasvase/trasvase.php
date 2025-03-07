@@ -644,7 +644,11 @@
                                                                                         document.envio.txtcantidadmerma1.value=0;
                                                                                         document.envio.txtcantidadmerma2.value=0;
                                                                                         document.envio.txtcantidaddestino1.focus();
-                                                                                    }                                                                                   
+                                                                                    }
+                                                                                    if(scanttotal1 > suma){
+                                                                                        alert('Falta aclarar productos hay una diferencia');
+                                                                                        document.envio.txtcantidaddestino1.focus();
+                                                                                    }                                                                                    
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
