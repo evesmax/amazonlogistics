@@ -509,11 +509,11 @@
                                 }
 				
                     $html.="<tr class=trcontenido>";
-                    $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
 					$html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
-                    $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
 					$html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
-                    $html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
 					$html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
 				$html.="</tr>";	
                               
@@ -605,7 +605,7 @@
                                                                                     }
                                                                                     return result;
                                                                                 }
-                                                                                function recalcula(factor,edita,canttotal1) {
+                                                                                function recalcula(factor, edita, canttotal1) {
 
                                                                                     var cantdestino1=0,cantdestino2=0
                                                                                         cantpnc1=0,cantpnc2=0,
@@ -633,9 +633,9 @@
                                                                                     
                                                                                     suma=cantdestino1+cantpnc1+cantmerma2;
 
-                                                                                    if((scanttotal1<>total)){
+                                                                                    if((scanttotal1 != total)){
                                                                                         alert('Las cantidades Exeden el Saldo de la Instruccion');
-                                                                                        
+
                                                                                     }                                                                                 
                                                                                 }
                                                                                 function pdf(idenvio){
@@ -646,7 +646,7 @@
 									</script>";
 		//Botones							
 		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
-                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
 
 
