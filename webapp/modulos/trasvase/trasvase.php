@@ -637,8 +637,11 @@
                                                                                     suma=cantdestino1+cantpnc1+cantmerma1;
                                                                                     total=scanttotal1;
 
-                                                                                    if(scanttotal1 != suma){
-                                                                                        alert('Las cantidades Exeden el Saldo de la Instruccion');
+                                                                                    if(scanttotal1 < suma){
+                                                                                        alert('Las suma de las cantidades exceden la cantidad esperada total');
+                                                                                        document.envio.txtcantidadpnc1.value=0;
+                                                                                        document.envio.txtcantidadmerma1.value=0;
+                                                                                        document.envio.txtcantidaddestino1.focus();
                                                                                     }                                                                                 
                                                                                 }
                                                                                 function pdf(idenvio){
