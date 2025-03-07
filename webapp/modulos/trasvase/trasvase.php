@@ -606,7 +606,7 @@
                                                                                     return result;
                                                                                 }
                                                                                 function recalcula(factor, edita, canttotal1) {
-
+                                                                                    var canttotal2 = 0; // Define canttotal2
                                                                                     var cantdestino1=0,cantdestino2=0
                                                                                         cantpnc1=0,cantpnc2=0,
                                                                                         cantmerma1=0,cantmerma2=0
