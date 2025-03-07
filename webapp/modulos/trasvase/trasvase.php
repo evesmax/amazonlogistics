@@ -573,7 +573,10 @@
 											document.location.href=pagina;
 										}
                                                                                 function valor(num) {
-                                                                                    var numerostring='',numero=0;
+                                                                                    if (typeof num !== 'string') {
+                                                                                        num = num.toString();
+                                                                                    }
+                                                                                    var numerostring='', numero=0;
                                                                                     numero=num.replace(/,/,'');
                                                                                     return numero;
                                                                                 }
