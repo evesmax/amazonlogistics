@@ -253,7 +253,7 @@
 					$html.="<tr class='trencabezado'><td><b>REMISION TRASVASE</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center>";
-					$html.="	<b>Folio:</b> <font color=blue>Nuevo</font>";
+					$html.="	<b>Folio:</b> <font color=blue>$idtrasvase</font>";
 					$html.="	</font>";
 					$html.="</td>";
 					$html.="</tr>";
