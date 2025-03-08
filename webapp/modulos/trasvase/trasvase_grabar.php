@@ -4,6 +4,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);	
 	
 	include("../../netwarelog/catalog/conexionbd.php");
+    include("../inventarios/clases/clinventarios.php");
+    $movimientos = new clinventarios();
 
 //Recuperando registros 
             $idtrasvase=$_REQUEST["txtidtrasvase"];
