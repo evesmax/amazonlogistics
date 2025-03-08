@@ -75,7 +75,7 @@ error_reporting(E_ALL);
                             cantidadmerma2=$cantidadmerma2,
                             idcapturista=$capturista,
                             idestadodocumento=2
-                        Where idtraslado=".$idtrasvase;
+                        Where idtrasvase=".$idtrasvase;
         echo $sqlafecta;
         $conexion->consultar($sqlafecta);
 
