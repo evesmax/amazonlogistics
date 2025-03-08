@@ -655,11 +655,18 @@
                                                                                         document.location = 'pdf.php?idenvio='+ref;
                                                                                 }
                                                                                 function deshabilitarBoton() {
-                                                                                    document.getElementById('txtcantidaddestino2').disabled = false;
-                                                                                    document.getElementById('txtcantidadpnc2').disabled = false;
-                                                                                    document.getElementById('txtcantidadmerma2').disabled = false;
-                                                                                    document.getElementById('btngrabar').disabled = true;
-                                                                                    document.getElementById('btngrabar').value = 'Procesando...'; 
+                                                                                    var cantidaddestino2 = document.getElementById('txtcantidaddestino2');
+                                                                                    var cantidadpnc2 = document.getElementById('txtcantidadpnc2');
+                                                                                    var cantidadmerma2 = document.getElementById('txtcantidadmerma2');
+                                                                                    var btngrabar = document.getElementById('btngrabar');
+
+                                                                                    if (cantidaddestino2 && cantidadpnc2 && cantidadmerma2 && btngrabar) {
+                                                                                        cantidaddestino2.disabled = false;
+                                                                                        cantidadpnc2.disabled = false;
+                                                                                        cantidadmerma2.disabled = false;
+                                                                                        btngrabar.disabled = true;
+                                                                                        btngrabar.value = 'Procesando...';
+                                                                                    }
                                                                                 }
 									</script>";
 		//Botones							
