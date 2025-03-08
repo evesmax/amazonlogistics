@@ -64,7 +64,7 @@ $doctoorigen=6;
         if ($cantidadmerma1>0) { 
             //Agrega Movimiento Almacen Producto No Conforme
             $doctoorigen=24;
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$idestadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
             echo "Actualiza inventario Salida por Merma TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,Lote:$lote,Estado:$idestadoproducto,Cantidad1:$cantidadmerma1,Cantidad2:$cantidadmerma2,Fecha:$fechadia,DoctoOrigen:$doctoorigen,Folio:$idtrasvase <br>";
         }
 
