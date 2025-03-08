@@ -23,6 +23,7 @@
                             cantidadmerma1=$cantidadmerma1,
                             cantidadmerma2=$cantidadmerma2,
                             idcapturista=$capturista,
+                            idestadodocumento=2
                         Where idtraslado=".$idtrasvase.";";
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);
