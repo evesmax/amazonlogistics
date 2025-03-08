@@ -459,12 +459,12 @@
                                 }
 				
                     $html.="<tr class=trcontenido>";
-                    $html.="<td align=right><input readonly type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20></td>";
-					$html.="<td align=right><input readonly type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20></td>";			
-                    $html.="<td align=right><input readonly type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20></td>";
-					$html.="<td align=right><input readonly type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20></td>";			
-                    $html.="<td align=right><input readonly type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20></td>";
-					$html.="<td align=right><input readonly type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20></td>";			
+                    $html.="<td align=right>".$cantidaddestino1."</b></td>";
+					$html.="<td align=right>".$cantidaddestino2."</b></td>";			
+                    $html.="<td align=right>".$cantidadpnc1."</b></td>";
+					$html.="<td align=right>".$cantidadpnc2."</b></td>";			
+                    $html.="<td align=right>".$cantidadmerma1."</b></td>";
+					$html.="<td align=right>".$cantidadmerma2."</b></td>";			
 				$html.="</tr>";	
                               
 			$html.="</table></center>";
