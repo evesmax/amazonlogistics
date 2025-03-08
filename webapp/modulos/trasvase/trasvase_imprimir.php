@@ -626,7 +626,19 @@
 		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
-
+        $opciones="
+                <left>    
+                <div id=opciones>
+                    <table  width=100>
+                        <td width=16 align=right>
+                            <a href='javascript:printSelec();'><img src='../../netwarelog/repolog/img/impresora.png' border='0'></a>
+                        </td>
+                        <td width=16  align=right>
+                                <a href='../../netwarelog/repolog/reporte.php'> <img src='../../netwarelog/repolog/img/filtros.png' 
+                                        title ='Haga clic aqui para cambiar filtros...' border='0'> </a>
+                        </td>
+                    </table>
+                </div><left>";
 
                 
                 echo $html_funcionesjavascript;  
@@ -643,7 +655,7 @@
                    
                 
 //Depuracion
-echo $html;
+echo $opciones.$html;
 
 
 ?>
