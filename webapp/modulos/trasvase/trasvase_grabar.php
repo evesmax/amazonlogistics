@@ -1,5 +1,7 @@
 <?php
-	
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);	
 	
 	include("../../netwarelog/catalog/conexionbd.php");
 
@@ -24,10 +26,11 @@
                             cantidadmerma2=$cantidadmerma2,
                             idcapturista=$capturista,
                             idestadodocumento=2
-                        Where idtraslado=".$idtrasvase.";";
-        //echo $sqlafecta;
+                        Where idtraslado=".$idtrasvase;
+        echo $sqlafecta;
         $conexion->consultar($sqlafecta);
 
+        exit();
 //Recupera valores de consulta
 
         $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase".$idtrasvase;
