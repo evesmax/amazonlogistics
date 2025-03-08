@@ -34,29 +34,34 @@ error_reporting(E_ALL);
 
        
 //Afectando Inventario con Documento.
-        if ($cantidad1>0 {
+        if ($cantidad1>0) {
             //Agrega Movimiento Almacen Salida de Producto Origen
             $doctoorigen=22;
             //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidad1,$cantidad2,$fechadia,$doctoorigen,$idtrsvase,$conexion);
+            echo "Actualiza inventario Salida <br>";
         }
 
-        if ($cantidaddestino1>0 { 
+        if ($cantidaddestino1>0) { 
             //Agrega Movimiento Almacen Entrada de Nuevo Producto
             $doctoorigen=23;
             //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidaddestino1,$cantidaddestino2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            echo "Actualiza inventario Entrad PResultado <br>";
         }
         
-        if ($cantidadpnc1>0 { 
+        if ($cantidadpnc1>0) { 
             $doctoorigen=23;
             $estadopnc=4;
             //Agrega Movimiento Almacen Producto No Conforme
             //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadopnc,$cantidadpnc1,$cantidadpnc2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            echo "Actualiza inventario Entrada NConforme <br>";
+
         }
 
-        if ($cantidadmerma1>0 { 
+        if ($cantidadmerma1>0) { 
             //Agrega Movimiento Almacen Producto No Conforme
             $doctoorigen=24;
             //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$idestadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idrecepcion,$conexion);
+            echo "Actualiza inventario Salida por Merma <br>";
         }
 
 
