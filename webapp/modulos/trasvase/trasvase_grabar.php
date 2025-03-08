@@ -15,6 +15,20 @@ error_reporting(E_ALL);
             $cantidadmerma2=$_REQUEST["txtcantidadmerma2"];
             $capturista=$_REQUEST["txtcapturista"];
                    
-            echo "idtrasvase".$idtrasvase;
-       
+
+//Afecta Cantidades en Logistica_Trasvase
+        $sqlafecta="UPDATE logistica_trasvase 
+                        set cantidaddestinoreal1=$cantidaddestino1,
+                            cantidaddestinoreal2=$cantidaddestino2,
+                            cantidadpnc1=$cantidadpnc1,
+                            cantidadpnc2=$cantidadpnc2,
+                            cantidadmerma1=$cantidadmerma1,
+                            cantidadmerma2=$cantidadmerma2,
+                            idcapturista=$capturista,
+                            idestadodocumento=2
+                        Where idtraslado=".$idtrasvase;
+        echo $sqlafecta;
+        $conexion->consultar($sqlafecta);
+
+         
 ?>
