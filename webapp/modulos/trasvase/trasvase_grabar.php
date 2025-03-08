@@ -16,6 +16,5 @@ error_reporting(E_ALL);
             $capturista=$_REQUEST["txtcapturista"];
                    
             echo "idtrasvase".$idtrasvase;
-            exit();
        
 ?>
