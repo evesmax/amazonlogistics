@@ -41,14 +41,14 @@ $doctoorigen=6;
         if ($cantidad1>0) {
             //Agrega Movimiento Almacen Salida de Producto Origen
             $tipomovimiento=22;
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidad1,$cantidad2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidad1,$cantidad2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
             echo "Actualiza inventario Salida TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,IdBodega:$idbodega,Producto:$producto,Lote:$lote,EstadoProducto:$estadoproducto,Cantidad1:$cantidad1,Cantidad2:$cantidad2,Fecha:$fechadia,DoctOrigen:$doctoorigen,FolioOrigen:$idtrasvase<br>";
         }
 
         if ($cantidaddestino1>0) { 
             //Agrega Movimiento Almacen Entrada de Nuevo Producto
             $tipomovimiento=23;
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidaddestino1,$cantidaddestino2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidaddestino1,$cantidaddestino2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
             echo "Actualiza inventario Entrad PResultado TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,LOte:$lote,EstadoProducto:$estadoproducto,Cantidad1:$cantidaddestino1,Cantidad2:$cantidaddestino2,Fecha:$fechadia,DoctoOrigen:$doctoorigen,Folio:$idtrasvase <br>";
         }
         
@@ -56,7 +56,7 @@ $doctoorigen=6;
             $tipomovimiento=23;
             $estadopnc=4;
             //Agrega Movimiento Almacen Producto No Conforme
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadopnc,$cantidadpnc1,$cantidadpnc2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadopnc,$cantidadpnc1,$cantidadpnc2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
             echo "Actualiza inventario Entrada NConforme TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,Lote:$lote,EstadoProducto:$estadopnc,Cantidad1:$cantidadpnc1,Cantidad2:$cantidadpnc2,Fecha:$fechadia,Doctoorigen:$doctoorigen,Folio:$idtrasvase, <br>";
 
         }
@@ -64,7 +64,7 @@ $doctoorigen=6;
         if ($cantidadmerma1>0) { 
             //Agrega Movimiento Almacen Producto No Conforme
             $doctoorigen=24;
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
             echo "Actualiza inventario Salida por Merma TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,Lote:$lote,Estado:$estadoproducto,Cantidad1:$cantidadmerma1,Cantidad2:$cantidadmerma2,Fecha:$fechadia,DoctoOrigen:$doctoorigen,Folio:$idtrasvase <br>";
         }
 
@@ -83,6 +83,6 @@ $doctoorigen=6;
         echo $sqlafecta;
         $conexion->consultar($sqlafecta);
 
-        //header("Location: trasvase_imprimir.php?idtrasvase=".$idtrasvase) 
+        header("Location: trasvase_imprimir.php?idtrasvase=".$idtrasvase) 
          
 ?>
