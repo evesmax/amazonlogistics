@@ -22,17 +22,18 @@ error_reporting(E_ALL);
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"idfabricante"};
-                        $marca=$rs{"fabricante"};
+                        $marca=$rs{"idmarca"};
                         $idbodega=$rs{"idbodega"};
-                        $producto=$rs{"producto"};
-                        $lote=$rs{"lote"};
-                        $estadoproducto=$rs{"estadoproducto"};
+                        $producto=$rs{"iproducto"};
+                        $lote=$rs{"idloteproducto"};
+                        $estadoproducto=$rs{"idestadoproducto"};
                         $cantidad1=$rs{"cantidad1"};
                         $cantidad2=$rs{"cantidad2"};
                         $productodestino=$rs{"idproductodestino"};
                         $fechadia=$rs{"fechadia"};
                 }
 		$conexion->cerrar_consulta($result);
+        echo $sQuery."<br>";
 
 //trasvase
 $doctoorigen=6;       
