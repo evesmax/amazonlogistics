@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);	
 	
 	include("../../netwarelog/catalog/conexionbd.php");
     include("../inventarios/clases/clinventarios.php");
@@ -83,6 +80,6 @@ $doctoorigen=6;
         echo $sqlafecta;
         $conexion->consultar($sqlafecta);
 
-        header("Location: trasvase_imprimir.php?idtrasvase=".$idtrasvase) 
+        header("Location: trasvase_imprimir.php?idtrasvase=" . $idtrasvase) 
          
 ?>
