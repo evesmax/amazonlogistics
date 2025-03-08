@@ -18,7 +18,7 @@ error_reporting(E_ALL);
             $capturista=$_REQUEST["txtcapturista"];
                    
 //Recupera valores de consulta
-        $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase".$idtrasvase;
+        $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase=".$idtrasvase;
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"idfabricante"};
