@@ -79,6 +79,6 @@ error_reporting(E_ALL);
         echo $sqlafecta;
         $conexion->consultar($sqlafecta);
 
-       // header("Location: trasvase_imprimir.php?idtrasvase=".$idtrasvase) 
+        header("Location: trasvase_imprimir.php?idtrasvase=".$idtrasvase) 
          
 ?>
