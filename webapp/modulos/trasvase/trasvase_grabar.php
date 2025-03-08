@@ -24,7 +24,7 @@ error_reporting(E_ALL);
                         $fabricante=$rs{"idfabricante"};
                         $marca=$rs{"idmarca"};
                         $idbodega=$rs{"idbodega"};
-                        $producto=$rs{"iproducto"};
+                        $producto=$rs{"idproducto"};
                         $lote=$rs{"idloteproducto"};
                         $estadoproducto=$rs{"idestadoproducto"};
                         $cantidad1=$rs{"cantidad1"};
