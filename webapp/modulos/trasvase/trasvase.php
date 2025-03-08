@@ -655,9 +655,10 @@
                                                                                         document.location = 'pdf.php?idenvio='+ref;
                                                                                 }
                                                                                 function deshabilitarBoton() {
+                                                                                    document.getElementById('txtcantidaddestino2').disabled = false;
+                                                                                    document.getElementById('txtcantidadpnc2').disabled = false;
+                                                                                    document.getElementById('txtcantidadmerma2').disabled = false;
                                                                                     document.getElementById('btngrabar').disabled = true;
-                                                                                    // Puedes agregar un mensaje al usuario, por ejemplo:
-                                                                                    //alert('Procesando...');
                                                                                     document.getElementById('btngrabar').value = 'Procesando...'; 
                                                                                 }
 									</script>";
