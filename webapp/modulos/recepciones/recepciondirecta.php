@@ -745,7 +745,7 @@
 			$html.="
                                 <tr class='trencabezado'>
                                     <td colspan=4 align=right>Producto que no Llego <div id=divestatus style='display:none;'><img src=validado.png></div></td>
-                                    <td align=left>Producto que llego: <input ".$investatus." type=text value=0.00 id='txtestatus1' name='txtestatus1' size=20></td>
+                                    <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus1' name='txtestatus1' size=20></td>
                                     <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus2' name='txtestatus2' size=20></td>
                                 </tr>";
                                 
@@ -758,7 +758,7 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>".$cmbestados."</b></td>";
+                                        $html.="Producto recibido como:<td colspan=4><b>".$cmbestados."</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
 				$html.="</tr>";
