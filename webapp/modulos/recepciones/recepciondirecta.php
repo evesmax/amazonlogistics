@@ -758,7 +758,7 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="Producto recibido como:<td colspan=4><b>".$cmbestados."</b></td>";
+                                        $html.="<td colspan=4><b>Producto recibido como:<br>".$cmbestados."</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
 				$html.="</tr>";
