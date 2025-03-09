@@ -77,8 +77,8 @@
             
 
 			if(($difestatus1*1>0)){
-                            $politica=1;
-                            $msg="Falto aclarar la diferencia de envio con recepcion";
+                $politica=1;
+                $msg="Falto aclarar la diferencia de envio con recepcion";
             }
 			if($cantidadrecibida1==0 or $cantidadrecibida2==0){
 				$politica=1;
