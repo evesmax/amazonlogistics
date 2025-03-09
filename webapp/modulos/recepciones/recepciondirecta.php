@@ -744,7 +744,7 @@
 			//Armando encabezado
 			$html.="
                                 <tr class='trencabezado'>
-                                    <td colspan=4><b>Producto que no Llego:</b></td>
+                                    <td colspan=4 align=right>Diferencia<div id=divestatus style='display:none;'><img src=validado.png></div></td>
                                     <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus1' name='txtestatus1' size=20></td>
                                     <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus2' name='txtestatus2' size=20></td>
                                 </tr>";
@@ -758,12 +758,12 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Producto recibido como:<br>".$cmbestados."</b></td>";
+                                        $html.="<td colspan=4><b>Recibe Producto:".$cmbestados."</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
 				$html.="</tr>";
                                 
-                                $html.="<tr class=trcontenido hidden>";
+                                $html.="<tr class=trcontenido>";
                                         $html.="<td colspan=4><b>Faltante</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantfalt1' name='txtcantfalt1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantfalt2' name='txtcantfalt2' size=20 ".$politica."></td>";			

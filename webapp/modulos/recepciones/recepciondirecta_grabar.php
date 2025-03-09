@@ -142,7 +142,7 @@ $fechaenvio=$fecharecepcion;
 
 //Afecta Cantidades en Traslados
         $sqlafecta="UPDATE logistica_traslados 
-                        set cantidad1=(cantidad1+".$cantenv1."),
+                        set cantidad1=(cantidad1+".$can tenv1."),
                         cantidad2=(cantidad2+".$cantenv2."), 
                         cantidadretirada1=(cantidadretirada1+".$cantenv1."),
                         cantidadretirada2=(cantidadretirada2+".$cantenv2."), 
