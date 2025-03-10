@@ -910,6 +910,24 @@
                                                                                     // Puedes agregar un mensaje al usuario, por ejemplo:
                                                                                     document.getElementById('btngrabar').value = 'Procesando...'; 
                                                                                 }
+                                                                                function deshabilitarBoton() {
+                                                                                    var cantdif1 = document.getElementById('txtcantdif1');
+                                                                                    var cantdif2 = document.getElementById('txtcantdif2');
+                                                                                    var estatus2 = document.getElementById('txtestatus2');
+                                                                                    var cantdev2 = document.getElementById('txtcantdev2');
+                                                                                    var cantfalt2 = document.getElementById('txtcantfalt2');
+                                                                                    var btngrabar = document.getElementById('btngrabar');
+
+                                                                                    if (cantdif1 && cantdif2 && estatus2 && btngrabar) {
+                                                                                        txtcantdif1.disabled = false;
+                                                                                        txtcantdif2.disabled = false;
+                                                                                        txtestatus2.disabled = false;  
+                                                                                        txtcantdev2.disabled = false;
+                                                                                        txtcantfalt2.disabled = false;
+                                                                                        btngrabar.disabled = true;
+                                                                                        btngrabar.value = 'Procesando...';
+                                                                                    }
+                                                                        
 									</script>";
 		//Botones							
 		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
