@@ -39,7 +39,7 @@
                     });
                     $('#txtcantfalt1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
-                        $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
+                        $('#txtestatus2').val(format_number($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1),2));
                         if($('#txtestatus1').val()==0 && $('#txtestatus2').val()==0){
                             $('#txtestatus1').css('color', 'blue');
                             $('#txtestatus2').css('color', 'blue');
