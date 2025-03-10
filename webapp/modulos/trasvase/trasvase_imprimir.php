@@ -68,7 +68,7 @@
                     $idproducto=$rs{"idproducto"};
                     $idproductodestino=$rs{"idproductodestino"};
                     $cantidaddestino1=$rs{"cantidaddestinoreal1"};
-                    $cantidaddestino2=$rs{"cantidaddestinorea2"};
+                    $cantidaddestinoreal2=$rs{"cantidaddestinorea2"};
                     $cantidadpnc1=$rs{"cantidadpnc1"};
                     $cantidadpnc2=$rs{"cantidadpnc1"};
                     $cantidadmerma1=$rs{"cantidadmerma1"};
@@ -459,8 +459,8 @@
                                 }
 				
                     $html.="<tr class=trcontenido>";
-                    $html.="<td align=right>".$cantidaddestino1."</b></td>";
-					$html.="<td align=right>".$cantidaddestino2."</b></td>";			
+                    $html.="<td align=right>".$cantidaddestinoreal1."</b></td>";
+					$html.="<td align=right>".$cantidaddestinoreal2."</b></td>";			
                     $html.="<td align=right>".$cantidadpnc1."</b></td>";
 					$html.="<td align=right>".$cantidadpnc2."</b></td>";			
                     $html.="<td align=right>".$cantidadmerma1."</b></td>";
