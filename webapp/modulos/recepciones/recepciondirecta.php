@@ -26,7 +26,7 @@
                     });    
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
-                        $('#txtestatus2').val(format_number($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1),2));
+                        $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
                         if($('#txtestatus1').val()==0 && $('#txtestatus2').val()==0){
                             $('#txtestatus1').css('color', 'blue');
                             $('#txtestatus2').css('color', 'blue');
@@ -39,7 +39,7 @@
                     });
                     $('#txtcantfalt1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
-                        $('#txtestatus2').val(format_number($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1),2));
+                        $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
                         if($('#txtestatus1').val()==0 && $('#txtestatus2').val()==0){
                             $('#txtestatus1').css('color', 'blue');
                             $('#txtestatus2').css('color', 'blue');
@@ -54,53 +54,21 @@
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
                         if($('#txtcantrec1').val()*1==0 || $('#txtcantrec1').val()*1==0 ){
-                            camposValidos= false;
+                            camposValidos= false
                             alert('Debe escribir una cantidad mayor a cero');
-                            $('#txtcantrec1').val(0);
+                            $('#txtcantrec1').val()=0;
                             $('#txtcantrec1').focus(); 
                         }
                             
                         // Si todos los campos son válidos, permite el envío del formulario
                         if (camposValidos) {
-                            return true;
+                        return true;
                         } else {
-                            return false; // Detiene el envío del formulario
+                        return false; // Detiene el envío del formulario
                         }
-                    }); // <-- Ensure this closing brace is present
+                    });
                     
-                    function recalcula(factor, edita, saldo) {
-                        var jfactor = 0, jfactord = 0, jedita = 0, jsaldo1 = 0, jsaldo2 = 0, 
-                            cant1 = 0, cant2 = 0, scant1, scant2, jsaldo = 0;
-                        jfactor = factor;
-                        jedita = edita;
-                        jfactord = jfactor;
-                        jsaldo = saldo;
-                        if (jfactor == 0) {
-                            jfactord = 1;
-                        }
-                        jsaldo1 = jsaldo / jfactor;
-                        jsaldo2 = jsaldo;
-                        scant1 = valor(document.getElementById('txtcantenv1').value);
-                        scant2 = valor(document.getElementById('txtcantenv2').value);
-                        scant2 = scant1 * jfactor;
-                        document.envio.txtcantenv2.value = format_number(scant2, 3); 
-                        cant1 = valor(document.getElementById('txtcantrec1').value);
-                        cant2 = cant1 * jfactor;
-                        document.envio.txtcantrec2.value = format_number(cant2, 2);                                                                                        
-                        document.envio.txtcantdif1.value = format_number(scant1 - cant1, 2);
-                        document.envio.txtcantdif2.value = format_number(scant2 - cant2, 3); 
-                        cant1 = 0;
-                        cant2 = 0;
-                        cant1 = valor(document.getElementById('txtcantdev1').value);
-                        cant2 = cant1 * jfactor;
-                        document.envio.txtcantdev2.value = format_number(cant2, 3); 
-                        cant1 = 0;
-                        cant2 = 0;
-                        cant1 = valor(document.getElementById('txtcantfalt1').value);
-                        cant2 = cant1 * jfactor;
-                        document.envio.txtcantfalt2.value = format_number(cant2, 3);                                                                                    
-                    } // <-- Ensure this closing brace is present
-            }); // <-- Ensure this closing brace is present
+            });
         </script>";	
 
 	include("../../netwarelog/catalog/conexionbd.php");
@@ -772,11 +740,11 @@
 
                 $investatus=" readonly style='text-align:right;color:red;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
 		$html.="<tr><td>"; //Mega tabla
-		$html.="<right><div id=devfalt style='display:none;'><table class='reporte' width='40%' align=right'>";
+		$html.="<right><div id=devfalt style='display:none;'><table class='reporte' width='40%' align=right>";
 			//Armando encabezado
 			$html.="
                                 <tr class='trencabezado'>
-                                    <td colspan=4 align=right>Diferencia<div id=divestatus style='display:none;'><img src=validado.png></div></td>
+                                    <td colspan=4><b>Producto que no Llego:</b></td>
                                     <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus1' name='txtestatus1' size=20></td>
                                     <td align=left><input ".$investatus." type=text value=0.00 id='txtestatus2' name='txtestatus2' size=20></td>
                                 </tr>";
@@ -790,12 +758,12 @@
                                 }
                                 
 				$html.="<tr class=trcontenido>";
-                                        $html.="<td colspan=4><b>Recibe Producto:".$cmbestados."</b></td>";
+                                        $html.="<td colspan=4><b>Producto recibido como:<br>".$cmbestados."</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantdev1' name='txtcantdev1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantdev2' name='txtcantdev2' size=20 ".$politica."></td>";			
 				$html.="</tr>";
                                 
-                                $html.="<tr class=trcontenido>";
+                                $html.="<tr class=trcontenido hidden>";
                                         $html.="<td colspan=4><b>Faltante</b></td>";
                                         $html.="<td align=right><input type=text value=0 id='txtcantfalt1' name='txtcantfalt1' size=20 onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'></td>";
 					$html.="<td align=right><input type=text value=0 id='txtcantfalt2' name='txtcantfalt2' size=20 ".$politica."></td>";			
@@ -915,7 +883,7 @@
                                                                                     scant1=valor(document.getElementById('txtcantenv1').value);
                                                                                     scant2=valor(document.getElementById('txtcantenv2').value);
                                                                                     scant2=scant1*jfactor;
-                                                                                    document.envio.txtcantenv2.value=format_number(scant2,3); 
+                                                                                    document.envio.txtcantenv2.value=format_number(scant2,2); 
                                                                                     cant1=valor(document.getElementById('txtcantrec1').value);
                                                                                     cant2=cant1*jfactor;
                                                                                     document.envio.txtcantrec2.value=format_number(cant2,2);                                                                                        
@@ -925,12 +893,12 @@
                                                                                     cant2=0;
                                                                                     cant1=valor(document.getElementById('txtcantdev1').value);
                                                                                     cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantdev2.value=format_number(cant2,3); 
+                                                                                    document.envio.txtcantdev2.value=format_number(cant2,2); 
                                                                                     cant1=0;
                                                                                     cant2=0;
                                                                                     cant1=valor(document.getElementById('txtcantfalt1').value);
                                                                                     cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantfalt2.value=format_number(cant2,3);                                                                                    
+                                                                                    document.envio.txtcantfalt2.value=format_number(cant2,2);                                                                                    
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
@@ -938,23 +906,10 @@
                                                                                         document.location = 'pdf.php?idenvio='+ref;
                                                                                 }
                                                                                 function deshabilitarBoton() {
-                                                                                    var cantdif1 = document.getElementById('txtcantdif1');
-                                                                                    var cantdif2 = document.getElementById('txtcantdif2');
-                                                                                    var estatus2 = document.getElementById('txtestatus2');
-                                                                                    var cantdev2 = document.getElementById('txtcantdev2');
-                                                                                    var cantfalt2 = document.getElementById('txtcantfalt2');
-                                                                                    var btngrabar = document.getElementById('btngrabar');
-
-                                                                                    if (cantdif1 && cantdif2 && btngrabar) {
-                                                                                        txtcantdif1.disabled = false;
-                                                                                        txtcantdif2.disabled = false;
-                                                                                        txtestatus2.disabled = false;  
-                                                                                        txtcantdev2.disabled = false;
-                                                                                        txtcantfalt2.disabled = false;
-                                                                                        btngrabar.disabled = true;
-                                                                                        btngrabar.value = 'Procesando...';
-                                                                                    }
-                                                                        
+                                                                                    document.getElementById('btngrabar').disabled = true;
+                                                                                    // Puedes agregar un mensaje al usuario, por ejemplo:
+                                                                                    document.getElementById('btngrabar').value = 'Procesando...'; 
+                                                                                }
 									</script>";
 		//Botones							
 		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
