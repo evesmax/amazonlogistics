@@ -906,11 +906,6 @@
                                                                                         document.location = 'pdf.php?idenvio='+ref;
                                                                                 }
                                                                                 function deshabilitarBoton() {
-                                                                                    document.getElementById('btngrabar').disabled = true;
-                                                                                    // Puedes agregar un mensaje al usuario, por ejemplo:
-                                                                                    document.getElementById('btngrabar').value = 'Procesando...'; 
-                                                                                }
-                                                                                function deshabilitarBoton() {
                                                                                     var cantdif1 = document.getElementById('txtcantdif1');
                                                                                     var cantdif2 = document.getElementById('txtcantdif2');
                                                                                     var estatus2 = document.getElementById('txtestatus2');
@@ -918,7 +913,7 @@
                                                                                     var cantfalt2 = document.getElementById('txtcantfalt2');
                                                                                     var btngrabar = document.getElementById('btngrabar');
 
-                                                                                    if (cantdif1 && cantdif2 && estatus2 && btngrabar) {
+                                                                                    if (cantdif1 && cantdif2 && btngrabar) {
                                                                                         txtcantdif1.disabled = false;
                                                                                         txtcantdif2.disabled = false;
                                                                                         txtestatus2.disabled = false;  
