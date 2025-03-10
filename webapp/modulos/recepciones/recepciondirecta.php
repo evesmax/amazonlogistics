@@ -54,9 +54,9 @@
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
                         if($('#txtcantrec1').val()*1==0 || $('#txtcantrec1').val()*1==0 ){
-                            camposValidos= false
+                            camposValidos= false;
                             alert('Debe escribir una cantidad mayor a cero');
-                            $('#txtcantrec1').val()=0;
+                            $('#txtcantrec1').val(0);
                             $('#txtcantrec1').focus(); 
                         }
                             
