@@ -100,7 +100,7 @@
                         cant2 = cant1 * jfactor;
                         document.envio.txtcantfalt2.value = format_number(cant2, 3);                                                                                    
                     } // <-- Ensure this closing brace is present
-            });
+            }); // <-- Ensure this closing brace is present
         </script>";	
 
 	include("../../netwarelog/catalog/conexionbd.php");
