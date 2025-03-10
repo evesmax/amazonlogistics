@@ -68,6 +68,38 @@
                         }
                     });
                     
+                    function recalcula(factor, edita, saldo) {
+                        var jfactor = 0, jfactord = 0, jedita = 0, jsaldo1 = 0, jsaldo2 = 0, 
+                            cant1 = 0, cant2 = 0, scant1, scant2, jsaldo = 0;
+                        jfactor = factor;
+                        jedita = edita;
+                        jfactord = jfactor;
+                        jsaldo = saldo;
+                        if (jfactor == 0) {
+                            jfactord = 1;
+                        }
+                        jsaldo1 = jsaldo / jfactor;
+                        jsaldo2 = jsaldo;
+                        scant1 = valor(document.getElementById('txtcantenv1').value);
+                        scant2 = valor(document.getElementById('txtcantenv2').value);
+                        scant2 = scant1 * jfactor;
+                        document.envio.txtcantenv2.value = format_number(scant2, 3); 
+                        cant1 = valor(document.getElementById('txtcantrec1').value);
+                        cant2 = cant1 * jfactor;
+                        document.envio.txtcantrec2.value = format_number(cant2, 2);                                                                                        
+                        document.envio.txtcantdif1.value = format_number(scant1 - cant1, 2);
+                        document.envio.txtcantdif2.value = format_number(scant2 - cant2, 3); 
+                        cant1 = 0;
+                        cant2 = 0;
+                        cant1 = valor(document.getElementById('txtcantdev1').value);
+                        cant2 = cant1 * jfactor;
+                        document.envio.txtcantdev2.value = format_number(cant2, 3); 
+                        cant1 = 0;
+                        cant2 = 0;
+                        cant1 = valor(document.getElementById('txtcantfalt1').value);
+                        cant2 = cant1 * jfactor;
+                        document.envio.txtcantfalt2.value = format_number(cant2, 3);                                                                                    
+                    }
             });
         </script>";	
 
