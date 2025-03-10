@@ -883,7 +883,7 @@
                                                                                     scant1=valor(document.getElementById('txtcantenv1').value);
                                                                                     scant2=valor(document.getElementById('txtcantenv2').value);
                                                                                     scant2=scant1*jfactor;
-                                                                                    document.envio.txtcantenv2.value=format_number(scant2,2); 
+                                                                                    document.envio.txtcantenv2.value=format_number(scant2,3); 
                                                                                     cant1=valor(document.getElementById('txtcantrec1').value);
                                                                                     cant2=cant1*jfactor;
                                                                                     document.envio.txtcantrec2.value=format_number(cant2,2);                                                                                        
@@ -893,12 +893,12 @@
                                                                                     cant2=0;
                                                                                     cant1=valor(document.getElementById('txtcantdev1').value);
                                                                                     cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantdev2.value=format_number(cant2,2); 
+                                                                                    document.envio.txtcantdev2.value=format_number(cant2,3); 
                                                                                     cant1=0;
                                                                                     cant2=0;
                                                                                     cant1=valor(document.getElementById('txtcantfalt1').value);
                                                                                     cant2=cant1*jfactor;
-                                                                                    document.envio.txtcantfalt2.value=format_number(cant2,2);                                                                                    
+                                                                                    document.envio.txtcantfalt2.value=format_number(cant2,3);                                                                                    
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
