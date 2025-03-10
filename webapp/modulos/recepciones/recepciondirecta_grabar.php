@@ -1,7 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+	
 	
 	include("../../netwarelog/catalog/conexionbd.php");
 
@@ -16,6 +14,7 @@ error_reporting(E_ALL);
             $cantenv1=$_REQUEST["txtcantenv1"];
             $cantenv2=$_REQUEST["txtcantenv2"];
             $obsenvio=$_REQUEST["txtobsenvio"];            
+
 
 //RECUPERANDO VARIABLES PARA GRABAR RECEPCION
             $idtraslado=$_REQUEST["txtidtraslado"];
@@ -90,7 +89,7 @@ error_reporting(E_ALL);
 				$msg=" Faltaron los folios";
 			}
 
-            if((trim($cartaporte)=="")){
+            			if((trim($cartaporte)=="")){
 				$politica=1;
 				$msg=" Falta la Carta Porte";
 			}
@@ -143,7 +142,7 @@ $fechaenvio=$fecharecepcion;
 
 //Afecta Cantidades en Traslados
         $sqlafecta="UPDATE logistica_traslados 
-                        set cantidad1=(cantidad1+".$can tenv1."),
+                        set cantidad1=(cantidad1+".$cantenv1."),
                         cantidad2=(cantidad2+".$cantenv2."), 
                         cantidadretirada1=(cantidadretirada1+".$cantenv1."),
                         cantidadretirada2=(cantidadretirada2+".$cantenv2."), 
@@ -275,7 +274,7 @@ $fechaenvio=$fecharecepcion;
                         $idfaltante = $conexion->insert_id();
             }  
 
-			    //Consecutivo Interno Bodega 
+						//Consecutivo Interno Bodega 
 				$consecutivobodega=-1;
 				//Afecta Folio Interno
 				$sqlcon="select ifnull(consecutivobodega,0) consecutivobodega from logistica_consecutivosbodega where idbodega=$idbodega";
