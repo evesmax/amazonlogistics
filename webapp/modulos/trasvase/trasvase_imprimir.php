@@ -67,8 +67,8 @@
                     $observaciones=$rs{"observaciones"};
                     $idproducto=$rs{"idproducto"};
                     $idproductodestino=$rs{"idproductodestino"};
-                    $cantidaddestino1=$rs{"cantidaddestinoreal1"};
-                    $cantidaddestinoreal2=$rs{"cantidaddestinorea2"};
+                    $cantidaddestinoreal1=$rs{"cantidaddestinoreal1"};
+                    $cantidaddestinoreal2=$rs{"cantidaddestinoreal2"};
                     $cantidadpnc1=$rs{"cantidadpnc1"};
                     $cantidadpnc2=$rs{"cantidadpnc1"};
                     $cantidadmerma1=$rs{"cantidadmerma1"};
