@@ -62,11 +62,11 @@
                             
                         // Si todos los campos son válidos, permite el envío del formulario
                         if (camposValidos) {
-                        return true;
+                            return true;
                         } else {
-                        return false; // Detiene el envío del formulario
+                            return false; // Detiene el envío del formulario
                         }
-                    });
+                    }); // <-- Ensure this closing brace is present
                     
                     function recalcula(factor, edita, saldo) {
                         var jfactor = 0, jfactord = 0, jedita = 0, jsaldo1 = 0, jsaldo2 = 0, 
@@ -99,7 +99,7 @@
                         cant1 = valor(document.getElementById('txtcantfalt1').value);
                         cant2 = cant1 * jfactor;
                         document.envio.txtcantfalt2.value = format_number(cant2, 3);                                                                                    
-                    }
+                    } // <-- Ensure this closing brace is present
             });
         </script>";	
 
