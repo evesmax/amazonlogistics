@@ -27,6 +27,8 @@
                     $cantidadpnc2=0;
                     $cantidadmerma1=0;
                     $cantidadmerma2=0;
+                    $cantidaddestinoreal1=0;
+                    $cantidaddestinoreal2=0;
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -81,6 +83,7 @@
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
+
 				//$tipoimagen="a";
                 if($tipoimagen=="i"){                        
                         $sqlimagen="select a.logotipo, concat(ifnull(a.rfc,''),' ',a.nombrefabricante) nombre, 
