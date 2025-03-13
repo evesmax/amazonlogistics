@@ -44,7 +44,7 @@
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
                         left join operaciones_bodegas obo on obo.idbodega=lt.idbodega
                         left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
-                        left join inventarios_productos ip2 on ip1.idproducto=lt.idproductodestino
+                        left join inventarios_productos ip2 on ip2.idproducto=lt.idproductodestino
                         left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
                         left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
                     Where lt.idtrasvase=".$idtrasvase;
