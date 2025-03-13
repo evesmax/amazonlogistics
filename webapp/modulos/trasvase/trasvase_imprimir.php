@@ -72,7 +72,7 @@
                     $cantidaddestinoreal1=$rs{"cantidaddestinoreal1"};
                     $cantidaddestinoreal2=$rs{"cantidaddestinoreal2"};
                     $cantidadpnc1=$rs{"cantidadpnc1"};
-                    $cantidadpnc2=$rs{"cantidadpnc1"};
+                    $cantidadpnc2=$rs{"cantidadpnc2"};
                     $cantidadmerma1=$rs{"cantidadmerma1"};
                     $cantidadmerma2=$rs{"cantidadmerma2"};
                     $capturista=$rs{"idcapturista"};
