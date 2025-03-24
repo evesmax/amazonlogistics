@@ -1,4 +1,8 @@
 <?php
+
+        date_default_timezone_set("America/Mexico_City");
+
+
         include("../../netwarelog/catalog/conexionbd.php");
         include("../../netwarelog/webconfig.php");
         //Funcion Agrega Consecutivos
