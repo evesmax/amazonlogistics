@@ -1,0 +1,33 @@
+Crea una webapp en PHP compatible con PHP 5.5.9 y MySQL 5.5.62 que cumpla con las siguientes funcionalidades:
+
+**1. Recepción de SQL:**
+   - El script PHP debe recibir una consulta SQL almacenada en una variable de sesión llamada `$_SESSION['sql_consulta']`.
+
+**2. Conexión a MySQL:**
+   - El script debe establecer una conexión a una base de datos MySQL utilizando las siguientes credenciales (por favor, incluye placeholders para que el usuario pueda reemplazarlos):
+     - Host: `[TU_HOST_MYSQL]`
+     - Usuario: `[TU_USUARIO_MYSQL]`
+     - Contraseña: `[TU_CONTRASEÑA_MYSQL]`
+     - Nombre de la base de datos: `[TU_NOMBRE_BD_MYSQL]`
+
+**3. Ejecución de la consulta SQL:**
+   - Ejecuta la consulta SQL almacenada en la variable de sesión utilizando la conexión establecida.
+
+**4. Construcción de tabla HTML con filtros y paginación:**
+   - Los resultados de la consulta deben mostrarse en una tabla HTML.
+   - Implementa funcionalidades de filtrado en cada columna de la tabla (utilizando JavaScript en el lado del cliente para filtrar los resultados mostrados).
+   - Implementa una paginación básica para la tabla (también utilizando JavaScript en el lado del cliente para mostrar un número limitado de filas por página y navegar entre ellas).
+
+**5. Botón de descarga de Excel:**
+   - Agrega un botón que permita al usuario descargar los resultados de la consulta en un archivo Excel. Puedes generar un archivo CSV y configurarlo para que se abra con Excel, o utilizar una librería PHP compatible con PHP 5.5 para generar un archivo .xlsx.
+
+**6. Botón de regreso:**
+   - Incluye un botón que permita al usuario regresar a la página anterior (puedes usar `window.history.back()` en JavaScript).
+
+**Requisitos adicionales:**
+
+* El código debe estar bien comentado y ser fácil de entender.
+* Proporciona el código PHP completo (incluyendo la conexión a la base de datos, la ejecución de la consulta, la generación de la tabla HTML, la lógica de filtrado y paginación en JavaScript, y la generación del archivo Excel).
+* Considera la seguridad al interactuar con la base de datos (aunque para este ejemplo, asume que la consulta SQL ya está validada antes de almacenarse en la sesión).
+
+Por favor, genera el código PHP completo para esta webapp que se desplegará dentro de un div.

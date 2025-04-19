@@ -1,0 +1,35 @@
+Necesito que hagas lo siguiente:
+
+1.- Adapta la solución para que la conexión sea con Mysql y que se conecte con estas credenciales:
+Host: 34.171.58.57
+User: nmdevel
+Password: nmdevel
+Database: _dbmlog0000018677
+
+2.- Agrega un archivo php que permita recibir por parámetro en el url algo como repologfilters.php?id=1 cuando se llame ese url lo que debe de hacer es recuperar con get el id del reporte y después debe de abrir la tabla repolog_reportes y filtrar por idreporte= al id que se recupero en el url 
+
+3.- EN caso de no encontrar resultados con la consulta regresar un texto que indique que el reporte desapareció
+
+4.- EN caso de encontrar coincidencia debe de obtener los valores de los campos: sql_select, sql_from, sql_where, sql_groupby, sql_having, sql_orderby y subtotales_agrupaciones
+
+5.- Con los datos de sql_where debe de crear una pantalla que dibujara filtros formados dinámicamente con el sql_where con estas reglas:
+
+Cuando encuentres: 
+
+5.1 Un texto entre corchetes por ejemplo: [Ingenio]
+Dubujaras: Ingenio y después un texto para que el usuario escriba un valor 
+
+5.2 Un texto con corchetes y ademas inicie el texto con # por ejemplo [#Fecha Corte]
+Dibujaras: Fecha Corte y después construirás un texto de selección de fecha con un boton que te muestre un calendario para que el usuario se le facilite seleccionar la fecha ademas debe de tener una validación de fecha correcta
+
+5.3 Un texto entre corchetes que inicie con @ por ejemplo [@Zafra;val;des;select idloteproducto val, descripcionlote des from inventarios_lotes order by des]
+
+En este caso después de la @ se encuentra el valor de la etiqueta del filtro, después del ; se determina que buscara val en la consulta y se es el nombre del campo valor y después del siguiente ; esta des que este representa el campo que sera la descripción y finalmente esta la consulta de sql que regresara el val y el des 
+
+Cuando se encuentre esto debe de construir una etiqueta con Zafra después un combo que se llenara con la consulta y ademas agregará en todos los casos una opción por default que diga todos 
+
+El combo debe de tener la funcionalidad de buscar elementos e irlos acumulando 
+
+
+6.- Despues de que el usuario seleccione los filtros definidos entonces le mostrara un botín a continuar este boton para un submit a un archivo de php que debe de recibir los parámetros seleccionados por el usuario y deberá de generar un sql valido para después enviárselo al index.php que ya crea una tabla con un sql dado 
+
