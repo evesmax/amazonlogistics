@@ -14,7 +14,7 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
+    include("../../netwarelog/webconfig.php");
     include("parametros.php");
     $idorg = $_SESSION["accelog_idorganizacion"];
     $sql = $_SESSION["sequel"];
