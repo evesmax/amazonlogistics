@@ -8,14 +8,24 @@
  * Compatible con PHP 5.5.9 y MySQL 5.5.62
  */
 
-// Incluir archivos de configuración necesarios
-require_once 'config.php';
-require_once 'sqlcleaner.php';
 
+ //Depedemcias Legacy
 // Inicializar sesión si no está iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
+    include("parametros.php");
+    $idorg = $_SESSION["accelog_idorganizacion"];
+    $sql = $_SESSION["sequel"];
+    $idestiloomision = $_SESSION["iestilo"];
+    $descripcion = $_SESSION["desc"];
+
+// Incluir archivos de configuración necesarios
+require_once 'config.php';
+require_once 'sqlcleaner.php';
+
+
 
 // Comprobar si hay un parámetro 'i'
 if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -33,3 +43,7 @@ if (isset($_GET['i']) && !empty($_GET['i'])) {
     echo "Error: Se requiere un ID de reporte válido. Por favor use: repolog.php?i=X donde X es el número de reporte.";
 }
 ?>
+
+<script>
+    $('#nmloader_div',window.parent.document).hide();
+</script>

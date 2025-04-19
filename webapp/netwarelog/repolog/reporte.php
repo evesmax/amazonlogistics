@@ -335,15 +335,7 @@ $_SESSION['query_columns'] = $columns;
     
     <!-- Script para ocultar el div de carga en ambiente productivo -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Buscar el div de carga por su ID
-            var loaderDiv = document.getElementById('nmloader_div');
-            
-            // Si existe, ocultarlo 
-            if (loaderDiv) {
-                loaderDiv.style.display = 'none';
-            }
-        });
+    $('#nmloader_div',window.parent.document).hide();
     </script>
 </body>
 </html>
