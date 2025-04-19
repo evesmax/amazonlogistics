@@ -1092,8 +1092,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         }
         $_SESSION['applied_filters'] = $appliedFilters;
         
-        // Redirect directly to index.php to mostrar resultados
-        header('Location: index.php');
+        // Redirect directly to reporte.php to mostrar resultados
+        header('Location: reporte.php');
         exit;
     }
 }
@@ -1331,5 +1331,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             </script>
         <?php endif; ?>
     </div>
+    
+    <!-- Script para ocultar el div de carga en ambiente productivo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Buscar el div de carga por su ID
+            var loaderDiv = document.getElementById('nmloader_div');
+            
+            // Si existe, ocultarlo 
+            if (loaderDiv) {
+                loaderDiv.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

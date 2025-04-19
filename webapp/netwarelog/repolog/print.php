@@ -240,7 +240,7 @@ $currentDate = date('d/m/Y H:i:s');
     
     <div class="print-button-container">
         <button onclick="window.print()" class="print-button">Imprimir / Guardar como PDF</button>
-        <a href="index.php" class="back-button">Volver a Resultados</a>
+        <a href="reporte.php" class="back-button">Volver a Resultados</a>
         <?php if (isset($_SESSION['repolog_report_id'])): ?>
             <a href="repolog.php?i=<?php echo intval($_SESSION['repolog_report_id']); ?>" class="back-button" style="background-color: #f0f0f0; color: #333;">Regresar al Reporte</a>
         <?php endif; ?>
@@ -302,6 +302,12 @@ $currentDate = date('d/m/Y H:i:s');
             // Verificar si estamos en modo de impresión (para no mostrar los botones de impresión)
             if (window.matchMedia && window.matchMedia('print').matches) {
                 document.querySelector('.print-button-container').style.display = 'none';
+            }
+            
+            // Buscar el div de carga por su ID y ocultarlo si existe
+            var loaderDiv = document.getElementById('nmloader_div');
+            if (loaderDiv) {
+                loaderDiv.style.display = 'none';
             }
         });
     </script>
