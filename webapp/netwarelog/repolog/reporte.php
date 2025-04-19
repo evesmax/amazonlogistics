@@ -8,7 +8,7 @@
  * 
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
-
+include("../../netwarelog/webconfig.php");
 // Include configuration file and utilities
 require_once 'config.php';
 require_once 'sqlcleaner.php';
