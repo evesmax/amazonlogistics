@@ -1079,7 +1079,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         foreach ($filters as $filter) {
             if ($filter['type'] != 'session') {
                 $filterKey = $filter['id'];
-                $label = $filter['label'] ?? $filter['name'] ?? '';
+                $label = isset($filter['label']) ? $filter['label'] : (isset($filter['name']) ? $filter['name'] : '');
                 
                 // Solo guardar los filtros que tienen valor
                 if (isset($filterValues[$filterKey]) && !empty($filterValues[$filterKey])) {
@@ -1104,7 +1104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtros de Reporte: <?php echo htmlspecialchars($report['nombrereporte'] ?? 'Sin nombre'); ?></title>
+    <title>Filtros de Reporte: <?php echo htmlspecialchars(isset($report['nombrereporte']) ? $report['nombrereporte'] : 'Sin nombre'); ?></title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <!-- Añadir jQuery y jQuery UI para el selector de fechas -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -1190,7 +1190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
 </head>
 <body>
     <div class="filters-container">
-        <h1>Filtros de Reporte: <?php echo htmlspecialchars($report['nombrereporte'] ?? 'Sin nombre'); ?></h1>
+        <h1>Filtros de Reporte: <?php echo htmlspecialchars(isset($report['nombrereporte']) ? $report['nombrereporte'] : 'Sin nombre'); ?></h1>
         
         <?php if (!empty($error)): ?>
             <div class="error-message">

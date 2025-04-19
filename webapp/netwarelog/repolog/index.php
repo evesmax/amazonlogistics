@@ -279,7 +279,7 @@ $_SESSION['query_columns'] = $columns;
                                 <?php foreach ($columns as $column): ?>
                                     <td>
                                     <?php 
-                                        $value = $row[$column] ?? '';
+                                        $value = isset($row[$column]) ? $row[$column] : '';
                                         
                                         // Detectar si parece contener HTML
                                         if (preg_match('/<[a-z][\s\S]*>/i', $value) && 

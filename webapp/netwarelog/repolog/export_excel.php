@@ -147,7 +147,7 @@ header('Cache-Control: max-age=0');
                         <?php foreach ($columns as $column): ?>
                             <td>
                             <?php 
-                                $value = $row[$column] ?? '';
+                                $value = isset($row[$column]) ? $row[$column] : '';
                                 
                                 // Detectar si parece contener HTML
                                 if (preg_match('/<[a-z][\s\S]*>/i', $value) && 
