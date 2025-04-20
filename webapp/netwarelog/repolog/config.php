@@ -4,12 +4,17 @@
  * 
  * Using PDO for MySQL database connection
  */
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+include("../../netwarelog/webconfig.php");
 
 // Database credentials for MySQL connection
-$host = '34.66.63.218';
-$dbname = '_dbmlog0000019551';
-$user = 'nmdevel';
-$password = 'nmdevel';
+$host = $servidor;
+$dbname = $bd;
+$user = $usuariobd;
+$password = $clavebd;
 
 // PDO connection string for MySQL
 define('DB_DSN', "mysql:host=$host;dbname=$dbname;charset=utf8");
@@ -21,8 +26,5 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+
 ?>
