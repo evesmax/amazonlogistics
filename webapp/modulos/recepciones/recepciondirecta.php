@@ -320,7 +320,7 @@
                     }
                     $conexion->cerrar_consulta($result);
                     
-                    echo "Capturista: ".$nombrecapturista;
+                    echo "Capturista:- $sqltrans- ".$nombrecapturista;
 
          //Genera Combo Bodegas
          //Verifica Politica para Seleccionar a otras bodegas
