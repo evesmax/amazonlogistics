@@ -16,6 +16,8 @@ if (session_status() == PHP_SESSION_NONE) {
 }
     include("../../netwarelog/webconfig.php");
     include("parametros.php");
+    include "../catalog/clases/clcsrf.php";
+
     $idorg = $_SESSION["accelog_idorganizacion"];
     $sql = $_SESSION["sequel"];
     $idestiloomision = $_SESSION["iestilo"];

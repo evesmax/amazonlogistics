@@ -1,6 +1,6 @@
 <?php
 	
-	
+        
 	include("../../netwarelog/catalog/conexionbd.php");
 
 	
@@ -25,7 +25,7 @@
                     $tipoimagen="";
                     $transportista="";
                     $fechaotfc="";
-					$nombremarca="";
+     		    $nombremarca="";
    //VARIABLES DEL ENVIO
                     
                     $fecharetiro="";
@@ -87,8 +87,8 @@
                 
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
-                                        $cancelado=$rs{"cancelado"};
-                                        $devuelto=$rs{"devuelto"};
+                                    $cancelado=$rs{"cancelado"};
+                                    $devuelto=$rs{"devuelto"};
                                     $otfc=$rs{"oefc"};
                                     $fechaoefc=$rs{"fecha"}; 
                                     $nombreingenio=$rs{"nombreingenio"};
