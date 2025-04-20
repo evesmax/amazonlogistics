@@ -319,11 +319,9 @@
                             $nombrecapturista=$rs{"capturista"};
                     }
                     $conexion->cerrar_consulta($result);
-                    
-                    echo "Capturista:- $sqltrans- ".$nombrecapturista;
-
-         //Genera Combo Bodegas
-         //Verifica Politica para Seleccionar a otras bodegas
+         
+        //Genera Combo Bodegas
+        //Verifica Politica para Seleccionar a otras bodegas
             $sel="";
             $cmbbodega = "<select id='cmbbodega' name='cmbbodega'>";
             $sqlbod = "Select b.idbodega, b.nombrebodega from operaciones_bodegas b
