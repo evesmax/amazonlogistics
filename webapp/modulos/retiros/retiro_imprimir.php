@@ -5,7 +5,8 @@
 
 	
 //RECUPERANDO VARIABLES
-         $idretiro=$_GET["folio"];
+        $idretiro=$_GET["folio"];
+        echo "llegue $idretiro";
 
         
     //OBTENIENDO INFORMACION BASICA
