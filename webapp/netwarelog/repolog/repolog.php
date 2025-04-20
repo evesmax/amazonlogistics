@@ -18,6 +18,7 @@ if (session_status() == PHP_SESSION_NONE) {
     include("parametros.php");
     include "../catalog/clases/clcsrf.php";
 
+    $usuario=$_SESSION["accelog_idempleado"];
     $idorg = $_SESSION["accelog_idorganizacion"];
     $sql = $_SESSION["sequel"];
     $idestiloomision = $_SESSION["iestilo"];
