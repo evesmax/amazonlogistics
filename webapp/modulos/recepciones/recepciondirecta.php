@@ -74,11 +74,10 @@
         </script>";	
 
 	include("../../netwarelog/catalog/conexionbd.php");
-	session_start();
-	$usuario= $_SESSION["accelog_idempleado"];
+	$usuario=$_SESSION["accelog_idempleado"];
     //RECUPERANDO VARIABLES
          $idtraslado=$_GET["idtraslado"];
-         $idenvio=$_GET["idenvio"];
+         $idenvio=0;
         
     //OBTENIENDO INFORMACION BASICA DE TRASLADOS
                     $otfc="";
@@ -319,7 +318,9 @@
                     while($rs = $conexion->siguiente($result)){
                             $nombrecapturista=$rs{"capturista"};
                     }
-                    $conexion->cerrar_consulta($result);         
+                    $conexion->cerrar_consulta($result);
+                    
+                    echo "Capturista: ".$nombrecapturista;
 
          //Genera Combo Bodegas
          //Verifica Politica para Seleccionar a otras bodegas
