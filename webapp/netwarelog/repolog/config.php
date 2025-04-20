@@ -6,7 +6,7 @@
  */
 
 // Database credentials for MySQL connection
-$host = '35.226.37.13';
+$host = '34.66.63.218';
 $dbname = '_dbmlog0000018677';
 $user = 'nmdevel';
 $password = 'nmdevel';
