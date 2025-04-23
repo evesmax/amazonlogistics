@@ -8,9 +8,6 @@
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
 
-
-ini_set('display_errors', '0');
-
 // Include configuration and utility files
 require_once 'config.php';
 require_once 'sqlcleaner.php';
@@ -1192,6 +1189,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
     </style>
 </head>
 <body>
+<?php 
+// Ocultar completamente el div de carga para el ambiente productivo
+// No incluimos el div para evitar cargar imágenes inexistentes
+// El script al final de la página también buscará este div y lo ocultará si existiera
+?>
     <div class="filters-container">
         <h1>Filtros de Reporte: <?php echo htmlspecialchars(isset($report['nombrereporte']) ? $report['nombrereporte'] : 'Sin nombre'); ?></h1>
         
@@ -1220,10 +1222,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                                        placeholder="<?php echo htmlspecialchars($filter['placeholder']); ?>">
                                        
                             <?php elseif ($filter['type'] === 'date'): ?>
+                                <?php $today = date('Y-m-d'); ?>
                                 <input type="text" 
                                        id="<?php echo htmlspecialchars($filter['id']); ?>" 
                                        name="<?php echo htmlspecialchars($filter['id']); ?>" 
                                        class="filter-date" 
+                                       value="<?php echo $today; ?>"
                                        placeholder="<?php echo htmlspecialchars($filter['placeholder']); ?>">
                                        
                             <?php elseif ($filter['type'] === 'combo'): ?>
