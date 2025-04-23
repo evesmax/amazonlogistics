@@ -8,7 +8,7 @@
  * 
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
 */
-
+ini_set('display_errors', '0');
 
 
 // Include configuration file and utilities
