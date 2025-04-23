@@ -1,5 +1,7 @@
 <?php
 
+ini_set('display_errors', '0');
+
 include("../../netwarelog/webconfig.php");
 include("../../netwarelog/catalog/conexionbd.php");
 
