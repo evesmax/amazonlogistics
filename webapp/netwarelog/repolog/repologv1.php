@@ -2,6 +2,8 @@
 
 // Consolida versiones legasy de repolog y repologv1
 
+ini_set('display_errors', '0');
+
     $idorg = $_SESSION["accelog_idorganizacion"];
     include("parametros.php");
     
