@@ -8,6 +8,9 @@
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
 
+
+ini_set('display_errors', '0');
+
 // Include configuration and utility files
 require_once 'config.php';
 require_once 'sqlcleaner.php';
