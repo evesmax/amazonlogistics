@@ -1,7 +1,7 @@
 <?php
 
 include("../../netwarelog/webconfig.php");
-//include("../../netwarelog/catalog/conexionbd.php");
+include("../../netwarelog/catalog/conexionbd.php");
 
 set_time_limit($tiempo_timeout);
 //Obtiene usuario
