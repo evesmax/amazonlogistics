@@ -26,12 +26,12 @@ if (isset($_SESSION['repolog_report_id'])) {
         $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        $stmt = $pdo->prepare("SELECT nombre FROM repolog_reportes WHERE idreporte = ?");
+        $stmt = $pdo->prepare("SELECT nombrereporte FROM repolog_reportes WHERE idreporte = ?");
         $stmt->execute([$_SESSION['repolog_report_id']]);
         $reportInfo = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($reportInfo && isset($reportInfo['nombre'])) {
-            $reportTitle = $reportInfo['nombre'];
+        if ($reportInfo && isset($reportInfo['nombrereporte'])) {
+            $reportTitle = $reportInfo['nombrereporte'];
         }
         
         $pdo = null;
@@ -122,11 +122,25 @@ header('Cache-Control: max-age=0');
 <body>
     <div class="header">
         <div class="logo">
-            <img src="https://www.qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/organizaciones/logo.png" alt="Logo Empresa" width="180">
+            <img src="assets/img/logo.png" alt="Logo Empresa" width="180">
         </div>
         <div class="title-container">
             <h1 class="report-title"><?php echo htmlspecialchars($reportTitle); ?></h1>
             <p class="report-date">Generado el: <?php echo $currentDate; ?></p>
+            
+            <?php if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])): ?>
+                <div class="report-filters" style="margin-top: 8px; font-size: 10pt; color: #666;">
+                    <strong>Filtros aplicados:</strong>
+                    <?php 
+                    $filterTexts = [];
+                    foreach ($_SESSION['applied_filters'] as $filter) {
+                        $filterTexts[] = '<span style="font-weight:bold;">' . htmlspecialchars($filter['label']) . ':</span> ' . 
+                                       htmlspecialchars($filter['value']);
+                    }
+                    echo implode(' | ', $filterTexts);
+                    ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     
@@ -150,13 +164,20 @@ header('Cache-Control: max-age=0');
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
                                 // Detectar si parece contener HTML
-                                if (preg_match('/<[a-z][\s\S]*>/i', $value) && 
-                                    (strpos($value, '<img') !== false || 
-                                     strpos($value, '<a') !== false || 
-                                     strpos($value, '<center') !== false ||
-                                     strpos($value, '<div') !== false)) {
-                                    // Es HTML, mostrarlo como tal
-                                    echo $value;
+                                if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+                                    // Contiene HTML, verificar si es una imagen
+                                    if (strpos($value, '<img') !== false) {
+                                        // Es una imagen, reemplazar con texto [IMAGEN]
+                                        echo '[IMAGEN]';
+                                    } else if (strpos($value, '<a') !== false || 
+                                              strpos($value, '<center') !== false ||
+                                              strpos($value, '<div') !== false) {
+                                        // Es otro tipo de HTML que no es imagen, mostrarlo como tal
+                                        echo $value;
+                                    } else {
+                                        // Es HTML pero no de los tipos específicos, escapar
+                                        echo htmlspecialchars($value);
+                                    }
                                 } else {
                                     // No es HTML, escapar como texto normal
                                     echo htmlspecialchars($value);
