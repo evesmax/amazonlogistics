@@ -1,4 +1,7 @@
 <?php
+
+ini_set('display_errors', '0');
+
 /**
  * RepoLog - Punto de entrada principal para reportes
  * 
@@ -26,7 +29,7 @@ if (isset($_GET['i']) && !empty($_GET['i'])) {
     $reportId = intval($_GET['i']);
     
     require_once 'repologv1.php';
-    
+
     // Almacenar el ID del reporte actual en la sesión
     $_SESSION['repolog_report_id'] = $reportId;
     
