@@ -9,9 +9,6 @@ set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
 
-$sqlAux = "inventarios_facturacion where idempleado=".$usuario;
-$resultado = $conexion->consultar($sqlAux);
-//echo $sqlAux;
 
 //Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
@@ -19,6 +16,7 @@ $uw=strpos($sqlAux,'WHERE');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
 
+ 
 // Expresión regular para extraer fechainicial y fechafinal
 if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matches)) {
     $fechainicial = $matches[1]; // 2025-02-01 00:00:00
@@ -27,6 +25,7 @@ if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matche
     $fechainicial = null;
     $fechafinal = null;
 }
+
 
 // Expresión regular para extraer otros filtros
 $filtros = [];
