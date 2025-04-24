@@ -109,7 +109,7 @@ foreach ($filtros as $nombre => $valor) {
     }    
     //echo $sqlAux."<br>";  
 }
-
+        echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
         //LLamar SP
         $sqlsp="call generaKardex('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
