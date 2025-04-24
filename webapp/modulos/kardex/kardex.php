@@ -13,7 +13,7 @@ $usuario=$_SESSION["accelog_idempleado"];
 
 
 //Recupero sql real
-$_SESSION["sequel"]=$_SESSION['sql_consulta_original_repologfilters'];
+$_SESSION["sequel"]=srt_replace("'",'"',$_SESSION['sql_consulta_original_repologfilters'];
 //Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
 $uw=strpos($sqlAux,'WHERE');
