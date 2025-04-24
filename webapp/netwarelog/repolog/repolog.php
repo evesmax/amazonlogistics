@@ -20,7 +20,7 @@ if (session_status() == PHP_SESSION_NONE) {
 // Comprobar si hay un parámetro 'i'
 if (isset($_GET['i']) && !empty($_GET['i'])) {
     $reportId = intval($_GET['i']);
-   require_once 'repologv1.php'; 
+   require 'repologv1.php'; 
    
     // Almacenar el ID del reporte actual en la sesión
     $_SESSION['repolog_report_id'] = $reportId;
@@ -34,3 +34,7 @@ if (isset($_GET['i']) && !empty($_GET['i'])) {
     echo "Error: Se requiere un ID de reporte válido. Por favor use: repolog.php?i=X donde X es el número de reporte.";
 }
 ?>
+
+ <script>
+    $('#nmloader_div',window.parent.document).hide();
+</script>
