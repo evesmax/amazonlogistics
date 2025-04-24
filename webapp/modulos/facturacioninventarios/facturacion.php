@@ -111,7 +111,8 @@ foreach ($filtros as $nombre => $valor) {
 }
 
         //LLamar SP
-        $sqlsp="call generaFacturacionInventario('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
+        $sqlsp="CALL generaFacturacionInventario('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
         //echo $sqlsp;
 
