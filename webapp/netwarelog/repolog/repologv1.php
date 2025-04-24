@@ -4,6 +4,7 @@
 
 ini_set('display_errors', '0');
 
+    $usuario=$_SESSION["accelog_idempleado"];
     $idorg = $_SESSION["accelog_idorganizacion"];
     include("parametros.php");
     

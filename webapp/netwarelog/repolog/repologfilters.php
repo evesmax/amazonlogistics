@@ -132,11 +132,14 @@ function parseWhereClause($whereClause) {
     preg_match_all($sessionPattern, $whereClause, $sessionMatches);
     foreach ($sessionMatches[1] as $match) {
         // Store in a hidden field for processing later
+        // Obtener valor de la variable de sesión si existe, de lo contrario usar un valor por defecto
+        $sessionValue = isset($_SESSION[$match]) ? $_SESSION[$match] : '0';
+        
         $filters[] = [
             'type' => 'session',
             'name' => $match,
             'id' => 'session_' . sanitizeId($match),
-            'value' => '2', // Valor fijo 2 como indicaste
+            'value' => $sessionValue, // Usar el valor de la sesión
             'original_name' => $match, // Original name as it appears in SQL
             'sql_pattern' => "[!$match]" // SQL pattern to be replaced
         ];
@@ -585,8 +588,8 @@ function buildSqlQuery($report, $filterValues) {
         // Second, handle session variables with the pattern [!VarName]
         foreach ($filters as $filter) {
             if ($filter['type'] === 'session') {
-                // For session variables, use the fixed value (2)
-                $filterValue = $filter['value']; // Should be '2'
+                // Para variables de sesión, usar el valor de la sesión
+                $filterValue = $filter['value']; // Valor de la sesión o por defecto
                 $pattern = $filter['sql_pattern']; // Should be [!VarName]
                 
                 // Replace session variables - always present
