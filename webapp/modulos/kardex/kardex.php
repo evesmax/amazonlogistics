@@ -39,7 +39,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
 
             if ($etiqueta == "Propietario") {
-                $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
+                $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '%".$valor."%' limit 1";
                 echo $sqlAux."<br>";
                 $resultado = $conexion->consultar($sqlAux);
                 while($rs = $conexion->siguiente($resultado)){
@@ -49,7 +49,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
             
             if ($etiqueta == "Marca") {
-                $sqlAux="Select idmarca id from vista_marcas where nombremarca like '".$valor."' limit 1";
+                $sqlAux="Select idmarca id from vista_marcas where nombremarca like '%".$valor."%' limit 1";
                 $resultado = $conexion->consultar($sqlAux);
                 while($rs = $conexion->siguiente($resultado)){
                     $idmarca=$rs{"id"};
@@ -59,7 +59,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
 
             if ($etiqueta == "Producto") {
 
-                    $sqlAux="select idproducto id from inventarios_productos where nombreproducto like '".$valor."' limit 1";
+                    $sqlAux="select idproducto id from inventarios_productos where nombreproducto like '%".$valor."%' limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
                         $idproducto=$rs{"id"};
@@ -69,7 +69,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
             if ($etiqueta=="Zafra") {
 
-                    $sqlAux="select idloteproducto id from inventarios_lotes where descripcionlote like '".$valor."' limit 1";
+                    $sqlAux="select idloteproducto id from inventarios_lotes where descripcionlote like '%".$valor."%' limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
                         $idloteproducto=$rs{"id"};
@@ -79,7 +79,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
             if ($etiqueta=="Estado Producto") {
 
-                    $sqlAux="select idestadoproducto id from inventarios_estados where descripcionestado like '".$valor."' limit 1";
+                    $sqlAux="select idestadoproducto id from inventarios_estados where descripcionestado like '%".$valor."%' limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
                         $idestado=$rs{"id"};
@@ -88,7 +88,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
 
             }    
             if ($etiqueta=="Nombre Bodega") {
-                    $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '".$valor."' limit 1";
+                    $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '%".$valor."%' limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
                         $idbodega=$rs{"id"};
