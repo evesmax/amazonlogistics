@@ -2,6 +2,8 @@
 
 ini_set('display_errors', '0');
 
+echo "SQL DE NUEVO REPORTE: ".$whereClause."<br>"."<br>";
+
 include("../../netwarelog/webconfig.php");
 include("../../netwarelog/catalog/conexionbd.php");
 
