@@ -15,7 +15,7 @@ $resultado = $conexion->consultar($sqlAux);
 
 //Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
-$uw=strpos($sqlAux,'where');
+$uw=strpos($sqlAux,'WHERE');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
 
