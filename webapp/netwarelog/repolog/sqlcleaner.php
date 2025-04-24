@@ -139,11 +139,11 @@ function fixFormatFunction($sql) {
  * Función para corregir problemas con fechas en WHERE
  */
 function fixDateConditions($sql) {
-    // Corregir condiciones con fechas mal formadas como "00:00:00"
-    $sql = preg_replace('/between\s+"([^"]*)"/', "between '$1'", $sql);
+    // Asegurar que todas las condiciones BETWEEN usen comillas dobles
+    $sql = preg_replace('/between\s+\'([^\']*)\'/', 'between "$1"', $sql);
     
-    // Corregir condiciones con [#Al] sin comillas
-    $sql = preg_replace('/\s+And\s+"\[#([^]]+)\]([^"]*)"/', " AND '[#$1]$2'", $sql);
+    // Corregir condiciones con [#Al] sin comillas - usar comillas dobles
+    $sql = preg_replace('/\s+And\s+"\[#([^]]+)\]([^"]*)"/', ' AND "[#$1]$2"', $sql);
     
     // NUEVA SOLUCIÓN: Eliminar condiciones con fecha no reemplazada [#Fecha]
     // Esto sucede cuando el usuario no proporciona un valor para el filtro
