@@ -19,6 +19,8 @@ $uw=strpos($sqlAux,'where');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
 
+echo $sqlwhere;
+
 // Expresión regular para extraer fechainicial y fechafinal
 if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matches)) {
     $fechainicial = $matches[1]; // 2025-02-01 00:00:00
