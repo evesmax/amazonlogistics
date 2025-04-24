@@ -158,19 +158,31 @@ function renderTable() {
             // Convertir a string si no lo es
             value = String(value);
             
-            // Detectar si parece ser contenido HTML
+            // Detectar si parece ser contenido HTML (case-insensitive)
             if (
                 value.indexOf('<') !== -1 && 
-                value.indexOf('>') !== -1 && 
-                (
-                    value.indexOf('<img') !== -1 || 
-                    value.indexOf('<a') !== -1 || 
-                    value.indexOf('<center') !== -1 ||
-                    value.indexOf('<div') !== -1
-                )
+                value.indexOf('>') !== -1
             ) {
-                // Es HTML, configurar innerHTML en lugar de textContent
-                cell.innerHTML = value;
+                // Convertir a minúsculas para mejor detección (sin modificar el valor original)
+                var valueLower = value.toLowerCase();
+                
+                if (
+                    valueLower.indexOf('<img') !== -1 || 
+                    valueLower.indexOf('<a') !== -1 || 
+                    valueLower.indexOf('<center') !== -1 ||
+                    valueLower.indexOf('<div') !== -1
+                ) {
+                    // Arreglar enlaces HTML sin comillas en los atributos href
+                    if (/<a\s+href=([^"'>]+)([^>]*)>/i.test(value)) {
+                        value = value.replace(/(<a\s+href=)([^"'>]+)([^>]*)>/gi, '$1"$2"$3>');
+                    }
+                    
+                    // Es HTML permitido, configurar innerHTML
+                    cell.innerHTML = value;
+                } else {
+                    // Es HTML pero no de los tipos permitidos, escapar
+                    cell.textContent = value;
+                }
             } else {
                 // No es HTML, usar textContent para escapar caracteres
                 cell.textContent = value;

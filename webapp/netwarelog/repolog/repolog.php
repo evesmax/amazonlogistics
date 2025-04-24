@@ -1,7 +1,4 @@
 <?php
-
-ini_set('display_errors', '0');
-
 /**
  * RepoLog - Punto de entrada principal para reportes
  * 
@@ -11,25 +8,19 @@ ini_set('display_errors', '0');
  * Compatible con PHP 5.5.9 y MySQL 5.5.62
  */
 
+// Incluir archivos de configuración necesarios
+require_once 'config.php';
+require_once 'sqlcleaner.php';
 
- //Depedemcias Legacy
 // Inicializar sesión si no está iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Incluir archivos de configuración necesarios
-require_once 'config.php';
-require_once 'sqlcleaner.php';
-
-
-
 // Comprobar si hay un parámetro 'i'
 if (isset($_GET['i']) && !empty($_GET['i'])) {
     $reportId = intval($_GET['i']);
     
-    require_once 'repologv1.php';
-
     // Almacenar el ID del reporte actual en la sesión
     $_SESSION['repolog_report_id'] = $reportId;
     
@@ -42,7 +33,3 @@ if (isset($_GET['i']) && !empty($_GET['i'])) {
     echo "Error: Se requiere un ID de reporte válido. Por favor use: repolog.php?i=X donde X es el número de reporte.";
 }
 ?>
-
-<script>
-    $('#nmloader_div',window.parent.document).hide();
-</script>
