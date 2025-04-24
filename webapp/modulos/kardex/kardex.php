@@ -11,18 +11,15 @@ set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
 
-$sqlAux = "inventarios_kardex where idempleado=".$usuario;
-$resultado = $conexion->consultar($sqlAux);
-//echo $sqlAux;
 
-//Recupera Filtros
+//Recupero sql real
 $_SESSION["sequel"]=$_SESSION['sql_consulta_original_repologfilters'];
+//Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
 $uw=strpos($sqlAux,'WHERE');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
 
-echo $sqlwhere."<br>".$sqlAux."<br>";
 
 // Expresión regular para extraer fechainicial y fechafinal
 if (preg_match('/ik\.fecha between "([^"]+)" And "([^"]+)"/', $sqlwhere, $matches)) {

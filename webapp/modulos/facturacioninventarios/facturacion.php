@@ -9,9 +9,11 @@ set_time_limit($tiempo_timeout);
 //Obtiene usuario
 $usuario=$_SESSION["accelog_idempleado"];
 
-
+//Recupero sql real
+$_SESSION["sequel"]=$_SESSION['sql_consulta_original_repologfilters'];
 //Recupera Filtros
 $sqlAux = $_SESSION["sequel"];
+
 $uw=strpos($sqlAux,'WHERE');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
