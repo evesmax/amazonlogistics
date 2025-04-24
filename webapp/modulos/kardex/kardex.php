@@ -35,7 +35,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
                 $fechainicial = $valor." 00:00:00"; // 2025-02-01 00:00:00
             }
             if ($etiqueta == "Al") {
-                $fechainicial = $valor." 23:59:59"; // 2025-02-01 00:00:00
+                $fechafinal = $valor." 23:59:59"; // 2025-02-01 00:00:00
             }
 
             if ($etiqueta == "Propietario") {
