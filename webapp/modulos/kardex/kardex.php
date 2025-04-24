@@ -40,6 +40,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
 
             if ($etiqueta == "Propietario") {
                 $sqlAux="Select idfabricante id from operaciones_fabricantes where nombrefabricante like '".$valor."' limit 1";
+                echo $sqlAux."<br>";
                 $resultado = $conexion->consultar($sqlAux);
                 while($rs = $conexion->siguiente($resultado)){
                     $idfabricante=$rs{"id"};
