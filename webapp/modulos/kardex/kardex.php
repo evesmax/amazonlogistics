@@ -2,7 +2,11 @@
 
 ini_set('display_errors', '0');
 
-echo $_SESSION['applied_filters'];
+echo $_SESSION['applied_filters'][0]."<br>";
+echo $_SESSION['applied_filters'][1]."<br>";
+echo $_SESSION['applied_filters'][2]."<br>";
+echo $_SESSION['applied_filters'][3]."<br>";
+
 
 include("../../netwarelog/webconfig.php");
 include("../../netwarelog/catalog/conexionbd.php");
