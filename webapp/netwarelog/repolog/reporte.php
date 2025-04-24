@@ -21,24 +21,34 @@ $query = '';
 $reportTitle = "Resultados de Consulta SQL";
 $appliedFilters = [];
 
-// Obtener el título del reporte y los filtros aplicados
+// Obtener el título del reporte, configuración de subtotales y los filtros aplicados
 if (isset($_SESSION['repolog_report_id'])) {
     try {
         $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // Obtener nombre del reporte
-        $stmt = $pdo->prepare("SELECT nombrereporte FROM repolog_reportes WHERE idreporte = ?");
+        // Obtener nombre del reporte y configuración de subtotales
+        $stmt = $pdo->prepare("SELECT nombrereporte, subtotales_agrupaciones, subtotales_subtotal FROM repolog_reportes WHERE idreporte = ?");
         $stmt->execute([$_SESSION['repolog_report_id']]);
         $reportInfo = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($reportInfo && isset($reportInfo['nombrereporte'])) {
             $reportTitle = $reportInfo['nombrereporte'];
+            
+            // Guardar la información de subtotales en variables de sesión
+            if (isset($reportInfo['subtotales_agrupaciones'])) {
+                $_SESSION['subtotales_agrupaciones'] = $reportInfo['subtotales_agrupaciones'];
+            }
+            
+            if (isset($reportInfo['subtotales_subtotal'])) {
+                $_SESSION['subtotales_subtotal'] = $reportInfo['subtotales_subtotal'];
+            }
         }
         
         $pdo = null;
     } catch (PDOException $e) {
         // Si hay error, mantenemos el título genérico
+        error_log("Error al obtener información del reporte: " . $e->getMessage());
     }
     
     // Obtener los filtros aplicados de la sesión
@@ -149,9 +159,181 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     $error = "No SQL query found in session.";
 }
 
+// Procesamos los subtotales si están configurados
+$hasSubtotals = false;
+$subtotalesAgrupaciones = isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : '';
+$subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+
+// Calculamos los subtotales si hay resultados y las configuraciones necesarias
+if (!empty($results) && !empty($subtotalesAgrupaciones) && !empty($subtotalesSubtotal)) {
+    $hasSubtotals = true;
+    $results = processSubtotals($results, $subtotalesAgrupaciones, $subtotalesSubtotal);
+}
+
 // Store results in session for export functionality
 $_SESSION['query_results'] = $results;
 $_SESSION['query_columns'] = $columns;
+
+/**
+ * Procesa los resultados para agregar subtotales según las configuraciones especificadas
+ * 
+ * @param array $data Los resultados de la consulta
+ * @param string $groupingFields Lista de campos para agrupar, separados por comas
+ * @param string $totalFields Lista de campos a totalizar, separados por comas
+ * @return array Resultados procesados con filas de subtotales y totales
+ */
+function processSubtotals($data, $groupingFields, $totalFields) {
+    if (empty($data) || empty($groupingFields) || empty($totalFields)) {
+        return $data;
+    }
+    
+    // Convertir las cadenas de campos a arrays
+    $groupFields = array_map('trim', explode(',', $groupingFields));
+    $sumFields = array_map('trim', explode(',', $totalFields));
+    
+    // Verificar que los campos existan en los datos
+    $firstRow = reset($data);
+    $validGroupFields = [];
+    foreach ($groupFields as $field) {
+        if (isset($firstRow[$field])) {
+            $validGroupFields[] = $field;
+        }
+    }
+    
+    $validSumFields = [];
+    foreach ($sumFields as $field) {
+        if (isset($firstRow[$field])) {
+            $validSumFields[] = $field;
+        }
+    }
+    
+    // Si no hay campos válidos para agrupar o totalizar, retornar los datos originales
+    if (empty($validGroupFields) || empty($validSumFields)) {
+        return $data;
+    }
+    
+    // Procesamos los subtotales y totales
+    $result = [];
+    $subtotals = [];
+    $grandTotals = [];
+    
+    // Inicializar totales generales
+    foreach ($validSumFields as $field) {
+        $grandTotals[$field] = 0;
+    }
+    
+    // Agrupamos los datos para calcular subtotales
+    $currentGroup = null;
+    $currentSubtotal = null;
+    
+    foreach ($data as $row) {
+        // Construir la clave del grupo actual
+        $groupKey = '';
+        foreach ($validGroupFields as $field) {
+            $groupKey .= $row[$field] . '|';
+        }
+        
+        // Si es un nuevo grupo, agregar subtotales del grupo anterior e inicializar nuevo grupo
+        if ($currentGroup !== null && $currentGroup !== $groupKey) {
+            // Agregar fila de subtotal del grupo anterior
+            if ($currentSubtotal !== null) {
+                $subtotalRow = [];
+                
+                // Copiar los valores de agrupación del último registro del grupo
+                foreach ($validGroupFields as $field) {
+                    $subtotalRow[$field] = $subtotals['lastRow'][$field];
+                }
+                
+                // Agregar los subtotales calculados
+                foreach ($validSumFields as $field) {
+                    $subtotalRow[$field] = $currentSubtotal[$field];
+                }
+                
+                // Marcar como fila de subtotal
+                $subtotalRow['__is_subtotal'] = true;
+                $subtotalRow['__subtotal_level'] = 1;
+                
+                // Agregar la fila de subtotal a los resultados
+                $result[] = $subtotalRow;
+            }
+            
+            // Reiniciar subtotales para el nuevo grupo
+            $currentSubtotal = [];
+            foreach ($validSumFields as $field) {
+                $currentSubtotal[$field] = 0;
+            }
+        }
+        
+        // Si es el primer registro o un nuevo grupo, inicializar subtotales
+        if ($currentGroup === null || $currentGroup !== $groupKey) {
+            $currentGroup = $groupKey;
+            
+            if ($currentSubtotal === null) {
+                $currentSubtotal = [];
+                foreach ($validSumFields as $field) {
+                    $currentSubtotal[$field] = 0;
+                }
+            }
+        }
+        
+        // Agregar el registro actual a los resultados
+        $result[] = $row;
+        
+        // Actualizar subtotales y totales generales
+        foreach ($validSumFields as $field) {
+            $value = is_numeric($row[$field]) ? floatval($row[$field]) : 0;
+            $currentSubtotal[$field] += $value;
+            $grandTotals[$field] += $value;
+        }
+        
+        // Guardar el último registro del grupo para referencia
+        $subtotals['lastRow'] = $row;
+    }
+    
+    // Agregar subtotal del último grupo
+    if ($currentSubtotal !== null) {
+        $subtotalRow = [];
+        
+        // Copiar los valores de agrupación del último registro
+        foreach ($validGroupFields as $field) {
+            $subtotalRow[$field] = $subtotals['lastRow'][$field];
+        }
+        
+        // Agregar los subtotales calculados
+        foreach ($validSumFields as $field) {
+            $subtotalRow[$field] = $currentSubtotal[$field];
+        }
+        
+        // Marcar como fila de subtotal
+        $subtotalRow['__is_subtotal'] = true;
+        $subtotalRow['__subtotal_level'] = 1;
+        
+        // Agregar la fila de subtotal a los resultados
+        $result[] = $subtotalRow;
+    }
+    
+    // Agregar fila de totales generales al final
+    $totalRow = [];
+    
+    // Dejar en blanco los campos de agrupación
+    foreach ($validGroupFields as $field) {
+        $totalRow[$field] = '';
+    }
+    
+    // Agregar los totales generales
+    foreach ($validSumFields as $field) {
+        $totalRow[$field] = $grandTotals[$field];
+    }
+    
+    // Marcar como fila de total general
+    $totalRow['__is_subtotal'] = true;
+    $totalRow['__subtotal_level'] = 2;  // Nivel 2 para total general
+    
+    // Agregar la fila de total general a los resultados
+    $result[] = $totalRow;
+    
+    return $result;
+}
 ?>
 
 <!DOCTYPE html>
@@ -190,6 +372,22 @@ $_SESSION['query_columns'] = $columns;
         .filter-label {
             font-weight: bold;
             margin-right: 5px;
+        }
+        
+        /* Estilos para filas de subtotales y totales */
+        .subtotal-row {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            border-top: 1px solid #ccc;
+        }
+        .total-row {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            border-top: 2px solid #999;
+            border-bottom: 2px solid #999;
+        }
+        .subtotal-row td, .total-row td {
+            padding: 8px 10px;
         }
     </style>
 </head>
@@ -280,12 +478,66 @@ $_SESSION['query_columns'] = $columns;
                     </thead>
                     <tbody>
                         <?php foreach ($results as $row): ?>
-                            <tr>
+                            <?php 
+                            // Determinar si es una fila de subtotal o total
+                            $isSubtotal = isset($row['__is_subtotal']) && $row['__is_subtotal'] === true;
+                            $subtotalLevel = isset($row['__subtotal_level']) ? intval($row['__subtotal_level']) : 0;
+                            
+                            // Definir clases CSS según el tipo de fila
+                            $rowClass = '';
+                            if ($isSubtotal) {
+                                $rowClass = $subtotalLevel === 1 ? 'subtotal-row' : 'total-row';
+                            }
+                            ?>
+                            <tr class="<?php echo $rowClass; ?>">
                                 <?php foreach ($columns as $column): ?>
                                     <td>
                                     <?php 
+                                        // Ignorar campos especiales de control
+                                        if ($column === '__is_subtotal' || $column === '__subtotal_level') {
+                                            echo '';
+                                            continue;
+                                        }
+                                        
                                         $value = isset($row[$column]) ? $row[$column] : '';
                                         
+                                        // Si es una fila de subtotal o total, dar formato especial
+                                        if ($isSubtotal) {
+                                            // Si es un campo numérico (aparece en los campos a totalizar)
+                                            $subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+                                            $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
+                                            
+                                            if (in_array($column, $sumFields)) {
+                                                // Formatear como número con 2 decimales
+                                                if (is_numeric($value)) {
+                                                    echo '<strong>' . number_format(floatval($value), 2, '.', ',') . '</strong>';
+                                                } else {
+                                                    echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                }
+                                                continue;
+                                            } else if ($subtotalLevel === 2) {
+                                                // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
+                                                if ($column === reset($columns)) {
+                                                    echo '<strong>TOTAL GENERAL</strong>';
+                                                    continue;
+                                                }
+                                            } else if ($subtotalLevel === 1) {
+                                                // Para filas de subtotal, mostrar "Subtotal:" y el valor del campo
+                                                $subtotalesAgrupaciones = isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : '';
+                                                $groupFields = array_map('trim', explode(',', $subtotalesAgrupaciones));
+                                                
+                                                if (in_array($column, $groupFields)) {
+                                                    if ($column === reset($groupFields)) {
+                                                        echo '<strong>Subtotal: ' . htmlspecialchars($value) . '</strong>';
+                                                    } else {
+                                                        echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                    }
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Procesamiento normal para filas regulares
                                         // Detectar si parece contener HTML (case-insensitive)
                                         if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
                                             // Convertir etiquetas comunes a minúsculas para detección consistente

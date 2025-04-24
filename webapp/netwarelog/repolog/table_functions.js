@@ -46,21 +46,40 @@ function filterTable() {
         }
     });
     
-    // Apply filters to the data
-    filteredData = tableData.filter(function(row) {
+    // Separar las filas normales de las filas de subtotales/totales
+    var regularRows = [];
+    var subtotalRows = [];
+    
+    // Primero filtramos las filas normales
+    tableData.forEach(function(row) {
+        // Si es una fila de subtotal o total, la guardamos para procesarla después
+        if (row.__is_subtotal) {
+            subtotalRows.push(row);
+            return;
+        }
+        
+        // Es una fila normal, aplicamos los filtros
+        var includeRow = true;
+        
         // Check if row matches all column filters
         for (var column in columnFilters) {
             var cellValue = String(row[column] || '').toLowerCase();
             if (cellValue.indexOf(columnFilters[column]) === -1) {
-                return false;
+                includeRow = false;
+                break;
             }
         }
         
         // Check if row matches global search
-        if (globalSearch) {
+        if (includeRow && globalSearch) {
             var matchesGlobal = false;
             
             for (var i = 0; i < tableColumns.length; i++) {
+                // Saltamos las columnas de control
+                if (tableColumns[i] === '__is_subtotal' || tableColumns[i] === '__subtotal_level') {
+                    continue;
+                }
+                
                 var colValue = String(row[tableColumns[i]] || '').toLowerCase();
                 if (colValue.indexOf(globalSearch) !== -1) {
                     matchesGlobal = true;
@@ -69,12 +88,22 @@ function filterTable() {
             }
             
             if (!matchesGlobal) {
-                return false;
+                includeRow = false;
             }
         }
         
-        return true;
+        if (includeRow) {
+            regularRows.push(row);
+        }
     });
+    
+    // Si hay filtros activos, no incluimos subtotales/totales
+    if (globalSearch || Object.keys(columnFilters).length > 0) {
+        filteredData = regularRows;
+    } else {
+        // Si no hay filtros, incluimos todas las filas (normales y subtotales/totales)
+        filteredData = tableData.slice();
+    }
     
     // Update pagination and table
     updatePagination();
@@ -150,14 +179,92 @@ function renderTable() {
     // Create rows for current page
     for (var i = startIndex; i < endIndex; i++) {
         var row = document.createElement('tr');
+        var rowData = filteredData[i];
+        
+        // Determinar si es una fila de subtotal o total
+        var isSubtotal = rowData.__is_subtotal === true;
+        var subtotalLevel = rowData.__subtotal_level || 0;
+        
+        // Asignar clase CSS para las filas de subtotales y totales
+        if (isSubtotal) {
+            if (subtotalLevel === 1) {
+                row.className = 'subtotal-row';
+            } else if (subtotalLevel === 2) {
+                row.className = 'total-row';
+            }
+        }
         
         tableColumns.forEach(function(column) {
+            // Ignorar columnas de control especiales
+            if (column === '__is_subtotal' || column === '__subtotal_level') {
+                return;
+            }
+            
             var cell = document.createElement('td');
-            var value = filteredData[i][column] || '';
+            var value = rowData[column] || '';
             
             // Convertir a string si no lo es
             value = String(value);
             
+            // Si es una fila de subtotal o total, dar formato especial
+            if (isSubtotal) {
+                // En filas de subtotales, los valores numéricos deben mostrarse en negrita
+                var isSumField = false;
+                
+                // Comprobar si la sesión tiene información de campos de suma
+                if (typeof subtotalesSubtotal !== 'undefined') {
+                    var sumFields = subtotalesSubtotal.split(',').map(function(item) { 
+                        return item.trim(); 
+                    });
+                    isSumField = sumFields.indexOf(column) !== -1;
+                } else {
+                    // Como fallback, verificamos si el valor parece numérico
+                    isSumField = !isNaN(parseFloat(value));
+                }
+                
+                if (isSumField) {
+                    // Formatear números con 2 decimales
+                    if (!isNaN(parseFloat(value))) {
+                        var num = parseFloat(value);
+                        value = '<strong>' + num.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong>';
+                        cell.innerHTML = value;
+                        row.appendChild(cell);
+                        return;
+                    } else {
+                        value = '<strong>' + value + '</strong>';
+                        cell.innerHTML = value;
+                        row.appendChild(cell);
+                        return;
+                    }
+                } else if (subtotalLevel === 2 && column === tableColumns[0]) {
+                    // Para fila de total general, mostrar "TOTAL GENERAL" en la primera columna
+                    cell.innerHTML = '<strong>TOTAL GENERAL</strong>';
+                    row.appendChild(cell);
+                    return;
+                } else if (subtotalLevel === 1) {
+                    // Para filas de subtotal, verificar si es un campo de agrupación
+                    var isGroupField = false;
+                    
+                    if (typeof subtotalesAgrupaciones !== 'undefined') {
+                        var groupFields = subtotalesAgrupaciones.split(',').map(function(item) { 
+                            return item.trim(); 
+                        });
+                        isGroupField = groupFields.indexOf(column) !== -1;
+                    }
+                    
+                    if (isGroupField) {
+                        if (column === groupFields[0]) {
+                            cell.innerHTML = '<strong>Subtotal: ' + escapeHtml(value) + '</strong>';
+                        } else {
+                            cell.innerHTML = '<strong>' + escapeHtml(value) + '</strong>';
+                        }
+                        row.appendChild(cell);
+                        return;
+                    }
+                }
+            }
+            
+            // Procesamiento normal para filas regulares
             // Detectar si parece ser contenido HTML (case-insensitive)
             if (
                 value.indexOf('<') !== -1 && 
@@ -193,4 +300,16 @@ function renderTable() {
         
         tableBody.appendChild(row);
     }
+}
+
+// Función auxiliar para escapar HTML
+function escapeHtml(text) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
