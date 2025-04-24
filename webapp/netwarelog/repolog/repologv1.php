@@ -158,4 +158,13 @@ ini_set('display_errors', '0');
     $_SESSION["repolog_valores_hum"] = $filtros_valores_hum;
     $_SESSION["repolog_cuantos"] = $filtros_cuantos;
     $_SESSION["repolog_filtros"] = $filtros_etiquetas;
+    
+    
     ///////
+
+
+    ?>
+
+    <script>
+    $('#nmloader_div',window.parent.document).hide();
+    </script>

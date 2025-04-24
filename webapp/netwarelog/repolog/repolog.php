@@ -20,7 +20,8 @@ if (session_status() == PHP_SESSION_NONE) {
 // Comprobar si hay un parámetro 'i'
 if (isset($_GET['i']) && !empty($_GET['i'])) {
     $reportId = intval($_GET['i']);
-    
+   require_once 'repologv1.php'; 
+   
     // Almacenar el ID del reporte actual en la sesión
     $_SESSION['repolog_report_id'] = $reportId;
     
