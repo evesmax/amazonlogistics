@@ -214,6 +214,11 @@ $currentDate = date('d/m/Y H:i:s');
     </style>
 </head>
 <body>
+<?php 
+// Ocultar completamente el div de carga para el ambiente productivo
+// No incluimos el div para evitar cargar imágenes inexistentes
+// El script al final de la página también buscará este div y lo ocultará si existiera
+?>
     <div class="print-header">
         <div class="print-logo">
             <img src="assets/img/logo.png" alt="Logo Empresa" class="company-logo">
@@ -271,14 +276,28 @@ $currentDate = date('d/m/Y H:i:s');
                             <?php 
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
-                                // Detectar si parece contener HTML
-                                if (preg_match('/<[a-z][\s\S]*>/i', $value) && 
-                                    (strpos($value, '<img') !== false || 
-                                     strpos($value, '<a') !== false || 
-                                     strpos($value, '<center') !== false ||
-                                     strpos($value, '<div') !== false)) {
-                                    // Es HTML, mostrarlo como tal
-                                    echo $value;
+                                // Detectar si parece contener HTML (case-insensitive)
+                                if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+                                    // Convertir etiquetas comunes a minúsculas para detección consistente
+                                    $valueLower = strtolower($value);
+                                    
+                                    // Verificar tipos de HTML permitidos (minúsculas o mayúsculas)
+                                    if (strpos($valueLower, '<img') !== false || 
+                                        strpos($valueLower, '<a') !== false || 
+                                        strpos($valueLower, '<center') !== false ||
+                                        strpos($valueLower, '<div') !== false) {
+                                        
+                                        // Arreglar enlaces HTML sin comillas en los atributos
+                                        if (preg_match('/<a\s+href=([^"\'>]+)([^>]*)>/i', $value)) {
+                                            $value = preg_replace('/(<a\s+href=)([^"\'>]+)([^>]*)>/i', '$1"$2"$3>', $value);
+                                        }
+                                        
+                                        // Es HTML permitido, mostrarlo como tal
+                                        echo $value;
+                                    } else {
+                                        // Es HTML pero no de los tipos permitidos, escapar
+                                        echo htmlspecialchars($value);
+                                    }
                                 } else {
                                     // No es HTML, escapar como texto normal
                                     echo htmlspecialchars($value);

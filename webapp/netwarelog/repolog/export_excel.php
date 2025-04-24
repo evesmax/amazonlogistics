@@ -163,15 +163,24 @@ header('Cache-Control: max-age=0');
                             <?php 
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
-                                // Detectar si parece contener HTML
+                                // Detectar si parece contener HTML (case-insensitive)
                                 if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+                                    // Convertir a minúsculas para mejor detección
+                                    $valueLower = strtolower($value);
+                                    
                                     // Contiene HTML, verificar si es una imagen
-                                    if (strpos($value, '<img') !== false) {
+                                    if (strpos($valueLower, '<img') !== false) {
                                         // Es una imagen, reemplazar con texto [IMAGEN]
                                         echo '[IMAGEN]';
-                                    } else if (strpos($value, '<a') !== false || 
-                                              strpos($value, '<center') !== false ||
-                                              strpos($value, '<div') !== false) {
+                                    } else if (strpos($valueLower, '<a') !== false || 
+                                              strpos($valueLower, '<center') !== false ||
+                                              strpos($valueLower, '<div') !== false) {
+                                        
+                                        // Arreglar enlaces HTML sin comillas en los atributos
+                                        if (preg_match('/<a\s+href=([^"\'>]+)([^>]*)>/i', $value)) {
+                                            $value = preg_replace('/(<a\s+href=)([^"\'>]+)([^>]*)>/i', '$1"$2"$3>', $value);
+                                        }
+                                        
                                         // Es otro tipo de HTML que no es imagen, mostrarlo como tal
                                         echo $value;
                                     } else {
