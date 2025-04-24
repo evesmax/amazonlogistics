@@ -2,7 +2,7 @@
 
 ini_set('display_errors', '0');
 
-echo "SQL DE NUEVO REPORTE: ".$whereClause."<br>"."<br>";
+echo "SQL DE NUEVO REPORTE: ".$_SESSION['sql_consulta_original_repologfilters']."<br>"."<br>";
 
 include("../../netwarelog/webconfig.php");
 include("../../netwarelog/catalog/conexionbd.php");
@@ -16,7 +16,7 @@ $resultado = $conexion->consultar($sqlAux);
 //echo $sqlAux;
 
 //Recupera Filtros
-$sqlAux = $_SESSION["sequel"];
+$sqlAux = $_SESSION["sequel2"];
 $uw=strpos($sqlAux,'where');
 $ct=strlen($sqlAux);
 $sqlwhere=substr($sqlAux,$uw);
