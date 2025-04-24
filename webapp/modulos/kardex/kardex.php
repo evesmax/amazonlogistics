@@ -2,10 +2,14 @@
 
 ini_set('display_errors', '0');
 
-echo $_SESSION['applied_filters'][0]."<br>";
-echo $_SESSION['applied_filters'][1]."<br>";
-echo $_SESSION['applied_filters'][2]."<br>";
-echo $_SESSION['applied_filters'][3]."<br>";
+    echo "<h3>Usando un bucle foreach:</h3>";
+    echo "<ul>";
+    foreach ($_SESSION['applied_filters'] as $clave => $valor) {
+        // Es buena idea escapar la salida si se muestra en HTML para prevenir XSS
+        echo "<li><strong>" . htmlspecialchars($clave) . ":</strong> " . htmlspecialchars((string)$valor) . "</li>";
+    }
+    echo "</ul>";
+    echo "<hr>";
 
 
 include("../../netwarelog/webconfig.php");
