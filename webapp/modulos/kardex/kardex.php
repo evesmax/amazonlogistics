@@ -2,14 +2,42 @@
 
 ini_set('display_errors', '0');
 
-    echo "<h3>Usando un bucle foreach:</h3>";
+if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters'])) {
+
+    echo "<h2>Filtros Aplicados:</h2>";
     echo "<ul>";
-    foreach ($_SESSION['applied_filters'] as $clave => $valor) {
-        // Es buena idea escapar la salida si se muestra en HTML para prevenir XSS
-        echo "<li><strong>" . htmlspecialchars($clave) . ":</strong> " . htmlspecialchars((string)$valor) . "</li>";
+
+    // 3. Recorre el arreglo de filtros
+    foreach ($_SESSION['applied_filters'] as $filtro) {
+        // Cada $filtro es un arreglo como ['label' => 'Algún Label', 'value' => 'Algún Valor']
+
+        // Verifica si las claves 'label' y 'value' existen en el sub-arreglo
+        if (isset($filtro['label']) && isset($filtro['value'])) {
+            $etiqueta = htmlspecialchars($filtro['label']); // Escapa para seguridad en HTML
+            $valor = htmlspecialchars((string)$filtro['value']); // Convierte a string y escapa
+
+            // Muestra la información
+            echo "<li>" . $etiqueta . ": " . $valor . "</li>";
+
+            // Aquí puedes hacer lo que necesites con $etiqueta y $valor
+            // Por ejemplo, usarlos en consultas SQL, mostrarlos en diferentes formatos, etc.
+
+        } else {
+            // Opcional: Manejar el caso de que un filtro no tenga 'label' o 'value'
+            echo "<li>Filtro con formato incorrecto encontrado.</li>";
+            // Puedes imprimir el filtro para depurar: print_r($filtro);
+        }
     }
+
     echo "</ul>";
-    echo "<hr>";
+
+} else {
+    echo "<p>No se encontraron filtros aplicados en la sesión o no es un arreglo.</p>";
+    // Puedes añadir un var_dump($_SESSION['applied_filters']); aquí para depurar si es necesario
+}
+
+
+
 
 
 include("../../netwarelog/webconfig.php");
