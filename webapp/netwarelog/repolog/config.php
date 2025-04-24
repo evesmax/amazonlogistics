@@ -5,11 +5,13 @@
  * Using PDO for MySQL database connection
  */
 
+include("../../netwarelog/webconfig.php");
+
 // Database credentials for MySQL connection
-$host = '34.55.165.151';  // IP actualizada del servidor
-$dbname = '_dbmlog0000018677';
-$user = 'nmdevel';
-$password = 'nmdevel';
+$host = $servidor;  // IP actualizada del servidor
+$dbname = $bd;
+$user = $usuariobd;
+$password = $clavebd;
 
 // PDO connection string for MySQL
 define('DB_DSN', "mysql:host=$host;dbname=$dbname;charset=utf8");
