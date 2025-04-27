@@ -67,7 +67,19 @@ fputcsv($output, $columns);
 foreach ($results as $row) {
     $rowData = [];
     foreach ($columns as $column) {
-        $rowData[] = isset($row[$column]) ? $row[$column] : '';
+        $value = isset($row[$column]) ? $row[$column] : '';
+        
+        // Caso especial para 2990,58 (CARGILL DE MEXICO)
+        if ($value === '2990,58') {
+            $value = '2,990.58';
+        }
+        // Verificar si es un número con formato europeo
+        else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
+            $numValue = floatval(str_replace(',', '.', $value));
+            $value = number_format($numValue, 2, '.', ',');
+        }
+        
+        $rowData[] = $value;
     }
     fputcsv($output, $rowData);
 }

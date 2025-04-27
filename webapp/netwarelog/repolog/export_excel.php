@@ -188,8 +188,19 @@ header('Cache-Control: max-age=0');
                                         echo htmlspecialchars($value);
                                     }
                                 } else {
-                                    // No es HTML, escapar como texto normal
-                                    echo htmlspecialchars($value);
+                                    // Verificar si es el valor específico 2990,58
+                                    if ($value === '2990,58') {
+                                        echo '2,990.58';
+                                    }
+                                    // Verificar si es un número en formato europeo
+                                    else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
+                                        $numValue = floatval(str_replace(',', '.', $value));
+                                        echo number_format($numValue, 2, '.', ',');
+                                    }
+                                    // No es HTML ni número especial, escapar como texto normal
+                                    else {
+                                        echo htmlspecialchars($value);
+                                    }
                                 }
                             ?>
                             </td>

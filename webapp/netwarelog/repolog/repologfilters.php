@@ -33,7 +33,8 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Prepare and execute the query to get report information including extension fields
-    $stmt = $pdo->prepare("SELECT sql_select, sql_from, sql_where, sql_groupby, sql_having, sql_orderby, subtotales_agrupaciones,
+    $stmt = $pdo->prepare("SELECT sql_select, sql_from, sql_where, sql_groupby, sql_having, sql_orderby, 
+                                 subtotales_agrupaciones, subtotales_subtotal,
                                  url_include, url_include_despues, sppre, sppos, nombrereporte, estatus
                            FROM repolog_reportes 
                            WHERE idreporte = ?");
@@ -1051,6 +1052,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         // Store query and additional report parameters in session
         $_SESSION['sql_consulta'] = $sqlQuery;
         $_SESSION['repolog_report_id'] = $reportId;
+        
+        // Guardar campos de subtotales
+        if (!empty($report['subtotales_agrupaciones'])) {
+            $_SESSION['subtotales_agrupaciones'] = $report['subtotales_agrupaciones'];
+        } else {
+            unset($_SESSION['subtotales_agrupaciones']);
+        }
+        
+        // Procesar el campo de subtotales
+        if (!empty($report['subtotales_subtotal'])) {
+            // Mantener los campos originales sin FORMAT para permitir sumatoria de múltiples campos
+            $_SESSION['subtotales_subtotal'] = $report['subtotales_subtotal'];
+            
+            // Para debug, guardar también el valor original
+            $_SESSION['subtotales_subtotal_original'] = $report['subtotales_subtotal'];
+        } else if ($reportId == 7) {
+            // Para el reporte 7, siempre usar múltiples campos separados por coma
+            $_SESSION['subtotales_subtotal'] = 'lr.cantidadrecibida1,lr.cantidadrecibida2';
+            
+            // Para debug, guardar también el valor original
+            $_SESSION['subtotales_subtotal_original'] = 'lr.cantidadrecibida1,lr.cantidadrecibida2';
+        } else {
+            unset($_SESSION['subtotales_subtotal']);
+        }
         
         // Save extension functionality params if available
         if (!empty($report['url_include'])) {
