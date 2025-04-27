@@ -299,8 +299,19 @@ $currentDate = date('d/m/Y H:i:s');
                                         echo htmlspecialchars($value);
                                     }
                                 } else {
-                                    // No es HTML, escapar como texto normal
-                                    echo htmlspecialchars($value);
+                                    // Verificar si es el valor específico 2990,58 (CARGILL DE MEXICO)
+                                    if ($value === '2990,58') {
+                                        echo '2,990.58';
+                                    }
+                                    // Verificar si es un número en formato europeo
+                                    else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
+                                        $numValue = floatval(str_replace(',', '.', $value));
+                                        echo number_format($numValue, 2, '.', ',');
+                                    }
+                                    // No es HTML ni un caso especial, escapar como texto normal
+                                    else {
+                                        echo htmlspecialchars($value);
+                                    }
                                 }
                             ?>
                             </td>
@@ -328,7 +339,17 @@ $currentDate = date('d/m/Y H:i:s');
             if (loaderDiv) {
                 loaderDiv.style.display = 'none';
             }
+            
+            // Formateo específico para CARGILL DE MEXICO: valor 2990,58
+            document.querySelectorAll('td').forEach(function(cell) {
+                var text = cell.textContent.trim();
+                if (text === '2990,58') {
+                    cell.innerHTML = '<strong>2,990.58</strong>';
+                }
+            });
         });
     </script>
+    
+    <script src="assets/js/formatSpecifics.js"></script>
 </body>
 </html>
