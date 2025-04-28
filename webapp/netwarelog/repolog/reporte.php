@@ -8,8 +8,6 @@
  * 
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
-ini_set('display_errors', '1');
-
 
 // Include configuration file and utilities
 require_once 'config.php';
@@ -592,7 +590,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         
         foreach (array_keys($firstRow) as $column) {
             if (stripos($column, $baseName) !== false || 
-                levenshtein(strtolower($column), strtolower($baseName)) <= 3) {
+                (function_exists('levenshtein') && levenshtein(strtolower($column), strtolower($baseName)) <= 3)) {
                 $validSumFields[] = $column;
                 $columnMapping[$fieldTrim] = $column;
                 
@@ -996,8 +994,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     
                                                     // Intentar mapeo directo si coincide nombre con una columna disponible
                                                     foreach ($columns as $col) {
+                                                        // Verificar si la función levenshtein existe en esta versión de PHP
                                                         if (stripos($col, $fieldBase) !== false || 
-                                                            levenshtein(strtolower($col), strtolower($fieldBase)) <= 3) {
+                                                            (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
                                                             $mappedSumFields[] = $col;
                                                             $matchFound = true;
                                                             $_SESSION['debug_field_mapping_sql_to_display'][] = [
@@ -1109,7 +1108,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                         $matchFound = false;
                                                         foreach ($columns as $col) {
                                                             if (stripos($col, $fieldBase) !== false || 
-                                                                levenshtein(strtolower($col), strtolower($fieldBase)) <= 3) {
+                                                                (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
                                                                 $mappedGroupFields[] = $col;
                                                                 $matchFound = true;
                                                                 break;
@@ -1197,9 +1196,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
 
     <?php if (!empty($results)): ?>
         <script>
-            // Store data for JavaScript processing
-            const tableData = <?php echo json_encode($results); ?>;
-            const tableColumns = <?php echo json_encode($columns); ?>;
+            // Store data for JavaScript processing (usando var en lugar de const para compatibilidad)
+            var tableData = <?php echo json_encode($results); ?>;
+            var tableColumns = <?php echo json_encode($columns); ?>;
             
             // Código para asegurarse que los valores numéricos tienen el formato correcto
             // Pero respetando los formatos originales en lo posible
