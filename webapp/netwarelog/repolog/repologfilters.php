@@ -23,7 +23,7 @@ $reportId = intval($_GET['id']);
 // Initialize variables
 $report = null;
 $error = '';
-$filters = [];
+$filters = array();
 
 try {
     // Create a PDO connection
@@ -67,7 +67,7 @@ try {
  * @return array Array of filter objects
  */
 function parseWhereClause($whereClause) {
-    $filters = [];
+    $filters = array();
     
     // Regular expressions to match different filter patterns
     $regularPattern = '/\[([^\]]+)\]/'; // Matches [FilterName]
@@ -158,7 +158,7 @@ function parseWhereClause($whereClause) {
  * @return array Array of options
  */
 function getComboOptions($sql, $valueField, $displayField) {
-    $options = [];
+    $options = array();
     
     try {
         // Create a PDO connection
@@ -186,7 +186,7 @@ function getComboOptions($sql, $valueField, $displayField) {
         
     } catch (Exception $e) {
         // Return empty array on error
-        $options = [];
+        $options = array();
     }
     
     return $options;

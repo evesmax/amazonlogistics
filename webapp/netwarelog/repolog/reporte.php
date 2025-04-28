@@ -280,7 +280,7 @@ if (!empty($results)) {
         }
     } else {
         // No calcular subtotales si no están configurados
-        error_log("Subtotales no configurados explícitamente para el reporte " . ($_SESSION['repolog_report_id'] ?? 'desconocido'));
+        error_log("Subtotales no configurados explícitamente para el reporte " . (isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'desconocido'));
     }
 }
     
@@ -395,17 +395,17 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     fixAmericanNumberFormat($data);
     
     // Para depuración, almacenar los parámetros originales
-    $_SESSION['debug_subtotals_params'] = [
+    $_SESSION['debug_subtotals_params'] = array(
         'groupingFields' => $groupingFields,
         'totalFields' => $totalFields,
         'data_sample' => !empty($data) ? array_slice($data, 0, 3) : 'empty'
-    ];
+    );
     
     // Inicializar arrays para depuración
-    $_SESSION['debug_number_conversion'] = [];
-    $_SESSION['debug_field_mapping'] = [];
-    $_SESSION['debug_american_format'] = [];
-    $_SESSION['american_format_fixes'] = [];
+    $_SESSION['debug_number_conversion'] = array();
+    $_SESSION['debug_field_mapping'] = array();
+    $_SESSION['debug_american_format'] = array();
+    $_SESSION['american_format_fixes'] = array();
     
     // Log para depuración
     error_log("processSubtotals: Campos a agrupar = $groupingFields, Campos a sumar = $totalFields");
@@ -536,7 +536,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         
         foreach (array_keys($firstRow) as $column) {
             if (stripos($column, $baseName) !== false || 
-                levenshtein(strtolower($column), strtolower($baseName)) <= 3) {
+                (function_exists('levenshtein') && levenshtein(strtolower($column), strtolower($baseName)) <= 3)) {
                 $validGroupFields[] = $column;
                 $columnMapping[$field] = $column;
                 
@@ -621,13 +621,13 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     }
     
     // Agregar información de mapeo a la sesión para depuración
-    $_SESSION['debug_column_mapping'] = [
+    $_SESSION['debug_column_mapping'] = array(
         'original_group_fields' => $groupFields,
         'original_sum_fields' => $sumFields,
         'valid_group_fields' => $validGroupFields,
         'valid_sum_fields' => $validSumFields,
         'column_mapping' => $columnMapping
-    ];
+    );
     
     // Si no hay campos válidos para totalizar, retornar los datos originales
     if (empty($validSumFields)) {
@@ -638,9 +638,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     $calculateOnlyGrandTotals = empty($validGroupFields);
     
     // Procesamos los subtotales y totales
-    $result = [];
-    $subtotals = [];
-    $grandTotals = [];
+    $result = array();
+    $subtotals = array();
+    $grandTotals = array();
     
     // Inicializar totales generales
     foreach ($validSumFields as $field) {
@@ -662,7 +662,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         if ($currentGroup !== null && $currentGroup !== $groupKey) {
             // Agregar fila de subtotal del grupo anterior
             if ($currentSubtotal !== null) {
-                $subtotalRow = [];
+                $subtotalRow = array();
                 
                 // Copiar los valores de agrupación del último registro del grupo
                 foreach ($validGroupFields as $field) {
@@ -683,7 +683,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             }
             
             // Reiniciar subtotales para el nuevo grupo
-            $currentSubtotal = [];
+            $currentSubtotal = array();
             foreach ($validSumFields as $field) {
                 $currentSubtotal[$field] = 0;
             }
@@ -694,7 +694,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             $currentGroup = $groupKey;
             
             if ($currentSubtotal === null) {
-                $currentSubtotal = [];
+                $currentSubtotal = array();
                 foreach ($validSumFields as $field) {
                     $currentSubtotal[$field] = 0;
                 }
@@ -725,7 +725,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     
     // Agregar subtotal del último grupo
     if ($currentSubtotal !== null) {
-        $subtotalRow = [];
+        $subtotalRow = array();
         
         // Copiar los valores de agrupación del último registro
         foreach ($validGroupFields as $field) {
@@ -746,7 +746,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     }
     
     // Agregar fila de totales generales al final
-    $totalRow = [];
+    $totalRow = array();
     
     // Dejar en blanco los campos de agrupación, excepto el primero que mostrará "TOTAL GENERAL"
     $firstField = true;

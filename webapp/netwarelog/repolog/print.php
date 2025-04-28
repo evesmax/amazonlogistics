@@ -10,10 +10,10 @@
 require_once 'config.php';
 
 // Initialize variables
-$results = [];
-$columns = [];
+$results = array();
+$columns = array();
 $error = '';
-$appliedFilters = [];
+$appliedFilters = array();
 
 // Recuperar resultados de la sesión
 if (isset($_SESSION['query_results']) && isset($_SESSION['query_columns'])) {
@@ -231,7 +231,7 @@ $currentDate = date('d/m/Y H:i:s');
                 <div class="print-filters" style="margin-top: 8px; font-size: 12px;">
                     <strong>Filtros aplicados:</strong>
                     <?php 
-                    $filterTexts = [];
+                    $filterTexts = array();
                     foreach ($appliedFilters as $filter) {
                         $filterTexts[] = '<span style="font-weight:bold;">' . htmlspecialchars($filter['label']) . ':</span> ' . 
                                          htmlspecialchars($filter['value']);

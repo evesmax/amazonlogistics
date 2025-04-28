@@ -27,7 +27,7 @@ if (isset($_SESSION['repolog_report_id'])) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         $stmt = $pdo->prepare("SELECT nombre FROM repolog_reportes WHERE idreporte = ?");
-        $stmt->execute([$_SESSION['repolog_report_id']]);
+        $stmt->execute(array($_SESSION['repolog_report_id']));
         $reportInfo = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($reportInfo && isset($reportInfo['nombre'])) {
@@ -51,21 +51,21 @@ $output = fopen('php://output', 'w');
 fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
 
 // Add company name and report title rows
-fputcsv($output, ["RepoLog - Sistema de Reportes"]);
-fputcsv($output, ["Reporte: " . $reportTitle]);
-fputcsv($output, ["Fecha de generación: " . date('d/m/Y H:i:s')]);
-fputcsv($output, []); // Empty row for spacing
+fputcsv($output, array("RepoLog - Sistema de Reportes"));
+fputcsv($output, array("Reporte: " . $reportTitle));
+fputcsv($output, array("Fecha de generación: " . date('d/m/Y H:i:s')));
+fputcsv($output, array()); // Empty row for spacing
 
 // Add reference to logo
-fputcsv($output, ["Logo: www.qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/organizaciones/logo.png"]);
-fputcsv($output, []); // Empty row before data
+fputcsv($output, array("Logo: www.qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/organizaciones/logo.png"));
+fputcsv($output, array()); // Empty row before data
 
 // Add column headers as first row
 fputcsv($output, $columns);
 
 // Add data rows
 foreach ($results as $row) {
-    $rowData = [];
+    $rowData = array();
     foreach ($columns as $column) {
         $value = isset($row[$column]) ? $row[$column] : '';
         
@@ -85,8 +85,8 @@ foreach ($results as $row) {
 }
 
 // Add footer
-fputcsv($output, []); // Empty row for spacing
-fputcsv($output, ["Este reporte ha sido generado por el sistema RepoLog. © " . date('Y')]);
+fputcsv($output, array()); // Empty row for spacing
+fputcsv($output, array("Este reporte ha sido generado por el sistema RepoLog. © " . date('Y')));
 
 // Close the file pointer
 fclose($output);

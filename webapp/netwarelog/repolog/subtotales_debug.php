@@ -8,7 +8,7 @@
 require_once 'config.php';
 
 // Verificar datos disponibles en sesión
-$datos = [
+$datos = array(
     'ID del Reporte' => isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'No definido',
     'Nombre del Reporte' => isset($_SESSION['nombrereporte']) ? $_SESSION['nombrereporte'] : 'No definido',
     'Subtotales Agrupaciones' => isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : 'No definido',
@@ -24,7 +24,7 @@ $datos = [
 ];
 
 // Si hay resultados, analizar algunos valores numéricos
-$numericAnalysis = [];
+$numericAnalysis = array();
 if (isset($_SESSION['query_results']) && !empty($_SESSION['query_results'])) {
     $results = $_SESSION['query_results'];
     $firstRow = reset($results);
@@ -33,7 +33,7 @@ if (isset($_SESSION['query_results']) && !empty($_SESSION['query_results'])) {
     foreach ($firstRow as $field => $value) {
         if (is_string($value) && (strpos($value, ',') !== false || is_numeric(str_replace(',', '.', $value)))) {
             // Parece un valor numérico o con formatos especiales
-            $numericAnalysis[$field] = [
+            $numericAnalysis[$field] = array(
                 'Valor Original' => $value,
                 'Tipo' => gettype($value),
                 'Es Numérico?' => is_numeric($value) ? 'Sí' : 'No',
@@ -75,7 +75,7 @@ function convertirEuropeoANumerico($valor) {
 }
 
 // Probar ejemplos de conversión
-$ejemplos = [
+$ejemplos = array(
     '1234',
     '1234.56',
     '1,234.56',
@@ -84,9 +84,9 @@ $ejemplos = [
     '2990,58'
 ];
 
-$pruebasConversion = [];
+$pruebasConversion = array();
 foreach ($ejemplos as $ejemplo) {
-    $pruebasConversion[$ejemplo] = [
+    $pruebasConversion[$ejemplo] = array(
         'Resultado' => convertirEuropeoANumerico($ejemplo),
         'Formato Numérico' => number_format(convertirEuropeoANumerico($ejemplo), 2, '.', ',')
     ];

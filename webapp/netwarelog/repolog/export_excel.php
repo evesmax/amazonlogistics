@@ -132,7 +132,7 @@ header('Cache-Control: max-age=0');
                 <div class="report-filters" style="margin-top: 8px; font-size: 10pt; color: #666;">
                     <strong>Filtros aplicados:</strong>
                     <?php 
-                    $filterTexts = [];
+                    $filterTexts = array();
                     foreach ($_SESSION['applied_filters'] as $filter) {
                         $filterTexts[] = '<span style="font-weight:bold;">' . htmlspecialchars($filter['label']) . ':</span> ' . 
                                        htmlspecialchars($filter['value']);
