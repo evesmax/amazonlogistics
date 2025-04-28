@@ -45,10 +45,23 @@ if (isset($_SESSION['repolog_report_id'])) {
             }
         }
         
+        // Para depuración
+        error_log("Reporte ID: " . $_SESSION['repolog_report_id']);
+        error_log("Información del reporte: " . print_r($reportInfo, true));
+        
+        // Registro para depuración
+        error_log("Configuración de subtotales desde BD: Agrupaciones = " . 
+                  (isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : 'No definido') . 
+                  ", Campos a sumar = " . 
+                  (isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : 'No definido'));
+        
         $pdo = null;
     } catch (PDOException $e) {
         // Si hay error, mantenemos el título genérico
         error_log("Error al obtener información del reporte: " . $e->getMessage());
+        
+        // Log del error
+        error_log("No se pudo obtener la configuración de subtotales de la base de datos.");
     }
     
     // Obtener los filtros aplicados de la sesión
@@ -192,48 +205,82 @@ if (isset($_SESSION['repolog_report_id'])) {
     }
 }
 
-// Aplicar subtotales si hay resultados
+// Aplicar subtotales si hay resultados y si están configurados explícitamente
 if (!empty($results)) {
-    // Si al menos hay campos para totalizar, aplicar subtotales
-    if (!empty($subtotalesSubtotal)) {
-        $hasSubtotals = true;
-        
-        // Si no hay campos de agrupación, usaremos solo totales generales
-        $groupingFields = !empty($subtotalesAgrupaciones) ? $subtotalesAgrupaciones : '';
-        
-        // Guardar para depuración
-        $_SESSION['debug_process_subtotals'] = [
-            'groupingFields' => $groupingFields,
-            'subtotalesSubtotal' => $subtotalesSubtotal
-        ];
-        
-        $results = processSubtotals($results, $groupingFields, $subtotalesSubtotal);
+    // Verificar si ambos campos de configuración de subtotales están presentes en la base de datos
+    $subtotalesConfiguradosExplicitamente = false;
+    
+    // Revisar si tenemos valores en la base de datos para este reporte
+    if (isset($_SESSION['repolog_report_id'])) {
+        try {
+            $check_pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+            $check_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            $check_stmt = $check_pdo->prepare("SELECT subtotales_agrupaciones, subtotales_subtotal FROM repolog_reportes WHERE idreporte = ?");
+            $check_stmt->execute([$_SESSION['repolog_report_id']]);
+            $check_result = $check_stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Verificar si al menos uno de los campos está configurado
+            if ($check_result) {
+                // Siempre actualizar con los valores de la base de datos, tengan contenido o no
+                $subtotalesAgrupaciones = $check_result['subtotales_agrupaciones'];
+                $subtotalesSubtotal = $check_result['subtotales_subtotal'];
+                $_SESSION['subtotales_agrupaciones'] = $subtotalesAgrupaciones;
+                $_SESSION['subtotales_subtotal'] = $subtotalesSubtotal;
+                
+                // Solo activar subtotales si al menos uno de los campos tiene contenido
+                if (!empty($check_result['subtotales_agrupaciones']) || !empty($check_result['subtotales_subtotal'])) {
+                    $subtotalesConfiguradosExplicitamente = true;
+                }
+            }
+            
+            $check_pdo = null;
+        } catch (Exception $e) {
+            error_log("Error verificando configuración de subtotales: " . $e->getMessage());
+        }
     }
-    // Si solo tenemos campos de agrupación pero no campos de suma
-    else if (!empty($subtotalesAgrupaciones) && isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 7) {
-        // Para el reporte 7, sabemos que el campo a sumar es 'Cantidad Recibida (bts)'
-        $hasSubtotals = true;
-        $results = processSubtotals($results, $subtotalesAgrupaciones, 'Cantidad Recibida (bts)');
-    }
-    else {
-        // En otros casos, intentar detectar campos numéricos para totalizar
-        $firstRow = reset($results);
-        $numericFields = [];
-        
-        // Buscar campos numéricos en la primera fila de resultados
-        foreach ($firstRow as $key => $value) {
-            if (is_numeric($value) || 
-                (is_string($value) && is_numeric(preg_replace('/[^\d.-]/', '', $value)))) {
-                $numericFields[] = $key;
+    
+    // Solo calcular subtotales si están configurados explícitamente
+    if ($subtotalesConfiguradosExplicitamente) {
+        // Si al menos hay campos para totalizar, aplicar subtotales
+        if (!empty($subtotalesSubtotal)) {
+            $hasSubtotals = true;
+            
+            // Si no hay campos de agrupación, usaremos solo totales generales
+            $groupingFields = !empty($subtotalesAgrupaciones) ? $subtotalesAgrupaciones : '';
+            
+            // Guardar para depuración
+            $_SESSION['debug_process_subtotals'] = [
+                'groupingFields' => $groupingFields,
+                'subtotalesSubtotal' => $subtotalesSubtotal
+            ];
+            
+            $results = processSubtotals($results, $groupingFields, $subtotalesSubtotal);
+        }
+        // Si solo tenemos campos de agrupación pero no campos de suma
+        else if (!empty($subtotalesAgrupaciones)) {
+            // Intentar detectar campos numéricos para totalizar
+            $firstRow = reset($results);
+            $numericFields = [];
+            
+            // Buscar campos numéricos en la primera fila de resultados
+            foreach ($firstRow as $key => $value) {
+                if (is_numeric($value) || 
+                    (is_string($value) && is_numeric(preg_replace('/[^\d.-]/', '', $value)))) {
+                    $numericFields[] = $key;
+                }
+            }
+            
+            // Si encontramos campos numéricos, calcular subtotales
+            if (!empty($numericFields)) {
+                $hasSubtotals = true;
+                // Usar todos los campos numéricos encontrados, no solo el primero
+                $results = processSubtotals($results, $subtotalesAgrupaciones, implode(',', $numericFields));
             }
         }
-        
-        // Si encontramos campos numéricos, usar el primero para totalizar
-        if (!empty($numericFields)) {
-            $hasSubtotals = true;
-            // Si no hay agrupaciones, solo crear total general
-            $results = processSubtotals($results, '', $numericFields[0]);
-        }
+    } else {
+        // No calcular subtotales si no están configurados
+        error_log("Subtotales no configurados explícitamente para el reporte " . ($_SESSION['repolog_report_id'] ?? 'desconocido'));
     }
 }
     
@@ -252,8 +299,12 @@ $_SESSION['query_columns'] = $columns;
  * @return array Resultados procesados con filas de subtotales y totales
  */
 /**
- * Función especial para corregir valores numéricos con formato americano (1,000.00)
- * Esta función se ejecuta una sola vez antes de procesar los subtotales
+ * Función optimizada para convertir todos los valores numéricos a formato float para cálculos
+ * Esta función maneja correctamente los formatos:
+ * - Americano/Mexicano: 1,234.56 (coma como separador de miles, punto como decimal)
+ * - Europeo simple: 1234,56 (coma como decimal)
+ * - Europeo completo: 1.234,56 (punto como separador de miles, coma como decimal)
+ * - Numérico simple: 1234.56 o 1234
  */
 function fixAmericanNumberFormat(&$data) {
     // Si no hay datos, retornar
@@ -265,10 +316,13 @@ function fixAmericanNumberFormat(&$data) {
     $firstRow = reset($data);
     $numericColumns = [];
     
-    // Identificar columnas que parecen numéricas
+    // Identificar TODAS las columnas que podrían contener valores numéricos
     foreach ($firstRow as $key => $value) {
-        // Buscar números en formato americano: 1,000.00
-        if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $value)) {
+        // Verificar si parece ser un campo numérico o con formato numérico
+        if (is_numeric($value) || 
+            (is_string($value) && 
+             (preg_match('/^[\d,.]+$/', $value) || 
+              preg_match('/^-[\d,.]+$/', $value)))) { // Permitir negativos también
             $numericColumns[] = $key;
         }
     }
@@ -276,18 +330,58 @@ function fixAmericanNumberFormat(&$data) {
     // Procesar todas las filas y convertir explícitamente los valores
     foreach ($data as &$row) {
         foreach ($numericColumns as $column) {
-            if (isset($row[$column]) && is_string($row[$column])) {
-                // Convertir explícitamente el formato americano (1,000.00) a valor numérico
-                if (preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $row[$column])) {
-                    $cleanValue = str_replace(',', '', $row[$column]);
-                    // Guardar tanto el valor string como el numérico
-                    $row[$column . '_original'] = $row[$column];
+            if (isset($row[$column])) {
+                $originalValue = $row[$column];
+                
+                // Si ya es un número, no necesitamos convertirlo
+                if (is_numeric($originalValue) && !is_string($originalValue)) {
+                    continue;
+                }
+                
+                // Convertir a string para poder procesar
+                $stringValue = strval($originalValue);
+                
+                // 1. Detectar formato americano (1,234.56) - ESTE ES EL FORMATO OBJETIVO
+                if (preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $stringValue)) {
+                    // Quitar las comas y convertir a float
+                    $cleanValue = str_replace(',', '', $stringValue);
                     $row[$column] = floatval($cleanValue);
-                    
-                    // Para depuración
+                }
+                // 2. Detectar formato simple con punto decimal (1234.56)
+                else if (preg_match('/^\d+\.\d+$/', $stringValue)) {
+                    // Ya tiene el formato correcto, simplemente convertir a float
+                    $row[$column] = floatval($stringValue);
+                }
+                // 3. Detectar formato europeo simple con coma decimal (1234,56)
+                else if (preg_match('/^\d+,\d+$/', $stringValue)) {
+                    // Reemplazar coma por punto para el formato correcto
+                    $cleanValue = str_replace(',', '.', $stringValue);
+                    $row[$column] = floatval($cleanValue);
+                }
+                // 4. Detectar formato europeo completo (1.234,56)
+                else if (preg_match('/^\d{1,3}(\.\d{3})+(,\d+)$/', $stringValue)) {
+                    // Quitar puntos y reemplazar coma por punto
+                    $cleanValue = str_replace('.', '', $stringValue);
+                    $cleanValue = str_replace(',', '.', $cleanValue);
+                    $row[$column] = floatval($cleanValue);
+                }
+                // 5. Caso especial para números enteros con comas (1,234)
+                else if (preg_match('/^\d{1,3}(,\d{3})+$/', $stringValue)) {
+                    // Quitar las comas y convertir a float
+                    $cleanValue = str_replace(',', '', $stringValue);
+                    $row[$column] = floatval($cleanValue);
+                }
+                // 6. Números enteros simples
+                else if (preg_match('/^\d+$/', $stringValue)) {
+                    $row[$column] = floatval($stringValue);
+                }
+                
+                // Guardar para depuración
+                if (isset($cleanValue) && $stringValue !== $cleanValue) {
                     $_SESSION['american_format_fixes'][] = [
                         'column' => $column,
-                        'original' => $row[$column . '_original'],
+                        'original' => $originalValue,
+                        'cleaned' => isset($cleanValue) ? $cleanValue : $stringValue,
                         'fixed' => $row[$column]
                     ];
                 }
@@ -313,6 +407,13 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     $_SESSION['debug_american_format'] = [];
     $_SESSION['american_format_fixes'] = [];
     
+    // Log para depuración
+    error_log("processSubtotals: Campos a agrupar = $groupingFields, Campos a sumar = $totalFields");
+    
+    // Guarda información más detallada para depuración
+    $_SESSION['subtotales_subtotal_original'] = $totalFields;
+    $_SESSION['subtotales_agrupaciones_original'] = $groupingFields;
+    
     // Si no hay datos, retornar vacío
     if (empty($data)) {
         return $data;
@@ -330,86 +431,189 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     // Crear mapeo de nombres de campo SQL a nombres de columna visibles
     $columnMapping = [];
     
-    // Mapeos conocidos para reporte 7
-    $knownMappings = [
-        'of.nombrefabricante' => 'Propietario',
-        'obo.nombrebodega' => 'Bodega Destino',
-        'lr.cantidadrecibida1' => 'Cantidad Recibida (bts)',
-        'lr.cantidadrecibida2' => 'Cantidad Recibida (tm)',
-        'cantidadrecibida1' => 'Cantidad Recibida (bts)',
-        'cantidadrecibida2' => 'Cantidad Recibida (tm)'
+    // Lista de campos que pueden requerir mapeo por reporte específico
+    $reportSpecificMappings = [];
+    
+    // Mapeos generales conocidos 
+    $generalKnownMappings = [
+        // Mapeos para campos de agrupación comunes
+        'of.nombrefabricante' => ['Propietario', 'Ingenio'],
+        'ob.nombrebodega' => ['Bodega', 'Bodega Destino'],
+        'obo.nombrebodega' => ['Bodega Destino'],
+        'vm.nombremarca' => ['Marca'],
+        
+        // Mapeos para campos de suma comunes
+        'lr.cantidadrecibida1' => ['Cantidad Recibida (bts)'],
+        'lr.cantidadrecibida2' => ['Cantidad Recibida (tm)'],
+        'cantidadrecibida1' => ['Cantidad Recibida (bts)'],
+        'cantidadrecibida2' => ['Cantidad Recibida (tm)'],
+        'ik.inventarioinicial' => ['InventarioInicial', 'Inventario Inicial', 'Inventario'],
+        'ik.entradastotales' => ['EntradasTotales', 'Entradas Totales', 'Entradas'],
+        'ik.porfacturar' => ['PorFacturar', 'TotalFacturacion', 'Total Facturacion']
     ];
+    
+    // Crear lista plana de todos los posibles mapeos
+    $flatMappings = [];
+    foreach ($generalKnownMappings as $sqlField => $possibleColumns) {
+        foreach ($possibleColumns as $column) {
+            $flatMappings[$sqlField] = $column;
+        }
+    }
+    
+    // Tratar casos específicos para reportes
+    if (isset($_SESSION['repolog_report_id'])) {
+        $reportId = $_SESSION['repolog_report_id'];
+        
+        if ($reportId == 23) {
+            // Mapeos específicos para el reporte 23
+            $reportSpecificMappings = [
+                'ob.nombrebodega' => 'Bodega',
+                'of.nombrefabricante' => 'Ingenio',
+                'vm.nombremarca' => 'Marca',
+                'ik.inventarioinicial' => 'InventarioInicial',
+                'ik.inventarioinicialtm' => 'InventarioInicialTM', 
+                'ik.entradastotales' => 'EntradasTotales',
+                'ik.porfacturar' => 'TotalFacturacion'
+            ];
+        }
+        else if ($reportId == 7) {
+            // Mapeos específicos para el reporte 7
+            $reportSpecificMappings = [
+                'of.nombrefabricante' => 'Ingenio',
+                'obo.nombrebodega' => 'Bodega Destino',
+                'obd.nombrebodega' => 'Bodega Origen',
+                'lr.cantidadrecibida1' => 'Cantidad Recibida (bts)',
+                'lr.cantidadrecibida2' => 'Cantidad Recibida (TM)',
+                'cantidadrecibida1' => 'Cantidad Recibida (bts)',
+                'cantidadrecibida2' => 'Cantidad Recibida (TM)'
+            ];
+        }
+    }
     
     // Verificar que los campos existan en los datos y crear mapeo
     $firstRow = reset($data);
     $validGroupFields = [];
     
+    error_log("Campos de agrupación originales: " . print_r($groupFields, true));
+    error_log("Campos a sumar originales: " . print_r($sumFields, true));
+    error_log("Columnas disponibles: " . print_r(array_keys($firstRow), true));
+    
     foreach ($groupFields as $field) {
+        // 1. Verificar si existe directamente
         if (isset($firstRow[$field])) {
-            // El campo existe directamente
             $validGroupFields[] = $field;
             $columnMapping[$field] = $field;
-        } elseif (isset($knownMappings[$field]) && isset($firstRow[$knownMappings[$field]])) {
-            // El campo existe con un mapeo conocido
-            $validGroupFields[] = $knownMappings[$field];
-            $columnMapping[$field] = $knownMappings[$field];
-        } else {
-            // Intentar encontrar una coincidencia aproximada si no es exacta
-            foreach (array_keys($firstRow) as $column) {
-                // Extraer el nombre de campo sin el prefijo de tabla
-                $fieldParts = explode('.', $field);
-                $baseName = end($fieldParts);
-                
-                // Verificar si la parte final del nombre coincide con alguna columna
-                if (stripos($column, $baseName) !== false) {
-                    $validGroupFields[] = $column;
-                    $columnMapping[$field] = $column;
+            continue;
+        }
+        
+        // 2. Verificar si tenemos un mapeo específico para este reporte
+        if (isset($reportSpecificMappings[$field])) {
+            $mappedColumn = $reportSpecificMappings[$field];
+            if (isset($firstRow[$mappedColumn])) {
+                $validGroupFields[] = $mappedColumn;
+                $columnMapping[$field] = $mappedColumn;
+                continue;
+            }
+        }
+        
+        // 3. Intentar todos los mapeos generales posibles
+        if (isset($generalKnownMappings[$field])) {
+            $found = false;
+            foreach ($generalKnownMappings[$field] as $possibleColumn) {
+                if (isset($firstRow[$possibleColumn])) {
+                    $validGroupFields[] = $possibleColumn;
+                    $columnMapping[$field] = $possibleColumn;
+                    $found = true;
                     break;
                 }
+            }
+            if ($found) continue;
+        }
+        
+        // 4. Intentar búsqueda inteligente por el nombre base del campo
+        $fieldParts = explode('.', $field);
+        $baseName = end($fieldParts);
+        
+        foreach (array_keys($firstRow) as $column) {
+            if (stripos($column, $baseName) !== false || 
+                levenshtein(strtolower($column), strtolower($baseName)) <= 3) {
+                $validGroupFields[] = $column;
+                $columnMapping[$field] = $column;
+                
+                error_log("Mapeo inteligente: Campo SQL '$field' mapeado a columna '$column'");
+                break;
             }
         }
     }
     
     $validSumFields = [];
     foreach ($sumFields as $field) {
-        if (isset($firstRow[$field])) {
-            // El campo existe directamente
-            $validSumFields[] = $field;
-            $columnMapping[$field] = $field;
-        } elseif (isset($knownMappings[$field]) && isset($firstRow[$knownMappings[$field]])) {
-            // El campo existe con un mapeo conocido
-            $validSumFields[] = $knownMappings[$field];
-            $columnMapping[$field] = $knownMappings[$field];
-        } else {
-            // Intentar encontrar una coincidencia aproximada si no es exacta
-            foreach (array_keys($firstRow) as $column) {
-                // Verificar si la parte final del nombre coincide con alguna columna
-                $fieldParts = explode('.', $field);
-                $baseName = end($fieldParts);
+        $fieldTrim = trim($field);
+        
+        // 1. Verificar si existe directamente
+        if (isset($firstRow[$fieldTrim])) {
+            $validSumFields[] = $fieldTrim;
+            $columnMapping[$fieldTrim] = $fieldTrim;
+            error_log("Campo de suma '$fieldTrim' encontrado directamente");
+            continue;
+        }
+        
+        // 2. Verificar si tenemos un mapeo específico para este reporte
+        if (isset($reportSpecificMappings[$fieldTrim])) {
+            $mappedColumn = $reportSpecificMappings[$fieldTrim];
+            if (isset($firstRow[$mappedColumn])) {
+                $validSumFields[] = $mappedColumn;
+                $columnMapping[$fieldTrim] = $mappedColumn;
+                error_log("Campo de suma '$fieldTrim' mapeado específicamente a '$mappedColumn'");
+                continue;
+            }
+        }
+        
+        // 3. Intentar todos los mapeos generales posibles
+        if (isset($generalKnownMappings[$fieldTrim])) {
+            $found = false;
+            foreach ($generalKnownMappings[$fieldTrim] as $possibleColumn) {
+                if (isset($firstRow[$possibleColumn])) {
+                    $validSumFields[] = $possibleColumn;
+                    $columnMapping[$fieldTrim] = $possibleColumn;
+                    $found = true;
+                    error_log("Campo de suma '$fieldTrim' mapeado de general a '$possibleColumn'");
+                    break;
+                }
+            }
+            if ($found) continue;
+        }
+        
+        // 4. Intentar búsqueda inteligente por el nombre base del campo
+        $fieldParts = explode('.', $fieldTrim);
+        $baseName = end($fieldParts);
+        
+        foreach (array_keys($firstRow) as $column) {
+            if (stripos($column, $baseName) !== false || 
+                levenshtein(strtolower($column), strtolower($baseName)) <= 3) {
+                $validSumFields[] = $column;
+                $columnMapping[$fieldTrim] = $column;
                 
-                // Mapeo optimizado para campos de cantidades recibidas
-                // Comprobar coincidencia con el campo base 
-                if (stripos($column, $baseName) !== false) {
+                error_log("Mapeo inteligente: Campo SQL '$fieldTrim' mapeado a columna '$column'");
+                break;
+            }
+        }
+        
+        // 5. Si llegamos aquí, significa que no pudimos encontrar un mapeo. Registrarlo para depuración
+        if (!in_array($fieldTrim, $validSumFields) && !array_key_exists($fieldTrim, $columnMapping)) {
+            error_log("ADVERTENCIA: No se encontró mapeo para el campo de suma '$fieldTrim'");
+            
+            // Como último recurso, buscar campos similares o con parte del nombre
+            foreach (array_keys($firstRow) as $column) {
+                if (stripos($column, 'cantidad') !== false || 
+                    stripos($column, 'total') !== false ||
+                    stripos($column, 'sum') !== false ||
+                    stripos($column, 'bts') !== false ||
+                    stripos($column, 'tm') !== false) {
+                    
                     $validSumFields[] = $column;
-                    $columnMapping[$field] = $column;
-                    
-                    // FORZAR: Si estamos mapeando cantidadrecibida2, buscar columna con (tm)
-                    if (stripos($field, 'cantidadrecibida2') !== false) {
-                        foreach (array_keys($firstRow) as $tmColumn) {
-                            if (stripos($tmColumn, '(tm)') !== false) {
-                                $validSumFields[] = $tmColumn;
-                                $columnMapping[$field] = $tmColumn;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // Guardar para depuración
-                    $_SESSION['debug_field_mapping'][] = [
-                        'original_field' => $field,
-                        'base_name' => $baseName,
-                        'matched_column' => $column
-                    ];
+                    $columnMapping[$fieldTrim] = $column;
+                    error_log("Mapeo de último recurso: Campo SQL '$fieldTrim' mapeado a columna numérica '$column'");
                     break;
                 }
             }
@@ -465,53 +669,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     $subtotalRow[$field] = $subtotals['lastRow'][$field];
                 }
                 
-                // SOLUCIÓN FORZADA PARA REPORTE 7
-                if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 7) {
-                    // Forzar los valores correctos para el reporte 7 (especial para Cantidad Recibida)
-                    $hasSpecialHandling = false;
-                    
-                    foreach ($validSumFields as $field) {
-                        if (strpos($field, 'Cantidad Recibida (bts)') !== false) {
-                            // Recalcular el total manualmente para este campo
-                            $manualTotal = 0;
-                            
-                            // Recorrer todos los registros añadidos hasta ahora y sumar manualmente
-                            foreach ($subtotals['current_group_rows'] as $groupRow) {
-                                $cellValue = $groupRow[$field];
-                                
-                                // Procesar específicamente los valores con formato 1,000.00
-                                if (is_string($cellValue) && preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $cellValue)) {
-                                    $cleanValue = str_replace(',', '', $cellValue);
-                                    $manualTotal += floatval($cleanValue);
-                                } else {
-                                    // Procesar otros formatos (ya procesados o sin formato)
-                                    $manualTotal += floatval($cellValue);
-                                }
-                            }
-                            
-                            // Asignar el total manual calculado
-                            $subtotalRow[$field] = $manualTotal;
-                            $hasSpecialHandling = true;
-                            
-                            // Actualizar también los totales generales
-                            $grandTotals[$field] = isset($grandTotals[$field]) ? $grandTotals[$field] + $manualTotal : $manualTotal;
-                        } else {
-                            // Para otros campos, usar el total normal
-                            $subtotalRow[$field] = $currentSubtotal[$field];
-                        }
-                    }
-                    
-                    // Si no hemos manejado ningún campo especial, usar los subtotales normales
-                    if (!$hasSpecialHandling) {
-                        foreach ($validSumFields as $field) {
-                            $subtotalRow[$field] = $currentSubtotal[$field];
-                        }
-                    }
-                } else {
-                    // Para otros reportes, usar el comportamiento normal
-                    foreach ($validSumFields as $field) {
-                        $subtotalRow[$field] = $currentSubtotal[$field];
-                    }
+                // Agregar los subtotales calculados
+                foreach ($validSumFields as $field) {
+                    $subtotalRow[$field] = $currentSubtotal[$field];
                 }
                 
                 // Marcar como fila de subtotal
@@ -546,80 +706,12 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         
         // Actualizar subtotales y totales generales
         foreach ($validSumFields as $field) {
-            // Preprocesar el valor para eliminar comas y otros caracteres no numéricos
+            // Los valores ya fueron procesados por fixAmericanNumberFormat
+            // Solo necesitamos convertir a número si todavía es una cadena
             $rawValue = $row[$field];
-            if (is_string($rawValue)) {
-                // Caso especial para 2990,58 (con coma decimal, sin separador de miles)
-                if ($rawValue === '2990,58') {
-                    // Especial para CARGILL, convertir directamente a 2990.58
-                    $value = 2990.58;
-                }
-                // Detectar y convertir números en formato europeo (con coma decimal)
-                else if (preg_match('/^[\d]+,[\d]+$/', $rawValue)) {
-                    // Caso simple: dígitos, coma, dígitos (ej: 2990,58)
-                    $cleanValue = str_replace(',', '.', $rawValue);
-                    $value = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
-                }
-                // Detectar formato europeo completo (2.990,58)
-                else if (strpos($rawValue, ',') !== false) {
-                    // Si tiene coma como separador decimal, convertir a punto
-                    $cleanValue = str_replace('.', '', $rawValue); // Quitar separadores de miles
-                    $cleanValue = str_replace(',', '.', $cleanValue); // Convertir coma a punto decimal
-                    $value = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
-                } else {
-                    // Mejora para el procesamiento de números con formato americano (1,000.00)
-                    // o formato europeo (1.000,00)
-                    
-                    // SOLUCIÓN EMERGENCIA: Forzar formato americano para números con comas
-                    // Detectar si es formato americano con comas (1,000.00)
-                    if (preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $rawValue)) {
-                        // Definitivamente formato americano: 1,000 o 1,000.00
-                        // Eliminar SOLO las comas (separadores de miles)
-                        $cleanValue = str_replace(',', '', $rawValue);
-                        
-                        // Log para depuración
-                        $_SESSION['debug_american_format'][] = [
-                            'original' => $rawValue,
-                            'cleaned' => $cleanValue,
-                            'numeric' => floatval($cleanValue)
-                        ];
-                    }
-                    // Para el segundo caso específico 1,000 (sin decimales)
-                    else if (preg_match('/^[0-9]{1,3}(,[0-9]{3})+$/', $rawValue)) {
-                        // También es formato americano pero sin decimales
-                        $cleanValue = str_replace(',', '', $rawValue);
-                    }
-                    // Si tiene coma decimal pero no tiene punto (formato europeo simple)
-                    else if (preg_match('/^[0-9]+(,[0-9]+)$/', $rawValue)) {
-                        // Formato europeo simple (1234,56)
-                        $cleanValue = str_replace(',', '.', $rawValue);
-                    }
-                    // Si tiene punto como separador de miles y coma decimal (formato europeo completo)
-                    else if (preg_match('/^[0-9]{1,3}(\.[0-9]{3})+(,[0-9]+)$/', $rawValue)) {
-                        // Formato europeo completo (1.234,56)
-                        $cleanValue = str_replace('.', '', $rawValue); // Quitar puntos
-                        $cleanValue = str_replace(',', '.', $cleanValue); // Coma a punto
-                    }
-                    // Para cualquier otro caso, mantener el comportamiento por defecto
-                    else {
-                        // Comportamiento por defecto para otros casos
-                        $cleanValue = $rawValue;
-                    }
-                    
-                    $value = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
-                    
-                    // Guardar para depuración
-                    $_SESSION['debug_number_conversion'][] = [
-                        'field' => $field,
-                        'rawValue' => $rawValue,
-                        'cleanValue' => $cleanValue,
-                        'finalValue' => $value
-                    ];
-                }
-            } else {
-                $value = is_numeric($rawValue) ? floatval($rawValue) : 0;
-            }
+            $value = is_numeric($rawValue) ? floatval($rawValue) : 0;
             
+            // Actualizar subtotales y totales
             $currentSubtotal[$field] += $value;
             $grandTotals[$field] += $value;
         }
@@ -627,13 +719,8 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         // Guardar el último registro del grupo para referencia
         $subtotals['lastRow'] = $row;
         
-        // Para la solución especial del reporte 7, guardar todos los registros de cada grupo
-        if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 7) {
-            if (!isset($subtotals['current_group_rows'])) {
-                $subtotals['current_group_rows'] = [];
-            }
-            $subtotals['current_group_rows'][] = $row;
-        }
+        // Guardar referencia para el último registro del grupo
+        $subtotals['current_group_rows'] = $row;
     }
     
     // Agregar subtotal del último grupo
@@ -645,52 +732,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             $subtotalRow[$field] = $subtotals['lastRow'][$field];
         }
         
-        // SOLUCIÓN FORZADA PARA REPORTE 7 (último grupo)
-        if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 7) {
-            // Forzar los valores correctos para el reporte 7 (especial para Cantidad Recibida)
-            $hasSpecialHandling = false;
-            
-            foreach ($validSumFields as $field) {
-                if (strpos($field, 'Cantidad Recibida (bts)') !== false) {
-                    // Recalcular el total manualmente para este campo
-                    $manualTotal = 0;
-                    
-                    // Recorrer todos los registros añadidos hasta ahora y sumar manualmente
-                    if (isset($subtotals['current_group_rows'])) {
-                        foreach ($subtotals['current_group_rows'] as $groupRow) {
-                            $cellValue = $groupRow[$field];
-                            
-                            // Procesar específicamente los valores con formato 1,000.00
-                            if (is_string($cellValue) && preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $cellValue)) {
-                                $cleanValue = str_replace(',', '', $cellValue);
-                                $manualTotal += floatval($cleanValue);
-                            } else {
-                                // Procesar otros formatos (ya procesados o sin formato)
-                                $manualTotal += floatval($cellValue);
-                            }
-                        }
-                    }
-                    
-                    // Asignar el total manual calculado
-                    $subtotalRow[$field] = $manualTotal;
-                    $hasSpecialHandling = true;
-                } else {
-                    // Para otros campos, usar el total normal
-                    $subtotalRow[$field] = $currentSubtotal[$field];
-                }
-            }
-            
-            // Si no hemos manejado ningún campo especial, usar los subtotales normales
-            if (!$hasSpecialHandling) {
-                foreach ($validSumFields as $field) {
-                    $subtotalRow[$field] = $currentSubtotal[$field];
-                }
-            }
-        } else {
-            // Para otros reportes, usar el comportamiento normal
-            foreach ($validSumFields as $field) {
-                $subtotalRow[$field] = $currentSubtotal[$field];
-            }
+        // Usar el valor calculado normal para todos los campos
+        foreach ($validSumFields as $field) {
+            $subtotalRow[$field] = $currentSubtotal[$field];
         }
         
         // Marcar como fila de subtotal
@@ -723,40 +767,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         $totalRow[$firstColumn] = 'TOTAL GENERAL';
     }
     
-    // SOLUCIÓN FORZADA PARA REPORTE 7 (totales generales)
-    if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 7) {
-        // Calcular totales generales manualmente para campos específicos
-        foreach ($validSumFields as $field) {
-            if (strpos($field, 'Cantidad Recibida (bts)') !== false) {
-                // Recalcular el total general manualmente para este campo
-                $manualGrandTotal = 0;
-                
-                // Recorrer todos los registros originales (antes de subtotales)
-                foreach ($data as $originalRow) {
-                    $cellValue = $originalRow[$field];
-                    
-                    // Procesar específicamente los valores con formato 1,000.00
-                    if (is_string($cellValue) && preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $cellValue)) {
-                        $cleanValue = str_replace(',', '', $cellValue);
-                        $manualGrandTotal += floatval($cleanValue);
-                    } else {
-                        // Procesar otros formatos (ya procesados o sin formato)
-                        $manualGrandTotal += floatval($cellValue);
-                    }
-                }
-                
-                // Asignar el total general calculado manualmente
-                $totalRow[$field] = $manualGrandTotal;
-            } else {
-                // Para otros campos, usar el total normal
-                $totalRow[$field] = $grandTotals[$field];
-            }
-        }
-    } else {
-        // Para otros reportes, usar el comportamiento normal
-        foreach ($validSumFields as $field) {
-            $totalRow[$field] = $grandTotals[$field];
-        }
+    // Agregar los totales generales - usar valores normales
+    foreach ($validSumFields as $field) {
+        $totalRow[$field] = $grandTotals[$field];
     }
     
     // Marcar como fila de total general
@@ -840,8 +853,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     <button onclick="window.history.back()" class="back-btn">Regresar</button>
                 <?php endif; ?>
                 
-                <!-- Agregar enlace a herramienta de depuración de subtotales -->
-                <a href="subtotales_debug.php" class="back-btn" style="background-color: #ff9800; margin-left: 10px;">Depurar Subtotales</a>
+                <!-- Botón de depuración de subtotales removido -->
             </div>
             <?php if (!empty($results)): ?>
                 <div class="action-buttons">
@@ -950,38 +962,115 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             
                                             // Convertir los campos SQL a campos de visualización
                                             foreach ($sumFields as $field) {
-                                                if (isset($columnMapping[$field])) {
-                                                    $mappedSumFields[] = $columnMapping[$field];
+                                                // Verificar primero el mapeo específico del reporte
+                                                $fieldTrimmed = trim($field);
+                                                
+                                                // Depuración
+                                                if (!isset($_SESSION['debug_field_mapping_sql_to_display'])) {
+                                                    $_SESSION['debug_field_mapping_sql_to_display'] = [];
+                                                }
+                                                $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                    'sql_field' => $fieldTrimmed,
+                                                    'lookup_in' => 'columnMapping',
+                                                    'column_mapping' => $columnMapping
+                                                ];
+                                                
+                                                if (isset($columnMapping[$fieldTrimmed])) {
+                                                    $mapped = $columnMapping[$fieldTrimmed];
+                                                    $mappedSumFields[] = $mapped;
+                                                    $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                        'sql_field' => $fieldTrimmed,
+                                                        'mapped_to' => $mapped,
+                                                        'via' => 'column_mapping'
+                                                    ];
                                                 } else {
-                                                    $mappedSumFields[] = $field;
+                                                    // Intentar buscar por coincidencia parcial
+                                                    $matchFound = false;
+                                                    $fieldBase = $fieldTrimmed;
+                                                    if (strpos($fieldTrimmed, '.') !== false) {
+                                                        $parts = explode('.', $fieldTrimmed);
+                                                        $fieldBase = end($parts);
+                                                    }
+                                                    
+                                                    // Intentar mapeo directo si coincide nombre con una columna disponible
+                                                    foreach ($columns as $col) {
+                                                        if (stripos($col, $fieldBase) !== false || 
+                                                            levenshtein(strtolower($col), strtolower($fieldBase)) <= 3) {
+                                                            $mappedSumFields[] = $col;
+                                                            $matchFound = true;
+                                                            $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                                'sql_field' => $fieldTrimmed,
+                                                                'mapped_to' => $col,
+                                                                'via' => 'similarity'
+                                                            ];
+                                                            break;
+                                                        }
+                                                    }
+                                                    
+                                                    // Si todavía no encontramos coincidencia, usar el original
+                                                    if (!$matchFound) {
+                                                        $mappedSumFields[] = $fieldTrimmed;
+                                                        $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                            'sql_field' => $fieldTrimmed,
+                                                            'mapped_to' => $fieldTrimmed,
+                                                            'via' => 'no_match_found'
+                                                        ];
+                                                    }
                                                 }
                                             }
                                             
                                             if (in_array($column, $mappedSumFields)) {
                                                 // Formatear como número con 2 decimales (formato mexicano: 2,990.58)
+                                                // Formatear con separador de miles y 2 decimales
                                                 if (is_numeric($value)) {
-                                                    // Forzar formato con punto decimal y coma como separador de miles
+                                                    // Es un número, formatear con comas para miles y punto para decimales
                                                     $formattedValue = number_format(floatval($value), 2, '.', ',');
                                                     echo '<strong>' . $formattedValue . '</strong>';
-                                                } else {
-                                                    // Si es string pero puede contener un número formateado, intentar limpiarlo y formatear
-                                                    // Primero intentar limpiar el valor si tiene formato europeo (2.990,58)
-                                                    if (strpos($value, ',') !== false) {
-                                                        // Si tiene coma como separador decimal, convertir a punto
-                                                        $cleanValue = str_replace('.', '', $value); // Quitar separadores de miles
-                                                        $cleanValue = str_replace(',', '.', $cleanValue); // Convertir coma a punto decimal
-                                                    } else {
-                                                        // Simplemente quitar caracteres no numéricos
+                                                } else if (is_string($value)) {
+                                                    // Si ya tiene formato americano (1,234.56), asegurarse que tiene 2 decimales
+                                                    if (preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
+                                                        // Extraer el número sin formateo para reformatearlo
+                                                        $cleanValue = str_replace(',', '', $value);
+                                                        if (is_numeric($cleanValue)) {
+                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            echo '<strong>' . $formattedValue . '</strong>';
+                                                        } else {
+                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        }
+                                                    } 
+                                                    // Si tiene formato europeo simple (1234,56), convertirlo a americano
+                                                    else if (preg_match('/^\d+,\d+$/', $value)) {
+                                                        $cleanValue = str_replace(',', '.', $value);
+                                                        if (is_numeric($cleanValue)) {
+                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            echo '<strong>' . $formattedValue . '</strong>';
+                                                        } else {
+                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        }
+                                                    }
+                                                    // Si tiene formato europeo completo (1.234,56), convertirlo a americano
+                                                    else if (preg_match('/^\d{1,3}(\.\d{3})+(,\d+)$/', $value)) {
+                                                        $cleanValue = str_replace('.', '', $value);
+                                                        $cleanValue = str_replace(',', '.', $cleanValue);
+                                                        if (is_numeric($cleanValue)) {
+                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            echo '<strong>' . $formattedValue . '</strong>';
+                                                        } else {
+                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        }
+                                                    }
+                                                    // Para cualquier otro caso, intentar convertir y formatear
+                                                    else {
                                                         $cleanValue = preg_replace('/[^\d.-]/', '', $value);
+                                                        if (is_numeric($cleanValue)) {
+                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            echo '<strong>' . $formattedValue . '</strong>';
+                                                        } else {
+                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        }
                                                     }
-                                                    
-                                                    if (is_numeric($cleanValue)) {
-                                                        // Forzar formato con punto decimal y coma como separador de miles
-                                                        $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
-                                                        echo '<strong>' . $formattedValue . '</strong>';
-                                                    } else {
-                                                        echo '<strong>' . htmlspecialchars($value) . '</strong>';
-                                                    }
+                                                } else {
+                                                    echo '<strong>' . htmlspecialchars($value) . '</strong>';
                                                 }
                                                 continue;
                                             } else if ($subtotalLevel === 2) {
@@ -999,12 +1088,35 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                                   $_SESSION['debug_column_mapping']['column_mapping'] : [];
                                                 $mappedGroupFields = [];
                                                 
-                                                // Convertir los campos SQL a campos de visualización
+                                                // Convertir los campos SQL a campos de visualización usando el mismo enfoque mejorado
                                                 foreach ($groupFields as $field) {
-                                                    if (isset($columnMapping[$field])) {
-                                                        $mappedGroupFields[] = $columnMapping[$field];
-                                                    } else {
-                                                        $mappedGroupFields[] = $field;
+                                                    $fieldTrimmed = trim($field);
+                                                    
+                                                    // Verificar mapeo directo
+                                                    if (isset($columnMapping[$fieldTrimmed])) {
+                                                        $mappedGroupFields[] = $columnMapping[$fieldTrimmed];
+                                                    } 
+                                                    // Buscar por coincidencia parcial
+                                                    else {
+                                                        $fieldBase = $fieldTrimmed;
+                                                        if (strpos($fieldTrimmed, '.') !== false) {
+                                                            $parts = explode('.', $fieldTrimmed);
+                                                            $fieldBase = end($parts);
+                                                        }
+                                                        
+                                                        $matchFound = false;
+                                                        foreach ($columns as $col) {
+                                                            if (stripos($col, $fieldBase) !== false || 
+                                                                levenshtein(strtolower($col), strtolower($fieldBase)) <= 3) {
+                                                                $mappedGroupFields[] = $col;
+                                                                $matchFound = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        
+                                                        if (!$matchFound) {
+                                                            $mappedGroupFields[] = $fieldTrimmed;
+                                                        }
                                                     }
                                                 }
                                                 
@@ -1020,12 +1132,29 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         }
                                         
                                         // Procesamiento normal para filas regulares
+                                        // Verificar si es un número o parece un número formateado
+                                        if (is_numeric($value)) {
+                                            // Es un número, formatear con comas para miles y punto para decimales
+                                            $formattedValue = number_format(floatval($value), 2, '.', ',');
+                                            echo '<strong>' . $formattedValue . '</strong>';
+                                        }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
-                                        if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
+                                        else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
                                             $formattedValue = number_format(floatval($cleanValue), 2, '.', ','); // Formato americano/mexicano
                                             echo '<strong>' . $formattedValue . '</strong>';
+                                        }
+                                        // Verificar si parece un número en formato americano (1,234.56)
+                                        else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
+                                            // Extraer el número sin formateo para reformatearlo
+                                            $cleanValue = str_replace(',', '', $value);
+                                            if (is_numeric($cleanValue)) {
+                                                $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                echo '<strong>' . $formattedValue . '</strong>';
+                                            } else {
+                                                echo htmlspecialchars($value);
+                                            }
                                         }
                                         // Detectar si parece contener HTML (case-insensitive)
                                         else if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
@@ -1070,34 +1199,12 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             const tableData = <?php echo json_encode($results); ?>;
             const tableColumns = <?php echo json_encode($columns); ?>;
             
-            // Código adicional para forzar el formato correcto de números
+            // Código para asegurarse que los valores numéricos tienen el formato correcto
+            // Pero respetando los formatos originales en lo posible
             document.addEventListener('DOMContentLoaded', function() {
-                // Recorrer todas las celdas de la tabla y formatear los valores que parecen números con coma decimal
-                const tabla = document.getElementById('resultsTable');
-                if (tabla) {
-                    const celdas = tabla.querySelectorAll('tbody td');
-                    
-                    celdas.forEach(function(celda) {
-                        const texto = celda.textContent.trim();
-                        
-                        // Detectar si es un número con formato europeo (con coma decimal)
-                        if (/^[0-9]+,[0-9]+$/.test(texto)) {
-                            // Convertir de formato europeo a formato mexicano (punto decimal, coma para miles)
-                            const valor = texto.replace(',', '.');
-                            const numero = parseFloat(valor);
-                            
-                            if (!isNaN(numero)) {
-                                // Formatear al estilo mexicano: 2,990.58
-                                const formateado = numero.toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                                
-                                // Reemplazar el contenido con el valor formateado
-                                celda.innerHTML = '<strong>' + formateado + '</strong>';
-                            }
-                        }
-                    });
+                // Ejecutar formatoNumbersInTable() desde formatNumbersFix.js
+                if (typeof formatNumbersInTable === 'function') {
+                    formatNumbersInTable();
                 }
             });
         </script>

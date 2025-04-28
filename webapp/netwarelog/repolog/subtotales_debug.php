@@ -9,12 +9,15 @@ require_once 'config.php';
 
 // Verificar datos disponibles en sesión
 $datos = [
+    'ID del Reporte' => isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'No definido',
+    'Nombre del Reporte' => isset($_SESSION['nombrereporte']) ? $_SESSION['nombrereporte'] : 'No definido',
     'Subtotales Agrupaciones' => isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : 'No definido',
     'Subtotales Campo a Sumar' => isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : 'No definido',
     'Subtotales Original' => isset($_SESSION['subtotales_subtotal_original']) ? $_SESSION['subtotales_subtotal_original'] : 'No definido',
-    'ID del Reporte' => isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'No definido',
-    'Campos de Mapeo' => isset($_SESSION['debug_column_mapping']) ? $_SESSION['debug_column_mapping'] : 'No definido',
+    'Campos Válidos para Agrupación' => isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['valid_group_fields']) ? $_SESSION['debug_column_mapping']['valid_group_fields'] : 'No definido',
+    'Campos Válidos para Sumar' => isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['valid_sum_fields']) ? $_SESSION['debug_column_mapping']['valid_sum_fields'] : 'No definido',
     'Parámetros de Subtotales' => isset($_SESSION['debug_subtotals_params']) ? $_SESSION['debug_subtotals_params'] : 'No definido',
+    'Campos de Mapeo' => isset($_SESSION['debug_column_mapping']) ? $_SESSION['debug_column_mapping'] : 'No definido',
     'Campos de Suma' => isset($_SESSION['debug_sum_fields']) ? $_SESSION['debug_sum_fields'] : 'No definido',
     'Conversión de Números' => isset($_SESSION['debug_number_conversion']) ? $_SESSION['debug_number_conversion'] : 'No definido',
     'Formato Americano (Nuevo)' => isset($_SESSION['american_format_fixes']) ? $_SESSION['american_format_fixes'] : 'No definido',

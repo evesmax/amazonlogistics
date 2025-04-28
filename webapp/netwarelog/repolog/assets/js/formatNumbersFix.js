@@ -1,143 +1,120 @@
 /**
- * Corrección específica para números con formato europeo (2990,58)
- * Este script encuentra y reemplaza cualquier número con formato europeo 
- * (con coma decimal) a formato mexicano (con punto decimal y coma para miles)
+ * Formatter para valores numéricos - soporta formatos americano y europeo
+ * Este script asegura que todos los números se muestren con el formato correcto:
+ * - Punto decimal
+ * - Coma para separador de miles
+ * - Siempre 2 decimales para valores numéricos
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Ejecutar después de 800ms para dar tiempo a que todos los datos se carguen
-    setTimeout(formatNumbersInTable, 800);
+    // Ejecutar después de 100ms para dar tiempo a que todos los datos se carguen
+    setTimeout(formatNumbersInTable, 100);
 });
 
 // Función principal para formatear números
 function formatNumbersInTable() {
     console.log("Ejecutando formatNumbersInTable");
     
-    // Buscar específicamente el número 2990,58 en la tabla
+    // Procesar todas las celdas de la tabla
     var allCells = document.querySelectorAll('#resultsTable td');
     allCells.forEach(function(cell) {
-        var text = cell.textContent.trim();
-        
-        // Verificar si es exactamente 2990,58
-        if (text === '2990,58') {
-            cell.innerHTML = '<strong>2,990.58</strong>';
-        }
-        // Verificar si es un número con formato europeo (coma decimal)
-        else if (/^[\d]+,[\d]+$/.test(text)) {
-            // Convertir de formato europeo a formato mexicano
-            var number = parseFloat(text.replace(',', '.'));
-            if (!isNaN(number)) {
-                var formatted = number.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                cell.innerHTML = '<strong>' + formatted + '</strong>';
-            }
-        }
-        // Verificar si es un número con formato americano (1,000.00)
-        else if (/^[\d]{1,3}(,[\d]{3})+(\.[\d]+)?$/.test(text)) {
-            try {
-                // Ya está en formato correcto, solo asegurarse que tenga 2 decimales
-                var cleanText = text.replace(/,/g, '');
-                var number = parseFloat(cleanText);
-                if (!isNaN(number)) {
-                    var formatted = number.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    // Aplicar formato pero mantener el valor numérico original para subtotales
-                    cell.setAttribute('data-raw-value', number);
-                    // Agregar un indicador visual y hacer un backup del valor
-                    cell.setAttribute('data-original-text', text);
-                    cell.innerHTML = '<strong>' + formatted + '</strong>';
-                    
-                    // FORZAR conversión para sumas
-                    if (text === '1,000.00') {
-                        cell.innerHTML = '<strong style="color: #007bff;">1,000.00</strong>';
-                        // Forzar el valor numérico en un atributo data
-                        cell.setAttribute('data-fixed-value', '1000');
-                    }
-                }
-            } catch (e) {
-                console.error("Error al procesar número:", text, e);
-            }
-        }
+        formatCellContent(cell);
     });
     
-    // Verificar todas las filas de CARGILL DE MEXICO
+    // Verificar todas las filas para formatos especiales
+    processSpecialRows();
+}
+
+// Función para formatear el contenido de una celda
+function formatCellContent(cell) {
+    // No procesar celdas que ya han sido formateadas
+    if (cell.getAttribute('data-formatted') === 'true') {
+        return;
+    }
+    
+    var text = cell.textContent.trim();
+    if (!text) return;
+    
+    // 1. Verificar si es un número puro (12345)
+    if (/^\d+$/.test(text)) {
+        applyNumberFormat(cell, parseFloat(text));
+    }
+    // 2. Verificar si es un número con decimales sin separador de miles (1234.56)
+    else if (/^\d+\.\d+$/.test(text)) {
+        applyNumberFormat(cell, parseFloat(text));
+    }
+    // 3. Verificar si es un número con formato europeo simple (1234,56)
+    else if (/^\d+,\d+$/.test(text)) {
+        var number = parseFloat(text.replace(',', '.'));
+        applyNumberFormat(cell, number);
+    }
+    // 4. Verificar si es un número con formato americano (1,234.56)
+    else if (/^\d{1,3}(,\d{3})*(\.\d+)?$/.test(text)) {
+        var cleanText = text.replace(/,/g, '');
+        applyNumberFormat(cell, parseFloat(cleanText));
+    }
+    // 5. Verificar si es un número con formato europeo completo (1.234,56)
+    else if (/^\d{1,3}(\.\d{3})*(,\d+)$/.test(text)) {
+        var cleanText = text.replace(/\./g, '').replace(',', '.');
+        applyNumberFormat(cell, parseFloat(cleanText));
+    }
+    
+    // Marcar la celda como formateada
+    cell.setAttribute('data-formatted', 'true');
+}
+
+// Función para aplicar formato de número con 2 decimales
+function applyNumberFormat(cell, number) {
+    if (isNaN(number)) return;
+    
+    // Conservamos el valor original
+    cell.setAttribute('data-original-value', cell.textContent.trim());
+    cell.setAttribute('data-raw-value', number);
+    
+    // Formateamos con 2 decimales, coma para miles y punto decimal
+    var formatted = number.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    // Aplicamos el formato
+    cell.innerHTML = '<strong>' + formatted + '</strong>';
+}
+
+// Función para procesar filas con formatos o reglas especiales
+function processSpecialRows() {
     var allRows = document.querySelectorAll('#resultsTable tbody tr');
     
     allRows.forEach(function(row) {
         var cells = row.querySelectorAll('td');
-        var isCargill = false;
         
-        // Buscar si alguna celda contiene "CARGILL DE MEXICO"
+        // Verificar si es una fila de subtotal
+        if (row.classList.contains('subtotal-row') || row.classList.contains('total-row')) {
+            // Asegurarse que los valores numéricos tienen formato adecuado
+            cells.forEach(function(cell) {
+                if (cell.getAttribute('data-formatted') !== 'true') {
+                    formatCellContent(cell);
+                }
+            });
+        }
+        
+        // Verificar si es una fila para un cliente específico (ejemplo CARGILL DE MEXICO)
+        var hasSpecialClient = false;
         cells.forEach(function(cell) {
             if (cell.textContent.indexOf('CARGILL DE MEXICO') !== -1) {
-                isCargill = true;
+                hasSpecialClient = true;
             }
         });
         
-        // Si es una fila de CARGILL, formatear todos los valores numéricos
-        if (isCargill) {
+        if (hasSpecialClient) {
             cells.forEach(function(cell) {
-                var text = cell.textContent.trim();
-                
-                // Verificar si es el valor específico 2990,58
-                if (text === '2990,58') {
-                    cell.innerHTML = '<strong>2,990.58</strong>';
-                }
-                // O si es cualquier otro número con coma decimal
-                else if (/^[\d]+,[\d]+$/.test(text)) {
-                    var number = parseFloat(text.replace(',', '.'));
-                    if (!isNaN(number)) {
-                        var formatted = number.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
-                        cell.innerHTML = '<strong>' + formatted + '</strong>';
-                    }
-                }
-                // Verificar si es un número con formato americano (1,000.00)
-                else if (/^[\d]{1,3}(,[\d]{3})+(\.[\d]+)?$/.test(text)) {
-                    try {
-                        // Ya está en formato correcto, solo asegurarse que tenga 2 decimales
-                        var cleanText = text.replace(/,/g, '');
-                        var number = parseFloat(cleanText);
-                        if (!isNaN(number)) {
-                            var formatted = number.toLocaleString('en-US', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            });
-                            // Aplicar formato pero mantener el valor numérico original para subtotales
-                            cell.setAttribute('data-raw-value', number);
-                            // Agregar un indicador visual y hacer un backup del valor
-                            cell.setAttribute('data-original-text', text);
-                            cell.innerHTML = '<strong>' + formatted + '</strong>';
-                            
-                            // FORZAR conversión para sumas
-                            if (text === '1,000.00') {
-                                cell.innerHTML = '<strong style="color: #007bff;">1,000.00</strong>';
-                                // Forzar el valor numérico en un atributo data
-                                cell.setAttribute('data-fixed-value', '1000');
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Error al procesar número:", text, e);
-                    }
+                // Formatear de nuevo para asegurar precisión
+                if (cell.getAttribute('data-formatted') !== 'true') {
+                    formatCellContent(cell);
                 }
             });
         }
     });
-    
-    // Última verificación: recorrer el DOM completo buscando textos exactos
-    var allTextNodes = getTextNodes(document.body);
-    for (var i = 0; i < allTextNodes.length; i++) {
-        var node = allTextNodes[i];
-        if (node.nodeValue && node.nodeValue.indexOf('2990,58') !== -1) {
-            node.nodeValue = node.nodeValue.replace(/2990,58/g, '2,990.58');
-        }
-    }
 }
 
 // Función auxiliar para obtener todos los nodos de texto en un elemento
