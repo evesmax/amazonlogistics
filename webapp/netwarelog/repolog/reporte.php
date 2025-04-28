@@ -17,6 +17,15 @@ ini_set('display_errors', '1');
 require_once 'config.php';
 require_once 'sqlcleaner.php';
 
-echo "ENtre linea 20";
+
+// Initialize variables
+$results = [];
+$columns = [];
+$error = '';
+$query = '';
+$reportTitle = "Resultados de Consulta SQL";
+$appliedFilters = [];
+
+echo "ENtre linea 29";
 exit();
 
