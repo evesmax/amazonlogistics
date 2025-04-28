@@ -250,10 +250,10 @@ if (!empty($results)) {
             $groupingFields = !empty($subtotalesAgrupaciones) ? $subtotalesAgrupaciones : '';
             
             // Guardar para depuración
-            $_SESSION['debug_process_subtotals'] = [
+            $_SESSION['debug_process_subtotals'] = array(
                 'groupingFields' => $groupingFields,
                 'subtotalesSubtotal' => $subtotalesSubtotal
-            ];
+            );
             
             $results = processSubtotals($results, $groupingFields, $subtotalesSubtotal);
         }
@@ -969,20 +969,21 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 if (!isset($_SESSION['debug_field_mapping_sql_to_display'])) {
                                                     $_SESSION['debug_field_mapping_sql_to_display'] = [];
                                                 }
-                                                $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                // Usar array asociativo en lugar de corchetes para compatibilidad con PHP 5.5.9
+                                                $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                     'sql_field' => $fieldTrimmed,
                                                     'lookup_in' => 'columnMapping',
                                                     'column_mapping' => $columnMapping
-                                                ];
+                                                );
                                                 
                                                 if (isset($columnMapping[$fieldTrimmed])) {
                                                     $mapped = $columnMapping[$fieldTrimmed];
                                                     $mappedSumFields[] = $mapped;
-                                                    $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                    $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                         'sql_field' => $fieldTrimmed,
                                                         'mapped_to' => $mapped,
                                                         'via' => 'column_mapping'
-                                                    ];
+                                                    );
                                                 } else {
                                                     // Intentar buscar por coincidencia parcial
                                                     $matchFound = false;
@@ -999,11 +1000,11 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                             (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
                                                             $mappedSumFields[] = $col;
                                                             $matchFound = true;
-                                                            $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                            $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                                 'sql_field' => $fieldTrimmed,
                                                                 'mapped_to' => $col,
                                                                 'via' => 'similarity'
-                                                            ];
+                                                            );
                                                             break;
                                                         }
                                                     }
@@ -1011,11 +1012,11 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     // Si todavía no encontramos coincidencia, usar el original
                                                     if (!$matchFound) {
                                                         $mappedSumFields[] = $fieldTrimmed;
-                                                        $_SESSION['debug_field_mapping_sql_to_display'][] = [
+                                                        $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                             'sql_field' => $fieldTrimmed,
                                                             'mapped_to' => $fieldTrimmed,
                                                             'via' => 'no_match_found'
-                                                        ];
+                                                        );
                                                     }
                                                 }
                                             }
