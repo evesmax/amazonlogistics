@@ -17,6 +17,6 @@ ini_set('display_errors', '1');
 require_once 'config.php';
 require_once 'sqlcleaner.php';
 
-echo "ENtre linea 15";
+echo "ENtre linea 20";
 exit();
 
