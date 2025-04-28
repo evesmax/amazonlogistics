@@ -10,13 +10,8 @@
  */
 
 // Include configuration file and utilities
-ini_set('display_errors', '1');
-
-
-
 require_once 'config.php';
 require_once 'sqlcleaner.php';
-
 
 // Initialize variables
 $results = [];
@@ -25,7 +20,6 @@ $error = '';
 $query = '';
 $reportTitle = "Resultados de Consulta SQL";
 $appliedFilters = [];
-
 
 // Obtener el título del reporte, configuración de subtotales y los filtros aplicados
 if (isset($_SESSION['repolog_report_id'])) {
