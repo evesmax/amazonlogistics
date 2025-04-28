@@ -8,6 +8,8 @@
  * 
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
+ini_set('display_errors', '1');
+
 
 // Include configuration file and utilities
 require_once 'config.php';
