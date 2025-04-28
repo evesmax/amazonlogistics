@@ -28,6 +28,7 @@ if (isset($_GET['i']) && !empty($_GET['i'])) {
     // En lugar de hacer un redirect, incluimos directamente la página de filtros
     $_GET['id'] = $reportId; // Asegurar que el filtro reciba el ID
     include 'repologfilters.php';
+    require('repologv1.php');
 } else {
     // No hay ID de reporte, mostrar error
     echo "Error: Se requiere un ID de reporte válido. Por favor use: repolog.php?i=X donde X es el número de reporte.";
