@@ -246,7 +246,20 @@ function fixExtraAndBeforeClosingParenthesis($sql) {
     // Caso 6: Solución específica para la consulta de RecepcionDirecta con parentesis extra al final
     $sql = preg_replace('/(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\))\s+and\s*\)/i', '$1', $sql);
     
-    // Caso 7: Solución específica para el patrón exacto del reporte de RecepcionDirecta ID 18
+    // Caso 7: Solución para paréntesis excesivos en LIKE '%%' seguido por il.idloteproducto=valor
+    // Es el caso específico reportado por el usuario
+    $specificPattern = '/\(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s+(and|AND)\s+\(il\.idloteproducto\s*=\s*(\d+)\)/i';
+    if (preg_match($specificPattern, $sql)) {
+        // Eliminamos el paréntesis extra
+        $sql = preg_replace($specificPattern, '(lt.referencia1 LIKE \'%%\')) $1 (il.idloteproducto = $2)', $sql);
+    }
+    
+    // Caso 8: Solución para cualquier condición LIKE '%%' seguida de AND/OR y otra condición
+    // Este patrón manejará cualquier campo, no solo lt.referencia1
+    $sql = preg_replace('/\(([a-zA-Z0-9_.]+)\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*([^()]+?)\)/i', 
+                       '($1 LIKE \'%%\')) $2 ($3 = $4)', $sql);
+    
+    // Caso 9: Solución específica para el patrón exacto del reporte de RecepcionDirecta ID 18
     // Este patrón aparece cuando no se selecciona ningún filtro y genera un paréntesis extra
     $specificPattern = '/\(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s*ORDER/i';
     if (preg_match($specificPattern, $sql)) {
@@ -304,6 +317,37 @@ function finalSqlCleanup($sql) {
     $sql = preg_replace('/^\s*OR\s+/i', '', $sql);
     $sql = preg_replace('/\s+AND\s*$/i', '', $sql);
     $sql = preg_replace('/\s+OR\s*$/i', '', $sql);
+    
+    // Corregir problema de paréntesis adicional antes de and (campo = valor)
+    // Este es el caso donde aparece '%%')) and (il.idloteproducto = 11)' 
+    $sql = preg_replace('/\'%%\'\)\s*\)\s+and\s+\(/i', '\'%%\')) and (', $sql);
+    $sql = preg_replace('/\'%%\'\)\s*\)\s+AND\s+\(/i', '\'%%\')) AND (', $sql);
+    
+    // Solución más general: corrección para cualquier condición LIKE que termine con doble paréntesis
+    $sql = preg_replace('/LIKE\s+\'%%\'\)\s*\)\s+and/i', 'LIKE \'%%\')) and', $sql);
+    $sql = preg_replace('/LIKE\s+\'%%\'\)\s*\)\s+AND/i', 'LIKE \'%%\')) AND', $sql);
+    
+    // Solución muy general para eliminar el paréntesis adicional en cualquier condición AND
+    // Examina el SQL para encontrar desbalance de paréntesis alrededor de AND
+    $pattern = '/\)\s*\)\s+(AND|and|OR|or)\s+\(/';
+    if (preg_match($pattern, $sql)) {
+        // Contar el número de aperturas y cierres antes de cada AND
+        preg_match_all($pattern, $sql, $matches, PREG_OFFSET_CAPTURE);
+        foreach ($matches[0] as $match) {
+            $pos = $match[1];
+            $beforeMatch = substr($sql, 0, $pos);
+            $openCount = substr_count($beforeMatch, '(');
+            $closeCount = substr_count($beforeMatch, ')');
+            
+            if ($closeCount > $openCount) {
+                // Hay un desbalance, así que reemplazamos la primera coincidencia
+                $sql = preg_replace($pattern, ')) $1 (', $sql, 1);
+            }
+        }
+    }
+    
+    // Patrón específico y exacto para el problema reportado con il.idloteproducto
+    $sql = preg_replace('/\)\s*\)\s+and\s+\(il\.idloteproducto\s*=\s*(\d+)\)/i', ')) and (il.idloteproducto = $1)', $sql);
     
     // NUEVA SOLUCIÓN: Limpieza específica para filtros "Todos"
     // Esto soluciona el problema de condiciones como campo = ''

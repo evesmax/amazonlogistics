@@ -13,6 +13,56 @@
 require_once 'config.php';
 require_once 'sqlcleaner.php';
 
+/**
+ * Elimina paréntesis excesivos de una consulta SQL
+ * Especialmente diseñado para el problema de paréntesis extra en el filtro "LIKE '%%')"
+ * 
+ * @param string $sql Consulta SQL a limpiar
+ * @return string Consulta SQL limpia
+ */
+function eliminaParentesisExcesivos($sql) {
+    // Paso 1: Corregir el problema específico con lt.referencia1 LIKE '%%')
+    $sql = preg_replace('/\)\s*\)\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*([0-9]+)\)/i', 
+                        ')) $1 ($2 = $3)', 
+                        $sql);
+    
+    // Paso 2: Buscar patrones específicos del problema reportado - solución simple
+    $sql = str_replace(')) and (il.idloteproducto = ', ') and (il.idloteproducto = ', $sql);
+    $sql = str_replace(')) AND (il.idloteproducto = ', ') AND (il.idloteproducto = ', $sql);
+    
+    // Paso 3: Reemplazar cualquier coincidencia exacta
+    $sql = preg_replace('/LIKE\s+\'%%\'\)\s*\)\s+and/i', 'LIKE \'%%\') and', $sql);
+    $sql = preg_replace('/LIKE\s+\'%%\'\)\s*\)\s+AND/i', 'LIKE \'%%\') AND', $sql);
+    
+    // Paso 4: Revisión general de balance de paréntesis
+    $openParens = substr_count($sql, '(');
+    $closeParens = substr_count($sql, ')');
+    
+    // Si hay más paréntesis de cierre que de apertura
+    if ($closeParens > $openParens) {
+        // Buscar el patrón problemático cerca de 'ORDER BY'
+        $orderPos = stripos($sql, 'ORDER BY');
+        if ($orderPos !== false) {
+            $beforeOrder = substr($sql, 0, $orderPos);
+            $afterOrder = substr($sql, $orderPos);
+            
+            // Contar paréntesis antes de ORDER BY
+            $openBeforeOrder = substr_count($beforeOrder, '(');
+            $closeBeforeOrder = substr_count($beforeOrder, ')');
+            
+            // Si hay desbalance antes de ORDER BY
+            if ($closeBeforeOrder > $openBeforeOrder) {
+                // Eliminar el exceso de paréntesis de cierre
+                $excess = $closeBeforeOrder - $openBeforeOrder;
+                $beforeOrder = preg_replace('/\){' . $excess . '}\s*$/', '', $beforeOrder);
+                $sql = $beforeOrder . $afterOrder;
+            }
+        }
+    }
+    
+    return $sql;
+}
+
 // Initialize variables
 $results = [];
 $columns = [];
@@ -122,7 +172,127 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     // Luego aplicamos las correcciones generales
     $query = fixAllSqlIssues($query);
     
-    // SOLUCIÓN DE EMERGENCIA: Verificar específicamente el reporte de RecepcionDirecta (ID=18)
+    // Extraer las fechas del filtro de usuario para TODOS los reportes
+    $startDate = date("Y/m/d");
+    $endDate = date("Y/m/d");
+    $fechasEncontradas = false;
+    
+    // 1. Primero buscamos en las variables de sesión (más confiable)
+    // Estas se guardan en repologfilters.php cuando el usuario selecciona una fecha
+    $sessionDateKeys = array();
+    foreach ($_SESSION as $key => $value) {
+        if (strpos($key, 'user_selected_date_') === 0) {
+            $sessionDateKeys[$key] = $value;
+        }
+    }
+            
+    // Si encontramos valores de fecha en la sesión, los usamos
+    if (!empty($sessionDateKeys)) {
+        error_log("Fechas encontradas en SESSION: " . print_r($sessionDateKeys, true));
+        
+        // Buscar fechas filter_del y filter_al (más comunes en la aplicación)
+        if (isset($_SESSION['user_selected_date_filter_del'])) {
+            $startDate = $_SESSION['user_selected_date_filter_del'];
+            $fechasEncontradas = true;
+            error_log("Fecha de inicio (filter_del) encontrada: $startDate");
+        }
+        
+        if (isset($_SESSION['user_selected_date_filter_al'])) {
+            $endDate = $_SESSION['user_selected_date_filter_al'];
+            $fechasEncontradas = true;
+            error_log("Fecha de fin (filter_al) encontrada: $endDate");
+        }
+        
+        // Si no encontramos filter_del/filter_al, buscar otras fechas
+        if (!$fechasEncontradas) {
+            // Buscar fechas de inicio y fin genéricas
+            foreach ($sessionDateKeys as $key => $value) {
+                if (stripos($key, 'inicio') !== false || stripos($key, 'desde') !== false || stripos($key, 'del') !== false) {
+                    $startDate = $value;
+                    $fechasEncontradas = true;
+                    error_log("Fecha de inicio encontrada en SESSION[$key]: $value");
+                }
+                else if (stripos($key, 'fin') !== false || stripos($key, 'hasta') !== false || stripos($key, 'al') !== false) {
+                    $endDate = $value;
+                    $fechasEncontradas = true;
+                    error_log("Fecha de fin encontrada en SESSION[$key]: $value");
+                }
+                // Si encontramos una fecha pero no es inicio ni fin, la usamos para ambos
+                else {
+                    // Solo usamos esta fecha genérica si aún no hemos encontrado una fecha de inicio o fin
+                    if (!$fechasEncontradas) {
+                        $startDate = $value;
+                        $endDate = $value;
+                        $fechasEncontradas = true;
+                        error_log("Fecha genérica encontrada en SESSION[$key]: $value");
+                    }
+                }
+            }
+        }
+    }
+    
+    // 2. Si no encontramos fechas en SESSION, buscar en POST (para compatibilidad)
+    if (!$fechasEncontradas && isset($_POST) && is_array($_POST)) {
+        foreach ($_POST as $key => $value) {
+            // Buscar campos de tipo fecha
+            if (stripos($key, 'fecha') !== false && !empty($value)) {
+                // Si encontramos una fecha de inicio
+                if (stripos($key, 'inicio') !== false || stripos($key, 'desde') !== false) {
+                    $startDate = $value;
+                    $fechasEncontradas = true;
+                    error_log("Fecha de inicio encontrada en POST[$key]: $value");
+                }
+                // Si encontramos una fecha de fin
+                else if (stripos($key, 'fin') !== false || stripos($key, 'hasta') !== false) {
+                    $endDate = $value;
+                    $fechasEncontradas = true;
+                    error_log("Fecha de fin encontrada en POST[$key]: $value");
+                }
+                // Si es un campo genérico de fecha, usarlo como ambas fechas
+                else {
+                    $startDate = $value;
+                    $endDate = $value;
+                    $fechasEncontradas = true;
+                    error_log("Fecha genérica encontrada en POST[$key]: $value");
+                }
+            }
+        }
+    }
+    
+    // 3. Si aún no tenemos fechas, extraerlas de la consulta SQL original
+    if (!$fechasEncontradas) {
+        error_log("No se encontraron fechas en SESSION ni POST, buscando en SQL...");
+        
+        // Buscar fechas en la consulta original con expresión regular
+        if (preg_match('/BETWEEN\s+["\']([^"\']+)["\']\s+AND\s+["\']([^"\']+)["\']/i', $query, $dateMatches)) {
+            $startDate = trim($dateMatches[1]);
+            $endDate = trim($dateMatches[2]);
+            $fechasEncontradas = true;
+            
+            // Asegurarnos de que tengamos solo la fecha, sin la hora
+            if (strpos($startDate, ' ') !== false) {
+                $startDateParts = explode(' ', $startDate);
+                $startDate = $startDateParts[0];
+            }
+            
+            if (strpos($endDate, ' ') !== false) {
+                $endDateParts = explode(' ', $endDate);
+                $endDate = $endDateParts[0];
+            }
+            
+            error_log("Fechas extraídas de SQL: $startDate - $endDate");
+        }
+    }
+    
+    // Si llegamos aquí sin fechas, usar el día actual
+    if (!$fechasEncontradas) {
+        error_log("No se encontraron fechas en SESSION, POST ni SQL. Usando fechas del día actual: $startDate - $endDate");
+    }
+    
+    // Información de depuración
+    error_log("Fechas finales para SQL: startDate=$startDate, endDate=$endDate");
+    
+    // SOLUCIÓN ESPECÍFICA PARA EL REPORTE 18: RecepcionDirecta
     if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 18) {
         // Verificar si estamos ante el caso problemático específico
         if (strpos($query, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ||
@@ -130,26 +300,51 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
             
             // Reemplazar manualmente el SQL que causa problemas con una versión correcta
             $query = "SELECT concat(\"<Center><A href=../../modulos/recepciones/recepciondirecta.php?idtraslado=\",lt.idtraslado,\"><img src=../../modulos/recepciones/delivery.png>\",\"</A></Center>\") \"Recibir\", "
-                   . "lt.idtraslado \"Traslado\", of.nombrefabricante \"Propietario\", vm.nombremarca \"Ingenio\", "
-                   . "obo.nombrebodega \"Bodega Origen\", obd.nombrebodega \"Bodega Destino\", ip.nombreproducto \"Producto\", "
-                   . "ie.descripcionestado \"Estado Producto\", il.descripcionlote \"Zafra\", lt.fecha \"FechaInicio\" "
-                   . "FROM logistica_traslados lt "
-                   . "INNER JOIN operaciones_fabricantes of ON of.idfabricante=lt.idfabricante "
-                   . "INNER JOIN vista_marcas vm ON vm.idmarca=lt.idmarca "
-                   . "INNER JOIN operaciones_bodegas obo ON obo.idbodega=lt.idbodegaorigen "
-                   . "INNER JOIN operaciones_bodegas obd ON obd.idbodega=lt.idbodegadestino "
-                   . "INNER JOIN inventarios_productos ip ON ip.idproducto=lt.idproducto "
-                   . "INNER JOIN inventarios_estados ie ON ie.idestadoproducto=lt.idestadoproducto "
-                   . "INNER JOIN inventarios_lotes il ON il.idloteproducto=lt.idloteproducto "
-                   . "WHERE ( lt.idbodegadestino IN (SELECT idbodega FROM relaciones_usuariosbodegas WHERE idempleado=2) OR "
-                   . "NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado=2) ) "
-                   . "AND lt.idestadodocumento<>4 "
-                   . "AND (lt.fecha BETWEEN \"2025/04/30 00:00:00\" AND \"2025/04/30 23:59:59\") "
-                   . "AND (lt.idestadodocumento=1) "
-                   . "AND (lt.referencia1 LIKE '%%') "
-                   . "ORDER BY lt.fecha DESC";
+                  . "lt.idtraslado \"Traslado\", of.nombrefabricante \"Propietario\", vm.nombremarca \"Ingenio\", "
+                  . "obo.nombrebodega \"Bodega Origen\", obd.nombrebodega \"Bodega Destino\", ip.nombreproducto \"Producto\", "
+                  . "ie.descripcionestado \"Estado Producto\", il.descripcionlote \"Zafra\", lt.fecha \"FechaInicio\" "
+                  . "FROM logistica_traslados lt "
+                  . "INNER JOIN operaciones_fabricantes of ON of.idfabricante=lt.idfabricante "
+                  . "INNER JOIN vista_marcas vm ON vm.idmarca=lt.idmarca "
+                  . "INNER JOIN operaciones_bodegas obo ON obo.idbodega=lt.idbodegaorigen "
+                  . "INNER JOIN operaciones_bodegas obd ON obd.idbodega=lt.idbodegadestino "
+                  . "INNER JOIN inventarios_productos ip ON ip.idproducto=lt.idproducto "
+                  . "INNER JOIN inventarios_estados ie ON ie.idestadoproducto=lt.idestadoproducto "
+                  . "INNER JOIN inventarios_lotes il ON il.idloteproducto=lt.idloteproducto "
+                  . "WHERE ( lt.idbodegadestino IN (SELECT idbodega FROM relaciones_usuariosbodegas WHERE idempleado=2) OR "
+                  . "NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado=2) ) "
+                  . "AND lt.idestadodocumento<>4 "
+                  . "AND (lt.fecha BETWEEN \"$startDate 00:00:00\" AND \"$endDate 23:59:59\") "
+                  . "AND (lt.idestadodocumento=1) "
+                  . "AND (lt.referencia1 LIKE '%%') "
+                  . "ORDER BY lt.fecha DESC";
+            
+            // Registrar el SQL corregido
+            error_log("SQL corregido para RecepcionDirecta: " . $query);
         }
     }
+    
+    // Aplicar fecha a la consulta SQL
+    // Buscar patrón de BETWEEN de fecha y reemplazarlo con las fechas de usuario
+    $query = preg_replace('/BETWEEN\s+["\']([^"\']+)["\']\s+AND\s+["\']([^"\']+)["\']/i', 
+                          "BETWEEN \"$startDate 00:00:00\" AND \"$endDate 23:59:59\"", 
+                          $query);
+    
+    // SOLUCIÓN DIRECTA para el problema del paréntesis extra antes de los filtros de combo
+    // Este error ocurre cuando hay condiciones agregadas después de LIKE '%%'
+    $query = preg_replace('/\(lt\.referencia1\s+LIKE\s+\'%%\'\)\s*\)\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*([0-9]+)\)/i', 
+                          '(lt.referencia1 LIKE \'%%\')) $1 ($2 = $3)', 
+                          $query);
+                          
+    // Corrección general para este problema de paréntesis en cualquier condición
+    $query = preg_replace('/\)\s*\)\s+(and|AND|or|OR)\s+\(([^()]+)\)/i', 
+                          ')) $1 ($2)', 
+                          $query);
+    
+    // Solución final para eliminar paréntesis excesivos
+    $query = eliminaParentesisExcesivos($query);
+    
+    error_log("SQL después de aplicar fechas y corregir paréntesis: " . $query);
     
     // Guardar el SQL final en la sesión para referencia
     $_SESSION['sql_final'] = $query;
