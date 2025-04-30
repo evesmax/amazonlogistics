@@ -1138,6 +1138,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    
+    <!-- Select2 para los filtros con búsqueda -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <style>
         .filters-container {
             max-width: 800px;
@@ -1177,6 +1181,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             height: 40px;
         }
         
+        /* Estilos para el nuevo autocompletado */
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .filter-autocomplete {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            height: 40px;
+        }
+        
+        /* Estilos para el menú de autocompletado */
+        .ui-autocomplete {
+            max-height: 220px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 0 0 4px 4px;
+            z-index: 1000 !important;
+            width: auto !important;
+            min-width: 200px;
+        }
+        
+        .ui-menu-item {
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .ui-menu-item div {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            text-align: left;
+        }
+        
+        .ui-menu-item:first-child div {
+            background-color: #5c7cfa;
+            color: white;
+        }
+        
+        .ui-menu-item div:hover,
+        .ui-menu-item div.ui-state-active {
+            background-color: #5c7cfa !important;
+            color: white !important;
+        }
+        
+        .ui-menu-item strong {
+            font-weight: bold;
+            color: inherit;
+        }
+        
+        /* Quitar el ícono de dropdown y agregar un campo de nivel */
+        .filter-autocomplete {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%23888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px !important;
+        }
+        
         .filter-date {
             width: 100%;
             padding: 8px;
@@ -1211,8 +1284,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             margin-bottom: 20px;
         }
         
+        /* Estilos mejorados para select2 */
         .select2-container {
             width: 100% !important;
+        }
+        
+        .select-search-container {
+            width: 100%;
+        }
+        
+        /* Personalización del select2 para que se parezca a la imagen de referencia */
+        .select2-container--default .select2-selection--single {
+            height: 40px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px;
+            padding-left: 0;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px;
+        }
+        
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #5c7cfa;
+        }
+        
+        .select2-results__option {
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        
+        .select2-search--dropdown .select2-search__field {
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        .select2-container--open .select2-dropdown--below {
+            border-color: #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -1259,20 +1378,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                                        placeholder="<?php echo htmlspecialchars($filter['placeholder']); ?>">
                                        
                             <?php elseif ($filter['type'] === 'combo'): ?>
-                                <!-- Combo que usa 'value' para el campo 'val' (valor interno) y muestra el texto del campo 'des' -->
-                                <!-- Al seleccionar una opción, el valor enviado será el del campo 'val', no el texto mostrado -->
-                                <select id="<?php echo htmlspecialchars($filter['id']); ?>" 
-                                        name="<?php echo htmlspecialchars($filter['id']); ?>" 
-                                        class="filter-select">
-                                    <option value="">-- Todos --</option>
-                                    <?php foreach ($filter['options'] as $option): ?>
-                                        <!-- value contiene el campo 'val' que es el valor interno para el SQL -->
-                                        <option value="<?php echo htmlspecialchars($option['value']); ?>">
-                                            <!-- El texto mostrado es el campo 'des' -->
-                                            <?php echo htmlspecialchars($option['text']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <!-- Selector con búsqueda simple -->
+                                <div class="select-search-container">
+                                    <select id="<?php echo htmlspecialchars($filter['id']); ?>" 
+                                            name="<?php echo htmlspecialchars($filter['id']); ?>" 
+                                            class="filter-select-search">
+                                        <option value="">-- Todos --</option>
+                                        <?php foreach ($filter['options'] as $option): ?>
+                                            <option value="<?php echo htmlspecialchars($option['value']); ?>">
+                                                <?php echo htmlspecialchars($option['text']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <script>
+                                $(document).ready(function() {
+                                    // Inicializa Select2 para este campo específico
+                                    $("#<?php echo htmlspecialchars($filter['id']); ?>").select2({
+                                        placeholder: "-- Seleccione o escriba --",
+                                        allowClear: true,
+                                        width: '100%'
+                                    });
+                                });
+                                </script>
                             <?php endif; ?>
                         </div>
                     <?php else: // Para filtros de tipo 'session', agregamos campo oculto con valor fijo ?>
