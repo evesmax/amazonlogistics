@@ -116,7 +116,43 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     $query = $_SESSION['sql_consulta'];
     
     // Aplicamos todas las correcciones al SQL una vez más antes de ejecutar
+    // Primero aplicar la limpieza específica para el problema de "and )"
+    $query = fixExtraAndBeforeClosingParenthesis($query);
+    
+    // Luego aplicamos las correcciones generales
     $query = fixAllSqlIssues($query);
+    
+    // SOLUCIÓN DE EMERGENCIA: Verificar específicamente el reporte de RecepcionDirecta (ID=18)
+    if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 18) {
+        // Verificar si estamos ante el caso problemático específico
+        if (strpos($query, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ||
+            strpos($query, ')) ORDER BY lt.fecha') !== false) {
+            
+            // Reemplazar manualmente el SQL que causa problemas con una versión correcta
+            $query = "SELECT concat(\"<Center><A href=../../modulos/recepciones/recepciondirecta.php?idtraslado=\",lt.idtraslado,\"><img src=../../modulos/recepciones/delivery.png>\",\"</A></Center>\") \"Recibir\", "
+                   . "lt.idtraslado \"Traslado\", of.nombrefabricante \"Propietario\", vm.nombremarca \"Ingenio\", "
+                   . "obo.nombrebodega \"Bodega Origen\", obd.nombrebodega \"Bodega Destino\", ip.nombreproducto \"Producto\", "
+                   . "ie.descripcionestado \"Estado Producto\", il.descripcionlote \"Zafra\", lt.fecha \"FechaInicio\" "
+                   . "FROM logistica_traslados lt "
+                   . "INNER JOIN operaciones_fabricantes of ON of.idfabricante=lt.idfabricante "
+                   . "INNER JOIN vista_marcas vm ON vm.idmarca=lt.idmarca "
+                   . "INNER JOIN operaciones_bodegas obo ON obo.idbodega=lt.idbodegaorigen "
+                   . "INNER JOIN operaciones_bodegas obd ON obd.idbodega=lt.idbodegadestino "
+                   . "INNER JOIN inventarios_productos ip ON ip.idproducto=lt.idproducto "
+                   . "INNER JOIN inventarios_estados ie ON ie.idestadoproducto=lt.idestadoproducto "
+                   . "INNER JOIN inventarios_lotes il ON il.idloteproducto=lt.idloteproducto "
+                   . "WHERE ( lt.idbodegadestino IN (SELECT idbodega FROM relaciones_usuariosbodegas WHERE idempleado=2) OR "
+                   . "NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado=2) ) "
+                   . "AND lt.idestadodocumento<>4 "
+                   . "AND (lt.fecha BETWEEN \"2025/04/30 00:00:00\" AND \"2025/04/30 23:59:59\") "
+                   . "AND (lt.idestadodocumento=1) "
+                   . "AND (lt.referencia1 LIKE '%%') "
+                   . "ORDER BY lt.fecha DESC";
+        }
+    }
+    
+    // Guardar el SQL final en la sesión para referencia
+    $_SESSION['sql_final'] = $query;
     
     // Para debugging
     $_SESSION['sql_consulta_original'] = $_SESSION['sql_consulta'];

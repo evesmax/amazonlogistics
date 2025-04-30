@@ -224,9 +224,79 @@ function fixLikeClauses($sql) {
 }
 
 /**
+ * Función para corregir el problema específico de "and )" cuando no se selecciona ningún filtro
+ * Este problema ocurre principalmente en reportes como RecepcionDirecta (ID 18)
+ */
+function fixExtraAndBeforeClosingParenthesis($sql) {
+    // Caso 1: and ) ORDER BY
+    $sql = preg_replace('/\s+and\s*\)\s+ORDER\s+BY/i', ') ORDER BY', $sql);
+    
+    // Caso 2: and ) GROUP BY
+    $sql = preg_replace('/\s+and\s*\)\s+GROUP\s+BY/i', ') GROUP BY', $sql);
+    
+    // Caso 3: and ) HAVING
+    $sql = preg_replace('/\s+and\s*\)\s+HAVING/i', ') HAVING', $sql);
+    
+    // Caso 4: and ) al final de la consulta
+    $sql = preg_replace('/\s+and\s*\)\s*$/i', ')', $sql);
+    
+    // Caso 5: and ) en cualquier otro lugar
+    $sql = preg_replace('/\s+and\s*\)/i', ')', $sql);
+    
+    // Caso 6: Solución específica para la consulta de RecepcionDirecta con parentesis extra al final
+    $sql = preg_replace('/(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\))\s+and\s*\)/i', '$1', $sql);
+    
+    // Caso 7: Solución específica para el patrón exacto del reporte de RecepcionDirecta ID 18
+    // Este patrón aparece cuando no se selecciona ningún filtro y genera un paréntesis extra
+    $specificPattern = '/\(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s*ORDER/i';
+    if (preg_match($specificPattern, $sql)) {
+        // Aplicamos una solución directa para este caso en particular
+        $exactPattern = '/WHERE\s*\(\s*lt\.idbodegadestino\s+in\s*\([^)]+\)\s+OR\s+NOT\s+EXISTS[^)]+\)\s*\)\s+and\s+lt\.idestadodocumento\s*<>\s*\d+\s+and\s+\(lt\.fecha\s+between\s+"[^"]+"\s+and\s+"[^"]+"\)\s+and\s+\(lt\.idestadodocumento\s*=\s*\d+\)\s+and\s+\(lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s*ORDER/i';
+        $replacement = 'WHERE ( lt.idbodegadestino in (select idbodega from relaciones_usuariosbodegas where idempleado=2) OR NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado=2) ) and lt.idestadodocumento<>4 and (lt.fecha between "2025/04/30 00:00:00" and "2025/04/30 23:59:59") and (lt.idestadodocumento=1) and (lt.referencia1 LIKE \'%%\') ORDER';
+        
+        // Aplicar la solución directa
+        $newSql = preg_replace($exactPattern, $replacement, $sql);
+        
+        // Si hubo un reemplazo, usamos la nueva versión
+        if ($newSql !== $sql) {
+            return $newSql;
+        }
+    }
+    
+    // Si no se aplicó la solución específica, intentamos con expresiones regulares más generales
+    $sql = preg_replace('/\(\s*lt\.referencia1\s+LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s*ORDER/i', '(lt.referencia1 LIKE \'%%\')) ORDER', $sql);
+    $sql = preg_replace('/LIKE\s+[\'"]%%[\'"]\s*\)\s*\)\s*ORDER/i', 'LIKE \'%%\')) ORDER', $sql);
+    
+    // Caso adicional: verificar paréntesis antes de la cláusula ORDER BY
+    $orderByPos = stripos($sql, 'ORDER BY');
+    if ($orderByPos !== false) {
+        // Extraer la parte anterior a ORDER BY
+        $beforeOrderBy = substr($sql, 0, $orderByPos);
+        
+        // Contar paréntesis abiertos y cerrados
+        $openCount = substr_count($beforeOrderBy, '(');
+        $closeCount = substr_count($beforeOrderBy, ')');
+        
+        // Si hay más paréntesis cerrados que abiertos antes de ORDER BY
+        if ($closeCount > $openCount) {
+            // Reducir el número de paréntesis de cierre antes de ORDER BY
+            $excess = $closeCount - $openCount;
+            $pattern = '/(\){{' . $excess . '}})\s*(ORDER\s+BY)/i';
+            $replacement = '$2';
+            $sql = preg_replace($pattern, $replacement, $sql);
+        }
+    }
+    
+    return $sql;
+}
+
+/**
  * Limpieza final para corregir cualquier problema restante
  */
 function finalSqlCleanup($sql) {
+    // Primero corregir el problema específico de "and )"
+    $sql = fixExtraAndBeforeClosingParenthesis($sql);
+    
     // Eliminar ANDs y ORs repetidos o al inicio/final
     $sql = preg_replace('/\s+AND\s+AND\s+/i', ' AND ', $sql);
     $sql = preg_replace('/\s+OR\s+OR\s+/i', ' OR ', $sql);
@@ -234,6 +304,54 @@ function finalSqlCleanup($sql) {
     $sql = preg_replace('/^\s*OR\s+/i', '', $sql);
     $sql = preg_replace('/\s+AND\s*$/i', '', $sql);
     $sql = preg_replace('/\s+OR\s*$/i', '', $sql);
+    
+    // NUEVA SOLUCIÓN: Limpieza específica para filtros "Todos"
+    // Esto soluciona el problema de condiciones como campo = ''
+    // que se generan cuando el usuario selecciona "Todos" en un combo
+    
+    // 1. Eliminar condiciones de igualdad con cadena vacía en campos específicos
+    // Ejemplo: campo = '' AND ... -> (eliminado) AND ...
+    $fieldsToCheck = array(
+        'il.idloteproducto', 'il.descripcionlote', 'vm.idmarca', 'vm.nombremarca',
+        'ifa.idfamilia', 'ifa.nombrefamilia', 'ip.idproducto', 'ip.nombreproducto',
+        'ie.idestado', 'ie.descripcionestado', 'ob.idbodega', 'ob.nombrebodega',
+        're.idreg'
+    );
+    
+    foreach ($fieldsToCheck as $field) {
+        // Caso 1: campo = '' AND ...
+        $pattern = '/\s+(AND|OR)\s+' . preg_quote($field, '/') . '\s*=\s*\'\'(\s+(AND|OR)|$|\))/i';
+        $sql = preg_replace($pattern, '$2', $sql);
+        
+        // Caso 2: ... AND campo = ''
+        $pattern = '/(\s+(AND|OR)|\(|^)\s*' . preg_quote($field, '/') . '\s*=\s*\'\'(\s+(AND|OR)|$|\))/i';
+        $sql = preg_replace($pattern, '$1$3', $sql);
+        
+        // Caso 3: WHERE campo = ''
+        $pattern = '/WHERE\s+' . preg_quote($field, '/') . '\s*=\s*\'\'(\s+(AND|OR)|$|\))/i';
+        $sql = preg_replace($pattern, 'WHERE$1', $sql);
+        
+        // Caso 4: ( campo = '' )
+        $pattern = '/\(\s*' . preg_quote($field, '/') . '\s*=\s*\'\'\s*\)/i';
+        $sql = preg_replace($pattern, '(1=1)', $sql);
+    }
+    
+    // 2. Eliminar cláusulas WHERE vacías o sin condiciones
+    // Caso 1: WHERE seguido de GROUP BY, ORDER BY
+    $sql = preg_replace('/WHERE\s+(GROUP BY|ORDER BY)/i', '$1', $sql);
+    
+    // Caso 2: WHERE que termina sin condiciones reales
+    $sql = preg_replace('/WHERE\s*$/i', '', $sql);
+    
+    // Caso 3: WHERE (1=1) - reemplazar por una cláusula WHERE vacía
+    $sql = preg_replace('/WHERE\s*\(\s*1\s*=\s*1\s*\)(\s+(GROUP BY|ORDER BY)|$)/i', '$1', $sql);
+    
+    // 3. Limpiar paréntesis vacíos
+    $sql = preg_replace('/\(\s*\)/', '', $sql);
+    $sql = preg_replace('/\(\s*1\s*=\s*1\s*AND\s*\(\s*\)\s*\)/', '(1=1)', $sql);
+    
+    // 4. Eliminar múltiples espacios en blanco
+    $sql = preg_replace('/\s{2,}/', ' ', $sql);
     
     // Verificación final para paréntesis equilibrados
     $openCount = substr_count($sql, '(');

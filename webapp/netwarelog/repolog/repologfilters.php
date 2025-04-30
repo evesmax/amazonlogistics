@@ -173,11 +173,23 @@ function getComboOptions($sql, $valueField, $displayField) {
         // Fetch all results
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
+        // Add "Todos" option explicitly as first option - this is important
+        // Value is empty string which will trigger the "filterEmpty" condition
+        $options[] = [
+            'value' => '',  // Empty value triggers "Todos" handling in processFilters
+            'text' => '-- Todos --'
+        ];
+        
         // Format results as options array
         foreach ($results as $row) {
+            // Ensure values are properly formatted
+            $optionValue = isset($row[$valueField]) ? $row[$valueField] : '';
+            $optionText = isset($row[$displayField]) ? $row[$displayField] : '';
+            
+            // Add to options array
             $options[] = [
-                'value' => $row[$valueField],
-                'text' => $row[$displayField]
+                'value' => $optionValue,
+                'text' => $optionText
             ];
         }
         
@@ -185,8 +197,13 @@ function getComboOptions($sql, $valueField, $displayField) {
         $pdo = null;
         
     } catch (Exception $e) {
-        // Return empty array on error
-        $options = array();
+        // On error, at least provide the "Todos" option
+        $options = array(
+            [
+                'value' => '',
+                'text' => '-- Todos --'
+            ]
+        );
     }
     
     return $options;
@@ -471,117 +488,315 @@ function cleanSqlQuery($sql) {
 
 function buildSqlQuery($report, $filterValues) {
     global $filters; // Access the global filters array
+    global $debug_info; // Para compartir información de depuración
     $sqlQuery = "SELECT " . $report['sql_select'] . " FROM " . $report['sql_from'];
     
     // Process WHERE clause with filter values
     if (!empty($report['sql_where'])) {
         $whereClause = $report['sql_where'];
         
+        // Depuración - Inicializamos aquí para tener acceso a toda la información
+        $debug_info = array();
+        
+        // PARCHE ESPECÍFICO PARA ZAFRA EN REPORTE 18
+        // Este es un arreglo directo para el problema reportado con el filtro Zafra
+        if (isset($_GET['id']) && intval($_GET['id']) == 18) {
+            $debug_info[] = "Aplicando parche especial para el reporte 18 (Zafra)";
+            
+            // Caso específico: Si no hay valor para el filtro Zafra (opción "Todos"), eliminar toda la condición
+            if (!isset($_POST['filter_zafra']) || $_POST['filter_zafra'] === '') {
+                // Eliminar patrón exacto tal como aparece en el SQL
+                $exactPattern = "/and\\s*\\(il\\.idloteproducto\\s*=\\s*'\\[@Zafra;val;des;SELECT idloteproducto val, descripcionlote des from inventarios_lotes order by des\\]'\\)/i";
+                $whereClause = preg_replace($exactPattern, '', $whereClause);
+                
+                // Patrón alternativo
+                $zafraPattern = "/and\\s*\\(il\\.idloteproducto\\s*=\\s*'\\[@Zafra[^\\]]*\\]'\\)/i";
+                $whereClause = preg_replace($zafraPattern, '', $whereClause);
+                $debug_info[] = "Eliminada condición Zafra (opción Todos)";
+            }
+            // Caso específico: Si hay un valor seleccionado para Zafra, reemplazar el patrón por el valor
+            else if (isset($_POST['filter_zafra']) && !empty($_POST['filter_zafra'])) {
+                $comboValue = $_POST['filter_zafra'];
+                
+                // Reemplazar el patrón exacto 
+                $exactPattern = "\\(il\\.idloteproducto\\s*=\\s*'\\[@Zafra;val;des;SELECT idloteproducto val, descripcionlote des from inventarios_lotes order by des\\]'\\)";
+                $whereClause = preg_replace("/$exactPattern/i", "(il.idloteproducto = $comboValue)", $whereClause);
+                
+                // Patrón alternativo
+                $zafraPattern = "\\(il\\.idloteproducto\\s*=\\s*'\\[@Zafra[^\\]]*\\]'\\)";
+                $whereClause = preg_replace("/$zafraPattern/i", "(il.idloteproducto = $comboValue)", $whereClause);
+                $debug_info[] = "Reemplazado patrón Zafra con valor: $comboValue";
+            }
+        }
+        
         // First, look for direct combo patterns [@Field;val;des;sql] and replace them with selected values
         // This is a direct approach that should work more reliably
         $comboPatternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/'; // [@Campo;val;des;SQL]
         preg_match_all($comboPatternRegex, $whereClause, $comboMatches, PREG_SET_ORDER);
         
+        $debug_info[] = "Total patrones combo encontrados: " . count($comboMatches);
+        
         foreach ($comboMatches as $match) {
             $fullPattern = $match[0];      // The entire pattern [@Field;val;des;sql]
             $label = $match[1];            // Field name/label
+            $val_field = $match[2];        // Field for value (val) in SQL
+            $des_field = $match[3];        // Field for text (des) in SQL
             $filterKey = 'filter_' . sanitizeId($label); // Expected POST field name
             
-            // Check if a value was selected for this combo
+            // Agregar info para depuración
+            $debug_info[] = "Procesando patrón: " . $fullPattern;
+            $debug_info[] = "Label: " . $label . ", Campo valor: " . $val_field . ", Campo descriptor: " . $des_field;
+            $debug_info[] = "Filtro POST esperado: " . $filterKey;
+            
+            if (isset($filterValues[$filterKey])) {
+                $debug_info[] = "Valor seleccionado: " . $filterValues[$filterKey];
+            } else {
+                $debug_info[] = "No hay valor seleccionado para este filtro";
+            }
+            
+            // Detectar si este es un filter nulo (Todos) o tiene un valor seleccionado
+            $filterEmpty = !isset($filterValues[$filterKey]) || trim($filterValues[$filterKey]) === '';
+            
+            // Si el usuario seleccionó un valor específico (no Todos)
             if (isset($filterValues[$filterKey]) && !empty($filterValues[$filterKey])) {
-                // Use the user-selected value (corresponds to 'val' field in the combo)
+                // Usuario seleccionó un valor específico (por ejemplo, un ID numérico)
                 $comboValue = $filterValues[$filterKey];
                 
+                // SOLUCIÓN PARA TIPOS COMBO: Asegurar que solo usemos el valor (val) y no el patrón completo
+                
+                // Aquí aplicamos directamente el valor seleccionado de la opción al SQL
+                // El valor ya viene correcto desde el select HTML, que tiene value="opcion['value']"
+                
                 // For debugging - add a trace to a variable
-                $trace = "Reemplazando combo: " . $fullPattern . " con valor: " . $comboValue;
+                $debug_info[] = "Reemplazando combo: " . $fullPattern . " con valor: " . $comboValue;
                 
-                // Replace the entire combo pattern with the value
-                $whereClause = str_replace($fullPattern, $comboValue, $whereClause);
+                // Almacenar el patrón completo para búsquedas precisas (incluye los corchetes [@...])
+                $patternWithBrackets = preg_quote($fullPattern, '/');
                 
-                // Caso específico: Si es Zafra y está dentro de un paréntesis, vamos a ser más conservadores
-                // y solo modificar si realmente hay un desbalance de paréntesis
-                if ($label === 'Zafra' && strpos($whereClause, 'il.descripcionlote = ' . $comboValue) !== false) {
-                    // Solo si hay un paréntesis abierto antes de il.descripcionlote pero no hay uno de cierre
-                    $pattern = '/\(il\.descripcionlote\s*=\s*' . $comboValue . '/i';
-                    if (preg_match($pattern, $whereClause)) {
-                        // Verificamos si hay un desbalance concreto en esta parte
-                        $parts = explode('il.descripcionlote', $whereClause);
-                        if (count($parts) > 1) {
-                            $beforePart = $parts[0];
-                            $openBefore = substr_count($beforePart, '(');
-                            $closeBefore = substr_count($beforePart, ')');
+                // Buscar específicamente condiciones con il.idloteproducto y variantes de Zafra
+                if ($label === 'Zafra') {
+                    $debug_info[] = "Procesando caso especial para Zafra";
+                    
+                    // Buscar patrones comunes para Zafra
+                    // Estas expresiones buscan la condición completa, incluidos paréntesis, AND y OR
+                    
+                    // Caso 1: (il.idloteproducto = [@Zafra;...])
+                    if (preg_match('/\(\s*il\.idloteproducto\s*=\s*' . $patternWithBrackets . '\s*\)/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $replacement = '(il.idloteproducto = ' . $comboValue . ')';
+                        $whereClause = str_replace($fullCondition, $replacement, $whereClause);
+                        $debug_info[] = "Reemplazo en caso 1: " . $fullCondition . " -> " . $replacement;
+                    }
+                    // Caso 2: and (il.idloteproducto = [@Zafra;...]) 
+                    else if (preg_match('/and\s*\(\s*il\.idloteproducto\s*=\s*' . $patternWithBrackets . '\s*\)/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $replacement = 'and (il.idloteproducto = ' . $comboValue . ')';
+                        $whereClause = str_replace($fullCondition, $replacement, $whereClause);
+                        $debug_info[] = "Reemplazo en caso 2: " . $fullCondition . " -> " . $replacement;
+                    }
+                    // Caso 3: and il.idloteproducto = [@Zafra;...]
+                    else if (preg_match('/and\s+il\.idloteproducto\s*=\s*' . $patternWithBrackets . '/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $replacement = 'and il.idloteproducto = ' . $comboValue;
+                        $whereClause = str_replace($fullCondition, $replacement, $whereClause);
+                        $debug_info[] = "Reemplazo en caso 3: " . $fullCondition . " -> " . $replacement;
+                    }
+                    // Caso 4: il.idloteproducto = [@Zafra;...]
+                    else if (preg_match('/il\.idloteproducto\s*=\s*' . $patternWithBrackets . '/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $replacement = 'il.idloteproducto = ' . $comboValue;
+                        $whereClause = str_replace($fullCondition, $replacement, $whereClause);
+                        $debug_info[] = "Reemplazo en caso 4: " . $fullCondition . " -> " . $replacement;
+                    }
+                    // Si no se encontró ningún patrón específico, hacer el reemplazo básico
+                    else {
+                        $whereClause = str_replace($fullPattern, $comboValue, $whereClause);
+                        $debug_info[] = "Reemplazo general para Zafra: " . $fullPattern . " -> " . $comboValue;
+                    }
+                } 
+                // Para otros filtros combo (no Zafra), aplicar reemplazo directo
+                else {
+                    $whereClause = str_replace($fullPattern, $comboValue, $whereClause);
+                    $debug_info[] = "Reemplazo directo: " . $fullPattern . " -> " . $comboValue;
+                }
+            }
+            // Si es un filtro vacío (opción "Todos"), necesitamos eliminar la condición del SQL
+            else if ($filterEmpty) {
+                $debug_info[] = "Procesando filtro vacío (Todos) para: " . $fullPattern;
+                
+                // Manejo especial para Zafra - eliminar la condición completa
+                if ($label === 'Zafra') {
+                    $debug_info[] = "Procesando caso especial Zafra con 'Todos'";
+                    
+                    // Caso especial 1: Buscar "(il.idloteproducto = [@Zafra...])""
+                    if (preg_match('/\(\s*il\.idloteproducto\s*=\s*' . preg_quote($fullPattern, '/') . '\s*\)/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $debug_info[] = "Encontrada condición con paréntesis para eliminar: " . $fullCondition;
+                        
+                        // Buscar si hay AND/OR antes o después de esta condición
+                        $pos = strpos($whereClause, $fullCondition);
+                        if ($pos !== false) {
+                            $beforePos = max(0, $pos - 5);
+                            $afterPos = $pos + strlen($fullCondition);
                             
-                            // Solo si hay un claro desbalance
-                            if ($openBefore > $closeBefore) {
-                                // En este caso, añadimos un paréntesis de cierre después del valor pero antes del AND
-                                // pero asegurándonos de no duplicar paréntesis existentes
-                                if (strpos($whereClause, $comboValue . ')') === false) {
-                                    $whereClause = str_replace(
-                                        'il.descripcionlote = ' . $comboValue . ' and', 
-                                        'il.descripcionlote = ' . $comboValue . ') and', 
-                                        $whereClause
-                                    );
-                                }
+                            // Verificar AND/OR antes
+                            $beforePart = substr($whereClause, $beforePos, 5);
+                            if (strtoupper(trim($beforePart)) === 'AND') {
+                                $fullCondition = 'AND ' . $fullCondition;
+                                $debug_info[] = "Incluyendo AND antes: " . $fullCondition;
+                            } else if (strtoupper(trim(substr($beforePart, 0, 2))) === 'OR') {
+                                $fullCondition = 'OR ' . $fullCondition;
+                                $debug_info[] = "Incluyendo OR antes: " . $fullCondition;
                             }
+                            
+                            // Verificar AND/OR después
+                            $afterPart = substr($whereClause, $afterPos, 5);
+                            if (strtoupper(trim($afterPart)) === 'AND') {
+                                $fullCondition = $fullCondition . ' AND';
+                                $debug_info[] = "Incluyendo AND después: " . $fullCondition;
+                            } else if (strtoupper(trim(substr($afterPart, 0, 2))) === 'OR') {
+                                $fullCondition = $fullCondition . ' OR';
+                                $debug_info[] = "Incluyendo OR después: " . $fullCondition;
+                            }
+                            
+                            // Eliminar la condición completa
+                            $whereClause = str_replace($fullCondition, '', $whereClause);
+                            $debug_info[] = "Condición eliminada, SQL resultante: " . $whereClause;
                         }
                     }
-                }
-            } else {
-                // If no value selected, remove the condition or replace with empty
-                if (strpos($whereClause, " = " . $fullPattern) !== false) {
-                    // If it's an equality comparison (=), handle differently
-                    $conditionPattern = '/([^\s]+)\s*=\s*' . preg_quote($fullPattern, '/') . '/';
-                    if (preg_match($conditionPattern, $whereClause, $matches)) {
-                        $fieldName = $matches[1]; // The field being compared (e.g., "il.descripcionlote")
-                        $conditionStr = $matches[0]; // The full condition (e.g., "il.descripcionlote = [@Zafra;...")
+                    // Caso 2: and il.idloteproducto = [@Zafra...] sin paréntesis
+                    else if (preg_match('/and\s+il\.idloteproducto\s*=\s*' . preg_quote($fullPattern, '/') . '/i', $whereClause, $matches)) {
+                        $fullCondition = $matches[0];
+                        $debug_info[] = "Encontrada condición con AND para eliminar: " . $fullCondition;
                         
-                        // Caso especial para "il.descripcionlote = [@Zafra...]"
-                        if ($fieldName === 'il.descripcionlote') {
-                            // Buscar patrones como (il.descripcionlote = [@Zafra...] and
-                            $fullPattern = '/\(il\.descripcionlote\s*=\s*' . preg_quote($fullPattern, '/') . '\s+and/i';
-                            if (preg_match($fullPattern, $whereClause, $fullMatches)) {
-                                $fullMatch = $fullMatches[0];
-                                // Eliminar el paréntesis inicial y el "and" final
-                                $whereClause = str_replace($fullMatch, '(', $whereClause);
+                        // Eliminar hasta el siguiente AND/OR o fin de la cláusula
+                        $pos = strpos($whereClause, $fullCondition) + strlen($fullCondition);
+                        $restOfClause = substr($whereClause, $pos);
+                        
+                        // Buscar el siguiente AND/OR
+                        if (preg_match('/\s+(AND|OR)\s+/i', $restOfClause, $opMatches, PREG_OFFSET_CAPTURE)) {
+                            $opPos = $opMatches[0][1];
+                            $fullCondition .= substr($restOfClause, 0, $opPos);
+                        }
+                        
+                        $whereClause = str_replace($fullCondition, '', $whereClause);
+                        $debug_info[] = "Condición eliminada, SQL resultante: " . $whereClause;
+                    }
+                    // Caso general para Zafra: cualquier condición que incluya el patrón
+                    else {
+                        $debug_info[] = "Usando eliminación general para Zafra";
+                    }
+                }
+                
+                // ESTRATEGIA GENERAL: 1. Buscar la condición completa que contiene el patrón
+                //                     2. Determinar si es parte de AND/OR
+                //                     3. Eliminar la condición completa preservando la estructura SQL
+                
+                // Buscar condiciones de igualdad como "campo = [@Filtro]"
+                $equalityPatterns = array(
+                    'equals' => '/([^\s]+)\s*=\s*' . preg_quote($fullPattern, '/') . '/i',
+                    'like' => '/([^\s]+)\s*LIKE\s*[\'"]?[%]?' . preg_quote($fullPattern, '/') . '[%]?[\'"]?/i'
+                );
+                
+                foreach ($equalityPatterns as $type => $pattern) {
+                    if (preg_match($pattern, $whereClause, $matches)) {
+                        $fieldName = $matches[1]; // El campo al que se aplica el filtro
+                        $conditionStr = $matches[0]; // La condición completa
+                        
+                        // Ahora determinar si esta condición está dentro de AND/OR
+                        // y eliminarla apropiadamente
+                        
+                        // Caso 1: "(campo = [@Filtro])" - Condición dentro de paréntesis
+                        $parenPattern = '/\(\s*' . preg_quote($conditionStr, '/') . '\s*\)/i';
+                        if (preg_match($parenPattern, $whereClause, $parenMatches)) {
+                            // Necesitamos verificar si los paréntesis están dentro de AND/OR
+                            $fullCondition = $parenMatches[0];
+                            $wherePos = stripos($whereClause, 'WHERE');
+                            $condPos = strpos($whereClause, $fullCondition);
+                            
+                            // Si está justo después de WHERE, eliminar la condición entera
+                            if ($wherePos !== false && ($condPos - $wherePos) <= 7) {
+                                // Es la primera condición después de WHERE
+                                // Buscar si hay AND/OR después
+                                $afterPos = $condPos + strlen($fullCondition);
+                                $afterStr = substr($whereClause, $afterPos, 6);
+                                
+                                if (stripos($afterStr, ' AND ') === 0) {
+                                    // Hay un AND después, eliminarlo también
+                                    $whereClause = str_replace($fullCondition . ' AND', '', $whereClause);
+                                } else if (stripos($afterStr, ' OR ') === 0) {
+                                    // Hay un OR después, eliminarlo también
+                                    $whereClause = str_replace($fullCondition . ' OR', '', $whereClause);
+                                } else {
+                                    // No hay operador después, solo eliminar la condición
+                                    $whereClause = str_replace($fullCondition, '', $whereClause);
+                                }
                             } else {
-                                // Buscar patrones como AND (il.descripcionlote = [@Zafra...])
-                                $parenthesisPattern = '/\s+and\s+\(\s*il\.descripcionlote\s*=\s*' . preg_quote($fullPattern, '/') . '\s*\)/i';
-                                if (preg_match($parenthesisPattern, $whereClause, $parenthesisMatches)) {
-                                    $parenthesisMatch = $parenthesisMatches[0];
-                                    // Eliminar completamente la condición con paréntesis
-                                    $whereClause = str_replace($parenthesisMatch, '', $whereClause);
+                                // Está en medio de la cláusula WHERE
+                                // Buscar si hay AND/OR antes
+                                $beforeStr = substr($whereClause, 0, $condPos);
+                                
+                                if (preg_match('/\s+AND\s+$/i', $beforeStr)) {
+                                    // Hay un AND antes
+                                    $whereClause = preg_replace('/\s+AND\s+' . preg_quote($fullCondition, '/') . '/', '', $whereClause);
+                                } else if (preg_match('/\s+OR\s+$/i', $beforeStr)) {
+                                    // Hay un OR antes
+                                    $whereClause = preg_replace('/\s+OR\s+' . preg_quote($fullCondition, '/') . '/', '', $whereClause);
+                                } else {
+                                    // Caso extraño, solo reemplazar
+                                    $whereClause = str_replace($fullCondition, '', $whereClause);
                                 }
                             }
                         }
-                        
-                        // Para otros casos, eliminar la condición completa con AND/OR
-                        $beforePos = strpos($whereClause, $conditionStr);
-                        if ($beforePos !== false) {
-                            $beforeChar = $beforePos > 0 ? $whereClause[$beforePos - 1] : '';
-                            $afterPos = $beforePos + strlen($conditionStr);
-                            $afterChar = $afterPos < strlen($whereClause) ? $whereClause[$afterPos] : '';
+                        // Caso 2: "campo = [@Filtro] AND/OR" - Condición seguida de operador
+                        else if (preg_match('/' . preg_quote($conditionStr, '/') . '\s+(AND|OR)/i', $whereClause, $opAfterMatches)) {
+                            $operator = $opAfterMatches[1];
+                            $fullCondition = $conditionStr . ' ' . $operator;
                             
-                            $replacePart = $conditionStr;
+                            // Si está después de WHERE, eliminar la condición y el operador
+                            $wherePos = stripos($whereClause, 'WHERE');
+                            $condPos = strpos($whereClause, $conditionStr);
                             
-                            // Handle AND/OR before/after the condition
-                            if ($beforeChar === ' ' && substr($whereClause, max(0, $beforePos - 5), 5) === ' AND ') {
-                                $replacePart = ' AND ' . $replacePart;
-                            } elseif ($afterChar === ' ' && substr($whereClause, $afterPos, 5) === ' AND ') {
-                                $replacePart = $replacePart . ' AND ';
-                            } elseif ($beforeChar === ' ' && substr($whereClause, max(0, $beforePos - 4), 4) === ' OR ') {
-                                $replacePart = ' OR ' . $replacePart;
-                            } elseif ($afterChar === ' ' && substr($whereClause, $afterPos, 4) === ' OR ') {
-                                $replacePart = $replacePart . ' OR ';
+                            if ($wherePos !== false && ($condPos - $wherePos) <= 7) {
+                                // Es la primera condición después de WHERE
+                                $whereClause = str_replace('WHERE ' . $fullCondition, 'WHERE ', $whereClause);
+                            } else {
+                                // Está en medio de la cláusula, buscar qué hay antes
+                                $beforeStr = substr($whereClause, 0, $condPos);
+                                
+                                if (preg_match('/\s+AND\s+$/i', $beforeStr)) {
+                                    // AND antes: "... AND campo = [@Filtro] AND ..."
+                                    $whereClause = preg_replace('/\s+AND\s+' . preg_quote($conditionStr, '/') . '\s+(AND|OR)/i', ' $1', $whereClause);
+                                } else if (preg_match('/\s+OR\s+$/i', $beforeStr)) {
+                                    // OR antes: "... OR campo = [@Filtro] AND ..."
+                                    $whereClause = preg_replace('/\s+OR\s+' . preg_quote($conditionStr, '/') . '\s+(AND|OR)/i', ' $1', $whereClause);
+                                } else {
+                                    // Caso extraño
+                                    $whereClause = str_replace($fullCondition, '', $whereClause);
+                                }
                             }
-                            
-                            // Remove the condition
-                            $whereClause = str_replace($replacePart, '', $whereClause);
+                        }
+                        // Caso 3: "AND/OR campo = [@Filtro]" - Operador antes de condición
+                        else if (preg_match('/(AND|OR)\s+' . preg_quote($conditionStr, '/') . '/i', $whereClause, $opBeforeMatches)) {
+                            $operator = $opBeforeMatches[1];
+                            $fullCondition = $operator . ' ' . $conditionStr;
+                            $whereClause = str_replace($fullCondition, '', $whereClause);
+                        }
+                        // Caso 4: campo = [@Filtro] sin AND/OR - posiblemente única condición
+                        else {
+                            $whereClause = str_replace($conditionStr, '1=1', $whereClause);
                         }
                     }
-                } else {
-                    // For other cases, just replace the pattern with empty
-                    $whereClause = str_replace($fullPattern, '', $whereClause);
                 }
+                
+                // Limpieza final: Eliminar WHERE vacío
+                $whereClause = preg_replace('/WHERE\s+$/i', '', $whereClause);
+                
+                // Reemplazar "WHERE 1=1 AND" por "WHERE"
+                $whereClause = preg_replace('/WHERE\s+1\s*=\s*1\s+AND/i', 'WHERE', $whereClause);
+                
+                // Reemplazar "WHERE 1=1" al final por cadena vacía
+                $whereClause = preg_replace('/WHERE\s+1\s*=\s*1\s*$/i', '', $whereClause);
             }
             // Note: We'll still continue with regular processing for any patterns that weren't handled
         }
@@ -1017,6 +1232,133 @@ function buildSqlQuery($report, $filterValues) {
     $_SESSION['sql_consulta_original_repologfilters'] = $sqlQuery;
     $_SESSION['sql_consulta_fixed_repologfilters'] = $sqlQuery;
     
+    // Verificación FINAL para patrones no procesados de tipo [@Campo;val;des;SQL]
+    global $debug_info_html;
+    
+    // Buscar cualquier patrón de tipo [@*;*;*;*] que haya quedado sin procesar
+    if (preg_match_all('/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/i', $sqlQuery, $unprocessedMatches)) {
+        $debug_info[] = "¡ATENCIÓN! Se encontraron " . count($unprocessedMatches[0]) . " patrones de filtro sin procesar en el SQL final. Aplicando corrección general.";
+        
+        foreach ($unprocessedMatches[0] as $index => $fullPattern) {
+            $fieldName = $unprocessedMatches[1][$index]; // El nombre del campo (ej: Zafra)
+            $valField = $unprocessedMatches[2][$index];  // El campo para valor (val)
+            $desField = $unprocessedMatches[3][$index];  // El campo para texto (des)
+            $filterKey = 'filter_' . sanitizeId($fieldName);
+            
+            $debug_info[] = "Procesando patrón sin resolver: " . $fullPattern;
+            $debug_info[] = "Campo: " . $fieldName . ", Filtro POST: " . $filterKey;
+            
+            // Buscar campos relacionados con este patrón en el SQL
+            // Primero buscamos si hay una condición completa para este campo
+            if (preg_match('/([a-z0-9_.]+)\s*=\s*\'' . preg_quote($fullPattern, '/') . '\'/i', $sqlQuery, $fieldMatches)) {
+                $actualField = $fieldMatches[1]; // El campo real en el SQL (ej: il.idloteproducto)
+                $debug_info[] = "Campo SQL encontrado: " . $actualField;
+                
+                // Caso 1: Cuando no hay valor para el filtro (opción Todos)
+                if (!isset($_POST[$filterKey]) || $_POST[$filterKey] === '') {
+                    $debug_info[] = "Aplicando corrección para $fieldName (Todos) - Eliminando condición completa";
+                    
+                    // Patrones para eliminar la condición completa
+                    $patterns = array(
+                        "/and\s*\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i",
+                        "/\s*and\s*" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i",
+                        "/\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i"
+                    );
+                    
+                    foreach ($patterns as $pattern) {
+                        $sqlQueryBefore = $sqlQuery;
+                        $sqlQuery = preg_replace($pattern, '', $sqlQuery);
+                        
+                        if ($sqlQueryBefore !== $sqlQuery) {
+                            $debug_info[] = "Patrón aplicado correctamente: " . $pattern;
+                            break;
+                        }
+                    }
+                }
+                // Caso 2: Hay un valor específico para el filtro
+                else if (isset($_POST[$filterKey]) && !empty($_POST[$filterKey])) {
+                    $comboValue = $_POST[$filterKey];
+                    $debug_info[] = "Aplicando corrección para $fieldName (valor: $comboValue) - Reemplazando patrón directo";
+                    
+                    // Reemplazo más específico primero
+                    $patterns = array(
+                        "/\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "(" . $actualField . " = $comboValue)",
+                        "/" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $actualField . " = $comboValue"
+                    );
+                    
+                    foreach ($patterns as $pattern => $replacement) {
+                        $sqlQueryBefore = $sqlQuery;
+                        $sqlQuery = preg_replace($pattern, $replacement, $sqlQuery);
+                        
+                        if ($sqlQueryBefore !== $sqlQuery) {
+                            $debug_info[] = "Patrón aplicado correctamente: " . $pattern . " -> " . $replacement;
+                            break;
+                        }
+                    }
+                }
+            } 
+            // Si no encontramos el patrón exacto, intentamos una búsqueda más genérica
+            else {
+                $debug_info[] = "No se encontró un campo SQL específico para el patrón, aplicando reemplazo directo";
+                
+                // Caso 1: Cuando no hay valor para el filtro (opción Todos)
+                if (!isset($_POST[$filterKey]) || $_POST[$filterKey] === '') {
+                    // Intento de reemplazo directo más agresivo para patrones genéricos
+                    $sqlQuery = preg_replace("/and\s*\([^=]+=\s*'" . preg_quote($fullPattern, '/') . "'\)/i", "", $sqlQuery);
+                    $sqlQuery = preg_replace("/\s+and\s+[^=]+=\s*'" . preg_quote($fullPattern, '/') . "'/i", "", $sqlQuery);
+                }
+                // Caso 2: Hay un valor específico para el filtro
+                else if (isset($_POST[$filterKey]) && !empty($_POST[$filterKey])) {
+                    $comboValue = $_POST[$filterKey];
+                    $sqlQuery = str_replace("'" . $fullPattern . "'", $comboValue, $sqlQuery);
+                }
+            }
+        }
+        
+        // Limpieza general de SQL para prevenir errores de sintaxis
+        $debug_info[] = "Aplicando limpieza general del SQL para prevenir errores de sintaxis";
+        
+        // Corregir problemas de sintaxis SQL causados por los reemplazos
+        $sqlQuery = preg_replace("/and\s+and/i", "and", $sqlQuery);
+        $sqlQuery = preg_replace("/where\s+and/i", "where", $sqlQuery);
+        $sqlQuery = preg_replace("/and\s*\(\s*\)/i", "", $sqlQuery);
+        $sqlQuery = preg_replace("/\(\s*\)/i", "", $sqlQuery);
+        $sqlQuery = preg_replace("/\s+and\s*$/i", "", $sqlQuery);
+        
+        // Eliminar condiciones vacías
+        $sqlQuery = preg_replace("/where\s*$/i", "", $sqlQuery);
+        
+        // Aplicar limpieza avanzada usando la función especializada
+        require_once 'sqlcleaner.php';
+        $debug_info[] = "Aplicando limpieza especializada con fixExtraAndBeforeClosingParenthesis()";
+        $sqlQuery = fixExtraAndBeforeClosingParenthesis($sqlQuery);
+        $sqlQuery = fixAllSqlIssues($sqlQuery);
+        
+        // Si aún quedan patrones no procesados, reemplazarlos con un valor comodín
+        if (preg_match('/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/i', $sqlQuery)) {
+            $debug_info[] = "¡ADVERTENCIA! Todavía quedan patrones sin procesar. Aplicando limpieza final.";
+            $sqlQuery = preg_replace("/'\[@[^]]*\]'/i", "'%'", $sqlQuery);
+        }
+    }
+    
+    // Generar HTML de depuración si hay información disponible
+    if (isset($debug_info) && !empty($debug_info)) {
+        global $debug_info_html;
+        $debug_info_html = '<div class="debug-info" style="background:#f8f9fa;border:1px solid #ddd;padding:10px;margin-top:20px;font-size:12px;font-family:monospace;">';
+        $debug_info_html .= '<h4>Información de Depuración de Patrones [@Campo;val;des;SQL]:</h4>';
+        $debug_info_html .= '<ul>';
+        foreach ($debug_info as $info) {
+            $debug_info_html .= '<li>' . htmlspecialchars($info) . '</li>';
+        }
+        $debug_info_html .= '</ul>';
+        
+        // Añadir información sobre el SQL final
+        $debug_info_html .= '<h4>SQL final generado:</h4>';
+        $debug_info_html .= '<pre>' . htmlspecialchars($sqlQuery) . '</pre>';
+        
+        $debug_info_html .= '</div>';
+    }
+    
     return $sqlQuery;
 }
 
@@ -1045,6 +1387,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             $debugInfo .= htmlspecialchars($key . ": " . $value) . "\n";
         }
         $debugInfo .= "</pre>";
+        
+        // Añadir información adicional sobre el reporte ID 18 (RecepcionDirecta)
+        if ($reportId == 18) {
+            $debugInfo .= "<h4>Información de Depuración Especial para RecepcionDirecta (ID 18):</h4>";
+            $debugInfo .= "<p>Este reporte requiere atención especial cuando no se seleccionan filtros debido a un patrón especial.</p>";
+            $debugInfo .= "<pre>Patrón detectado: " . (strpos($sqlQuery, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ? 'SÍ' : 'NO') . "</pre>";
+            $debugInfo .= "<pre>SQL original:\n" . htmlspecialchars($sqlQuery) . "</pre>";
+            
+            // Fix directo para RecepcionDirecta
+            if (strpos($sqlQuery, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ||
+                strpos($sqlQuery, ')) ORDER BY lt.fecha') !== false) {
+                
+                // Aplicar solución específica para este caso
+                require_once 'sqlcleaner.php';
+                $sqlQuery = fixExtraAndBeforeClosingParenthesis($sqlQuery);
+                $debugInfo .= "<p>Solución aplicada a RecepcionDirecta (ID 18)</p>";
+                $debugInfo .= "<pre>SQL corregido:\n" . htmlspecialchars($sqlQuery) . "</pre>";
+            }
+        }
         
         // Show only for test or development
         $showDebug = true;
@@ -1424,6 +1785,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                     <div style="background:#333; color:#fff; padding:15px; border-radius:4px; overflow-x:auto;">
                         <code><?php echo htmlspecialchars($previewSQL); ?></code>
                     </div>
+                    
+                    <?php if (isset($debug_info) && !empty($debug_info)): ?>
+                    <div style="margin-top:20px; padding:15px; background:#f1f8e9; border-radius:4px; border-left:4px solid #8bc34a;">
+                        <h3>Información de Depuración de Patrones [@Campo;val;des;SQL]:</h3>
+                        <ul style="margin-left: 20px; font-family: monospace; line-height: 1.5;">
+                            <?php foreach ($debug_info as $line): ?>
+                                <li><?php echo htmlspecialchars($line); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($debug_info_html)): ?>
+                        <?php echo $debug_info_html; ?>
+                    <?php endif; ?>
                     
                     <?php if (isset($showDebug) && $showDebug): ?>
                     <div style="margin-top:20px; padding:15px; background:#f1f8e9; border-radius:4px; border-left:4px solid #8bc34a;">
