@@ -305,14 +305,33 @@ function processDateConditions($sql) {
     }
     
     // Segundo, buscar patrones con fechas literales en el SQL (ej: re.fecha="2025/04/19")
-    // Cualquier condición de fecha que el sistema haya generado automáticamente con la fecha actual
+    // Ya no reemplazamos automáticamente la fecha actual - dejamos que los filtros de usuario funcionen
     $todayDate = date('Y/m/d');
-    $literalDatePatterns = [
-        // Fechas literales con comillas dobles
-        '/([^\s]+)\.fecha\s*=\s*"' . preg_quote($todayDate, '/') . '"/',
-        // Fechas literales con comillas simples
-        '/([^\s]+)\.fecha\s*=\s*\'' . preg_quote($todayDate, '/') . '\'/',
-    ];
+    // Esta parte es solo para casos donde no hay filtros de fecha del usuario
+    $literalDatePatterns = [];
+    
+    // Comprobar si hay filtros de fecha en la sesión
+    $hasFechaFilter = false;
+    if (isset($_SESSION['filter_values']) && is_array($_SESSION['filter_values'])) {
+        foreach ($_SESSION['filter_values'] as $key => $value) {
+            if (stripos($key, 'fecha') !== false && !empty($value)) {
+                $hasFechaFilter = true;
+                break;
+            }
+        }
+    }
+    
+    // Solo si NO hay filtros de fecha del usuario, entonces buscamos fechas literales
+    if (!$hasFechaFilter) {
+        $literalDatePatterns = [
+            // Fechas literales con comillas dobles
+            '/([^\s]+)\.fecha\s*=\s*"' . preg_quote($todayDate, '/') . '"/',
+            // Fechas literales con comillas simples
+            '/([^\s]+)\.fecha\s*=\s*\'' . preg_quote($todayDate, '/') . '\'/',
+        ];
+    }
+    
+    error_log("Filtros de fecha del usuario detectados: " . ($hasFechaFilter ? 'SÍ' : 'NO'));
     
     foreach ($literalDatePatterns as $pattern) {
         if (preg_match_all($pattern, $sql, $matches, PREG_SET_ORDER)) {
@@ -1116,6 +1135,10 @@ function buildSqlQuery($report, $filterValues) {
                         } else {
                             $filterValue = $userValue;
                         }
+                        
+                        // Registrar la fecha de usuario para su uso en reporte.php
+                        $_SESSION['user_selected_date_' . $filterKey] = $filterValue;
+                        error_log("Fecha seleccionada para $filterKey: $filterValue");
                     } else if ($filter['type'] === 'combo') {
                         // Para combos, asegurarnos de usar el valor seleccionado (val) y no el texto
                         // El valor ya viene correcto desde el select HTML que tiene value="opcion['value']"
