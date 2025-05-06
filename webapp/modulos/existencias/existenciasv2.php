@@ -117,7 +117,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
 
         echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
         //LLamar SP
-        $sqlsp="call generaFacturacionInventario('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        $sqlsp="call generaExistenciasInventario('$fechainicial','$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
         //echo $sqlsp;
 
