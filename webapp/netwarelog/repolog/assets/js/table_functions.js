@@ -201,6 +201,14 @@ function filterTable() {
     // Update pagination and table
     updatePagination();
     renderTable();
+    
+    // Aplicar formato a los números después de renderizar la tabla
+    // Pequeño retraso para asegurar que la tabla ya esté renderizada
+    setTimeout(function() {
+        if (typeof formatNumbersInTable === 'function') {
+            formatNumbersInTable();
+        }
+    }, 50);
 }
 
 /**
@@ -211,6 +219,14 @@ function changeRowsPerPage() {
     currentPage = 1; // Reset to first page
     updatePagination();
     renderTable();
+    
+    // Aplicar formato a los números después de renderizar la tabla
+    // Pequeño retraso para asegurar que la tabla ya esté renderizada
+    setTimeout(function() {
+        if (typeof formatNumbersInTable === 'function') {
+            formatNumbersInTable();
+        }
+    }, 50);
 }
 
 /**
@@ -230,6 +246,14 @@ function changePage(delta) {
     
     updatePagination();
     renderTable();
+    
+    // Aplicar formato a los números después de renderizar la tabla
+    // Pequeño retraso para asegurar que la tabla ya esté renderizada
+    setTimeout(function() {
+        if (typeof formatNumbersInTable === 'function') {
+            formatNumbersInTable();
+        }
+    }, 50);
 }
 
 /**
