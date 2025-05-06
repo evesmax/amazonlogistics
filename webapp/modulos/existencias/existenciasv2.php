@@ -79,7 +79,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
                     $conexion->cerrar_consulta($resultado);
 
             }
-            if ($etiqueta=="Estado Producto") {
+            if ($etiqueta=="EstadoProducto") {
 
                     $sqlAux="select idestadoproducto id from inventarios_estados where idestadoproducto = ".$valor." limit 1";
                     $resultado = $conexion->consultar($sqlAux);
@@ -89,7 +89,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
                     $conexion->cerrar_consulta($resultado);
 
             }    
-            if ($etiqueta=="Nombre Bodega") {
+            if ($etiqueta=="Bodega") {
                     $sqlAux="select idbodega id from operaciones_bodegas where idbodega =".$valor." limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
