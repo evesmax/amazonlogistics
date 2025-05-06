@@ -306,6 +306,145 @@ function fixExtraAndBeforeClosingParenthesis($sql) {
 /**
  * Limpieza final para corregir cualquier problema restante
  */
+/**
+ * Elimina paréntesis excesivos o mal formados en consultas SQL
+ * Soluciona problemas específicos con filtros anidados
+ *
+ * @param string $query La consulta SQL a procesar
+ * @return string La consulta SQL corregida
+ */
+function eliminaParentesisExcesivos($query) {
+    // Caso específico: secuencias de cierre de paréntesis separados por AND/OR
+    // Ejemplo: )) AND ()) ORDER BY -> )) ORDER BY
+    $query = preg_replace('/\)\s*\)\s+(AND|OR)\s+\(\s*\)\s*\)/i', ')) ', $query);
+    
+    // Problema común: Paréntesis de apertura seguidos de cierre sin contenido
+    // Ejemplo: WHERE (()) -> WHERE ()
+    $query = preg_replace('/\(\s*\(\s*\)\s*\)/i', '()', $query);
+    
+    // Problema común: Condición vacía
+    // Ejemplo: WHERE () AND campo=valor -> WHERE campo=valor
+    $query = preg_replace('/WHERE\s+\(\s*\)\s+(AND|OR)/i', 'WHERE ', $query);
+    
+    // Corrección para el caso específico de lt.referencia1
+    // Esto es para el reporte 18 (RecepcionDirecta)
+    if (strpos($query, 'lt.referencia1 LIKE') !== false) {
+        // Arreglar el problema de AND extra antes de ORDER BY
+        $query = preg_replace('/\)\s*\)\s+(AND|OR)?\s*ORDER BY/i', ')) ORDER BY', $query);
+        
+        // Problema específico con LIKE '%%'
+        $query = preg_replace('/\(lt\.referencia1\s+LIKE\s+\'%%\'\)\s*\)\s+(AND|OR)/i', 
+                             '(lt.referencia1 LIKE \'%%\')) ', $query);
+    }
+    
+    // Eliminar AND/OR redundantes al final de condiciones
+    // Ejemplo: WHERE (campo1=1 AND campo2=2 AND ) -> WHERE (campo1=1 AND campo2=2)
+    $query = preg_replace('/(\s+(AND|OR)\s+)+\)/i', ')', $query);
+    
+    // NUEVO: Detectar y corregir paréntesis extra antes de ORDER BY
+    // Caso específico: ...))) ORDER BY... -> ...)) ORDER BY...
+    $query = preg_replace('/\)\s*\)\s*\)\s+ORDER\s+BY/i', ')) ORDER BY', $query);
+    
+    // NUEVO: Detectar paréntesis desbalanceados al final de la consulta
+    // Contar el número de paréntesis de apertura y cierre
+    $openParens = substr_count($query, '(');
+    $closeParens = substr_count($query, ')');
+    
+    // Si hay más paréntesis de cierre que de apertura
+    if ($closeParens > $openParens) {
+        // Eliminar el exceso de paréntesis
+        $excess = $closeParens - $openParens;
+        
+        // Si hay paréntesis excesivos, eliminarlos justo antes de ORDER BY
+        if (preg_match('/\)\s*\){' . $excess . '}\s+ORDER\s+BY/i', $query)) {
+            $query = preg_replace('/\)\s*\){' . $excess . '}\s+ORDER\s+BY/i', ')) ORDER BY', $query);
+        }
+        // O al final de la consulta si no hay ORDER BY
+        else {
+            $pattern = '/\){' . $excess . '}\s*$/';
+            if (preg_match($pattern, $query)) {
+                $query = preg_replace($pattern, ')', $query);
+            }
+        }
+    }
+    
+    // NUEVO: Corrección específica para los reportes con triple paréntesis
+    // Detecta patrón ))) ORDER BY
+    $query = preg_replace('/\)\)\)\s+(ORDER\s+BY)/i', ')) $1', $query);
+    
+    // Patrón específico para reportes como el #4
+    if (strpos($query, 'lt.cantidad2-IFNULL') !== false) {
+        $query = preg_replace('/\)\)\)\s+ORDER/i', ')) ORDER', $query);
+    }
+    
+    return $query;
+}
+
+/**
+ * Función especial para eliminar cláusulas AND completas cuando no se selecciona ningún valor en combos
+ * 
+ * Esta función elimina cláusulas completas del tipo:
+ * and (obo.idbodega = "[@BodegaOrigen;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des]")
+ * 
+ * @param string $sql La consulta SQL original
+ * @param array $emptyFilters Arreglo con los nombres de los filtros que están vacíos
+ * @return string La consulta SQL sin las cláusulas AND correspondientes a filtros vacíos
+ */
+function eliminarClausulasAndCompletas($sql, $emptyFilters = array()) {
+    // Si no hay filtros vacíos, no hacemos nada
+    if (empty($emptyFilters)) {
+        return $sql;
+    }
+    
+    // Log para depuración
+    error_log("Aplicando eliminación de cláusulas AND para filtros vacíos: " . implode(", ", $emptyFilters));
+    error_log("SQL original: " . $sql);
+    
+    // Para cada filtro vacío, eliminar la cláusula AND completa
+    foreach ($emptyFilters as $filterName) {
+        // Patrones para detectar cláusulas AND con el nombre del filtro
+        $patterns = array(
+            // Patrón 1: and (campo = "[@Filtro;...]")
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            
+            // Patrón 2: and (campo in ("[@Filtro;...]"))
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)\)/i',
+            
+            // Patrón 3: and campo = "[@Filtro;...]"
+            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?/i',
+            
+            // Patrón 4: and campo in ("[@Filtro;...]")
+            '/\s+and\s+[a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            
+            // Patrón 5: OR (campo = "[@Filtro;...]")
+            '/\s+or\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            
+            // Patrón 6: OR campo = "[@Filtro;...]"
+            '/\s+or\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?/i',
+            
+            // Patrón 7: Detectar cláusulas dentro de múltiples niveles de paréntesis
+            '/\s+and\s+\(\s*\(\s*[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)\s*\)/i',
+            
+            // Patrón 8: Patrones similares pero sin el signo @ (para reporte 4)
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\]"?/i'
+        );
+        
+        // Aplicar cada patrón
+        foreach ($patterns as $pattern) {
+            $oldSQL = $sql;
+            $sql = preg_replace($pattern, '', $sql);
+            // Si hubo un cambio, registrarlo
+            if ($oldSQL !== $sql) {
+                error_log("Patrón aplicado: " . $pattern);
+                error_log("SQL después del patrón: " . $sql);
+            }
+        }
+    }
+    
+    return $sql;
+}
+
 function finalSqlCleanup($sql) {
     // Primero corregir el problema específico de "and )"
     $sql = fixExtraAndBeforeClosingParenthesis($sql);

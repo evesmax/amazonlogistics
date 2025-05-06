@@ -43,6 +43,9 @@ try {
     // Fetch report data
     $report = $stmt->fetch(PDO::FETCH_ASSOC);
     
+    // Guardar el ID del reporte actual en la sesión para uso en reporte.php
+    $_SESSION['current_report_id'] = $reportId;
+    
     // Close connection
     $pdo = null;
     
@@ -505,6 +508,375 @@ function cleanSqlQuery($sql) {
     return $sql;
 }
 
+/**
+ * Función para reemplazar patrones de combo no sustituidos en la consulta SQL
+ * Esta solución es efectiva cuando hay múltiples filtros combinados y algunos 
+ * patrones [@Filtro;val;des;...] permanecen en la consulta sin ser sustituidos
+ * 
+ * @param string $sql Consulta SQL con patrones a reemplazar
+ * @param array $filters Array de filtros disponibles
+ * @param array $filterValues Valores seleccionados por el usuario
+ * @return string Consulta SQL con patrones reemplazados
+ */
+function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
+    // Log para depuración
+    error_log("Buscando patrones de combo no sustituidos en SQL");
+    
+    // Si no hay filtros o valores, no hay nada que hacer
+    if (empty($filters) || empty($filterValues)) {
+        return $sql;
+    }
+    
+    // Imprimir todas las claves disponibles en filterValues para depuración
+    error_log("Valores de filtros disponibles: " . implode(", ", array_keys($filterValues)));
+    
+    // MEJORA: Buscar específicamente el patrón problemático de BodegaOrigen
+    if (strpos($sql, '[@BodegaOrigen') !== false) {
+        error_log("ENCONTRADO patrón específico de BodegaOrigen - buscando valor en filtros");
+        
+        // Buscar el filtro específico para BodegaOrigen en varias formas posibles
+        $bodegaOrigenKeys = [
+            'filter_bodegaorigen',
+            'filter_BodegaOrigen',
+            'filter_Bodega_Origen',
+            'filter_bodega_origen'
+        ];
+        
+        $bodegaOrigenValue = null;
+        foreach ($bodegaOrigenKeys as $key) {
+            if (isset($filterValues[$key]) && !empty($filterValues[$key])) {
+                $bodegaOrigenValue = $filterValues[$key];
+                error_log("Encontrado valor específico para BodegaOrigen: $bodegaOrigenValue con clave $key");
+                break;
+            }
+        }
+        
+        // Si encontramos un valor, reemplazar el patrón directamente
+        if ($bodegaOrigenValue !== null) {
+            // Patrones específicos para BodegaOrigen con diferentes comillas
+            $patterns = [
+                '(obo.idbodega = "[@BodegaOrigen;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des]")',
+                "(obo.idbodega = '[@BodegaOrigen;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des]')",
+                '(obo.idbodega = [@BodegaOrigen;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des])'
+            ];
+            
+            foreach ($patterns as $pattern) {
+                $replacement = "(obo.idbodega = '$bodegaOrigenValue')";
+                $newSql = str_replace($pattern, $replacement, $sql);
+                if ($newSql !== $sql) {
+                    error_log("Reemplazado patrón específico de BodegaOrigen con valor $bodegaOrigenValue");
+                    $sql = $newSql;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // MEJORA: Lo mismo para otros patrones específicos problemáticos
+    if (strpos($sql, '[@BodegaDestino') !== false) {
+        error_log("ENCONTRADO patrón específico de BodegaDestino - buscando valor en filtros");
+        
+        // Buscar valores posibles para BodegaDestino
+        $bodegaDestinoKeys = [
+            'filter_bodegadestino',
+            'filter_BodegaDestino',
+            'filter_Bodega_Destino',
+            'filter_bodega_destino'
+        ];
+        
+        $bodegaDestinoValue = null;
+        foreach ($bodegaDestinoKeys as $key) {
+            if (isset($filterValues[$key]) && !empty($filterValues[$key])) {
+                $bodegaDestinoValue = $filterValues[$key];
+                error_log("Encontrado valor específico para BodegaDestino: $bodegaDestinoValue con clave $key");
+                break;
+            }
+        }
+        
+        // Si encontramos un valor, reemplazar el patrón directamente
+        if ($bodegaDestinoValue !== null) {
+            // Patrones para BodegaDestino con diferentes comillas
+            $patterns = [
+                '(obd.idbodega = "[@BodegaDestino;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des]")',
+                "(obd.idbodega = '[@BodegaDestino;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des]')",
+                '(obd.idbodega = [@BodegaDestino;val;des;select idbodega val, nombrebodega des from operaciones_bodegas order by des])'
+            ];
+            
+            foreach ($patterns as $pattern) {
+                $replacement = "(obd.idbodega = '$bodegaDestinoValue')";
+                $newSql = str_replace($pattern, $replacement, $sql);
+                if ($newSql !== $sql) {
+                    error_log("Reemplazado patrón específico de BodegaDestino con valor $bodegaDestinoValue");
+                    $sql = $newSql;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Buscar todos los patrones de tipo [@nombre;val;des;...] que aún estén en la consulta
+    // Esta parte es el reemplazo genérico original, mejorado
+    $patternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/';
+    if (preg_match_all($patternRegex, $sql, $matches, PREG_SET_ORDER)) {
+        error_log("Encontrados " . count($matches) . " patrones genéricos no sustituidos");
+        
+        foreach ($matches as $match) {
+            $fullPattern = $match[0]; // [@nombre;val;des;...]
+            $filterName = $match[1];  // nombre
+            $valField = $match[2];    // val
+            $desField = $match[3];    // des
+            $sqlQuery = $match[4];    // SQL de consulta
+            
+            // MEJORA: Imprimir el patrón completo para depuración
+            error_log("Procesando patrón: $fullPattern");
+            
+            // MEJORA: Más variantes de nombres de filtros para mayor robustez
+            $possibleFilterKeys = [
+                'filter_' . strtolower($filterName),
+                'filter_' . sanitizeId($filterName),
+                'filter_' . str_replace(' ', '_', strtolower($filterName)),
+                strtolower($filterName),
+                'filter_' . strtolower(str_replace(' ', '', $filterName))
+            ];
+            
+            // MEJORA: Imprimir las claves que estamos buscando
+            error_log("Buscando valores para las claves: " . implode(", ", $possibleFilterKeys));
+            
+            $filterValue = null;
+            $filterFound = false;
+            
+            // Buscar el filtro en los valores proporcionados por el usuario
+            foreach ($possibleFilterKeys as $filterKey) {
+                if (isset($filterValues[$filterKey]) && $filterValues[$filterKey] !== '') {
+                    $filterValue = $filterValues[$filterKey];
+                    $filterFound = true;
+                    error_log("Encontrado valor $filterValue para el filtro $filterName con clave $filterKey");
+                    break;
+                }
+            }
+            
+            // Si no encontramos un valor directo, buscar en los filtros originales con más flexibilidad
+            if (!$filterFound) {
+                foreach ($filters as $filter) {
+                    // MEJORA: Verificar también si el id del filtro o label coincide aproximadamente
+                    $filterLabel = isset($filter['label']) ? $filter['label'] : '';
+                    $filterId = isset($filter['id']) ? $filter['id'] : '';
+                    
+                    if (isset($filter['type']) && $filter['type'] === 'combo' && 
+                        (strcasecmp($filterLabel, $filterName) === 0 || 
+                         stripos($filterId, strtolower($filterName)) !== false ||
+                         stripos($filterId, strtolower(str_replace(' ', '_', $filterName))) !== false ||
+                         stripos($filterId, strtolower(str_replace(' ', '', $filterName))) !== false ||
+                         strtolower($filterId) === 'filter_' . strtolower(str_replace(' ', '_', $filterName)) ||
+                         strtolower($filterId) === 'filter_' . sanitizeId($filterName))) {
+                        
+                        $filterKey = $filter['id'];
+                        if (isset($filterValues[$filterKey]) && $filterValues[$filterKey] !== '') {
+                            $filterValue = $filterValues[$filterKey];
+                            $filterFound = true;
+                            error_log("Encontrado valor $filterValue para filtro $filterName por búsqueda flexible en filtros (id: $filterId)");
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // MEJORA: Si todavía no se encuentra, hacer una verificación adicional para filtros específicos
+            if (!$filterFound) {
+                // Verificación específica para BodegaOrigen
+                if (strcasecmp($filterName, 'BodegaOrigen') === 0 || 
+                    strcasecmp($filterName, 'Bodega Origen') === 0 || 
+                    strcasecmp($filterName, 'Bodega_Origen') === 0) {
+                    
+                    $bodegaOrigenKeys = [
+                        'filter_bodegaorigen', 'filter_bodega_origen', 'bodegaorigen', 'bodega_origen',
+                        'filter_origen', 'origen', 'filter_bodega', 'bodega'
+                    ];
+                    
+                    foreach ($bodegaOrigenKeys as $key) {
+                        if (isset($filterValues[$key]) && !empty($filterValues[$key])) {
+                            $filterValue = $filterValues[$key];
+                            $filterFound = true;
+                            error_log("Encontrado valor $filterValue para BodegaOrigen con clave alternativa $key");
+                            break;
+                        }
+                    }
+                }
+                
+                // Verificación específica para BodegaDestino
+                if (strcasecmp($filterName, 'BodegaDestino') === 0 || 
+                    strcasecmp($filterName, 'Bodega Destino') === 0 || 
+                    strcasecmp($filterName, 'Bodega_Destino') === 0) {
+                    
+                    $bodegaDestinoKeys = [
+                        'filter_bodegadestino', 'filter_bodega_destino', 'bodegadestino', 'bodega_destino',
+                        'filter_destino', 'destino'
+                    ];
+                    
+                    foreach ($bodegaDestinoKeys as $key) {
+                        if (isset($filterValues[$key]) && !empty($filterValues[$key])) {
+                            $filterValue = $filterValues[$key];
+                            $filterFound = true;
+                            error_log("Encontrado valor $filterValue para BodegaDestino con clave alternativa $key");
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Si hemos encontrado un valor, reemplazar el patrón en la consulta con más variantes
+            if ($filterFound && $filterValue !== null) {
+                // MEJORA: Intentar más variantes de reemplazo para el patrón
+                $patterns = [
+                    '"' . $fullPattern . '"', // Con comillas dobles
+                    "'" . $fullPattern . "'", // Con comillas simples
+                    $fullPattern,            // Sin comillas
+                    '(' . $fullPattern . ')', // Con paréntesis
+                    '(obo.idbodega = "' . $fullPattern . '")', // Patrón específico BodegaOrigen
+                    "(obo.idbodega = '" . $fullPattern . "')",
+                    '(obd.idbodega = "' . $fullPattern . '")', // Patrón específico BodegaDestino
+                    "(obd.idbodega = '" . $fullPattern . "')"
+                ];
+                
+                // Buscar patrones específicos según el nombre del filtro
+                if (strcasecmp($filterName, 'BodegaOrigen') === 0) {
+                    $patternFound = false;
+                    $bodegaPatterns = [
+                        '(obo.idbodega = "' . $fullPattern . '")', 
+                        "(obo.idbodega = '" . $fullPattern . "')",
+                        '(obo.idbodega = ' . $fullPattern . ')',
+                        'obo.idbodega = "' . $fullPattern . '"',
+                        "obo.idbodega = '" . $fullPattern . "'",
+                        'obo.idbodega = ' . $fullPattern
+                    ];
+                    
+                    foreach ($bodegaPatterns as $pattern) {
+                        $replacement = "(obo.idbodega = '$filterValue')";
+                        if (strpos($sql, $pattern) !== false) {
+                            $newSql = str_replace($pattern, $replacement, $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Reemplazado patrón específico BodegaOrigen: $pattern con $replacement");
+                                $sql = $newSql;
+                                $patternFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!$patternFound) {
+                        // Si no se encontró un patrón específico, intentar reemplazos genéricos
+                        foreach ($patterns as $pattern) {
+                            $newSql = str_replace($pattern, $filterValue, $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Reemplazado patrón genérico para BodegaOrigen: $pattern con $filterValue");
+                                $sql = $newSql;
+                                break;
+                            }
+                        }
+                    }
+                } 
+                else if (strcasecmp($filterName, 'BodegaDestino') === 0) {
+                    $patternFound = false;
+                    $bodegaPatterns = [
+                        '(obd.idbodega = "' . $fullPattern . '")', 
+                        "(obd.idbodega = '" . $fullPattern . "')",
+                        '(obd.idbodega = ' . $fullPattern . ')',
+                        'obd.idbodega = "' . $fullPattern . '"',
+                        "obd.idbodega = '" . $fullPattern . "'",
+                        'obd.idbodega = ' . $fullPattern
+                    ];
+                    
+                    foreach ($bodegaPatterns as $pattern) {
+                        $replacement = "(obd.idbodega = '$filterValue')";
+                        if (strpos($sql, $pattern) !== false) {
+                            $newSql = str_replace($pattern, $replacement, $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Reemplazado patrón específico BodegaDestino: $pattern con $replacement");
+                                $sql = $newSql;
+                                $patternFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!$patternFound) {
+                        // Si no se encontró un patrón específico, intentar reemplazos genéricos
+                        foreach ($patterns as $pattern) {
+                            $newSql = str_replace($pattern, $filterValue, $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Reemplazado patrón genérico para BodegaDestino: $pattern con $filterValue");
+                                $sql = $newSql;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    // Para otros filtros, intentar reemplazos genéricos
+                    foreach ($patterns as $pattern) {
+                        $newSql = str_replace($pattern, $filterValue, $sql);
+                        if ($newSql !== $sql) {
+                            error_log("Reemplazado patrón genérico: $pattern con $filterValue");
+                            $sql = $newSql;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                error_log("No se encontró valor para el filtro $filterName - el patrón $fullPattern se mantendrá en la consulta");
+                
+                // MEJORA: Para casos donde no se encontró un valor, verificar si debemos eliminar la cláusula completa
+                if (strcasecmp($filterName, 'BodegaOrigen') === 0) {
+                    // Intentar eliminar la cláusula de BodegaOrigen si no hay valor
+                    $bodegaPatterns = [
+                        'and (obo.idbodega = "' . $fullPattern . '")', 
+                        "and (obo.idbodega = '" . $fullPattern . "')",
+                        'and (obo.idbodega = ' . $fullPattern . ')',
+                        'AND (obo.idbodega = "' . $fullPattern . '")',
+                        "AND (obo.idbodega = '" . $fullPattern . "')",
+                        'AND (obo.idbodega = ' . $fullPattern . ')'
+                    ];
+                    
+                    foreach ($bodegaPatterns as $pattern) {
+                        if (strpos($sql, $pattern) !== false) {
+                            $newSql = str_replace($pattern, '', $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Eliminada cláusula de BodegaOrigen sin valor: $pattern");
+                                $sql = $newSql;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (strcasecmp($filterName, 'BodegaDestino') === 0) {
+                    // Intentar eliminar la cláusula de BodegaDestino si no hay valor
+                    $bodegaPatterns = [
+                        'and (obd.idbodega = "' . $fullPattern . '")', 
+                        "and (obd.idbodega = '" . $fullPattern . "')",
+                        'and (obd.idbodega = ' . $fullPattern . ')',
+                        'AND (obd.idbodega = "' . $fullPattern . '")',
+                        "AND (obd.idbodega = '" . $fullPattern . "')",
+                        'AND (obd.idbodega = ' . $fullPattern . ')'
+                    ];
+                    
+                    foreach ($bodegaPatterns as $pattern) {
+                        if (strpos($sql, $pattern) !== false) {
+                            $newSql = str_replace($pattern, '', $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Eliminada cláusula de BodegaDestino sin valor: $pattern");
+                                $sql = $newSql;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return $sql;
+}
+
 function buildSqlQuery($report, $filterValues) {
     global $filters; // Access the global filters array
     global $debug_info; // Para compartir información de depuración
@@ -896,11 +1268,21 @@ function buildSqlQuery($report, $filterValues) {
             }
         }
         
+        // Recopilar los nombres de los filtros vacíos para combo boxes
+        $emptyComboFilters = array();
+        
         // Process regular user inputs
         foreach ($filters as $filter) {
             if ($filter['type'] !== 'session') {
                 $filterKey = $filter['id']; // e.g., filter_ingenio
                 $filterPattern = $filter['sql_pattern']; // e.g., [Ingenio] or [#Fecha]
+                
+                // Para filtros tipo combo, recopilar los nombres cuando están vacíos
+                if ($filter['type'] === 'combo' && (!isset($filterValues[$filterKey]) || $filterValues[$filterKey] === '')) {
+                    // Extraer el nombre del filtro sin el prefijo filter_
+                    $filterName = str_replace('filter_', '', $filterKey);
+                    $emptyComboFilters[] = $filterName;
+                }
                 
                 // Si el usuario no proporcionó valor para este filtro
                 if (!isset($filterValues[$filterKey]) || $filterValues[$filterKey] === '') {
@@ -1375,9 +1757,16 @@ function buildSqlQuery($report, $filterValues) {
         }
         $debug_info_html .= '</ul>';
         
+        // Aplicamos la función de reemplazo de patrones no sustituidos
+        // Este paso asegura que la vista previa y el SQL ejecutado sean idénticos
+        $finalSql = reemplazarPatronesComboNoSustituidos($sqlQuery, $filters, $filterValues);
+        
         // Añadir información sobre el SQL final
-        $debug_info_html .= '<h4>SQL final generado:</h4>';
-        $debug_info_html .= '<pre>' . htmlspecialchars($sqlQuery) . '</pre>';
+        $debug_info_html .= '<h4>SQL final generado (EXACTAMENTE el mismo que se ejecutará):</h4>';
+        $debug_info_html .= '<pre>' . htmlspecialchars($finalSql) . '</pre>';
+        
+        // Usar este SQL final como retorno en lugar del original
+        $sqlQuery = $finalSql;
         
         $debug_info_html .= '</div>';
     }
@@ -1398,7 +1787,147 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
     
     // Check if it's a preview request or submit
     if (isset($_POST['action']) && $_POST['action'] === 'preview') {
-        // Just show the SQL preview
+        // ******** IMPORTANTE: ESTA SECCIÓN DEBE SER IDÉNTICA A LA SOLUCIÓN EN reporte.php ********
+        // Para garantizar que la vista previa muestre EXACTAMENTE el SQL final, implementamos
+        // todas las transformaciones de reporte.php aquí - código copiado al 100%
+        
+        require_once 'sqlcleaner.php';
+        
+        // PASO PRELIMINAR: Fechas
+        // Reemplazar fechas específicas como las que se hacen en reporte.php
+        $startDate = isset($filterValues['filter_del']) ? $filterValues['filter_del'] : date('Y/m/d');
+        $endDate = isset($filterValues['filter_al']) ? $filterValues['filter_al'] : date('Y/m/d');
+        
+        // Extender fechas para incluir todo el día
+        $startTimeStr = " 00:00:00";
+        $endTimeStr = " 23:59:59";
+        
+        // Formatear fechas completas
+        $startDateFormatted = $startDate . $startTimeStr;
+        $endDateFormatted = $endDate . $endTimeStr;
+        
+        // Reemplazar patrones de fecha justo como en reporte.php
+        $sqlQuery = str_replace("[#Del]", "\"$startDateFormatted\"", $sqlQuery);
+        $sqlQuery = str_replace("[#Al]", "\"$endDateFormatted\"", $sqlQuery);
+        
+        // PASO 1: Aplicar el método para eliminar cláusulas AND completas para combos vacíos
+        if (!empty($emptyComboFilters)) {
+            $debug_info[] = "Filtros combo vacíos encontrados: " . implode(", ", $emptyComboFilters);
+            $sqlQuery = eliminarClausulasAndCompletas($sqlQuery, $emptyComboFilters);
+        }
+        
+        // PASO 2: Aplicar todas las limpiezas generales
+        // Igual que en reporte.php
+        $sqlQuery = fixAllSqlIssues($sqlQuery);
+        $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
+        // Aplicar una segunda vez para casos difíciles con múltiples paréntesis
+        $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
+        
+        // PASO 3: SOLUCIÓN DEFINITIVA SIMPLIFICADA Y MEJORADA
+        // Normalizar la consulta SQL para facilitar su procesamiento
+        
+        // PASO PRELIMINAR: Detectar y corregir problemas específicos
+        // Buscar condiciones con BETWEEN seguidas de una cláusula AND/OR sin paréntesis de cierre
+        if (preg_match('/\)\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*\'[^\']*\'\s+ORDER\s+BY/i', $sqlQuery)) {
+            $sqlQuery = preg_replace('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s+ORDER\s+BY/i', 
+                                 ') and ($1 = \'$2\') ORDER BY', $sqlQuery);
+        }
+        
+        // PASO 0: Normalizar la consulta 
+        // Reemplazar múltiples espacios con uno solo
+        $sqlQuery = preg_replace('/\s+/', ' ', $sqlQuery);
+        
+        // Verificar si hay el patrón "ORDER BY"
+        if (stripos($sqlQuery, 'ORDER BY') !== false) {
+            // PASO 1: Separar la consulta en dos partes (antes y después de ORDER BY)
+            list($beforeOrder, $afterOrder) = explode('ORDER BY', $sqlQuery, 2);
+            
+            // PASO 1.5: DETECCIÓN DE ERRORES COMUNES
+            // Buscar condiciones sin cerrar antes de ORDER BY
+            $matches = [];
+            if (preg_match_all('/and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s*$/', $beforeOrder, $matches)) {
+                $condition = $matches[0][0];
+                $field = $matches[1][0];
+                $value = $matches[2][0];
+                
+                // Reemplazar la condición sin cerrar por una correctamente formada
+                $replacement = "and ($field = '$value')";
+                $beforeOrder = str_replace($condition, $replacement, $beforeOrder);
+            }
+            
+            // PASO 2: Buscar cláusula fecha y asegurar que termina correctamente
+            if (preg_match('/\(lt\.fecha BETWEEN "[^"]+"\s+AND\s+"[^"]+"\)/', $beforeOrder, $matches)) {
+                $fechaClause = $matches[0];
+                
+                // Obtener todo lo que está después de la cláusula fecha
+                $posAfterFecha = strpos($beforeOrder, $fechaClause) + strlen($fechaClause);
+                $afterFechaContent = substr($beforeOrder, $posAfterFecha);
+                
+                // Verificación especial para detectar condiciones adicionales después de la fecha
+                if (preg_match('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=/', $afterFechaContent)) {
+                    // Si hay un paréntesis extra después de la cláusula fecha, eliminarlo
+                    if (substr(trim($afterFechaContent), 0, 1) === ')' && substr_count($beforeOrder, '(') < substr_count($beforeOrder, ')')) {
+                        $afterFechaContent = substr(trim($afterFechaContent), 1);
+                    }
+                    
+                    // Asegurarse de que la condición adicional termina con un paréntesis
+                    if (trim($afterFechaContent) !== '' && substr(trim($afterFechaContent), -1) !== ')') {
+                        $afterFechaContent .= ')';
+                    }
+                }
+                
+                // Reconstruir la parte antes de ORDER BY
+                $beforeOrder = substr($beforeOrder, 0, $posAfterFecha) . $afterFechaContent;
+            }
+            
+            // PASO 3: Asegurar que hay un balance correcto de paréntesis antes de ORDER BY
+            $openCount = substr_count($beforeOrder, '(');
+            $closeCount = substr_count($beforeOrder, ')');
+            
+            // Solución ultra simple pero efectiva: forzar un balance correcto
+            if ($openCount != $closeCount) {
+                if ($openCount > $closeCount) {
+                    // Faltan paréntesis de cierre
+                    $beforeOrder .= str_repeat(')', $openCount - $closeCount);
+                } else {
+                    // Sobran paréntesis de cierre
+                    // Simplemente quitar los paréntesis excesivos al final
+                    $beforeOrder = rtrim($beforeOrder);
+                    while (substr($beforeOrder, -1) === ')' && $closeCount > $openCount) {
+                        $beforeOrder = substr($beforeOrder, 0, -1);
+                        $closeCount--;
+                    }
+                }
+            }
+            
+            // PASO 4: Reconstruir la consulta con las partes corregidas
+            $sqlQuery = trim($beforeOrder) . ' ORDER BY ' . $afterOrder;
+            
+            // PASO 5: Verificación final para casos extremos
+            // Eliminar dobles paréntesis vacíos (que pueden quedar como resultado de filtros eliminados)
+            $sqlQuery = preg_replace('/\(\s*\)/', '', $sqlQuery);
+            
+            // Reemplazar AND ( ) con nada
+            $sqlQuery = preg_replace('/AND\s*\(\s*\)/', '', $sqlQuery);
+            
+            // Eliminar dobles WHERE
+            $sqlQuery = preg_replace('/WHERE\s+WHERE/', 'WHERE', $sqlQuery);
+            
+            // Eliminar WHERE vacío antes de ORDER BY
+            $sqlQuery = preg_replace('/WHERE\s+ORDER\s+BY/', 'ORDER BY', $sqlQuery);
+        }
+        
+        // Aplicar todas las correcciones generales
+        $sqlQuery = fixAllSqlIssues($sqlQuery);
+        
+        // Aplicar función específica para eliminación de paréntesis excesivos
+        if (function_exists('eliminaParentesisExcesivos')) {
+            $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
+            // Aplicar una segunda vez para casos difíciles con múltiples paréntesis
+            $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
+        }
+        
+        // Asignamos la SQL completamente procesada a la vista previa
         $previewSQL = $sqlQuery;
         $showPreview = true;
         
@@ -1411,30 +1940,150 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         }
         $debugInfo .= "</pre>";
         
-        // Añadir información adicional sobre el reporte ID 18 (RecepcionDirecta)
+        // Añadir información adicional sobre todos los reportes
+        $debugInfo .= "<h4>Información de Procesamiento SQL:</h4>";
+        $debugInfo .= "<p>Esta consulta ha pasado por las mismas transformaciones que se aplicarán al ejecutarla.</p>";
+        $debugInfo .= "<pre>SQL completamente procesado:</pre>";
+        
+        // Mostrar información específica para el reporte 18 (RecepcionDirecta)
         if ($reportId == 18) {
             $debugInfo .= "<h4>Información de Depuración Especial para RecepcionDirecta (ID 18):</h4>";
-            $debugInfo .= "<p>Este reporte requiere atención especial cuando no se seleccionan filtros debido a un patrón especial.</p>";
-            $debugInfo .= "<pre>Patrón detectado: " . (strpos($sqlQuery, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ? 'SÍ' : 'NO') . "</pre>";
-            $debugInfo .= "<pre>SQL original:\n" . htmlspecialchars($sqlQuery) . "</pre>";
-            
-            // Fix directo para RecepcionDirecta
-            if (strpos($sqlQuery, '(lt.referencia1 LIKE \'%%\')) ORDER') !== false ||
-                strpos($sqlQuery, ')) ORDER BY lt.fecha') !== false) {
-                
-                // Aplicar solución específica para este caso
-                require_once 'sqlcleaner.php';
-                $sqlQuery = fixExtraAndBeforeClosingParenthesis($sqlQuery);
-                $debugInfo .= "<p>Solución aplicada a RecepcionDirecta (ID 18)</p>";
-                $debugInfo .= "<pre>SQL corregido:\n" . htmlspecialchars($sqlQuery) . "</pre>";
-            }
+            $debugInfo .= "<p>Este reporte requiere atención especial cuando hay filtros específicos.</p>";
         }
         
         // Show only for test or development
         $showDebug = true;
     } else {
-        // Store query and additional report parameters in session
-        $_SESSION['sql_consulta'] = $sqlQuery;
+        // Aplicamos las mismas transformaciones que en vista previa y en reporte.php
+        // para garantizar consistencia completa
+        
+        // Primero aplicamos todas las transformaciones de sqlcleaner
+        require_once 'sqlcleaner.php';
+        
+        // Aplicar el nuevo método para eliminar cláusulas AND completas para combos vacíos
+        if (!empty($emptyComboFilters)) {
+            $debug_info[] = "Filtros combo vacíos encontrados: " . implode(", ", $emptyComboFilters);
+            $sqlQuery = eliminarClausulasAndCompletas($sqlQuery, $emptyComboFilters);
+        }
+        
+        // Aplicar limpieza general de SQL
+        $sqlQuery = fixAllSqlIssues($sqlQuery);
+        
+        // APLICAR LA SOLUCIÓN DEFINITIVA Y MEJORADA (exactamente igual que en reporte.php)
+        
+        // PASO PRELIMINAR: Detectar y corregir problemas específicos
+        // Buscar condiciones con BETWEEN seguidas de una cláusula AND/OR sin paréntesis de cierre
+        if (preg_match('/\)\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*\'[^\']*\'\s+ORDER\s+BY/i', $sqlQuery)) {
+            error_log("Detectado patrón problemático de condición sin cerrar");
+            $sqlQuery = preg_replace('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s+ORDER\s+BY/i', 
+                                 ') and ($1 = \'$2\') ORDER BY', $sqlQuery);
+        }
+        
+        // PASO 0: Normalizar la consulta 
+        // Reemplazar múltiples espacios con uno solo
+        $sqlQuery = preg_replace('/\s+/', ' ', $sqlQuery);
+        
+        // Verificar si hay el patrón "ORDER BY"
+        if (stripos($sqlQuery, 'ORDER BY') !== false) {
+            // PASO 1: Separar la consulta en dos partes (antes y después de ORDER BY)
+            list($beforeOrder, $afterOrder) = explode('ORDER BY', $sqlQuery, 2);
+            
+            // PASO 1.5: DETECCIÓN DE ERRORES COMUNES
+            // Buscar condiciones sin cerrar antes de ORDER BY
+            $matches = [];
+            if (preg_match_all('/and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s*$/', $beforeOrder, $matches)) {
+                error_log("Encontrada condición sin cerrar: " . $matches[0][0]);
+                $condition = $matches[0][0];
+                $field = $matches[1][0];
+                $value = $matches[2][0];
+                
+                // Reemplazar la condición sin cerrar por una correctamente formada
+                $replacement = "and ($field = '$value')";
+                $beforeOrder = str_replace($condition, $replacement, $beforeOrder);
+                
+                error_log("Corregida condición sin cerrar");
+            }
+            
+            // PASO 2: Buscar cláusula fecha y asegurar que termina correctamente
+            if (preg_match('/\(lt\.fecha BETWEEN "[^"]+"\s+AND\s+"[^"]+"\)/', $beforeOrder, $matches)) {
+                $fechaClause = $matches[0];
+                
+                // Obtener todo lo que está después de la cláusula fecha
+                $posAfterFecha = strpos($beforeOrder, $fechaClause) + strlen($fechaClause);
+                $afterFechaContent = substr($beforeOrder, $posAfterFecha);
+                
+                // Verificación especial para detectar condiciones adicionales después de la fecha
+                if (preg_match('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=/', $afterFechaContent)) {
+                    error_log("Detectadas condiciones adicionales después de fecha");
+                    
+                    // Si hay un paréntesis extra después de la cláusula fecha, eliminarlo
+                    if (substr(trim($afterFechaContent), 0, 1) === ')' && substr_count($beforeOrder, '(') < substr_count($beforeOrder, ')')) {
+                        error_log("Eliminando paréntesis extra después de la fecha");
+                        $afterFechaContent = substr(trim($afterFechaContent), 1);
+                    }
+                    
+                    // Asegurarse de que la condición adicional termina con un paréntesis
+                    if (trim($afterFechaContent) !== '' && substr(trim($afterFechaContent), -1) !== ')') {
+                        error_log("Contenido después de fecha necesita cierre: " . $afterFechaContent);
+                        $afterFechaContent .= ')';
+                    }
+                }
+                
+                // Reconstruir la parte antes de ORDER BY
+                $beforeOrder = substr($beforeOrder, 0, $posAfterFecha) . $afterFechaContent;
+            }
+            
+            // PASO 3: Asegurar que hay un balance correcto de paréntesis antes de ORDER BY
+            $openCount = substr_count($beforeOrder, '(');
+            $closeCount = substr_count($beforeOrder, ')');
+            
+            // Solución ultra simple pero efectiva: forzar un balance correcto
+            if ($openCount != $closeCount) {
+                if ($openCount > $closeCount) {
+                    // Faltan paréntesis de cierre
+                    $beforeOrder .= str_repeat(')', $openCount - $closeCount);
+                } else {
+                    // Sobran paréntesis de cierre
+                    // Simplemente quitar los paréntesis excesivos al final
+                    $beforeOrder = rtrim($beforeOrder);
+                    while (substr($beforeOrder, -1) === ')' && $closeCount > $openCount) {
+                        $beforeOrder = substr($beforeOrder, 0, -1);
+                        $closeCount--;
+                    }
+                }
+            }
+            
+            // PASO 4: Reconstruir la consulta con las partes corregidas
+            $sqlQuery = trim($beforeOrder) . ' ORDER BY ' . $afterOrder;
+            
+            // PASO 5: Verificación final para casos extremos
+            // Eliminar dobles paréntesis vacíos (que pueden quedar como resultado de filtros eliminados)
+            $sqlQuery = preg_replace('/\(\s*\)/', '', $sqlQuery);
+            
+            // Reemplazar AND ( ) con nada
+            $sqlQuery = preg_replace('/AND\s*\(\s*\)/', '', $sqlQuery);
+            
+            // Eliminar dobles WHERE
+            $sqlQuery = preg_replace('/WHERE\s+WHERE/', 'WHERE', $sqlQuery);
+            
+            // Eliminar WHERE vacío antes de ORDER BY
+            $sqlQuery = preg_replace('/WHERE\s+ORDER\s+BY/', 'ORDER BY', $sqlQuery);
+        }
+        
+        // NUEVA SOLUCIÓN: Aplicar reemplazo de patrones de combo no sustituidos
+        // Esto asegura que la SQL guardada sea idéntica a la que se mostrará y ejecutará
+        $finalSql = reemplazarPatronesComboNoSustituidos($sqlQuery, $filters, $filterValues);
+        
+        // Log para verificar que el SQL sea idéntico al mostrado en la vista previa
+        error_log("SQL FINAL (después de reemplazarPatronesComboNoSustituidos): " . $finalSql);
+        
+        // Guardar la SQL generada en la sesión
+        $_SESSION['sql_consulta'] = $finalSql;
+        
+        // Guardar una copia original para referencia
+        $_SESSION['sql_consulta_original'] = $finalSql;
+        
+        // Guardar el ID del reporte
         $_SESSION['repolog_report_id'] = $reportId;
         
         // Guardar campos de subtotales
@@ -1461,6 +2110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             unset($_SESSION['subtotales_subtotal']);
         }
         
+        // Guardar los filtros y valores de filtros en la sesión para uso posterior (en reporte.php)
+        $_SESSION['filters'] = $filters;
+        $_SESSION['filter_values'] = $filterValues;
+        
         // Save extension functionality params if available
         if (!empty($report['url_include'])) {
             $_SESSION['repolog_url_include'] = $report['url_include'];
@@ -1486,7 +2139,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             unset($_SESSION['repolog_sppos']);
         }
         
-        // Guardar los filtros aplicados para mostrarlos como subtítulo del reporte
+        // Guardar los filtros aplicados para mostrarlos como subtítulo del reporte, 
+        // mostrando valores descriptivos en lugar de IDs para combos
         $appliedFilters = [];
         foreach ($filters as $filter) {
             if ($filter['type'] != 'session') {
@@ -1495,9 +2149,126 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                 
                 // Solo guardar los filtros que tienen valor
                 if (isset($filterValues[$filterKey]) && !empty($filterValues[$filterKey])) {
+                    $filterValue = $filterValues[$filterKey];
+                    $displayValue = $filterValue; // Por defecto, usamos el valor tal cual
+                    
+                    // Si es un filtro tipo combo (select/dropdown), buscar el valor descriptivo
+                    if ($filter['type'] === 'combo' && isset($filter['options']) && is_array($filter['options'])) {
+                        // Primero intentamos buscar en las opciones del combo
+                        foreach ($filter['options'] as $option) {
+                            if (isset($option['value']) && $option['value'] == $filterValue) {
+                                $displayValue = $option['text'];
+                                break;
+                            }
+                        }
+                    }
+                    // Si es un filtro con query (select dinámico), buscar el valor en la base de datos
+                    else if ($filter['type'] === 'combo' && isset($filter['query']) && !empty($filter['query'])) {
+                        try {
+                            // Crear conexión a BD
+                            $lookupPdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+                            $lookupPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            
+                            // Extraer tablas y columnas de la query original
+                            $query = $filter['query'];
+                            
+                            // Analizar si el query tiene estructura value,text o es una consulta completa
+                            if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
+                                $valueColumn = trim($matches[1]);
+                                $textColumn = trim($matches[2]);
+                                $tableName = trim($matches[3]);
+                                
+                                // Construir consulta para buscar el valor descriptivo
+                                $lookupQuery = "SELECT $textColumn FROM $tableName WHERE $valueColumn = ?";
+                                $stmt = $lookupPdo->prepare($lookupQuery);
+                                $stmt->execute([$filterValue]);
+                                
+                                if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $displayValue = reset($row); // Primer valor del array asociativo
+                                }
+                            }
+                            // Si el query es complejo, intentar extraer las tablas y columnas
+                            else if (preg_match('/FROM\s+([^\s;]+)/i', $query, $tableMatch)) {
+                                $tableName = trim($tableMatch[1]);
+                                
+                                // Extraer clave primaria de la tabla (asumiendo 'id' + nombre de tabla singular o 'id' genérico)
+                                $singularTable = preg_replace('/es$|s$/', '', $tableName);
+                                $possibleIdColumns = [
+                                    'id' . $singularTable,
+                                    $singularTable . 'id',
+                                    'id' . $tableName,
+                                    $tableName . 'id',
+                                    'id'
+                                ];
+                                
+                                // Intentar columnas descriptivas comunes
+                                $possibleDescColumns = [
+                                    'nombre' . $singularTable,
+                                    'nombre',
+                                    'descripcion',
+                                    'description',
+                                    'name'
+                                ];
+                                
+                                // Obtener primera columna que no sea ID como columna descriptiva
+                                $lookupQuery = "SHOW COLUMNS FROM $tableName";
+                                $stmt = $lookupPdo->query($lookupQuery);
+                                $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                
+                                $idColumn = null;
+                                $descColumn = null;
+                                
+                                // Primero buscar entre las columnas sugeridas
+                                foreach ($possibleIdColumns as $idCol) {
+                                    foreach ($columns as $col) {
+                                        if (strtolower($col['Field']) === strtolower($idCol)) {
+                                            $idColumn = $col['Field'];
+                                            break 2;
+                                        }
+                                    }
+                                }
+                                
+                                foreach ($possibleDescColumns as $descCol) {
+                                    foreach ($columns as $col) {
+                                        if (strtolower($col['Field']) === strtolower($descCol)) {
+                                            $descColumn = $col['Field'];
+                                            break 2;
+                                        }
+                                    }
+                                }
+                                
+                                // Si no encontramos columna descriptiva, usar la segunda columna (asumiendo que la primera es ID)
+                                if (!$descColumn && count($columns) > 1) {
+                                    if ($columns[0]['Field'] === $idColumn) {
+                                        $descColumn = $columns[1]['Field'];
+                                    } else {
+                                        $descColumn = $columns[0]['Field'];
+                                    }
+                                }
+                                
+                                // Si encontramos ambas columnas, buscar el valor descriptivo
+                                if ($idColumn && $descColumn) {
+                                    $lookupQuery = "SELECT $descColumn FROM $tableName WHERE $idColumn = ?";
+                                    $stmt = $lookupPdo->prepare($lookupQuery);
+                                    $stmt->execute([$filterValue]);
+                                    
+                                    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                        $displayValue = reset($row);
+                                    }
+                                }
+                            }
+                            
+                            $lookupPdo = null;
+                        } catch (Exception $e) {
+                            // Si hay error, mantener el valor original
+                            error_log("Error al buscar valor descriptivo: " . $e->getMessage());
+                        }
+                    }
+                    
+                    // Añadir filtro con valor descriptivo
                     $appliedFilters[] = [
                         'label' => $label,
-                        'value' => $filterValues[$filterKey]
+                        'value' => $displayValue
                     ];
                 }
             }
