@@ -32,7 +32,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             $valor = htmlspecialchars((string)$filtro['value']); // Convierte a string y escapa
 
             // Muestra la información
-            //echo "<li>" . $etiqueta . ": " . $valor . "</li>";
+            echo "<li>" . $etiqueta . ": " . $valor . "</li>";
             if ($etiqueta == "Del") {
                 $fechainicial = $valor." 00:00:00"; // 2025-02-01 00:00:00
             }
