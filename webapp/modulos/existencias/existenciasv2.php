@@ -41,7 +41,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
 
             if ($etiqueta == "Propietario") {
-                $sqlAux="Select idfabricante id from operaciones_fabricantes where idfabricante = '%".$valor."%' limit 1";
+                $sqlAux="Select idfabricante id from operaciones_fabricantes where idfabricante=".$valor."' limit 1";
                 //echo $sqlAux."<br>";
                 $resultado = $conexion->consultar($sqlAux);
                 while($rs = $conexion->siguiente($resultado)){
@@ -81,7 +81,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
             }
             if ($etiqueta=="Estado Producto") {
 
-                    $sqlAux="select idestadoproducto id from inventarios_estados where descripcionestado like '%".$valor."%' limit 1";
+                    $sqlAux="select idestadoproducto id from inventarios_estados where idestadoproducto = ".$valor." limit 1";
                     $resultado = $conexion->consultar($sqlAux);
                     while($rs = $conexion->siguiente($resultado)){
                         $idestado=$rs{"id"};
