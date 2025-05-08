@@ -1816,6 +1816,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             $sqlQuery = eliminarClausulasAndCompletas($sqlQuery, $emptyComboFilters);
         }
         
+        // DEBUGGING: Registrar todos los valores de filtro recibidos para analizar el problema
+        error_log("=== VALORES DE FILTROS RECIBIDOS (DEBUG) ===");
+        foreach ($filterValues as $key => $value) {
+            error_log("Filtro: $key, Valor: " . ($value === '' ? '(vacío)' : $value));
+        }
+        
         // PASO 2: Aplicar todas las limpiezas generales
         // Igual que en reporte.php
         $sqlQuery = fixAllSqlIssues($sqlQuery);
@@ -1826,11 +1832,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         // PASO 3: SOLUCIÓN DEFINITIVA SIMPLIFICADA Y MEJORADA
         // Normalizar la consulta SQL para facilitar su procesamiento
         
-        // PASO PRELIMINAR: Detectar y corregir problemas específicos
-        // Buscar condiciones con BETWEEN seguidas de una cláusula AND/OR sin paréntesis de cierre
-        if (preg_match('/\)\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*\'[^\']*\'\s+ORDER\s+BY/i', $sqlQuery)) {
-            $sqlQuery = preg_replace('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s+ORDER\s+BY/i', 
-                                 ') and ($1 = \'$2\') ORDER BY', $sqlQuery);
+        // PASO PRELIMINAR 0: CORRECCIÓN EXACTA PARA EL REPORTE 5
+        // Detección absoluta del patrón en reporte 5, que es extremadamente específico
+        $patronReporte5 = '/\)\)\s+and\s+\(obd\.idbodega\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i';
+        if (preg_match($patronReporte5, $sqlQuery, $matches)) {
+            $fullMatch = $matches[0];
+            $valor = $matches[1];
+            $correcto = ')) and (obd.idbodega = \'' . $valor . '\') ORDER BY';
+            $sqlQuery = str_replace($fullMatch, $correcto, $sqlQuery);
+            error_log("Vista Previa: ¡SOLUCIÓN ESPECÍFICA APLICADA PARA REPORTE 5!");
+        }
+
+        // PASO PRELIMINAR 1: SOLUCIÓN GENERAL PARA PARÉNTESIS FALTANTES
+        // Buscar cualquier condición del tipo "and (campo = 'valor' ORDER BY" y cerrar el paréntesis
+        $patronGeneral = '/\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]*)[\'\"]\s+(ORDER\s+BY)/i';
+        if (preg_match($patronGeneral, $sqlQuery)) {
+            $sqlQuery = preg_replace($patronGeneral, ') $1 ($2 = \'$3\') $4', $sqlQuery);
+            error_log("Vista Previa: Aplicada corrección general para condiciones sin cerrar antes de ORDER BY");
+        }
+        
+        // PASO PRELIMINAR 2: SOLUCIÓN PARA DOBLE PARÉNTESIS
+        // Este patrón busca: ")) and (campo = 'valor' ORDER BY" (doble paréntesis al inicio)
+        $patronDobleParentesis = '/\)\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+(ORDER\s+BY)/i';
+        if (preg_match($patronDobleParentesis, $sqlQuery, $matches)) {
+            $fullMatch = $matches[0];
+            $operator = $matches[1];
+            $campo = $matches[2];
+            $valor = $matches[3];
+            $orderBy = $matches[4];
+            
+            $replacement = ')) ' . $operator . ' (' . $campo . ' = \'' . $valor . '\') ' . $orderBy;
+            $sqlQuery = str_replace($fullMatch, $replacement, $sqlQuery);
+            error_log("Vista Previa: Corregido doble paréntesis con patrón general");
         }
         
         // PASO 0: Normalizar la consulta 
@@ -1917,8 +1950,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             $sqlQuery = preg_replace('/WHERE\s+ORDER\s+BY/', 'ORDER BY', $sqlQuery);
         }
         
-        // Aplicar todas las correcciones generales
+        // Aplicar todas las correcciones generales - incluyendo la nueva solución universal
         $sqlQuery = fixAllSqlIssues($sqlQuery);
+        
+        // Aplicar específicamente la solución universal de paréntesis desbalanceados
+        // Esto es crucial porque asegura que la vista previa muestre exactamente lo mismo que se ejecutará
+        if (function_exists('fixUnbalancedParenthesisBeforeOrderBy')) {
+            $sqlQuery = fixUnbalancedParenthesisBeforeOrderBy($sqlQuery);
+            error_log("Vista Previa: Aplicada solución universal para paréntesis desbalanceados");
+        }
         
         // Aplicar función específica para eliminación de paréntesis excesivos
         if (function_exists('eliminaParentesisExcesivos')) {
@@ -1927,7 +1967,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
         }
         
-        // Asignamos la SQL completamente procesada a la vista previa
+        // Aplicamos todas las transformaciones que se aplicarían en reporte.php
+        // para asegurar que la vista previa sea exactamente igual al SQL ejecutado
+        
+        // 1. Verificar si hay variables de fecha disponibles (similar a reporte.php)
+        $startDate = date("Y/m/d");
+        $endDate = date("Y/m/d");
+        
+        // Buscar fechas en SESSION (más común)
+        if (isset($_SESSION['user_selected_date_filter_del'])) {
+            $startDate = $_SESSION['user_selected_date_filter_del'];
+        }
+        
+        if (isset($_SESSION['user_selected_date_filter_al'])) {
+            $endDate = $_SESSION['user_selected_date_filter_al'];
+        }
+        
+        // O buscar en los valores de filtros actuales
+        foreach ($filterValues as $key => $value) {
+            if (stripos($key, 'del') !== false || stripos($key, 'inicio') !== false || stripos($key, 'desde') !== false) {
+                if (!empty($value)) {
+                    $startDate = $value;
+                }
+            }
+            else if (stripos($key, 'al') !== false || stripos($key, 'fin') !== false || stripos($key, 'hasta') !== false) {
+                if (!empty($value)) {
+                    $endDate = $value;
+                }
+            }
+        }
+        
+        // 2. Aplicar fechas a la consulta SQL
+        $sqlQuery = preg_replace('/BETWEEN\s+["\']([^"\']+)["\']\s+AND\s+["\']([^"\']+)["\']/i', 
+                          "BETWEEN \"$startDate 00:00:00\" AND \"$endDate 23:59:59\"", 
+                          $sqlQuery);
+                          
+        // 3. Aplicar corrección final de paréntesis (igual que en reporte.php)
+        $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
+        
+        // Guardamos el SQL completo en la sesión para mostrarlo como SQL ejecutado
+        $_SESSION['sql_final_ejecutado'] = $sqlQuery;
         $previewSQL = $sqlQuery;
         $showPreview = true;
         
@@ -1942,8 +2021,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         
         // Añadir información adicional sobre todos los reportes
         $debugInfo .= "<h4>Información de Procesamiento SQL:</h4>";
-        $debugInfo .= "<p>Esta consulta ha pasado por las mismas transformaciones que se aplicarán al ejecutarla.</p>";
-        $debugInfo .= "<pre>SQL completamente procesado:</pre>";
+        $debugInfo .= "<p>Esta consulta muestra exactamente el mismo SQL que se ejecutará al generar el reporte.</p>";
+        $debugInfo .= "<pre>SQL completamente procesado y listo para ejecución:</pre>";
         
         // Mostrar información específica para el reporte 18 (RecepcionDirecta)
         if ($reportId == 18) {
@@ -1966,17 +2045,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             $sqlQuery = eliminarClausulasAndCompletas($sqlQuery, $emptyComboFilters);
         }
         
-        // Aplicar limpieza general de SQL
+        // Aplicar limpieza general de SQL - incluyendo la nueva solución universal
         $sqlQuery = fixAllSqlIssues($sqlQuery);
+        
+        // Aplicar específicamente la solución universal de paréntesis desbalanceados
+        if (function_exists('fixUnbalancedParenthesisBeforeOrderBy')) {
+            $sqlQuery = fixUnbalancedParenthesisBeforeOrderBy($sqlQuery);
+            error_log("Submit: Aplicada solución universal para paréntesis desbalanceados");
+        }
         
         // APLICAR LA SOLUCIÓN DEFINITIVA Y MEJORADA (exactamente igual que en reporte.php)
         
-        // PASO PRELIMINAR: Detectar y corregir problemas específicos
-        // Buscar condiciones con BETWEEN seguidas de una cláusula AND/OR sin paréntesis de cierre
-        if (preg_match('/\)\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*\'[^\']*\'\s+ORDER\s+BY/i', $sqlQuery)) {
-            error_log("Detectado patrón problemático de condición sin cerrar");
-            $sqlQuery = preg_replace('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s+ORDER\s+BY/i', 
-                                 ') and ($1 = \'$2\') ORDER BY', $sqlQuery);
+        // PASO PRELIMINAR 0: CORRECCIÓN EXACTA PARA EL REPORTE 5
+        // Detección absoluta del patrón en reporte 5, que es extremadamente específico
+        $patronReporte5 = '/\)\)\s+and\s+\(obd\.idbodega\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i';
+        if (preg_match($patronReporte5, $sqlQuery, $matches)) {
+            $fullMatch = $matches[0];
+            $valor = $matches[1];
+            $correcto = ')) and (obd.idbodega = \'' . $valor . '\') ORDER BY';
+            $sqlQuery = str_replace($fullMatch, $correcto, $sqlQuery);
+            error_log("Submit: ¡SOLUCIÓN ESPECÍFICA APLICADA PARA REPORTE 5!");
+        }
+
+        // PASO PRELIMINAR 1: SOLUCIÓN GENERAL PARA PARÉNTESIS FALTANTES
+        // Buscar cualquier condición del tipo "and (campo = 'valor' ORDER BY" y cerrar el paréntesis
+        $patronGeneral = '/\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]*)[\'\"]\s+(ORDER\s+BY)/i';
+        if (preg_match($patronGeneral, $sqlQuery)) {
+            $sqlQuery = preg_replace($patronGeneral, ') $1 ($2 = \'$3\') $4', $sqlQuery);
+            error_log("Submit: Aplicada corrección general para condiciones sin cerrar antes de ORDER BY");
+        }
+        
+        // PASO PRELIMINAR 2: SOLUCIÓN PARA DOBLE PARÉNTESIS
+        // Este patrón busca: ")) and (campo = 'valor' ORDER BY" (doble paréntesis al inicio)
+        $patronDobleParentesis = '/\)\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+(ORDER\s+BY)/i';
+        if (preg_match($patronDobleParentesis, $sqlQuery, $matches)) {
+            $fullMatch = $matches[0];
+            $operator = $matches[1];
+            $campo = $matches[2];
+            $valor = $matches[3];
+            $orderBy = $matches[4];
+            
+            $replacement = ')) ' . $operator . ' (' . $campo . ' = \'' . $valor . '\') ' . $orderBy;
+            $sqlQuery = str_replace($fullMatch, $replacement, $sqlQuery);
+            error_log("Submit: Corregido doble paréntesis con patrón general");
         }
         
         // PASO 0: Normalizar la consulta 
@@ -2079,6 +2190,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         
         // Guardar la SQL generada en la sesión
         $_SESSION['sql_consulta'] = $finalSql;
+        
+        // Guardar también en sql_final_ejecutado para consistencia con el botón "Mostrar SQL"
+        $_SESSION['sql_final_ejecutado'] = $finalSql;
         
         // Guardar una copia original para referencia
         $_SESSION['sql_consulta_original'] = $finalSql;
@@ -2568,17 +2682,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                 
                 <div class="buttons-container" style="display:flex; gap:10px;">
                     <?php if ($report['estatus'] == 'D'): ?>
-                        <button type="submit" name="action" value="preview" class="submit-btn" style="background-color:#2196F3;">Vista Previa SQL</button>
+                        <button type="submit" name="action" value="preview" class="submit-btn" style="background-color:#2196F3;">Mostrar SQL</button>
                     <?php endif; ?>
                     <button type="submit" class="submit-btn">Generar Reporte</button>
                 </div>
                 
                 <?php if ($showPreview): ?>
-                <div class="sql-preview" style="margin-top:20px; padding:15px; background:#f0f0f0; border-radius:4px; border-left:4px solid #2196F3;">
-                    <h3>Vista Previa de la Consulta SQL:</h3>
+                <div class="sql-preview" style="margin-top:20px; padding:15px; background:#f0f0f0; border-radius:4px; border-left:4px solid #4CAF50;">
+                    <?php if (isset($_SESSION['sql_final_ejecutado']) && !empty($_SESSION['sql_final_ejecutado'])): ?>
+                    <h3>SQL Ejecutado en la Última Consulta:</h3>
                     <div style="background:#333; color:#fff; padding:15px; border-radius:4px; overflow-x:auto;">
-                        <code><?php echo htmlspecialchars($previewSQL); ?></code>
+                        <code><?php echo htmlspecialchars($_SESSION['sql_final_ejecutado']); ?></code>
                     </div>
+                    <?php else: ?>
+                    <h3>SQL en Construcción</h3>
+                    <p style="color:#666;">Haga clic en "Generar Reporte" para ver el SQL exacto utilizado.</p>
+                    <?php endif; ?>
                     
                     <?php if (isset($debug_info) && !empty($debug_info)): ?>
                     <div style="margin-top:20px; padding:15px; background:#f1f8e9; border-radius:4px; border-left:4px solid #8bc34a;">

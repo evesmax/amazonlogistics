@@ -8,8 +8,18 @@
  * Compatible with PHP 5.5.9
  */
 
+// Aumentar límite de memoria para exportaciones grandes
+ini_set('memory_limit', '256M');
+
 // Include configuration file
 require_once 'config.php';
+// Se ha eliminado la referencia a all_level_html_fix.php para mostrar el HTML tal cual
+
+// Función simple para mostrar HTML
+function displayHtmlValue($value) {
+    // Simplemente retornar el valor tal cual
+    return $value;
+}
 
 // Check if results exist in session
 if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
@@ -69,11 +79,48 @@ foreach ($results as $row) {
     foreach ($columns as $column) {
         $value = isset($row[$column]) ? $row[$column] : '';
         
+        // Procesar HTML antes de convertir a texto plano
+        $value = displayHtmlValue($value);
+        
+        // Detectar si contiene HTML
+        if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+            // Convertir a minúsculas para mejor detección
+            $valueLower = strtolower($value);
+            
+            // Si contiene imágenes, reemplazar con texto descriptivo
+            if (strpos($valueLower, '<img') !== false) {
+                // Si tiene enlace, intentar extraer su contenido
+                if (preg_match('/<a[^>]*>.*?<\/a>/i', $value)) {
+                    // Extraer texto dentro de enlace o usar [IMAGEN]
+                    if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty($matches[1]) 
+                        && $matches[1] != '<img') {
+                        $value = trim($matches[1]);
+                    } else {
+                        $value = '[ICONO]';
+                    }
+                } else {
+                    $value = '[IMAGEN]';
+                }
+            } 
+            // Si es solo un enlace, extraer el texto
+            else if (strpos($valueLower, '<a') !== false) {
+                if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty($matches[1])) {
+                    $value = trim($matches[1]);
+                } else {
+                    $value = '[ENLACE]';
+                }
+            } 
+            // Para cualquier otro HTML, simplemente eliminar etiquetas
+            else {
+                $value = strip_tags($value);
+            }
+        }
+        
         // Caso especial para 2990,58 (CARGILL DE MEXICO)
         if ($value === '2990,58') {
             $value = '2,990.58';
         }
-        // Verificar si es un número con formato europeo
+        // Verificar si es un número en formato europeo
         else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
             $numValue = floatval(str_replace(',', '.', $value));
             $value = number_format($numValue, 2, '.', ',');

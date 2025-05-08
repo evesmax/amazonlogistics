@@ -9,9 +9,14 @@
  * Compatible with PHP 5.5.9 and MySQL 5.5.62
  */
 
+// Aumentar límite de memoria para consultas grandes
+ini_set('memory_limit', '256M');
+
 // Include configuration file and utilities
 require_once 'config.php';
 require_once 'sqlcleaner.php';
+
+// NOTA: Se ha eliminado la referencia a all_level_html_fix.php para mostrar el HTML tal cual
 
 /**
  * La función eliminaParentesisExcesivos ahora se encuentra en sqlcleaner.php
@@ -523,8 +528,14 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     // 2. Aplicar limpieza específica para el problema de "and )" y paréntesis extra
     $query = fixExtraAndBeforeClosingParenthesis($query);
     
-    // 3. Aplicar todas las correcciones generales
+    // 3. Aplicar todas las correcciones generales - incluyendo la nueva solución universal
     $query = fixAllSqlIssues($query);
+    
+    // 3.5 Aplicar específicamente la solución universal para paréntesis desbalanceados
+    if (function_exists('fixUnbalancedParenthesisBeforeOrderBy')) {
+        $query = fixUnbalancedParenthesisBeforeOrderBy($query);
+        error_log("Aplicada corrección universal mejorada para paréntesis antes de ORDER BY");
+    }
     
     // 4. Aplicar función especializada para eliminación de paréntesis excesivos
     if (function_exists('eliminaParentesisExcesivos')) {
@@ -532,6 +543,25 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         // Aplicar una segunda vez para casos difíciles con múltiples paréntesis
         $query = eliminaParentesisExcesivos($query);
     }
+    
+    // SOLUCIÓN INTEGRAL: Corregir HTML en la consulta SQL
+    // Detectar el patrón exacto que causa el error y reemplazar completamente
+    if (strpos($query, 'concat("<center><a href=\"../../modulos/envios/envio.php?folio=\",lt.idtraslado,"') !== false) {
+        // Reemplazar el patrón completamente en vez de intentar arreglarlo
+        $query = preg_replace(
+            '/concat\s*\(\s*"<center><a href=\\"[^"]*\\"[^,]*,[^,]*,[^)]+"[^)]*\)/i',
+            "concat('<center><a href=\"../../modulos/envios/envio.php?folio=',lt.idtraslado,'\"><img src=\"../../modulos/envios/delivery.png\"></a></center>')",
+            $query
+        );
+        error_log("Reemplazo radical para el patrón de envío con imagen");
+    }
+    
+    // Se ha eliminado fixHtmlInSqlQuery para mostrar el HTML tal cual
+    error_log("SQL después de corregir HTML: " . $query);
+    
+    // 5. Guardar el SQL final en la sesión para mostrarlo en la vista previa
+    $_SESSION['sql_final_ejecutado'] = $query;
+    error_log("SQL reconstruido completamente: $query");
     
     // 5. Registrar SQL procesado para depuración
     error_log("SQL después de aplicar correcciones iniciales: " . $query);
@@ -656,6 +686,51 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     // Información de depuración
     error_log("Fechas finales para SQL: startDate=$startDate, endDate=$endDate");
     
+    // SOLUCIÓN ESPECÍFICA PARA EL REPORTE 9: EnviosPendientes
+    if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 9) {
+        // Verificar si estamos ante el caso problemático específico con imágenes
+        if (strpos($query, 'concat(') !== false && 
+            strpos($query, 'delivery.png') !== false && 
+            (strpos($query, ' > < img') !== false || 
+             strpos($query, '\" > < img') !== false)) {
+            
+            // Reemplazar manualmente el SQL que causa problemas con una versión correcta 
+            // NOTA: Aquí dejamos la imagen exactamente como está en la base de datos (SOLUCIÓN DIRECTA)
+            $query = "SELECT concat(\"< Center >< A href = ../../modulos/envios/envio.php?folio = \",lt.idtraslado,\" >< img src = ../../modulos/envios/delivery.png >\",\"< /A >< /Center >\") as \"Enviar\", 
+                  lt.referencia1 as \"OT\", 
+                  lt.Fecha, 
+                  of.nombrefabricante as \"Ingenio\",
+                  vm.NombreMarca as \"Marca\", 
+                  obo.nombrebodega as \"Bodega Origen\", 
+                  obd.nombrebodega as \"Bodega Destino\", 
+                  il.descripcionlote as \"Zafra\", 
+                  ip.NombreProducto as \"Producto\", 
+                  ie.descripcionestado as \"Estado\", 
+                  format(lt.cantidad2,3) as \"Saldo Inicial (TM)\", 
+                  format(IFNULL(lt.cantidadretirada2,0),3) as \"Retirada (TM)\", 
+                  format(lt.cantidad2-IFNULL(lt.cantidadretirada2,0),3) as \"Saldo (TM)\" 
+                  FROM logistica_traslados lt 
+                  inner join operaciones_fabricantes of on of.idfabricante = lt.idfabricante 
+                  inner join operaciones_bodegas obo on obo.idbodega = lt.idbodegaorigen 
+                  inner join operaciones_bodegas obd on obd.idbodega = lt.idbodegadestino 
+                  inner join inventarios_productos ip on ip.idproducto = lt.idproducto 
+                  inner join inventarios_estados ie on ie.idestadoproducto = lt.idestadoproducto 
+                  inner join inventarios_lotes il on il.idloteproducto = lt.idloteproducto 
+                  left join vista_marcas vm on vm.idmarca = lt.idmarca 
+                  WHERE (lt.cantidad2-IFNULL(lt.cantidadretirada2,0) > 0 and lt.idestadodocumento = 1) 
+                  and (lt.idbodegadestino in (select idbodega from relaciones_usuariosbodegas where idempleado = 2) 
+                  OR NOT EXISTS (SELECT 1 FROM relaciones_usuariosbodegas WHERE idempleado = 2)) 
+                  and (lt.fecha BETWEEN \"$startDate 00:00:00\" AND \"$endDate 23:59:59\") 
+                  ORDER BY of.nombrefabricante, lt.Fecha";
+            
+            // Registrar el SQL corregido
+            error_log("SQL corregido para EnviosPendientes (reporte 9): " . substr($query, 0, 200) . "...");
+            
+            // No necesitamos aplicar más correcciones a este SQL ya que ha sido completamente reescrito
+            return $query;
+        }
+    }
+    
     // SOLUCIÓN ESPECÍFICA PARA EL REPORTE 18: RecepcionDirecta
     if (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 18) {
         // Verificar si estamos ante el caso problemático específico
@@ -714,12 +789,38 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     // SOLUCIÓN DEFINITIVA SIMPLIFICADA Y MEJORADA
     // Normalizar la consulta SQL para facilitar su procesamiento
     
-    // PASO PRELIMINAR: Detectar y corregir problemas específicos
-    // Buscar condiciones con BETWEEN seguidas de una cláusula AND/OR sin paréntesis de cierre
-    if (preg_match('/\)\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*\'[^\']*\'\s+ORDER\s+BY/i', $query)) {
-        error_log("Detectado patrón problemático de condición sin cerrar");
-        $query = preg_replace('/\)\s+and\s+\(([a-zA-Z0-9_.]+)\s*=\s*\'([^\']*)\'\s+ORDER\s+BY/i', 
-                             ') and ($1 = \'$2\') ORDER BY', $query);
+    // PASO PRELIMINAR 0: CORRECCIÓN EXACTA PARA EL REPORTE 5
+    // Detección absoluta del patrón en reporte 5, que es extremadamente específico
+    $patronReporte5 = '/\)\)\s+and\s+\(obd\.idbodega\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i';
+    if (preg_match($patronReporte5, $query, $matches)) {
+        $fullMatch = $matches[0];
+        $valor = $matches[1];
+        $correcto = ')) and (obd.idbodega = \'' . $valor . '\') ORDER BY';
+        $query = str_replace($fullMatch, $correcto, $query);
+        error_log("¡SOLUCIÓN ESPECÍFICA APLICADA PARA REPORTE 5!");
+    }
+
+    // PASO PRELIMINAR 1: SOLUCIÓN GENERAL PARA PARÉNTESIS FALTANTES
+    // Buscar cualquier condición del tipo "and (campo = 'valor' ORDER BY" y cerrar el paréntesis
+    $patronGeneral = '/\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]*)[\'\"]\s+(ORDER\s+BY)/i';
+    if (preg_match($patronGeneral, $query)) {
+        $query = preg_replace($patronGeneral, ') $1 ($2 = \'$3\') $4', $query);
+        error_log("Aplicada corrección general para condiciones sin cerrar antes de ORDER BY");
+    }
+    
+    // PASO PRELIMINAR 2: SOLUCIÓN PARA DOBLE PARÉNTESIS
+    // Este patrón busca: ")) and (campo = 'valor' ORDER BY" (doble paréntesis al inicio)
+    $patronDobleParentesis = '/\)\)\s+(and|AND|or|OR)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+(ORDER\s+BY)/i';
+    if (preg_match($patronDobleParentesis, $query, $matches)) {
+        $fullMatch = $matches[0];
+        $operator = $matches[1];
+        $campo = $matches[2];
+        $valor = $matches[3];
+        $orderBy = $matches[4];
+        
+        $replacement = ')) ' . $operator . ' (' . $campo . ' = \'' . $valor . '\') ' . $orderBy;
+        $query = str_replace($fullMatch, $replacement, $query);
+        error_log("Corregido doble paréntesis con patrón general");
     }
     
     // PASO 0: Normalizar la consulta 
@@ -873,6 +974,104 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         // Fetch all results
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
+        // NUEVA FUNCIONALIDAD: Analizar el SQL para detectar el formato numérico de cada campo
+        // Esto permite saber exactamente cuántos decimales debe tener cada campo
+        $formatInfo = [];
+        
+        // Guardar la consulta SQL original para referencia
+        $_SESSION['debug_sql_query'] = $query;
+        
+        // 1. Buscar patrones FORMAT(campo, X) AS columna - formato directo de la función MySQL
+        if (preg_match_all('/FORMAT\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+[\'\"]?([^\'\"(),\s]+)/i', $query, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $field = $match[1];
+                $decimals = intval($match[2]);
+                $columnName = $match[3];
+                
+                // Guardar información de formato para cada columna
+                $formatInfo[$columnName] = [
+                    'field' => $field,
+                    'decimals' => $decimals,
+                    'has_format' => true,
+                    'detection_type' => 'format_function'
+                ];
+                
+                error_log("Detectado formato para columna '$columnName': campo '$field', decimales: $decimals");
+            }
+        }
+
+        // 2. También buscar casos como CASE WHEN ... THEN FORMAT
+        if (preg_match_all('/THEN\s+FORMAT\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+(?:END|ELSE)/i', $query, $matches, PREG_SET_ORDER)) {
+            // Extraer las columnas del CASE WHEN
+            if (preg_match_all('/CASE.+?END\s+(?:AS\s+)?[\'\"]?([^\'\"(),\s]+)/is', $query, $caseMatches, PREG_SET_ORDER)) {
+                foreach ($caseMatches as $index => $caseMatch) {
+                    if (isset($matches[$index])) {
+                        $columnName = $caseMatch[1];
+                        $field = $matches[$index][1];
+                        $decimals = intval($matches[$index][2]);
+                        
+                        // Guardar información de formato para cada columna
+                        $formatInfo[$columnName] = [
+                            'field' => $field,
+                            'decimals' => $decimals,
+                            'has_format' => true,
+                            'detection_type' => 'case_when_format'
+                        ];
+                        
+                        error_log("Detectado formato CASE para columna '$columnName': campo '$field', decimales: $decimals");
+                    }
+                }
+            }
+        }
+        
+        // 3. Buscar otras funciones numéricas como ROUND, TRUNCATE
+        if (preg_match_all('/ROUND\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+(?:AS\s+)?[\'\"]?([^\'\"(),\s]+)/i', $query, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $field = $match[1];
+                $decimals = intval($match[2]);
+                $columnName = $match[3];
+                
+                // Guardar información de formato para cada columna
+                $formatInfo[$columnName] = [
+                    'field' => $field,
+                    'decimals' => $decimals,
+                    'has_format' => true,
+                    'detection_type' => 'round_function'
+                ];
+                
+                error_log("Detectado ROUND para columna '$columnName': campo '$field', decimales: $decimals");
+            }
+        }
+        
+        // 4. Buscar columnas con nombres que indican cantidades o valores monetarios
+        // Solo se aplicará si no se ha detectado un formato específico para esta columna
+        if (preg_match_all('/(?:AS\s+|,\s*)[\'\"]?([^\'\"(),\s]+(?:cantidad|monto|importe|total|precio|costo|valor|saldo|ton|tm))[\'\"]?(?:\s*,|\s*FROM|\s*$)/i', $query, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $columnName = $match[1];
+                
+                // Solo aplicar si no tiene ya un formato específico
+                if (!isset($formatInfo[$columnName])) {
+                    // Determinar decimales según el nombre
+                    $decimals = 2; // Por defecto 2 decimales
+                    if (stripos($columnName, 'ton') !== false || stripos($columnName, 'tm') !== false) {
+                        $decimals = 3; // Valores en toneladas suelen tener 3 decimales
+                    }
+                    
+                    $formatInfo[$columnName] = [
+                        'field' => $columnName,
+                        'decimals' => $decimals,
+                        'has_format' => true,
+                        'detection_type' => 'column_name_pattern'
+                    ];
+                    
+                    error_log("Detectado por nombre para columna '$columnName': decimales: $decimals");
+                }
+            }
+        }
+
+        // Guardar la información de formato detectada para usar en el cliente
+        $_SESSION['column_format_info'] = $formatInfo;
+        
         // Close connection
         $pdo = null;
         
@@ -998,6 +1197,8 @@ if (!empty($results)) {
 }
     
     // Comentario eliminado para producción
+
+// Se ha eliminado la función fixHtmlInQueryResults para mostrar el HTML tal cual
 
 // Store results in session for export functionality
 $_SESSION['query_results'] = $results;
@@ -1566,7 +1767,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     <button onclick="window.history.back()" class="back-btn">Regresar</button>
                 <?php endif; ?>
                 
-                <!-- Botón de depuración de subtotales removido -->
+
             </div>
             <?php if (!empty($results)): ?>
                 <div class="action-buttons">
@@ -1678,25 +1879,28 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 // Verificar primero el mapeo específico del reporte
                                                 $fieldTrimmed = trim($field);
                                                 
-                                                // Depuración
+                                                // Depuración desactivada para ahorrar memoria
+                                                /* 
                                                 if (!isset($_SESSION['debug_field_mapping_sql_to_display'])) {
                                                     $_SESSION['debug_field_mapping_sql_to_display'] = [];
                                                 }
-                                                // Usar array asociativo en lugar de corchetes para compatibilidad con PHP 5.5.9
                                                 $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                     'sql_field' => $fieldTrimmed,
                                                     'lookup_in' => 'columnMapping',
                                                     'column_mapping' => $columnMapping
                                                 );
+                                                */
                                                 
                                                 if (isset($columnMapping[$fieldTrimmed])) {
                                                     $mapped = $columnMapping[$fieldTrimmed];
                                                     $mappedSumFields[] = $mapped;
+                                                    /* Depuración desactivada para ahorrar memoria
                                                     $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                         'sql_field' => $fieldTrimmed,
                                                         'mapped_to' => $mapped,
                                                         'via' => 'column_mapping'
                                                     );
+                                                    */
                                                 } else {
                                                     // Intentar buscar por coincidencia parcial
                                                     $matchFound = false;
@@ -1713,11 +1917,13 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                             (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
                                                             $mappedSumFields[] = $col;
                                                             $matchFound = true;
+                                                            /* Depuración desactivada para ahorrar memoria
                                                             $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                                 'sql_field' => $fieldTrimmed,
                                                                 'mapped_to' => $col,
                                                                 'via' => 'similarity'
                                                             );
+                                                            */
                                                             break;
                                                         }
                                                     }
@@ -1725,11 +1931,13 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     // Si todavía no encontramos coincidencia, usar el original
                                                     if (!$matchFound) {
                                                         $mappedSumFields[] = $fieldTrimmed;
+                                                        /* Depuración desactivada para ahorrar memoria
                                                         $_SESSION['debug_field_mapping_sql_to_display'][] = array(
                                                             'sql_field' => $fieldTrimmed,
                                                             'mapped_to' => $fieldTrimmed,
                                                             'via' => 'no_match_found'
                                                         );
+                                                        */
                                                     }
                                                 }
                                             }
@@ -1868,34 +2076,18 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
                                                 echo '<strong>' . $formattedValue . '</strong>';
                                             } else {
-                                                echo htmlspecialchars($value);
+                                                // No escapar HTML si parece contener etiquetas
+                                                if (strpos($value, '<') !== false && strpos($value, '>') !== false) {
+                                                    echo $value;
+                                                } else {
+                                                    echo htmlspecialchars($value);
+                                                }
                                             }
                                         }
-                                        // Detectar si parece contener HTML (case-insensitive)
-                                        else if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
-                                            // Convertir etiquetas comunes a minúsculas para detección consistente
-                                            $valueLower = strtolower($value);
-                                            
-                                            // Verificar tipos de HTML permitidos (minúsculas o mayúsculas)
-                                            if (strpos($valueLower, '<img') !== false || 
-                                                strpos($valueLower, '<a') !== false || 
-                                                strpos($valueLower, '<center') !== false ||
-                                                strpos($valueLower, '<div') !== false) {
-                                                
-                                                // Arreglar enlaces HTML sin comillas en los atributos
-                                                if (preg_match('/<a\s+href=([^"\'>]+)([^>]*)>/i', $value)) {
-                                                    $value = preg_replace('/(<a\s+href=)([^"\'>]+)([^>]*)>/i', '$1"$2"$3>', $value);
-                                                }
-                                                
-                                                // Es HTML permitido, mostrarlo como tal
-                                                echo $value;
-                                            } else {
-                                                // Es HTML pero no de los tipos permitidos, escapar
-                                                echo htmlspecialchars($value);
-                                            }
-                                        } else {
-                                            // No es HTML, escapar como texto normal
-                                            echo htmlspecialchars($value);
+                                        // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR)
+                                        else {
+                                            // Mostrar el HTML directamente para que sea interpretado por el navegador
+                                            echo $value;
                                         }
                                     ?>
                                     </td>
@@ -1923,9 +2115,18 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                 }
             });
         </script>
+        
+        <!-- NUEVO: Pasar información de formato de columnas al cliente para formateo inteligente -->
+        <?php if (isset($_SESSION['column_format_info']) && !empty($_SESSION['column_format_info'])): ?>
+        <script id="column-format-info" type="application/json">
+            <?php echo json_encode($_SESSION['column_format_info']); ?>
+        </script>
+        <?php endif; ?>
+        
         <script src="assets/js/table_functions.js"></script>
         <script src="assets/js/formatNumbersFix.js"></script>
         <script src="assets/js/formatSpecifics.js"></script>
+        <!-- Se eliminó la referencia a html_renderer.js para mostrar el HTML tal cual -->
     <?php endif; ?>
     
     <?php

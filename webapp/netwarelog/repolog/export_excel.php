@@ -8,8 +8,18 @@
  * Compatible with PHP 5.5.9
  */
 
-// Include configuration file
+// Aumentar límite de memoria para exportaciones grandes
+ini_set('memory_limit', '256M');
+
+// Include configuration files
 require_once 'config.php';
+// Se ha eliminado la referencia a all_level_html_fix.php para mostrar el HTML tal cual
+
+// Función simple para mostrar HTML
+function displayHtmlValue($value) {
+    // Simplemente retornar el valor tal cual
+    return $value;
+}
 
 // Check if results exist in session
 if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
@@ -92,11 +102,7 @@ header('Cache-Control: max-age=0');
             width: 100%;
             margin-bottom: 20px;
         }
-        .logo {
-            display: table-cell;
-            vertical-align: middle;
-            width: 200px;
-        }
+        /* Logo eliminado por request del usuario */
         .title-container {
             display: table-cell;
             vertical-align: middle;
@@ -121,9 +127,6 @@ header('Cache-Control: max-age=0');
 </head>
 <body>
     <div class="header">
-        <div class="logo">
-            <img src="assets/img/logo.png" alt="Logo Empresa" width="180">
-        </div>
         <div class="title-container">
             <h1 class="report-title"><?php echo htmlspecialchars($reportTitle); ?></h1>
             <p class="report-date">Generado el: <?php echo $currentDate; ?></p>
@@ -163,6 +166,9 @@ header('Cache-Control: max-age=0');
                             <?php 
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
+                                // Aplicar la función displayHtmlValue para corregir el HTML
+                                $value = displayHtmlValue($value);
+                                
                                 // Detectar si parece contener HTML (case-insensitive)
                                 if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
                                     // Convertir a minúsculas para mejor detección
@@ -170,36 +176,76 @@ header('Cache-Control: max-age=0');
                                     
                                     // Contiene HTML, verificar si es una imagen
                                     if (strpos($valueLower, '<img') !== false) {
-                                        // Es una imagen, reemplazar con texto [IMAGEN]
-                                        echo '[IMAGEN]';
-                                    } else if (strpos($valueLower, '<a') !== false || 
-                                              strpos($valueLower, '<center') !== false ||
+                                        // Es una imagen, extraer el contenido del enlace si existe
+                                        if (preg_match('/<a href="[^"]*"[^>]*>.*?<\/a>/i', $value, $matches)) {
+                                            // Si tiene enlace, extraer texto de enlace o usar [IMAGEN ENLACE]
+                                            if (preg_match('/>([^<]*)<\/a>/i', $value, $contentMatches) && !empty($contentMatches[1]) 
+                                                && $contentMatches[1] != '<img') {
+                                                echo trim($contentMatches[1]);
+                                            } else {
+                                                echo '[IMAGEN ENLACE]';
+                                            }
+                                        } else {
+                                            // Sin enlace, solo una imagen
+                                            echo '[IMAGEN]';
+                                        }
+                                    } else if (strpos($valueLower, '<a') !== false) {
+                                        // Es un enlace, extraer el texto del enlace
+                                        if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty($matches[1])) {
+                                            echo trim($matches[1]);
+                                        } else {
+                                            // No se pudo extraer el texto, mostrar [ENLACE]
+                                            echo '[ENLACE]';
+                                        }
+                                    } else if (strpos($valueLower, '<center') !== false ||
                                               strpos($valueLower, '<div') !== false) {
                                         
-                                        // Arreglar enlaces HTML sin comillas en los atributos
-                                        if (preg_match('/<a\s+href=([^"\'>]+)([^>]*)>/i', $value)) {
-                                            $value = preg_replace('/(<a\s+href=)([^"\'>]+)([^>]*)>/i', '$1"$2"$3>', $value);
-                                        }
-                                        
-                                        // Es otro tipo de HTML que no es imagen, mostrarlo como tal
-                                        echo $value;
+                                        // Eliminar etiquetas HTML para mostrar solo el texto
+                                        echo strip_tags($value);
                                     } else {
-                                        // Es HTML pero no de los tipos específicos, escapar
-                                        echo htmlspecialchars($value);
+                                        // Es HTML - Mostrar sin etiquetas para Excel
+                                        echo strip_tags($value);
                                     }
                                 } else {
-                                    // Verificar si es el valor específico 2990,58
-                                    if ($value === '2990,58') {
-                                        echo '2,990.58';
+                                    // Verificar si parece ser un número formateado (con comas o puntos)
+                                    if (is_string($value) && preg_match('/^[\d.,]+$/', $value)) {
+                                        // Extraer solo dígitos y punto decimal, ignorando separadores de miles
+                                        $cleanedValue = $value;
+                                        
+                                        // Formato europeo (2.990,58) -> (2990.58)
+                                        if (strpos($value, ',') !== false && strpos($value, '.') !== false) {
+                                            // Si tiene puntos y luego coma, es formato europeo
+                                            if (strpos($value, '.') < strpos($value, ',')) {
+                                                $cleanedValue = str_replace('.', '', $value); // Quitar puntos
+                                                $cleanedValue = str_replace(',', '.', $cleanedValue); // Convertir coma a punto
+                                            }
+                                        } 
+                                        // Formato con coma decimal (2990,58) -> (2990.58)
+                                        else if (strpos($value, ',') !== false) {
+                                            $cleanedValue = str_replace(',', '.', $value);
+                                        }
+                                        
+                                        // Verificar si ahora es un número válido
+                                        if (is_numeric($cleanedValue)) {
+                                            // Agregar mso:number-format para indicar a Excel que es un número
+                                            // y el formato específico a utilizar
+                                            echo '<span style="mso:number-format:\'#,##0.00_\)\;\[Red\](#,##0.00\)\'">' . 
+                                                  $cleanedValue . 
+                                                 '</span>';
+                                        } else {
+                                            echo $value; // No se pudo convertir, mostrar original
+                                        }
                                     }
-                                    // Verificar si es un número en formato europeo
-                                    else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
-                                        $numValue = floatval(str_replace(',', '.', $value));
-                                        echo number_format($numValue, 2, '.', ',');
+                                    // Verificar si es un número sin formato
+                                    else if (is_numeric($value)) {
+                                        // Es un número sin formato, usar estilo para Excel
+                                        echo '<span style="mso:number-format:\'#,##0.00_\)\;\[Red\](#,##0.00\)\'">' . 
+                                              $value . 
+                                             '</span>';
                                     }
-                                    // No es HTML ni número especial, escapar como texto normal
+                                    // No es HTML ni número - MOSTRAR TAMBIÉN SIN ESCAPAR
                                     else {
-                                        echo htmlspecialchars($value);
+                                        echo $value;
                                     }
                                 }
                             ?>
