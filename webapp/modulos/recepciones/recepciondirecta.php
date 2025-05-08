@@ -559,7 +559,7 @@
                                                             <td align=left><b><input type=text id='txthorallegada' name='txthorallegada' value='' Size=20></b>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td width=30%>OBS. ENVIO:</td>
+                                                            <td width=30%>SELLOS:</td>
                                                             <td align=left><b><input type=text id='txtobsenvio' name='txtobsenvio' value='' Size=20></b>
                                                         </tr>";                                                
                                                

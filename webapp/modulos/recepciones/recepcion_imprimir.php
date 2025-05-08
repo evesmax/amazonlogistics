@@ -491,7 +491,7 @@
                                                             </td>
                                                         </tr>";
  						$html.="<tr>
-                                                            <td width=30%>OBSERVACIONES ENVIO:</td>
+                                                            <td width=30%>SELLOS:</td>
                                                             <td align=left><b>".$observacionesEnv."</b></td>
                                                         </tr>"; 
                                                
