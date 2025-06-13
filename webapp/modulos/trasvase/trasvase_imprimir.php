@@ -29,6 +29,8 @@
                     $cantidadmerma2=0;
                     $cantidaddestinoreal1=0;
                     $cantidaddestinoreal2=0;
+                    $foliosorigenreal="";
+                    $foliosdestinoreal="";
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -38,7 +40,8 @@
                         ip2.nombreproducto 'productodestino',
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,
-                        lt.cantidaddestinoreal1,lt.cantidaddestinoreal2,lt.cantidadpnc1,lt.cantidadpnc2,lt.cantidadmerma1,lt.cantidadmerma2,lt.idcapturista 
+                        lt.cantidaddestinoreal1,lt.cantidaddestinoreal2,lt.cantidadpnc1,lt.cantidadpnc2,lt.cantidadmerma1,lt.cantidadmerma2,lt.idcapturista,
+                        lt.foliosorigenreal,lt.foliosdestinoreal 
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -76,6 +79,8 @@
                     $cantidadmerma1=$rs{"cantidadmerma1"};
                     $cantidadmerma2=$rs{"cantidadmerma2"};
                     $capturista=$rs{"idcapturista"};
+                    $foliosorigenreal=$rs{"foliosorigenreal"};
+                    $foliosdestinoreal=$rs{"foliosdestinoreal"};
         }
 		$conexion->cerrar_consulta($result);                        
                         
@@ -358,7 +363,12 @@
                         $html.="<tr>
                                                             <td width=30%>Cantidad a trasvasar:</td>
                                                             <td align=left><b>".$cantidad2." Toneladas </b></td>
-                                                        </tr>";                     
+                                                        </tr>";
+                        $html.="<tr>
+                                                        <td width=30%>Folios Bultos Origen:</td>
+                                                        <td align=left><b>".$foliosorigenreal." </b></td>
+                                                    </tr>";
+
                         $html.="</table>";
 				$html.="</td>";
 				
@@ -389,6 +399,10 @@
                                                             <td>Observaciones:</td>
                                                             <td align=left>$observaciones</td>
                                                         </tr>";
+                        $html.="<tr>
+                                                        <td width=30%>Folios Bultos Destino:</td>
+                                                        <td align=left><b>".$foliosdestinoreal." </b></td>
+                                                    </tr>";
 							
 					$html.="</table>";
 				$html.="</td>";

@@ -50,15 +50,60 @@ function fixHtmlInCaseWhen($sql) {
     return $sql;
 }
 
+/**
+ * Normaliza comillas mixtas en SQL que pueden causar errores de sintaxis
+ * Corrige problemas como '10" o "10' asegurando consistencia en las comillas
+ * 
+ * @param string $sql Consulta SQL con posibles comillas mixtas
+ * @return string Consulta SQL con comillas normalizadas
+ */
+function normalizeQuotesInSql($sql) {
+    // Patrón 1: Corregir el caso específico reportado ('10") -> ('10')
+    $sql = preg_replace("/'([^'\"]*)\"/", "'$1'", $sql);
+    
+    // Patrón 2: Corregir el caso inverso ("10') -> ("10")
+    $sql = preg_replace("/\"([^'\"]*)\'/", '"$1"', $sql);
+    
+    // Patrón 3: Corregir condiciones WHERE específicas con comillas mixtas
+    // Buscar patrones como: = '10" y convertir a = '10'
+    $sql = preg_replace("/(\w+\s*=\s*)'([^'\"]*)\"/", "$1'$2'", $sql);
+    
+    // Patrón 4: Buscar patrones como: = "10' y convertir a = "10"
+    $sql = preg_replace("/(\w+\s*=\s*)\"([^'\"]*)\'/", '$1"$2"', $sql);
+    
+    // Patrón 5: Corregir en condiciones entre paréntesis
+    // (campo = '10") -> (campo = '10')
+    $sql = preg_replace("/(\([^)]*=\s*)'([^'\"]*)\"/", "$1'$2'", $sql);
+    $sql = preg_replace("/(\([^)]*=\s*)\"([^'\"]*)\'/", '$1"$2"', $sql);
+    
+    // Patrón 6: Verificación y corrección de seguridad para cualquier patrón restante
+    // Buscar cualquier ' seguido de " al final de valor
+    $sql = preg_replace("/'([^']*)\"/", "'$1'", $sql);
+    
+    // Buscar cualquier " seguido de ' al final de valor  
+    $sql = preg_replace("/\"([^\"]*)\'/", '"$1"', $sql);
+    
+    // Log de depuración específico para el caso reportado
+    if (preg_match("/'[^']*\"/", $sql) || preg_match("/\"[^\"]*\'/", $sql)) {
+        error_log("ADVERTENCIA: Aún se detectan comillas mixtas en SQL después de normalización: " . $sql);
+    }
+    
+    return $sql;
+}
+
 function fixAllSqlIssues($sql) {
     // Guardamos el SQL original para depuración
     $originalSql = $sql;
     
-    // 0. PRIMERO: Corregir problemas con HTML en cláusulas CASE WHEN
+    // 0. PRIMERO: Normalizar comillas mixtas en el SQL
+    $sql = normalizeQuotesInSql($sql);
+    error_log("Aplicada normalización de comillas mixtas");
+    
+    // 1. SEGUNDO: Corregir problemas con HTML en cláusulas CASE WHEN
     $sql = fixHtmlInCaseWhen($sql);
     error_log("Aplicada corrección de HTML en cláusulas CASE WHEN");
     
-    // 1. SEGUNDO: Normalizar espacios en operadores SQL
+    // 2. TERCERO: Normalizar espacios en operadores SQL
     $sql = normalizarEspaciosEnOperadores($sql);
     error_log("Aplicada normalización universal de espacios en operadores");
     

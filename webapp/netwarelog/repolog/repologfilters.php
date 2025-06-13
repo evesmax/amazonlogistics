@@ -1005,10 +1005,19 @@ function buildSqlQuery($report, $filterValues) {
                         $debug_info[] = "Reemplazo general para Zafra: " . $fullPattern . " -> " . $comboValue;
                     }
                 } 
-                // Para otros filtros combo (no Zafra), aplicar reemplazo directo
+                // Para otros filtros combo (no Zafra), aplicar reemplazo directo con comillas consistentes
                 else {
-                    $whereClause = str_replace($fullPattern, $comboValue, $whereClause);
-                    $debug_info[] = "Reemplazo directo: " . $fullPattern . " -> " . $comboValue;
+                    // SOLUCIÓN GENERAL: Asegurar comillas consistentes
+                    if (strpos($whereClause, "'" . $fullPattern . "'") !== false) {
+                        $whereClause = str_replace("'" . $fullPattern . "'", "'" . $comboValue . "'", $whereClause);
+                        $debug_info[] = "Reemplazo con comillas simples: '" . $fullPattern . "' -> '" . $comboValue . "'";
+                    } else if (strpos($whereClause, '"' . $fullPattern . '"') !== false) {
+                        $whereClause = str_replace('"' . $fullPattern . '"', '"' . $comboValue . '"', $whereClause);
+                        $debug_info[] = "Reemplazo con comillas dobles: \"" . $fullPattern . "\" -> \"" . $comboValue . "\"";
+                    } else {
+                        $whereClause = str_replace($fullPattern, $comboValue, $whereClause);
+                        $debug_info[] = "Reemplazo directo: " . $fullPattern . " -> " . $comboValue;
+                    }
                 }
             }
             // Si es un filtro vacío (opción "Todos"), necesitamos eliminar la condición del SQL
@@ -1715,7 +1724,19 @@ function buildSqlQuery($report, $filterValues) {
                 // Caso 2: Hay un valor específico para el filtro
                 else if (isset($_POST[$filterKey]) && !empty($_POST[$filterKey])) {
                     $comboValue = $_POST[$filterKey];
-                    $sqlQuery = str_replace("'" . $fullPattern . "'", $comboValue, $sqlQuery);
+                    
+                    // SOLUCIÓN GENERAL: Asegurar comillas consistentes alrededor del valor
+                    // Detectar si el patrón está entre comillas simples o dobles y mantener consistencia
+                    if (strpos($sqlQuery, "'" . $fullPattern . "'") !== false) {
+                        // Patrón está entre comillas simples - reemplazar con comillas simples
+                        $sqlQuery = str_replace("'" . $fullPattern . "'", "'" . $comboValue . "'", $sqlQuery);
+                    } else if (strpos($sqlQuery, '"' . $fullPattern . '"') !== false) {
+                        // Patrón está entre comillas dobles - reemplazar con comillas dobles
+                        $sqlQuery = str_replace('"' . $fullPattern . '"', '"' . $comboValue . '"', $sqlQuery);
+                    } else {
+                        // Patrón sin comillas específicas - usar el valor tal como viene
+                        $sqlQuery = str_replace($fullPattern, $comboValue, $sqlQuery);
+                    }
                 }
             }
         }

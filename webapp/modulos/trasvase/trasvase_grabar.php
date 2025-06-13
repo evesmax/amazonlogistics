@@ -13,6 +13,8 @@
             $cantidadmerma1=$_REQUEST["txtcantidadmerma1"];
             $cantidadmerma2=$_REQUEST["txtcantidadmerma2"];
             $capturista=$_REQUEST["txtcapturista"];
+            $foliosorigenreal=$_REQUEST["txtfoliosorigenreal"];
+            $foliosdestinoreal=$_REQUEST["txtfoliosdestinoreal"];
                    
 //Recupera valores de consulta
         $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase=".$idtrasvase;
@@ -76,7 +78,9 @@ $doctoorigen=6;
                             cantidadmerma1=$cantidadmerma1,
                             cantidadmerma2=$cantidadmerma2,
                             idcapturista=$capturista,
-                            idestadodocumento=2
+                            idestadodocumento=2,
+                            foliosorigenreal='$foliosorigenreal',
+                            foliosdestinoreal='$foliosdestinoreal'
                         Where idtrasvase=".$idtrasvase;
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);

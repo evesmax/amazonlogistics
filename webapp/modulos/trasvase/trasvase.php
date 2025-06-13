@@ -83,6 +83,9 @@
                     $cantidadpnc2=0;
                     $cantidadmerma1=0;
                     $cantidadmerma2=0;
+                    $foliosorigenreal="";
+                    $foliosdestinoreal="";
+
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -91,13 +94,13 @@
                         lt.cantidad1 'cantidad1', lt.cantidad2 'cantidad2', 
                         ip2.nombreproducto 'productodestino',
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
-                        lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino 
+                        lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
                         left join operaciones_bodegas obo on obo.idbodega=lt.idbodega
                         left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
-                        left join inventarios_productos ip2 on ip1.idproducto=lt.idproductodestino
+                        left join inventarios_productos ip2 on ip2.idproducto=lt.idproductodestino
                         left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
                         left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
                     Where lt.idtrasvase=".$idtrasvase;
@@ -404,7 +407,11 @@
                         $html.="<tr>
                                                             <td width=30%>Cantidad a trasvasar:</td>
                                                             <td align=left><b>".$cantidad2." Toneladas </b></td>
-                                                        </tr>";                     
+                                                        </tr>";
+                        $html.="<tr>
+                                                        <td width=30%>Folios Bultos Origen:</td>
+                                                        <td align=right><input type=text value=".$foliosorigenreal." id='txtfoliosorigenreal' name='txtfoliosorigenreal' size=40)> 
+                                                    </tr>";                                                                              
                         $html.="</table>";
 				$html.="</td>";
 				
@@ -429,12 +436,16 @@
                         $html.="<tr>
                                                             <td width=30%>Cantidad Esperada:</td>
                                                             <td align=left><b>".$cantidaddestino2." Toneladas </b></td>
-                                                        </tr>";  
-						
+                                                        </tr>";
 						$html.="<tr>
                                                             <td>Observaciones:</td>
                                                             <td align=left>$observaciones</td>
                                                         </tr>";
+                        
+                        $html.="<tr>
+                                                        <td width=30%>Folios Bultos Destino Real:</td>
+                                                        <td align=right><input type=text value=".$foliosdestinoreal." id='txtfoliosdestinoreal' name='txtfoliosdestinoreal' size=20)> 
+                                                    </tr>"; 
 							
 					$html.="</table>";
 				$html.="</td>";
