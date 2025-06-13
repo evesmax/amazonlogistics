@@ -410,7 +410,7 @@
                                                         </tr>";
                         $html.="<tr>
                                                         <td width=30%>Folios Bultos Origen:</td>
-                                                        <td align=right><input type=text value=".$foliosorigenreal." id='txtfoliosorigenreal' name='txtfoliosorigenreal' size=40)> 
+                                                        <td align=left><textarea type=text id='txtfoliosorigenreal' name='txtfoliosorigenreal' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                     </tr>";                                                                              
                         $html.="</table>";
 				$html.="</td>";
@@ -444,7 +444,7 @@
                         
                         $html.="<tr>
                                                         <td width=30%>Folios Bultos Destino Real:</td>
-                                                        <td align=right><input type=text value=".$foliosdestinoreal." id='txtfoliosdestinoreal' name='txtfoliosdestinoreal' size=20)> 
+                                                        <td align=left><textarea type=text id='txtfoliosdestinoreal' name='txtfoliosdestinoreal' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                     </tr>"; 
 							
 					$html.="</table>";
