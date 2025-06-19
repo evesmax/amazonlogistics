@@ -82,11 +82,11 @@ $doctoorigen=6;
                             foliosorigenreal='$foliosorigenreal',
                             foliosdestinoreal='$foliosdestinoreal'
                         Where idtrasvase=".$idtrasvase;
-        echo $sqlafecta;
+        //echo $sqlafecta;
         $conexion->consultar($sqlafecta);
         
 
 
-        //header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase) 
+        header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase) 
          
 ?>
