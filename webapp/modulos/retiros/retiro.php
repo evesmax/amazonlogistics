@@ -459,7 +459,7 @@ $htmlpoliticas="
                                                         </tr>";
 	                                                   
 						$html.="<tr>
-                                                            <td width=30%>REFERENCIA CLIENTE:</td>
+                                                            <td width=30%>FOLIO EXTERNO:</td>
                                                             <td align=left><input readonly type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
                                                         </tr>";
                                                

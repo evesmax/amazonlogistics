@@ -107,6 +107,8 @@ function fixAllSqlIssues($sql) {
     $sql = normalizarEspaciosEnOperadores($sql);
     error_log("Aplicada normalización universal de espacios en operadores");
     
+
+    
     // 1. SEGUNDA SOLUCIÓN: Eliminar condiciones vacías (filtros con valor '%')
     $sql = eliminarCondicionesVacias($sql);
     
@@ -170,6 +172,8 @@ function fixParenthesisWithAnd($sql) {
     
     return $sql;
 }
+
+
 
 /**
  * Corrección muy directa para el problema de OR DER BY
@@ -528,6 +532,8 @@ function fixExtraAndBeforeClosingParenthesis($sql) {
     // Caso 1: and ) ORDER BY
     $sql = preg_replace('/\s+and\s*\)\s+ORDER\s+BY/i', ') ORDER BY', $sql);
     
+
+    
     // Caso 2: and ) GROUP BY
     $sql = preg_replace('/\s+and\s*\)\s+GROUP\s+BY/i', ') GROUP BY', $sql);
     
@@ -840,6 +846,16 @@ function fixWhereClauseIssues($sql) {
 function finalSqlCleanup($sql) {
     // Primero corregir el problema específico de "and )"
     $sql = fixExtraAndBeforeClosingParenthesis($sql);
+    
+    // SOLUCIÓN ESPECÍFICA: Solo eliminar patrones [@...] que interfieren con GROUP BY/ORDER BY
+    // Solo actuar si hay patrones mal formados que causan errores de sintaxis SQL
+    if (preg_match('/[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', $sql)) {
+        error_log("Detectado patrón mal formado que interfiere con GROUP BY/ORDER BY en finalSqlCleanup");
+        $sql = preg_replace('/and\s*\([^)]*[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', ' $1', $sql);
+    }
+    
+    // CRÍTICO: Eliminar AND/OR extra antes de GROUP BY y ORDER BY
+    $sql = preg_replace('/\s+(AND|OR)\s+(GROUP\s+BY|ORDER\s+BY)/i', ' $2', $sql);
     
     // Eliminar ANDs y ORs repetidos o al inicio/final
     $sql = preg_replace('/\s+AND\s+AND\s+/i', ' AND ', $sql);

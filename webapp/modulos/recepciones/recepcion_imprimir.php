@@ -520,7 +520,7 @@
                                                         </tr>";
 						$html.="<tr align=left>
                                                             <td colspan=2 align=left>
-                                                                REFERENCIA:<b>".$referenciar."</b>
+                                                                FOLIO EXTERNO:<b>".$referenciar."</b>
                                                                 TICKET BASCULA:<b>".$ticketbascular."</b>
                                                             </td>       
                                                         </tr>";  

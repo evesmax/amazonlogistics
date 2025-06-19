@@ -427,7 +427,7 @@
                                                         </tr>";
 	                                                   
 						$html.="<tr>
-                                                            <td width=30%>REFERENCIA CLIENTE:</td>
+                                                            <td width=30%>FOLIO EXTERNO:</td>
                                                             <td align=left>".$referencia1."</td>
                                                         </tr>";
                                                

@@ -823,6 +823,23 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         error_log("Corregido doble paréntesis con patrón general");
     }
     
+    // PASO -1: LIMPIEZA ESPECÍFICA - Solo eliminar patrones realmente problemáticos
+    // Solo eliminar patrones [@...] que NO tienen cierre correcto (mal formados)
+    if (strpos($query, '[@') !== false) {
+        // Detectar patrones específicamente mal formados que causan errores de sintaxis
+        // 1. Patrones que no cierran correctamente antes de GROUP BY
+        $query = preg_replace('/and\s*\([^)]*[@][^]]*\]\"\s*GROUP\s+BY/i', ' GROUP BY', $query);
+        
+        // 2. Patrones que contienen ORDER BY fuera del cierre correcto
+        $query = preg_replace('/and\s*\([^)]*[@][^)]*ORDER\s+BY[^)]*\]/i', '', $query);
+        
+        // 3. Solo eliminar si el patrón [@...] está claramente mal formado (sin cierre de paréntesis)
+        if (preg_match('/[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', $query)) {
+            error_log("Detectado patrón [@...] mal formado que interfiere con GROUP BY/ORDER BY");
+            $query = preg_replace('/and\s*\([^)]*[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', ' $1', $query);
+        }
+    }
+    
     // PASO 0: Normalizar la consulta 
     // Reemplazar múltiples espacios con uno solo
     $query = preg_replace('/\s+/', ' ', $query);

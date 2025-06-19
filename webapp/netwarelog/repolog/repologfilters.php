@@ -64,6 +64,58 @@ try {
 }
 
 /**
+ * Corrige patrones combo mal formados que pueden tener paréntesis desbalanceados
+ * o sintaxis incorrecta en el SQL interno
+ * 
+ * @param string $whereClause SQL WHERE clause con posibles patrones mal formados
+ * @return string WHERE clause con patrones corregidos
+ */
+function fixMalformedComboPatterns($whereClause) {
+    // SOLUCIÓN UNIVERSAL: Detectar y corregir patrones mal formados
+    // Buscar patrones que contengan ORDER BY fuera del cierre correcto
+    $malformedPattern = '/\[@([^;]+);([^;]+);([^;]+);([^)]*)\)\s*ORDER BY[^\]]*\]/i';
+    
+    if (preg_match($malformedPattern, $whereClause, $match)) {
+        $fullPattern = $match[0];
+        $label = $match[1];
+        $valField = $match[2];
+        $desField = $match[3];
+        $incompleteSql = $match[4];
+        
+        // Reconstruir el patrón correctamente cerrando el SELECT apropiadamente
+        $correctedSql = $incompleteSql . ' ORDER BY ' . $desField . ')';
+        $correctedPattern = "[@$label;$valField;$desField;$correctedSql]";
+        
+        $whereClause = str_replace($fullPattern, $correctedPattern, $whereClause);
+        error_log("Patrón mal formado corregido universalmente: $label");
+    }
+    
+    // Buscar patrones con paréntesis desbalanceados
+    $flexiblePattern = '/\[@([^;]+);([^;]+);([^;]+);([^\]]*)\]/';
+    preg_match_all($flexiblePattern, $whereClause, $matches, PREG_SET_ORDER);
+    
+    foreach ($matches as $match) {
+        $fullPattern = $match[0];
+        $sqlPart = $match[4];
+        
+        // Verificar balance de paréntesis
+        if (stripos($sqlPart, 'select') !== false) {
+            $openParens = substr_count($sqlPart, '(');
+            $closeParens = substr_count($sqlPart, ')');
+            
+            if ($openParens > $closeParens) {
+                $fixedSqlPart = $sqlPart . str_repeat(')', $openParens - $closeParens);
+                $newPattern = "[@{$match[1]};{$match[2]};{$match[3]};$fixedSqlPart]";
+                $whereClause = str_replace($fullPattern, $newPattern, $whereClause);
+                error_log("Paréntesis balanceados en patrón: {$match[1]}");
+            }
+        }
+    }
+    
+    return $whereClause;
+}
+
+/**
  * Parse WHERE clause to identify filter conditions
  * 
  * @param string $whereClause SQL WHERE clause
@@ -920,7 +972,10 @@ function buildSqlQuery($report, $filterValues) {
             }
         }
         
-        // First, look for direct combo patterns [@Field;val;des;sql] and replace them with selected values
+        // First, preprocess any malformed combo patterns before processing
+        $whereClause = fixMalformedComboPatterns($whereClause);
+        
+        // Then look for direct combo patterns [@Field;val;des;sql] and replace them with selected values
         // This is a direct approach that should work more reliably
         $comboPatternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/'; // [@Campo;val;des;SQL]
         preg_match_all($comboPatternRegex, $whereClause, $comboMatches, PREG_SET_ORDER);
@@ -1650,6 +1705,15 @@ function buildSqlQuery($report, $filterValues) {
     global $debug_info_html;
     
     // Buscar cualquier patrón de tipo [@*;*;*;*] que haya quedado sin procesar
+    // LIMPIEZA ESPECÍFICA: Solo eliminar patrones que interfieren con GROUP BY/ORDER BY
+    if (preg_match('/[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', $sqlQuery)) {
+        error_log("Detectado patrón mal formado en verificación final - aplicando corrección específica");
+        $sqlQuery = preg_replace('/and\s*\([^)]*[@][^]]*\]\"\s*(GROUP\s+BY|ORDER\s+BY)/i', ' $1', $sqlQuery);
+    }
+    
+    // Aplicar corrección adicional para patrones mal formados
+    $sqlQuery = fixMalformedComboPatterns($sqlQuery);
+    
     if (preg_match_all('/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/i', $sqlQuery, $unprocessedMatches)) {
         $debug_info[] = "¡ATENCIÓN! Se encontraron " . count($unprocessedMatches[0]) . " patrones de filtro sin procesar en el SQL final. Aplicando corrección general.";
         
@@ -1760,9 +1824,16 @@ function buildSqlQuery($report, $filterValues) {
         $sqlQuery = fixExtraAndBeforeClosingParenthesis($sqlQuery);
         $sqlQuery = fixAllSqlIssues($sqlQuery);
         
-        // Si aún quedan patrones no procesados, reemplazarlos con un valor comodín
+
+        
+        // SOLUCIÓN UNIVERSAL: Si aún quedan patrones no procesados, aplicar limpieza general
         if (preg_match('/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/i', $sqlQuery)) {
-            $debug_info[] = "¡ADVERTENCIA! Todavía quedan patrones sin procesar. Aplicando limpieza final.";
+            $debug_info[] = "¡ADVERTENCIA! Todavía quedan patrones sin procesar. Aplicando limpieza universal.";
+            
+            // Eliminar condiciones completas que contengan patrones no resueltos
+            $sqlQuery = preg_replace('/and\s*\([^)]*=\s*["\']?\[@[^]]*\]["\']?\s*\)/i', '', $sqlQuery);
+            
+            // Si aún quedan patrones, reemplazar con comodín
             $sqlQuery = preg_replace("/'\[@[^]]*\]'/i", "'%'", $sqlQuery);
         }
     }
