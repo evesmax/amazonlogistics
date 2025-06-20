@@ -590,25 +590,25 @@
                                                             <td colspan=2 align=left>
                                                                 FOLIO EXTERNO:<input type=text id='txtreferencia' name='txtreferencia' value='' Size=20>
                                                                 TICKET BASiCULA:<input type=text id='txtticketbascula' name='txtticketbascula' value='' Size=20>
-                                                            </td>       i
-                                                        </tr>";  i
+                                                            </td>
+                                                        </tr>";
 
 						$html.="<tr>i
                                                             <td width=30%>iCUADRILLA:</td>
                                                             <td align=lefti><input type=text id='txtcabocuadrilla' name='txtcabocuadrilla' value='' Size=60></td>
-                                                        </tr>";           i                                     
+                                                        </tr>";                                   
 						$html.="<tr>i
                                                             <td>FOLIOS:</tid>
                                                             <td align=lefti><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
-                                                        </tr>";	          i                                      
+                                                        </tr>";                                     
 
 						$html.="<tr>i
                                                             <td>OBSERVACIOiNES:</td>
                                                             <td align=lefti><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
-                                                        </tr>";i
+                                                        </tr>";
 							
-					$html.="</table>";i
-				$html.="</td>";i
+					$html.="</table>";
+				$html.="</td>";
 									
 			$html.="</tr>";				
 		$html.="</table>";
