@@ -593,22 +593,22 @@
                                                             </td>
                                                         </tr>";
 
-						$html.="<tr>i
+						$html.="<tr>
                                                             <td width=30%>CUADRILLA:</td>
                                                             <td align=lefti><input type=text id='txtcabocuadrilla' name='txtcabocuadrilla' value='' Size=60></td>
                                                         </tr>";                                   
-						$html.="<tr>i
+						$html.="<tr>
                                                             <td>FOLIOS:</tid>
                                                             <td align=lefti><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";                                     
 
-						$html.="<tr>i
+						$html.="<tr>
                                                             <td>OBSERVACIOiNES:</td>
                                                             <td align=lefti><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";
 							
 					$html.="</table>";
-				$html.="</td>";i
+				$html.="</td>";
 									
 			$html.="</tr>";				
 		$html.="</table>";
