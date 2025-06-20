@@ -607,7 +607,7 @@
                                                             <td align=lefti><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";
 							
-					$html.="</table>";i
+					$html.="</table>";
 				$html.="</td>";i
 									
 			$html.="</tr>";				
