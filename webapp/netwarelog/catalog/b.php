@@ -352,8 +352,11 @@ $pagina = $_SESSION["pag_".$nombreestructura];
 
 
 // CONSULTA PRINCIPAL ...
+
+//Orden Decendente 30Jun2025 EGA
+
 //Obteniendo datos ...
-$sql = " select * from ".$nombreestructura."  ".$sqlw." limit ".$pagina.",".$filas_pagina;
+$sql = " select * from ".$nombreestructura."  ".$sqlw." order by 1 desc limit ".$pagina.",".$filas_pagina;
 //echo $sql;
 
 
