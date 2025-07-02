@@ -9,37 +9,71 @@
 
 // Variable global para almacenar la información de formato de columnas
 var columnFormatInfo = {};
+// Variable para evitar ejecuciones múltiples
+var formattingInProgress = false;
+var formattingCompleted = false;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Ejecutar después de 100ms para dar tiempo a que todos los datos se carguen
-    setTimeout(formatNumbersInTable, 100);
-});
+// ELIMINADO: Este DOMContentLoaded se maneja desde table_functions.js
+// para evitar ejecuciones múltiples que causan duplicación de datos
 
 // Función principal para formatear números
 function formatNumbersInTable() {
-    console.log("Ejecutando formatNumbersInTable");
-    
-    // NUEVA FUNCIONALIDAD: Obtener información de formato desde PHP
-    // Verificar si hay un elemento con la información de formato
-    var formatInfoElement = document.getElementById('column-format-info');
-    if (formatInfoElement) {
-        try {
-            // Parsear la información JSON del elemento
-            columnFormatInfo = JSON.parse(formatInfoElement.textContent);
-            console.log("Información de formato cargada:", columnFormatInfo);
-        } catch (e) {
-            console.error("Error al parsear información de formato:", e);
-        }
+    // Evitar ejecuciones múltiples
+    if (formattingInProgress || formattingCompleted) {
+        console.log("Formateo ya en progreso o completado, saltando ejecución");
+        return;
     }
     
-    // Procesar todas las celdas de la tabla
-    var allCells = document.querySelectorAll('#resultsTable td');
+    formattingInProgress = true;
+    console.log("Ejecutando formatNumbersInTable");
+    
+    try {
+        // NUEVA FUNCIONALIDAD: Obtener información de formato desde PHP
+        // Verificar si hay un elemento con la información de formato
+        var formatInfoElement = document.getElementById('column-format-info');
+        if (formatInfoElement) {
+            try {
+                // Parsear la información JSON del elemento
+                columnFormatInfo = JSON.parse(formatInfoElement.textContent);
+                console.log("Información de formato cargada:", columnFormatInfo);
+            } catch (e) {
+                console.error("Error al parsear información de formato:", e);
+            }
+        }
+        
+        // Procesar todas las celdas de la tabla
+        var allCells = document.querySelectorAll('#resultsTable td');
+        allCells.forEach(function(cell) {
+            formatCellContent(cell);
+        });
+        
+        // Verificar todas las filas para formatos especiales
+        processSpecialRows();
+        
+        // Marcar como completado
+        formattingCompleted = true;
+        console.log("Formateo completado exitosamente");
+    } catch (error) {
+        console.error("Error durante el formateo:", error);
+    } finally {
+        formattingInProgress = false;
+    }
+}
+
+// Función para reinicializar el formateo (llamada cuando se genera un nuevo reporte)
+function resetAndFormatNumbers() {
+    // Resetear las variables de control
+    formattingInProgress = false;
+    formattingCompleted = false;
+    
+    // Limpiar cualquier atributo de formateo previo
+    var allCells = document.querySelectorAll('#resultsTable td[data-formatted="true"]');
     allCells.forEach(function(cell) {
-        formatCellContent(cell);
+        cell.removeAttribute('data-formatted');
     });
     
-    // Verificar todas las filas para formatos especiales
-    processSpecialRows();
+    // Ejecutar el formateo de nuevo
+    setTimeout(formatNumbersInTable, 50);
 }
 
 // Función para formatear el contenido de una celda

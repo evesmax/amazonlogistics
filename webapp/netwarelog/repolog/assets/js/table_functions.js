@@ -9,42 +9,20 @@
 var currentPage = 1;
 var rowsPerPage = 10;
 var filteredData = [];
+// Variable para evitar inicialización múltiple
+var tableInitialized = false;
 
 // Initialize the table when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Procesar datos para formatear valores numéricos (usando una variable no constante)
-    var processedTableData = tableData.map(function(row) {
-        // Hacer una copia del objeto fila
-        var processedRow = Object.assign({}, row);
-        
-        // Recorrer todas las propiedades y formatear números
-        Object.keys(processedRow).forEach(function(key) {
-            if (key === '__is_subtotal' || key === '__subtotal_level') {
-                return; // Ignorar campos especiales
-            }
-            
-            var value = processedRow[key];
-            if (typeof value === 'string') {
-                // Detectar si es un número con formato europeo (usando coma decimal)
-                if (/^[\d]+,[\d]+$/.test(value)) {
-                    // Convertir coma a punto y luego a número
-                    var numericValue = parseFloat(value.replace(',', '.'));
-                    if (!isNaN(numericValue)) {
-                        // Formatear al estilo mexicano con 2 decimales
-                        processedRow[key] = numericValue.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
-                    }
-                }
-            }
-        });
-        
-        return processedRow;
-    });
-    
-    // Actualizar tableData con los datos procesados
-    tableData = processedTableData;
+    // Evitar inicialización múltiple
+    if (tableInitialized) {
+        console.log("Tabla ya inicializada, saltando inicialización duplicada");
+        return;
+    }
+    tableInitialized = true;
+    // NO PROCESAR los datos aquí - solo usar los datos originales
+    // El formateo se maneja en formatNumbersFix.js para evitar duplicaciones
+    console.log("Inicializando tabla con", tableData.length, "registros originales");
     
     // Initialize with all processed data
     filteredData = tableData.slice();
@@ -56,64 +34,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial rows per page value
     document.getElementById('rowsPerPage').value = rowsPerPage;
     
-    // Post-procesamiento: buscar y formatear directamente en el DOM
-    // Esto funciona si la solución anterior no es suficiente
+    // Inicializar formateo y correcciones de manera controlada
     setTimeout(function() {
-        // Parche específico para CARGILL DE MEXICO y 2990,58
-        var todasFilas = document.querySelectorAll('#resultsTable tbody tr');
-        
-        todasFilas.forEach(function(fila) {
-            var celdasFila = fila.querySelectorAll('td');
-            var esCargill = false;
-            
-            // Verificar si alguna celda contiene "CARGILL DE MEXICO"
-            celdasFila.forEach(function(celda) {
-                if (celda.textContent.trim().indexOf('CARGILL DE MEXICO') !== -1) {
-                    esCargill = true;
-                }
-            });
-            
-            // Si es una fila de CARGILL, buscar y reemplazar 2990,58
-            if (esCargill) {
-                celdasFila.forEach(function(celda) {
-                    if (celda.textContent.trim() === '2990,58') {
-                        celda.innerHTML = '<strong>2,990.58</strong>';
-                    }
-                });
-            }
-        });
-        
-        // Procesamiento general de cualquier valor con formato europeo
-        var celdas = document.querySelectorAll('#resultsTable tbody td');
-        celdas.forEach(function(celda) {
-            var texto = celda.textContent.trim();
-            // Patrón estricto para números con coma decimal: solo dígitos, una coma y más dígitos
-            if (/^[\d]+,[\d]+$/.test(texto)) {
-                // Convertir de formato europeo a formato mexicano
-                var valor = parseFloat(texto.replace(',', '.'));
-                if (!isNaN(valor)) {
-                    var formateado = valor.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    celda.innerHTML = '<strong>' + formateado + '</strong>';
-                }
-            }
-        });
-        
-        // Como último recurso, buscar específicamente el texto "2990,58" en el contenido de la tabla
-        var tableContent = document.getElementById('resultsTable');
-        if (tableContent) {
-            // Buscar nodos de texto específicos y reemplazar solo en ellos
-            var textNodes = getTextNodes(tableContent);
-            for (var i = 0; i < textNodes.length; i++) {
-                var node = textNodes[i];
-                if (node.nodeValue && node.nodeValue.indexOf('2990,58') !== -1) {
-                    node.nodeValue = node.nodeValue.replace(/2990,58/g, '2,990.58');
-                }
-            }
+        // Ejecutar formateo de números
+        if (typeof formatNumbersInTable === 'function') {
+            formatNumbersInTable();
         }
-    }, 500); // Esperar 500ms para asegurarnos que la tabla esté renderizada
+        
+        // Ejecutar correcciones específicas
+        if (typeof applySpecificCorrections === 'function') {
+            applySpecificCorrections();
+        }
+    }, 100);
 });
 
 /**
@@ -202,13 +134,7 @@ function filterTable() {
     updatePagination();
     renderTable();
     
-    // Aplicar formato a los números después de renderizar la tabla
-    // Pequeño retraso para asegurar que la tabla ya esté renderizada
-    setTimeout(function() {
-        if (typeof formatNumbersInTable === 'function') {
-            formatNumbersInTable();
-        }
-    }, 50);
+    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
 }
 
 /**
@@ -220,13 +146,7 @@ function changeRowsPerPage() {
     updatePagination();
     renderTable();
     
-    // Aplicar formato a los números después de renderizar la tabla
-    // Pequeño retraso para asegurar que la tabla ya esté renderizada
-    setTimeout(function() {
-        if (typeof formatNumbersInTable === 'function') {
-            formatNumbersInTable();
-        }
-    }, 50);
+    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
 }
 
 /**
@@ -247,13 +167,7 @@ function changePage(delta) {
     updatePagination();
     renderTable();
     
-    // Aplicar formato a los números después de renderizar la tabla
-    // Pequeño retraso para asegurar que la tabla ya esté renderizada
-    setTimeout(function() {
-        if (typeof formatNumbersInTable === 'function') {
-            formatNumbersInTable();
-        }
-    }, 50);
+    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
 }
 
 /**

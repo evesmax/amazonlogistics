@@ -3,7 +3,9 @@
  * Este script busca y reemplaza valores específicos en la tabla
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+// ELIMINADO: Este DOMContentLoaded se maneja desde table_functions.js
+// para evitar ejecuciones múltiples que causan duplicación de datos
+function applySpecificCorrections() {
     // Ejecutar después de que la página esté completamente cargada
     setTimeout(function() {
         // Primero buscar filas que contengan "CARGILL DE MEXICO"
@@ -60,4 +62,4 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log("Correcciones específicas para CARGILL DE MEXICO aplicadas");
     }, 1000); // Ejecutar 1 segundo después para asegurar que la tabla ya se cargó
-});
+}
