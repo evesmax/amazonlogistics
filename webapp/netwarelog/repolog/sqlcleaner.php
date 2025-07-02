@@ -9,6 +9,158 @@
  * @param string $sql Consulta SQL a limpiar
  * @return string Consulta SQL limpia
  */
+function cleanSqlUniversal($sql) {
+    // Log inicial para depuración
+    error_log("SQL antes de limpieza: " . substr($sql, -200));
+    
+    // Aplicar correcciones específicas primero
+    $sql = fixMismatchedQuotes($sql);
+    error_log("Después de fixMismatchedQuotes: " . substr($sql, -200));
+    
+    $sql = fixTableAliasReferences($sql);
+    error_log("Después de fixTableAliasReferences: " . substr($sql, -200));
+    
+    // Aplicar correcciones adicionales para casos específicos
+    $sql = forceFixSpecificPatterns($sql);
+    error_log("Después de forceFixSpecificPatterns: " . substr($sql, -200));
+    
+    $sql = fixHtmlInCaseWhen($sql);
+    $sql = normalizeQuotesInSql($sql);
+    $sql = fixAllSqlIssues($sql);
+    
+    return $sql;
+}
+
+/**
+ * Función que fuerza la corrección de patrones específicos problemáticos
+ */
+function forceFixSpecificPatterns($sql) {
+    // Patrones específicos muy directos para problemas conocidos
+    $forcePatterns = array(
+        // Comillas mixtas específicas
+        '/"14\'/' => '"14"',
+        '/\'11"/' => "'11'",
+        '/"N\/A\'/' => '"N/A"',
+        // Alias específico
+        '/\bik\.idestadoproducto\b/' => 'ie.idestadoproducto',
+    );
+    
+    foreach ($forcePatterns as $pattern => $replacement) {
+        if (preg_match($pattern, $sql)) {
+            $sql = preg_replace($pattern, $replacement, $sql);
+            error_log("Aplicado patrón forzado: $pattern -> $replacement");
+        }
+    }
+    
+    return $sql;
+}
+
+/**
+ * Corrige comillas desbalanceadas en SQL - GENÉRICO para todos los reportes
+ * 
+ * @param string $sql Consulta SQL a limpiar
+ * @return string Consulta SQL con comillas corregidas
+ */
+function fixMismatchedQuotes($sql) {
+    // Patrones de comillas desbalanceadas comunes - PHP 5.5.9 compatible
+    $patterns = array(
+        // Patrón AGRESIVO: "valor' -> "valor" (cualquier contexto)
+        '/"([^"\']*)\'/i' => '"$1"',
+        // Patrón AGRESIVO: 'valor" -> 'valor' (cualquier contexto)
+        '/\'([^"\']*)\"/i' => "'$1'",
+        // Patrón específico en ELSE: "N/A' -> "N/A"
+        '/ELSE\s+"([^"\']*)\'\s+END/i' => 'ELSE "$1" END',
+        // Patrón específico en ELSE: 'N/A" -> 'N/A'
+        '/ELSE\s+\'([^"\']*)\"\s+END/i' => "ELSE '$1' END",
+        // Corregir condiciones WHERE específicas con = y comillas mixtas
+        '/=\s*"([^"\']*)\'/i' => '= "$1"',
+        '/=\s*\'([^"\']*)\"/i' => "= '$1'",
+        // Corregir dentro de paréntesis con comillas mixtas
+        '/\(\s*([a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*"([^"\']*)\'\s*\)/i' => '($1 = "$2")',
+        '/\(\s*([a-zA-Z_][a-zA-Z0-9_]*\.[a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\'([^"\']*)\"\s*\)/i' => "($1 = '$2')",
+    );
+    
+    foreach ($patterns as $pattern => $replacement) {
+        $sql = preg_replace($pattern, $replacement, $sql);
+    }
+    
+    return $sql;
+}
+
+/**
+ * Corrige referencias de alias de tabla incorrectas - GENÉRICO para todos los reportes
+ * 
+ * @param string $sql Consulta SQL a limpiar
+ * @return string Consulta SQL con alias corregidos
+ */
+function fixTableAliasReferences($sql) {
+    // Patrones específicos conocidos de alias incorrectos - más directo y efectivo
+    $commonAliasFixes = array(
+        // Problema específico del reporte 21: ik no existe, debería ser ie (inventarios_estados)
+        '/\bik\.idestadoproducto\b/i' => 'ie.idestadoproducto',
+        '/\bik\.descripcionestado\b/i' => 'ie.descripcionestado',
+    );
+    
+    // Aplicar correcciones específicas primero
+    foreach ($commonAliasFixes as $pattern => $replacement) {
+        if (preg_match($pattern, $sql)) {
+            $sql = preg_replace($pattern, $replacement, $sql);
+            error_log("SQL Cleaner: Corregido alias específico con patrón '$pattern' -> '$replacement'");
+        }
+    }
+    
+    // Extraer aliases de tabla definidos en la consulta para verificaciones adicionales
+    preg_match_all('/\b(FROM|JOIN)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/i', $sql, $matches);
+    $validAliases = array();
+    
+    if (!empty($matches[3])) {
+        $validAliases = array_unique($matches[3]);
+    }
+    
+    // Buscar referencias a aliases no válidos en WHERE
+    if (!empty($validAliases)) {
+        // Encontrar aliases incorrectos en condiciones WHERE
+        preg_match_all('/\b([a-zA-Z_][a-zA-Z0-9_]*)\.[a-zA-Z_][a-zA-Z0-9_]*\s*=/', $sql, $aliasMatches);
+        
+        if (!empty($aliasMatches[1])) {
+            $usedAliases = array_unique($aliasMatches[1]);
+            
+            foreach ($usedAliases as $usedAlias) {
+                if (!in_array($usedAlias, $validAliases)) {
+                    // Intentar encontrar el alias correcto más similar
+                    $bestMatch = findBestAliasMatch($usedAlias, $validAliases);
+                    if ($bestMatch) {
+                        $sql = preg_replace('/\b' . preg_quote($usedAlias) . '\./', $bestMatch . '.', $sql);
+                        error_log("SQL Cleaner: Corregido alias incorrecto '$usedAlias' por '$bestMatch'");
+                    }
+                }
+            }
+        }
+    }
+    
+    return $sql;
+}
+
+/**
+ * Encuentra el mejor alias coincidente basado en similitud
+ */
+function findBestAliasMatch($invalidAlias, $validAliases) {
+    $bestMatch = null;
+    $bestScore = 0;
+    
+    foreach ($validAliases as $validAlias) {
+        // Calcular similitud simple
+        $similarity = 0;
+        similar_text(strtolower($invalidAlias), strtolower($validAlias), $similarity);
+        
+        if ($similarity > $bestScore && $similarity > 50) { // 50% de similitud mínima
+            $bestScore = $similarity;
+            $bestMatch = $validAlias;
+        }
+    }
+    
+    return $bestMatch;
+}
 /**
  * Corrige problemas específicos con HTML en cláusulas CASE WHEN
  * Particularmente útil para reportes con enlaces directos
@@ -17,8 +169,8 @@
  * @return string Consulta SQL limpia
  */
 function fixHtmlInCaseWhen($sql) {
-    // Patrones para el caso específico del CASE en reportes
-    $patterns = [
+    // Patrones para el caso específico del CASE en reportes - PHP 5.5.9 compatible
+    $patterns = array(
         // Patrón para enlaces de envíos
         'concat("<center><a href=\"../../modulos/envios/envio_imprimir.php?idenvio=\",ik.foliodoctoorigen," > ",ik.foliodoctoorigen," < /A > < /Center > ")' => 
             "concat('<center><a href=\"../../modulos/envios/envio_imprimir.php?idenvio=',ik.foliodoctoorigen,'\">',ik.foliodoctoorigen,'</a></center>')",
@@ -30,18 +182,18 @@ function fixHtmlInCaseWhen($sql) {
         // Patrón para enlaces de retiros
         'concat("<center><a href=\"../../modulos/retiros/retiro_imprimir.php?folio=\",ik.foliodoctoorigen," > ",ik.foliodoctoorigen," < /A > < /Center > ")' => 
             "concat('<center><a href=\"../../modulos/retiros/retiro_imprimir.php?folio=',ik.foliodoctoorigen,'\">',ik.foliodoctoorigen,'</a></center>')",
-    ];
+    );
     
     foreach ($patterns as $pattern => $replacement) {
         $sql = str_replace($pattern, $replacement, $sql);
     }
     
-    // Solución general para cualquier enlace con sintaxis similar
-    $general_patterns = [
+    // Solución general para cualquier enlace con sintaxis similar - PHP 5.5.9 compatible
+    $general_patterns = array(
         // Patrón general para etiquetas con espacios que pueden causar problemas
         '/concat\("(.*?)href=\\"(.*?)\\",(.*?)" > ",(.*?)," < \/A > < \/Center > "\)/i' => 
             "concat('$1href=\"$2',$3,'\">',($4),'</a></center>')",
-    ];
+    );
     
     foreach ($general_patterns as $pattern => $replacement) {
         $sql = preg_replace($pattern, $replacement, $sql);

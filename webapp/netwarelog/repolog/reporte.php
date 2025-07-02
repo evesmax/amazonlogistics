@@ -943,6 +943,15 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     
     error_log("SQL después de aplicar fechas y corregir paréntesis: " . $query);
     
+    // APLICAR LIMPIEZA UNIVERSAL AQUÍ TAMBIÉN para que el SQL mostrado sea el mismo que se ejecuta
+    $queryBeforeClean = $query;
+    $query = cleanSqlUniversal($query);
+    
+    // Log solo si hubo cambios en esta etapa también
+    if ($queryBeforeClean !== $query) {
+        error_log("SQL también limpiado en etapa de guardado para reporte " . (isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'desconocido'));
+    }
+    
     // Guardar el SQL final en la sesión para referencia
     $_SESSION['sql_final'] = $query;
     
@@ -975,6 +984,18 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         
         // Set error mode to throw exceptions
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // APLICAR LIMPIEZA UNIVERSAL SQL ANTES DE EJECUTAR
+        $originalQuery = $query;
+        $query = cleanSqlUniversal($query);
+        
+        // Log solo si hubo cambios
+        if ($originalQuery !== $query) {
+            error_log("SQL limpiado universalmente para reporte " . (isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'desconocido'));
+            error_log("SQL original problemático guardado en sesión");
+            $_SESSION['sql_problematic'] = $originalQuery;
+            $_SESSION['sql_cleaned'] = $query;
+        }
         
         // Prepare and execute the query
         $stmt = $pdo->query($query);
@@ -1171,6 +1192,9 @@ if (!empty($results)) {
     
     // Solo calcular subtotales si están configurados explícitamente
     if ($subtotalesConfiguradosExplicitamente) {
+        // CORREGIDO: Solo ejecutar processSubtotals UNA VEZ para evitar duplicación
+        $processSubtotalsExecuted = false;
+        
         // Si al menos hay campos para totalizar, aplicar subtotales
         if (!empty($subtotalesSubtotal)) {
             $hasSubtotals = true;
@@ -1181,13 +1205,16 @@ if (!empty($results)) {
             // Guardar para depuración
             $_SESSION['debug_process_subtotals'] = array(
                 'groupingFields' => $groupingFields,
-                'subtotalesSubtotal' => $subtotalesSubtotal
+                'subtotalesSubtotal' => $subtotalesSubtotal,
+                'execution_path' => 'explicit_subtotal_fields'
             );
             
             $results = processSubtotals($results, $groupingFields, $subtotalesSubtotal);
+            $processSubtotalsExecuted = true;
+            error_log("processSubtotals ejecutado con campos explícitos de suma");
         }
-        // Si solo tenemos campos de agrupación pero no campos de suma
-        else if (!empty($subtotalesAgrupaciones)) {
+        // Si solo tenemos campos de agrupación pero no campos de suma, Y NO hemos ejecutado processSubtotals ya
+        else if (!empty($subtotalesAgrupaciones) && !$processSubtotalsExecuted) {
             // Intentar detectar campos numéricos para totalizar
             $firstRow = reset($results);
             $numericFields = [];
@@ -1203,8 +1230,18 @@ if (!empty($results)) {
             // Si encontramos campos numéricos, calcular subtotales
             if (!empty($numericFields)) {
                 $hasSubtotals = true;
+                
+                // Guardar para depuración
+                $_SESSION['debug_process_subtotals'] = array(
+                    'groupingFields' => $subtotalesAgrupaciones,
+                    'subtotalesSubtotal' => implode(',', $numericFields),
+                    'execution_path' => 'auto_detected_numeric_fields'
+                );
+                
                 // Usar todos los campos numéricos encontrados, no solo el primero
                 $results = processSubtotals($results, $subtotalesAgrupaciones, implode(',', $numericFields));
+                $processSubtotalsExecuted = true;
+                error_log("processSubtotals ejecutado con campos numéricos detectados automáticamente");
             }
         }
     } else {
@@ -2123,14 +2160,8 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             var tableData = <?php echo json_encode($results); ?>;
             var tableColumns = <?php echo json_encode($columns); ?>;
             
-            // Código para asegurarse que los valores numéricos tienen el formato correcto
-            // Pero respetando los formatos originales en lo posible
-            document.addEventListener('DOMContentLoaded', function() {
-                // Ejecutar formatoNumbersInTable() desde formatNumbersFix.js
-                if (typeof formatNumbersInTable === 'function') {
-                    formatNumbersInTable();
-                }
-            });
+            // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
+            // para evitar ejecuciones múltiples que pueden causar duplicación de datos
         </script>
         
         <!-- NUEVO: Pasar información de formato de columnas al cliente para formateo inteligente -->
