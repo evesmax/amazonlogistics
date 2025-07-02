@@ -24,6 +24,12 @@ function cleanSqlUniversal($sql) {
     $sql = forceFixSpecificPatterns($sql);
     error_log("Después de forceFixSpecificPatterns: " . substr($sql, -200));
     
+    // Corregir JOINs tautológicos específicos (ie.idestadoproducto=ie.idestadoproducto)
+    $sql = preg_replace('/\bie\.idestadoproducto\s*=\s*ie\.idestadoproducto\b/', 'ie.idestadoproducto=ik.idestadoproducto', $sql);
+    if (strpos($sql, 'ie.idestadoproducto=ik.idestadoproducto') !== false) {
+        error_log("Corregido JOIN tautológico: ie.idestadoproducto=ie.idestadoproducto -> ie.idestadoproducto=ik.idestadoproducto");
+    }
+    
     $sql = fixHtmlInCaseWhen($sql);
     $sql = normalizeQuotesInSql($sql);
     $sql = fixAllSqlIssues($sql);

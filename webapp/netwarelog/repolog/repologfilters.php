@@ -2098,8 +2098,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         $sqlQuery = eliminaParentesisExcesivos($sqlQuery);
         
         // Guardamos el SQL completo en la sesión para mostrarlo como SQL ejecutado
-        $_SESSION['sql_final_ejecutado'] = $sqlQuery;
-        $previewSQL = $sqlQuery;
+        // IMPORTANTE: Aplicar la misma limpieza universal que en reporte.php para sincronizar
+        $sqlQueryLimpio = cleanSqlUniversal($sqlQuery);
+        
+        $_SESSION['sql_final_ejecutado'] = $sqlQueryLimpio;
+        $previewSQL = $sqlQueryLimpio;
         $showPreview = true;
         
         // For debugging purposes, show exactly what filter values were received
@@ -2284,7 +2287,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         $_SESSION['sql_consulta'] = $finalSql;
         
         // Guardar también en sql_final_ejecutado para consistencia con el botón "Mostrar SQL"
-        $_SESSION['sql_final_ejecutado'] = $finalSql;
+        // Aplicar la misma limpieza universal que en reporte.php
+        $finalSqlLimpio = cleanSqlUniversal($finalSql);
+        $_SESSION['sql_final_ejecutado'] = $finalSqlLimpio;
         
         // Guardar una copia original para referencia
         $_SESSION['sql_consulta_original'] = $finalSql;

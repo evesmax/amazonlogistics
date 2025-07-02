@@ -1747,6 +1747,20 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     // Agregar la fila de total general a los resultados
     $result[] = $totalRow;
     
+    // Logging para depuración de subtotales
+    $subtotalCount = 0;
+    $totalCount = 0;
+    foreach ($result as $row) {
+        if (isset($row['__is_subtotal']) && $row['__is_subtotal'] === true) {
+            if (isset($row['__subtotal_level']) && $row['__subtotal_level'] === 1) {
+                $subtotalCount++;
+            } elseif (isset($row['__subtotal_level']) && $row['__subtotal_level'] === 2) {
+                $totalCount++;
+            }
+        }
+    }
+    error_log("processSubtotals completado: " . count($result) . " filas totales, $subtotalCount subtotales, $totalCount totales generales");
+    
     return $result;
 }
 ?>
