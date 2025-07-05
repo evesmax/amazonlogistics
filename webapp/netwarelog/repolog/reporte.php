@@ -129,6 +129,8 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
         }
     }
     
+
+    //Nerid es bien Gay
     // Buscar todos los patrones de tipo [@nombre;val;des;...] que aún estén en la consulta
     // Esta parte es el reemplazo genérico original, mejorado
     $patternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/';
