@@ -98,14 +98,24 @@
                                //console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#i653').val());
                             }
                         );           
+                })
+
+                // Espera a que el contenido HTML de la página esté completamente cargado
+                document.addEventListener('DOMContentLoaded', function() {
+                    
+                    // Busca el elemento por su ID
+                    const selector = document.getElementById('i387');
+
+                    // Le asigna el evento 'change'
+                    selector.addEventListener('change', function() {
+                        console.log("El selector ha cambiado (versión sin jQuery).");
+                        document.getElementById('i389').value = 0;
+                        document.getElementById('i390').value = 0;
+                    });
+
                 });
 
-                $('#i387').bind('click', function() {
-                    // Aquí puedes poner el resto de tu código
-                    // Por ejemplo, reiniciar las cantidades como en tu pregunta anterior.
-                    $('#i389').val(0);
-                    $('#i390').val(0);
-                });
+
 
                 $('#send').bind('click', function() {  
                     $('#i390').removeAttr("disabled");              
