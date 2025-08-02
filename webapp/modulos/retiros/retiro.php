@@ -743,7 +743,6 @@ $htmlpoliticas="
             $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
                                     No hay inventario sificiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1."
                                 </span>
-                                <INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' disabled title='No hay inventario suficiente para procesar el retiro'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
         }					
 
