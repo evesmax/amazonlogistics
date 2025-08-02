@@ -596,7 +596,13 @@
 		$html.="</table>";
                 $html.="</tr></td>"; //Mega tabla
                 
-
+                //Imnprime QR
+                $folio = $idretiro;
+                $url_qr = 'https://qr-link-gen.replit.app/?folio=' . urlencode($folio);
+                $html="<div class='qr-container'>
+                <h3>Folio: <?php echo htmlspecialchars($folio); ?></h3>
+                <img src='<?php echo htmlspecialchars($url_qr); ?>' alt='Código QR para el folio <?php echo htmlspecialchars($folio); ?>'>
+                        </div>";
 
 
 
@@ -717,17 +723,5 @@
 
 echo $opciones.$html;
 
-$folio = $idretiro;
-$url_qr = 'https://qr-link-gen.replit.app/?folio=' . urlencode($folio);
-
 ?>
 
-    <div class="qr-container">
-        <h3>Folio: <?php echo htmlspecialchars($folio); ?></h3>
-        <!--
-            La etiqueta <img> simplemente usa la variable de PHP ($url_qr)
-            en su atributo 'src' para mostrar la imagen del QR.
-            Esta es la forma más directa y recomendada.
-        -->
-        <img src="<?php echo htmlspecialchars($url_qr); ?>" alt="Código QR para el folio <?php echo htmlspecialchars($folio); ?>">
-    </div>
