@@ -100,20 +100,11 @@
                         );           
                 });
 
-                $('#i387').on('change', function() {
-                // Obtiene el valor de la opción seleccionada
-                let valorSeleccionado = $(this).val();
-                
-                // Obtiene el texto de la opción seleccionada
-                let textoSeleccionado = $(this).find('option:selected').text();
-
-                // Muestra una alerta con el valor y el texto
-                alert("Seleccionaste la opción con valor: " + valorSeleccionado + " y texto: " + textoSeleccionado);
-                
-                // Aquí puedes poner el resto de tu código
-                // Por ejemplo, reiniciar las cantidades como en tu pregunta anterior.
-                $('#i389').val(0);
-                $('#i390').val(0);
+                $('#i387').bind('click', function() {
+                    // Aquí puedes poner el resto de tu código
+                    // Por ejemplo, reiniciar las cantidades como en tu pregunta anterior.
+                    $('#i389').val(0);
+                    $('#i390').val(0);
                 });
 
                 $('#send').bind('click', function() {  
