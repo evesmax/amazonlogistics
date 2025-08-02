@@ -103,6 +103,7 @@
                 $('#i387').bind('blur', function() {  
                     $('#i389').val(0);
                     $('#i390').val(0);
+                    alert("Cambio Producto, se reinician cantidades");
                 });
 
                 $('#send').bind('click', function() {  
