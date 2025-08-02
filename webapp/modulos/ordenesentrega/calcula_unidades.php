@@ -100,7 +100,7 @@
                         );           
                 });
 
-                $('#i387').bind('blur', function() {  
+                $('#i387').bind('onchange', function() {  
                     $('#i389').val(0);
                     $('#i390').val(0);
                     alert("Cambio Producto, se reinician cantidades");
