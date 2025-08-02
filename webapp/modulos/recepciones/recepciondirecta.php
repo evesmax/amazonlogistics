@@ -464,7 +464,7 @@
                                             $html.="<tr class='trencabezado'><td>BODEGA ORIGEN</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                     $html.="<td>";
-                                                            $html.="<b>".$bodegaorigen."</b><br>".$domiciliobodegaorigen."<br>";
+                                                            $html.="<b>".$bodegaorigen."</b><br>".$domicilio."<br>";
                                                     $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";																
