@@ -86,7 +86,13 @@ $htmlpoliticas="
 					$capturista=$usuario;
 					$responsable="";
 					$nombremarca="";
-			
+                    $fecha_final="";
+                    $idfabricante="";
+                    $idmarca="";
+                    $idbodega="";
+                    $idloteproducto="";
+                    $idestadoproducto="";
+                    $idempleado="";
 				$sqlcan="";
 				$sqldev="";
 				
@@ -108,7 +114,8 @@ $htmlpoliticas="
                                         where idbodega=lo.idbodega) then 'a' else 'i' end 'logo',
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, 
 								lo.idproducto,ob.responsable, vm.nombremarca, 
-                                lo.idtransportista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,lo.cantidad1,lo.cantidad2
+                                lo.idtransportista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,
+                                lo.cantidad1,lo.cantidad2,now() fecha_final,lo.idfabricante,lo.idmarca,lo.idbodega,lo.idproducto,lo.idloteproducto,lo.idestadoproducto,$usuario idempleado
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -119,9 +126,9 @@ $htmlpoliticas="
                                 inner join inventarios_lotes il on il.idloteproducto=lo.idloteproducto
                              Where lo.idordenentrega=".$idordenentrega;
                 
-				//echo $sqlestatus;
+				echo $sqlestatus;
                 
-                $result = $conexion->consultar($sqlestatus);
+        $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
 									$devuelto=$rs{"devuelto"};
                                     $cancelado=$rs{"cancelado"};
@@ -151,11 +158,32 @@ $htmlpoliticas="
                                     $placasremolque=$rs{"placasremolque"};
                                     $referenciacliente=$rs{"referenciacliente"}; 
                                     $cantidad1=$rs{"cantidad1"};
-                                    $cantidad2=$rs{"cantidad2"}; 
+                                    $cantidad2=$rs{"cantidad2"};
+                                    $fecha_final=$rs{"fecha_final"};
+                                    $idfabricante=$rs{"idfabricante"};
+                                    $idmarca=$rs{"idmarca"};
+                                    $idbodega=$rs{"idbodega"};
+                                    $idloteproducto=$rs{"idloteproducto"};
+                                    $idestadoproducto=$rs{"idestadoproducto"};
+                                    $capturista=$rs{"idempleado"};
+                                    $idempleado=$rs{"idempleado"};
 		}
 		$conexion->cerrar_consulta($result);                        
-                        
                 
+
+        //Verifica Inventario
+        $inventario=0;
+        $sqlinv="call generaExistenciasInventario(".$fecha_final.",".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
+        $result = $conexion->consultar($sqlinv);
+        $sqlinv="Select * from inventarios_existencias where idempleado=".$idempleado;
+        $result = $conexion->consultar($sqlinv);
+        while($rs = $conexion->siguiente($result)){
+            $inventario=$rs{"inventarioinicial"};
+        }
+        $conexion->consultar($sqlinv);
+        $conexion->cerrar_consulta($result);
+
+
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
@@ -706,9 +734,17 @@ $htmlpoliticas="
                                                                                     document.getElementById('btngrabar').value = 'Procesando...'; 
                                                                                 }
 									</script>";
-		//Botones							
-		$html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
+		//Botones
+        if ($inventario>=$cantidad1) {
+            $html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
+                            <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+        } else {
+            $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
+                                    No hay inventario sificiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1."
+                                </span>
+                                <INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' disabled title='No hay inventario suficiente para procesar el retiro'>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+        }					
 
 
 
