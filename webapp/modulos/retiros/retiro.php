@@ -173,7 +173,7 @@ $htmlpoliticas="
 
         //Verifica Inventario
         $inventario=0;
-        $sqlinv="call generaExistenciasInventario(".$fecha_final.",".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
+        $sqlinv="call generaExistenciasInventario('".$fecha_final."',".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
         echo "<br> Consulta Inventario".$sqlinv."<br>";
         $conexion->consultar($sqlinv);
         $sqlinv="Select * from inventarios_existencias where idempleado=".$idempleado;
