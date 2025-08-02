@@ -26,6 +26,7 @@
                     $transportista="";
                     $fechaotfc="";
      		    $nombremarca="";
+                    $cuadrilla="";
    //VARIABLES DEL ENVIO
                     
                     $fecharetiro="";
@@ -69,7 +70,7 @@
                                 format(lr.cantidad1,2) cantidad1, 
                                 format(lr.cantidad2,2) cantidad2, lr.folios,
                                 lr.observaciones,lr.licenciaoperador,ob.responsable,
-                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos 
+                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos,lr.cuadrilla 
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -128,6 +129,7 @@
 									$responsable=$rs{"responsable"};
 									$nombremarca=$rs{"nombremarca"};
                                     $sellos=$rs["sellos"];
+                                    $cuadrilla=$rs["cuadrilla"];
 									
 		}
             
@@ -447,6 +449,7 @@
                                                             <td colspan=2>
                                                                 # BANCO:".$banco."
                                                                 # ESTIBA:".$estiba."
+                                                                # CUADRILLA: ".$cuadrilla." 
                                                             </td>
                                                         </tr>";
 						$html.="<tr>

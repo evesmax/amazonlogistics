@@ -506,8 +506,9 @@ $htmlpoliticas="
 					$html.="<table class='reporte' width='100%'>";
 						$html.="<tr align=left>
                                                             <td colspan=2>
-                                                                # BANCO:<input type=text id='txtbanco' name='txtbanco' value='' Size=20>
-                                                                # ESTIBA:<input type=text id='txtestiba' name='txtestiba' value='' Size=20>
+                                                                # BANCO:<input type=text id='txtbanco' name='txtbanco' value='' Size=10>
+                                                                # ESTIBA:<input type=text id='txtestiba' name='txtestiba' value='' Size=10>
+                                                                # CUADRILLA:<input type=text id='txtcuadrilla' name='txtcuadrilla' value='' Size=25> 
                                                             </td>
                                                         </tr>";
 						$html.="<tr>

@@ -25,6 +25,7 @@ $observaciones = $_REQUEST["txtobservaciones"];
 $capturista=$_REQUEST["txtcapturista"];
 $licenciaoperador=$_REQUEST["txtlicencia"];
 $sellos=$_REQUEST["txtsellos"];
+$cuadrilla=$_REQUEST["txtcuadrilla"];
 //Grabando Documento
 
 //VALIDA INFORMACION DE VALORES
@@ -68,11 +69,11 @@ $sellos=$_REQUEST["txtsellos"];
 $sql = "Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
                                                 placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
                                                 cantidad1,cantidad2,folios,observaciones,
-                                                idestadodocumento,licenciaoperador,idempleado,sellos
+                                                idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
                                             ) VALUES 
                                             ('" . $idordenentrega . "','" . $fechasalida . "','" . $idtransportista . "','" . $cartaporte . "','" . $nombreoperador . "','" .
         $placastractor . "','" . $placasremolque . "','" . $referencia1 . "','" . $ticketbascula . "','" . $banco . "','" .
-        $estiba . "','" . $cantidad1 . "','" . $cantidad2 . "','" . $folios . "','" . $observaciones . "',1,'".$licenciaoperador."','".$capturista."','".$sellos."')";
+        $estiba . "','" . $cantidad1 . "','" . $cantidad2 . "','" . $folios . "','" . $observaciones . "',1,'".$licenciaoperador."','".$capturista."','".$sellos."','".$cuadrilla."')";
 
 
 
