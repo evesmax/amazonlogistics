@@ -41,9 +41,17 @@ function formatNumbersInTable() {
             }
         }
         
-        // Procesar todas las celdas de la tabla
+        // Procesar todas las celdas de la tabla, EXCEPTO las que están en filas de subtotales
         var allCells = document.querySelectorAll('#resultsTable td');
         allCells.forEach(function(cell) {
+            // Verificar si la celda está en una fila de subtotal (que tiene la clase no-format)
+            var parentRow = cell.closest('tr');
+            if (parentRow && (parentRow.classList.contains('no-format') || 
+                             parentRow.classList.contains('subtotal-row') || 
+                             parentRow.classList.contains('total-row'))) {
+                console.log("Saltando formateo de celda en fila de subtotal/total, clases:", parentRow.className);
+                return; // Saltar el formateo de esta celda
+            }
             formatCellContent(cell);
         });
         
@@ -250,7 +258,7 @@ function applyNumberFormat(cell, number, decimals) {
     cell.setAttribute('data-raw-value', number);
     cell.setAttribute('data-decimals', decimals);
     
-    // Formateamos con los decimales específicos, coma para miles y punto decimal
+    // Formateamos con los decimales específicos, formato americano: coma para miles y punto para decimal
     var formatted = number.toLocaleString('en-US', {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals
@@ -267,13 +275,11 @@ function processSpecialRows() {
     allRows.forEach(function(row) {
         var cells = row.querySelectorAll('td');
         
-        // Verificar si es una fila de subtotal
+        // Verificar si es una fila de subtotal - NO REFORMATEAR porque PHP ya las formatea correctamente
         if (row.classList.contains('subtotal-row') || row.classList.contains('total-row')) {
-            // Asegurarse que los valores numéricos tienen formato adecuado
+            // Marcar las celdas como ya formateadas para evitar que JS las modifique
             cells.forEach(function(cell) {
-                if (cell.getAttribute('data-formatted') !== 'true') {
-                    formatCellContent(cell);
-                }
+                cell.setAttribute('data-formatted', 'true');
             });
         }
         
