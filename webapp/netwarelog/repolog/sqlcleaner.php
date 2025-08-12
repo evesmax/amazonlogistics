@@ -369,17 +369,17 @@ function fixMultipleAndConditions($sql) {
     // Soluciones generales para condiciones AND mal formadas
     $patterns = [
         // Condición: valor'and -> valor') and (paréntesis faltante antes de and)
-        '/([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]and\s*\(/i' => '$1 = \'$2\') and (',
+        '/([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2and\s*\(/i' => '$1 = $2$3$2) and (',
         
         // Condición: valor"and + campo -> valor") and (campo (paréntesis faltantes)
-        '/([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]and\s+([a-zA-Z0-9_.]+)/i' => '$1 = \'$2\') and ($3',
+        '/([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2and\s+([a-zA-Z0-9_.]+)/i' => '$1 = $2$3$2) and ($4',
         
         // Condición: número sin comillas: campo = 9and -> campo = 9) and
         '/([a-zA-Z0-9_.]+)\s*=\s*([0-9]+)and\s*\(/i' => '$1 = $2) and (',
         
         // Condición general: (campo = valor and (campo2 = valor2)) -> (campo = valor) and (campo2 = valor2)
-        '/\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]and\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s*\)\)/i' => 
-            '($1 = \'$2\') and ($3 = \'$4\')',
+        '/\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2and\s+\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\5\s*\)\)/i' => 
+            '($1 = $2$3$2) and ($4 = $5$6$5)',
     ];
     
     // Aplicar cada patrón a la consulta
@@ -396,16 +396,16 @@ function fixMultipleAndConditions($sql) {
         // Patrón general para condiciones antes de ORDER BY sin paréntesis
         $orderByPatterns = [
             // Patrón 1: and (campo = valor ORDER BY -> and (campo = valor) ORDER BY
-            '/and\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i' => 
-                'and ($1 = \'$2\') ORDER BY',
+            '/and\s+\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2\s+ORDER\s+BY/i' => 
+                'and ($1 = $2$3$2) ORDER BY',
             
             // Patrón 2: )and (campo = valor ORDER BY -> ) and (campo = valor) ORDER BY
-            '/\)and\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i' => 
-                ') and ($1 = \'$2\') ORDER BY',
+            '/\)and\s+\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2\s+ORDER\s+BY/i' => 
+                ') and ($1 = $2$3$2) ORDER BY',
             
             // Patrón 3: cualquier campo = valor sin cerrar antes de ORDER BY
-            '/\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+ORDER\s+BY/i' => 
-                '($1 = \'$2\') ORDER BY',
+            '/\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2\s+ORDER\s+BY/i' => 
+                '($1 = $2$3$2) ORDER BY',
                 
             // Patrón 4: fecha <= "valor")and -> fecha <= "valor") and
             '/([a-zA-Z0-9_.]+)\s*<=\s*[\'\"]([^\'\"]+)[\'\"][\)]+and/i' => 
@@ -423,8 +423,8 @@ function fixMultipleAndConditions($sql) {
     
     // Solución universal para condiciones AND sin paréntesis adecuados
     // Este patrón busca cualquier combinación de condiciones AND sin paréntesis adecuados
-    $general_pattern = '/\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"](\s+and|\s*and\s*)\(?([a-zA-Z0-9_.]+)/i';
-    $general_replacement = '($1 = \'$2\')$3 ($4';
+    $general_pattern = '/\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2(\s+and|\s*and\s*)\(?([a-zA-Z0-9_.]+)/i';
+    $general_replacement = '($1 = $2$3$2)$4 ($5';
     
     $newSql = preg_replace($general_pattern, $general_replacement, $sql);
     if ($newSql !== $sql) {
@@ -604,14 +604,15 @@ function eliminarCondicionesVacias($sql) {
     }
     
     // Solución GENERAL para condiciones de filtro = valor AND filtro2 = % antes de ORDER BY
-    $generalPattern = '/\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s*and\s*\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i';
+    $generalPattern = '/\(([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2\s*and\s*\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i';
     if (preg_match($generalPattern, $sql, $matches)) {
         $campo = $matches[1]; // El campo del primer filtro (ej: obd.idbodega)
-        $valor = $matches[2]; // El valor no-vacío (ej: '9')
+        $tipoComilla = $matches[2]; // El tipo de comilla original (' o ")
+        $valor = $matches[3]; // El valor no-vacío (ej: '9')
         
-        $replacement = '('.$campo.' = \''.$valor.'\') ORDER BY';
+        $replacement = '('.$campo.' = '.$tipoComilla.$valor.$tipoComilla.') ORDER BY';
         $sql = preg_replace($generalPattern, $replacement, $sql);
-        error_log("Aplicada solución general para eliminar filtros vacíos antes de ORDER BY");
+        error_log("Aplicada solución general para eliminar filtros vacíos antes de ORDER BY - manteniendo comillas originales");
     }
     
     // Patrón general para condiciones vacías antes de ORDER BY - aún más general para capturar cualquier variante similar
@@ -620,7 +621,7 @@ function eliminarCondicionesVacias($sql) {
         $sql = preg_replace('/\)\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i', ') ORDER BY', $sql);
         
         // Patrón 2: condición normal + AND + condición con '%' + ORDER BY (sin paréntesis iniciales)
-        $sql = preg_replace('/([a-zA-Z0-9_.]+)\s*=\s*[\'\"]([^\'\"]+)[\'\"]\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i', '$1 = \'$2\' ORDER BY', $sql);
+        $sql = preg_replace('/([a-zA-Z0-9_.]+)\s*=\s*([\'\"])([^\'\"]+)\2\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i', '$1 = $2$3$2 ORDER BY', $sql);
         
         // Patrón 3: orden arbitrario - si hay AND (campo = '%') justo antes de ORDER BY
         $sql = preg_replace('/\s+(and|AND)\s+\(([a-zA-Z0-9_.]+)\s*=\s*[\'\"]%[\'\"]\s*\)\s+ORDER\s+BY/i', ' ORDER BY', $sql);
