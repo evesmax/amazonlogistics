@@ -219,9 +219,9 @@ function renderTable() {
         // Asignar clase CSS para las filas de subtotales y totales
         if (isSubtotal) {
             if (subtotalLevel === 1) {
-                row.className = 'subtotal-row';
+                row.className = 'subtotal-row no-format';
             } else if (subtotalLevel === 2) {
-                row.className = 'total-row';
+                row.className = 'total-row no-format';
             }
         }
         
@@ -257,7 +257,7 @@ function renderTable() {
                     // Formatear números con 2 decimales
                     if (!isNaN(parseFloat(value))) {
                         var num = parseFloat(value);
-                        value = '<strong>' + num.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong>';
+                        value = '<strong>' + num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong>';
                         cell.innerHTML = value;
                         row.appendChild(cell);
                         return;

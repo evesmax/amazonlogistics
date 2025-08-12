@@ -34,6 +34,9 @@ function cleanSqlUniversal($sql) {
     $sql = normalizeQuotesInSql($sql);
     $sql = fixAllSqlIssues($sql);
     
+    // NUEVA MEJORA: Limpieza específica para problemas de multiselección
+    $sql = cleanMultiselectionInConditions($sql);
+    
     return $sql;
 }
 
@@ -1530,5 +1533,62 @@ function fixUnbalancedParenthesisBeforeOrderBy($sql) {
     error_log("SQL reconstruido completamente: $fixedSql");
     
     return $fixedSql;
+}
+
+/**
+ * Limpieza específica para condiciones IN malformadas en multiselección
+ * Corrige patrones como: IN (9","10","2"" ) -> IN ("9","10","2")
+ * 
+ * @param string $sql Consulta SQL con posibles condiciones IN malformadas
+ * @return string Consulta SQL con condiciones IN corregidas
+ */
+function cleanMultiselectionInConditions($sql) {
+    $originalSql = $sql;
+    
+    // SOLUCIÓN UNIVERSAL: Detectar y corregir CUALQUIER patrón IN malformado
+    // Patrón 1: IN (valor1","valor2","valorN"" ) -> IN ("valor1","valor2","valorN")
+    // Funciona con cualquier tipo de valor: números, texto, fechas, etc.
+    $sql = preg_replace_callback('/IN\s*\(\s*([^"\'()]+(?:","[^"\'()]+)*)""\s*\)/i', function($matches) {
+        $values = explode('","', $matches[1]);
+        $cleanValues = array_map('trim', $values);
+        return 'IN ("' . implode('","', $cleanValues) . '")';
+    }, $sql);
+    
+    // Patrón 2: IN (valor1","valor2" ) -> IN ("valor1","valor2") - Sin doble comilla al final
+    $sql = preg_replace_callback('/IN\s*\(\s*([^"\'()]+(?:","[^"\'()]+)*)"\s*\)/i', function($matches) {
+        $values = explode('","', $matches[1]);
+        $cleanValues = array_map('trim', $values);
+        // Si ya tiene comilla al inicio, mantenerla
+        if (substr($matches[1], 0, 1) === '"') {
+            return 'IN (' . $matches[1] . ')';
+        } else {
+            return 'IN ("' . implode('","', $cleanValues) . '")';
+        }
+    }, $sql);
+    
+    // Patrón 3: IN (valor", valor2", valorN" ) -> IN ("valor","valor2","valorN")
+    $sql = preg_replace_callback('/IN\s*\(\s*([^"\'()]+(?:",[^"\'()]+)*"\s*)\)/i', function($matches) {
+        $content = trim($matches[1]);
+        $values = explode('",', $content);
+        $cleanValues = array_map(function($v) {
+            return '"' . trim(str_replace('"', '', $v)) . '"';
+        }, $values);
+        return 'IN (' . implode(',', $cleanValues) . ')';
+    }, $sql);
+    
+    // CORRECCIÓN ESPECIAL: Si el patrón está entre comillas externas
+    $sql = preg_replace('/IN\s+"\s*\(([^"]+)\)\s*"/i', 'IN ($1)', $sql);
+    
+    // LIMPIEZA FINAL: Asegurar formato consistente de espacios
+    $sql = preg_replace('/IN\s+\(/i', 'IN (', $sql);
+    $sql = preg_replace('/,\s*"/i', ',"', $sql);
+    $sql = preg_replace('/"\s*,/i', '",', $sql);
+    
+    // Log solo si hubo cambios
+    if ($sql !== $originalSql) {
+        error_log("Aplicada limpieza universal de multiselección IN: corregidos patrones malformados para cualquier tipo de valor");
+    }
+    
+    return $sql;
 }
 ?>

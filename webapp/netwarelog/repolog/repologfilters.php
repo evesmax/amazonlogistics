@@ -127,7 +127,7 @@ function parseWhereClause($whereClause) {
     // Regular expressions to match different filter patterns
     $regularPattern = '/\[([^\]]+)\]/'; // Matches [FilterName]
     $datePattern = '/\[#([^\]]+)\]/';  // Matches [#FilterName]
-    $comboPattern = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/'; // Matches [@Label;val;des;SQL]
+    $comboPattern = '/\[@([^;]+);([^;]+);([^;]+);([^;]+)(?:;([^;\]]+))?\]/'; // Matches [@Label;val;des;SQL;@Multiselection?]
     $sessionPattern = '/\[!([^\]]+)\]/'; // Matches [!SessionVariable]
     
     // Find all regular filters [FilterName]
@@ -161,7 +161,7 @@ function parseWhereClause($whereClause) {
         ];
     }
     
-    // Find all combo filters [@Label;val;des;SQL]
+    // Find all combo filters [@Label;val;des;SQL] or [@Label;val;des;SQL;@Multiselection]
     preg_match_all($comboPattern, $whereClause, $comboMatches, PREG_SET_ORDER);
     foreach ($comboMatches as $match) {
         $label = $match[1];
@@ -169,6 +169,12 @@ function parseWhereClause($whereClause) {
         $displayField = $match[3];
         $sql = $match[4];
         $fullPattern = $match[0]; // Full match including [@...] pattern
+        
+        // Check if multiselection is enabled (5th parameter should be @Multiselection)
+        $isMultiselection = false;
+        if (isset($match[5]) && trim($match[5]) === '@Multiselection') {
+            $isMultiselection = true;
+        }
         
         $filters[] = [
             'type' => 'combo',
@@ -179,7 +185,8 @@ function parseWhereClause($whereClause) {
             'sql' => $sql,
             'options' => getComboOptions($sql, $valueField, $displayField),
             'original_name' => $label, // Original name as it appears in SQL
-            'sql_pattern' => $fullPattern // SQL pattern to be replaced
+            'sql_pattern' => $fullPattern, // SQL pattern to be replaced
+            'multiselection' => $isMultiselection // Flag to indicate if multiselection is enabled
         ];
     }
     
@@ -995,13 +1002,28 @@ function buildSqlQuery($report, $filterValues) {
             $debug_info[] = "Filtro POST esperado: " . $filterKey;
             
             if (isset($filterValues[$filterKey])) {
-                $debug_info[] = "Valor seleccionado: " . $filterValues[$filterKey];
+                // Manejar arrays para multiselección en debug
+                if (is_array($filterValues[$filterKey])) {
+                    $debug_info[] = "Valores seleccionados (multiselección): " . implode(', ', array_map('strval', $filterValues[$filterKey]));
+                } else {
+                    $debug_info[] = "Valor seleccionado: " . strval($filterValues[$filterKey]);
+                }
             } else {
                 $debug_info[] = "No hay valor seleccionado para este filtro";
             }
             
             // Detectar si este es un filter nulo (Todos) o tiene un valor seleccionado
-            $filterEmpty = !isset($filterValues[$filterKey]) || trim($filterValues[$filterKey]) === '';
+            // Para arrays (multiselección), verificar si está vacío diferente
+            $filterEmpty = false;
+            if (isset($filterValues[$filterKey])) {
+                if (is_array($filterValues[$filterKey])) {
+                    $filterEmpty = empty($filterValues[$filterKey]);
+                } else {
+                    $filterEmpty = trim(strval($filterValues[$filterKey])) === '';
+                }
+            } else {
+                $filterEmpty = true;
+            }
             
             // Si el usuario seleccionó un valor específico (no Todos)
             if (isset($filterValues[$filterKey]) && !empty($filterValues[$filterKey])) {
@@ -1014,7 +1036,95 @@ function buildSqlQuery($report, $filterValues) {
                 // El valor ya viene correcto desde el select HTML, que tiene value="opcion['value']"
                 
                 // For debugging - add a trace to a variable
-                $debug_info[] = "Reemplazando combo: " . $fullPattern . " con valor: " . $comboValue;
+                if (is_array($comboValue)) {
+                    $debug_info[] = "Reemplazando combo: " . $fullPattern . " con valores múltiples: " . implode(', ', array_map('strval', $comboValue));
+                } else {
+                    $debug_info[] = "Reemplazando combo: " . $fullPattern . " con valor: " . strval($comboValue);
+                }
+                
+                // Manejar multiselección desde el inicio
+                if (is_array($comboValue)) {
+                    // Procesar multiselección - crear condición IN()
+                    $debug_info[] = "Detectada multiselección para $label";
+                    
+                    // Crear la cadena de valores para IN sin agregar IN() si ya existe
+                    $valuesString = "'" . implode("','", array_map('addslashes', array_map('strval', $comboValue))) . "'";
+                    
+                    // Verificar si el patrón ya contiene IN en el SQL
+                    if (preg_match('/\s+IN\s+["\']?' . preg_quote($fullPattern, '/') . '["\']?/i', $whereClause)) {
+                        // Ya hay IN en la consulta, solo reemplazar el patrón con los valores
+                        $debug_info[] = "IN ya presente en consulta, solo reemplazando valores";
+                        $debug_info[] = "ANTES del reemplazo: " . $whereClause;
+                        $debug_info[] = "Patrón a reemplazar: $fullPattern";
+                        $debug_info[] = "Valores para reemplazo: ($valuesString)";
+                        $whereClause = str_replace($fullPattern, "($valuesString)", $whereClause);
+                        
+                        // CORRECCIÓN ESPECIAL: Si el patrón está entre comillas, corregir IN "(...)" -> IN (...)
+                        $whereClause = preg_replace('/IN\s+"\s*\(([^"]+)\)\s*"/i', 'IN ($1)', $whereClause);
+                        
+                        $debug_info[] = "DESPUÉS del reemplazo: " . $whereClause;
+                        $debug_info[] = "Multiselección: reemplazado $fullPattern con ($valuesString)";
+                        
+                        // Limpiar inmediatamente patrones malformados después del reemplazo
+                        $whereClause = preg_replace('/IN\s*"IN\s*\(/i', 'IN (', $whereClause);
+                        $whereClause = preg_replace('/IN\s*"\s*\(/i', 'IN (', $whereClause);  
+                        $whereClause = preg_replace('/"\s*"\s*\)\s*\)/i', '")', $whereClause);
+                        $whereClause = preg_replace('/""\s*\)\s*\)/i', '")', $whereClause);
+                        $whereClause = preg_replace('/\(\s*IN\s*\(/i', '(', $whereClause);
+                        
+                        // Casos específicos para el patrón problemático IN "("value1","value2"" ))
+                        $whereClause = preg_replace('/IN\s*"?\s*\(\s*"/i', 'IN (', $whereClause);
+                        $whereClause = preg_replace('/"\s*"\s*\)\s*\)/i', '")', $whereClause);
+                        
+                        // LIMPIEZA UNIVERSAL COMPLETA: Funciona con cualquier valor y cualquier cantidad
+                        // Usar la misma función universal que en sqlcleaner.php
+                        $whereClause = cleanMultiselectionInConditions($whereClause);
+                        
+                        $debug_info[] = "Aplicada limpieza de comillas dobles malformadas";
+                    } else {
+                        // No hay IN en la consulta, usar la lógica original
+                        $inCondition = "IN ($valuesString)";
+                        
+                        // Buscar el campo en la condición SQL para construir la consulta completa
+                        if (preg_match('/([a-zA-Z0-9_]+\.?[a-zA-Z0-9_]+)\s*=\s*["\']?' . preg_quote($fullPattern, '/') . '["\']?/', $whereClause, $fieldMatch)) {
+                            $fieldName = $fieldMatch[1];
+                            $fullInCondition = "$fieldName $inCondition";
+                            
+                            // Intentar varios patrones de reemplazo para multiselección
+                            $replacementPatterns = [
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"\)/i" => "($fullInCondition)",
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "($fullInCondition)",
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"/i" => $fullInCondition,
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $fullInCondition,
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*" . preg_quote($fullPattern, '/') . "/i" => $fullInCondition
+                            ];
+                            
+                            $replaced = false;
+                            foreach ($replacementPatterns as $pattern => $replacement) {
+                                $newWhereClause = preg_replace($pattern, $replacement, $whereClause);
+                                if ($newWhereClause !== $whereClause) {
+                                    $whereClause = $newWhereClause;
+                                    $debug_info[] = "Multiselección aplicada: $fieldName con patrón $pattern";
+                                    $replaced = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!$replaced) {
+                                // Fallback: reemplazar directamente el patrón
+                                $whereClause = str_replace($fullPattern, $inCondition, $whereClause);
+                                $debug_info[] = "Multiselección fallback: reemplazado patrón directamente";
+                            }
+                        } else {
+                            // Fallback directo
+                            $whereClause = str_replace($fullPattern, $inCondition, $whereClause);
+                            $debug_info[] = "Multiselección fallback directo: sin detectar campo";
+                        }
+                    }
+                    
+                    // Saltarse el procesamiento de selección única
+                    continue;
+                }
                 
                 // Almacenar el patrón completo para búsquedas precisas (incluye los corchetes [@...])
                 $patternWithBrackets = preg_quote($fullPattern, '/');
@@ -1023,13 +1133,16 @@ function buildSqlQuery($report, $filterValues) {
                 if ($label === 'Zafra') {
                     $debug_info[] = "Procesando caso especial para Zafra";
                     
+                    // Para selección única (no arrays)
+                    $singleValue = is_array($comboValue) ? $comboValue[0] : $comboValue;
+                    
                     // Buscar patrones comunes para Zafra
                     // Estas expresiones buscan la condición completa, incluidos paréntesis, AND y OR
                     
                     // Caso 1: (il.idloteproducto = [@Zafra;...])
                     if (preg_match('/\(\s*il\.idloteproducto\s*=\s*' . $patternWithBrackets . '\s*\)/i', $whereClause, $matches)) {
                         $fullCondition = $matches[0];
-                        $replacement = '(il.idloteproducto = ' . $comboValue . ')';
+                        $replacement = '(il.idloteproducto = ' . $singleValue . ')';
                         $whereClause = str_replace($fullCondition, $replacement, $whereClause);
                         $debug_info[] = "Reemplazo en caso 1: " . $fullCondition . " -> " . $replacement;
                     }
@@ -1604,26 +1717,33 @@ function buildSqlQuery($report, $filterValues) {
                         $likePatternFull = $likeMatches[0]; // El patrón LIKE completo
                         $likeParam = $likeMatches[1]; // El patrón [%valor%]
                         
+                        // Asegurar que $filterValue sea string para interpolación
+                        $singleFilterValue = is_array($filterValue) ? strval($filterValue[0]) : strval($filterValue);
+                        
                         // Determinar qué tipo de patrón LIKE es
                         if (preg_match('/\[%(.*?)%\]/', $likeParam, $innerMatches)) {
                             // Es [%valor%] - contiene % al inicio y al final
-                            $replacementPattern = " LIKE '%{$filterValue}%'";
+                            $replacementPattern = " LIKE '%{$singleFilterValue}%'";
                             $whereClause = str_replace($likePatternFull, $replacementPattern, $whereClause);
                         } else if (preg_match('/\[%(.*?)\]/', $likeParam, $innerMatches)) {
                             // Es [%valor] - contiene % solo al inicio
-                            $replacementPattern = " LIKE '%{$filterValue}'";
+                            $replacementPattern = " LIKE '%{$singleFilterValue}'";
                             $whereClause = str_replace($likePatternFull, $replacementPattern, $whereClause);
                         } else if (preg_match('/\[(.*?)%\]/', $likeParam, $innerMatches)) {
                             // Es [valor%] - contiene % solo al final
-                            $replacementPattern = " LIKE '{$filterValue}%'";
+                            $replacementPattern = " LIKE '{$singleFilterValue}%'";
                             $whereClause = str_replace($likePatternFull, $replacementPattern, $whereClause);
                         } else {
                             // Reemplazar el patrón con el valor del usuario de forma estándar
-                            $whereClause = str_replace($filterPattern, $filterValue, $whereClause);
+                            // Asegurar que $filterValue sea string para str_replace
+                            $singleFilterValue = is_array($filterValue) ? strval($filterValue[0]) : strval($filterValue);
+                            $whereClause = str_replace($filterPattern, $singleFilterValue, $whereClause);
                         }
                     } else {
                         // Reemplazar el patrón con el valor del usuario de forma estándar
-                        $whereClause = str_replace($filterPattern, $filterValue, $whereClause);
+                        // Asegurar que $filterValue sea string para str_replace
+                        $singleFilterValue = is_array($filterValue) ? strval($filterValue[0]) : strval($filterValue);
+                        $whereClause = str_replace($filterPattern, $singleFilterValue, $whereClause);
                     }
                 }
             }
@@ -1756,21 +1876,49 @@ function buildSqlQuery($report, $filterValues) {
                 // Caso 2: Hay un valor específico para el filtro
                 else if (isset($_POST[$filterKey]) && !empty($_POST[$filterKey])) {
                     $comboValue = $_POST[$filterKey];
-                    $debug_info[] = "Aplicando corrección para $fieldName (valor: $comboValue) - Reemplazando patrón directo";
                     
-                    // Reemplazo más específico primero
-                    $patterns = array(
-                        "/\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "(" . $actualField . " = $comboValue)",
-                        "/" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $actualField . " = $comboValue"
-                    );
+                    // Check if it's a multiselection (array of values)
+                    $isMultiselection = is_array($comboValue);
                     
-                    foreach ($patterns as $pattern => $replacement) {
-                        $sqlQueryBefore = $sqlQuery;
-                        $sqlQuery = preg_replace($pattern, $replacement, $sqlQuery);
+                    if ($isMultiselection) {
+                        $debug_info[] = "Aplicando corrección para $fieldName (multiselección: " . implode(',', $comboValue) . ") - Reemplazando con IN";
                         
-                        if ($sqlQueryBefore !== $sqlQuery) {
-                            $debug_info[] = "Patrón aplicado correctamente: " . $pattern . " -> " . $replacement;
-                            break;
+                        // Para multiselección, crear una condición IN con los valores seleccionados
+                        $valuesString = "'" . implode("','", array_map('addslashes', $comboValue)) . "'";
+                        $inCondition = "$actualField IN ($valuesString)";
+                        
+                        // Reemplazo específico para multiselección
+                        $patterns = array(
+                            "/\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "($inCondition)",
+                            "/" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $inCondition
+                        );
+                        
+                        foreach ($patterns as $pattern => $replacement) {
+                            $sqlQueryBefore = $sqlQuery;
+                            $sqlQuery = preg_replace($pattern, $replacement, $sqlQuery);
+                            
+                            if ($sqlQueryBefore !== $sqlQuery) {
+                                $debug_info[] = "Multiselección aplicada correctamente: " . $pattern . " -> " . $replacement;
+                                break;
+                            }
+                        }
+                    } else {
+                        $debug_info[] = "Aplicando corrección para $fieldName (valor: $comboValue) - Reemplazando patrón directo";
+                        
+                        // Reemplazo más específico primero para selección única
+                        $patterns = array(
+                            "/\(" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "(" . $actualField . " = $comboValue)",
+                            "/" . preg_quote($actualField, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $actualField . " = $comboValue"
+                        );
+                        
+                        foreach ($patterns as $pattern => $replacement) {
+                            $sqlQueryBefore = $sqlQuery;
+                            $sqlQuery = preg_replace($pattern, $replacement, $sqlQuery);
+                            
+                            if ($sqlQueryBefore !== $sqlQuery) {
+                                $debug_info[] = "Patrón aplicado correctamente: " . $pattern . " -> " . $replacement;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1789,17 +1937,52 @@ function buildSqlQuery($report, $filterValues) {
                 else if (isset($_POST[$filterKey]) && !empty($_POST[$filterKey])) {
                     $comboValue = $_POST[$filterKey];
                     
-                    // SOLUCIÓN GENERAL: Asegurar comillas consistentes alrededor del valor
-                    // Detectar si el patrón está entre comillas simples o dobles y mantener consistencia
-                    if (strpos($sqlQuery, "'" . $fullPattern . "'") !== false) {
-                        // Patrón está entre comillas simples - reemplazar con comillas simples
-                        $sqlQuery = str_replace("'" . $fullPattern . "'", "'" . $comboValue . "'", $sqlQuery);
-                    } else if (strpos($sqlQuery, '"' . $fullPattern . '"') !== false) {
-                        // Patrón está entre comillas dobles - reemplazar con comillas dobles
-                        $sqlQuery = str_replace('"' . $fullPattern . '"', '"' . $comboValue . '"', $sqlQuery);
+                    // Check if it's a multiselection (array of values)
+                    $isMultiselection = is_array($comboValue);
+                    
+                    if ($isMultiselection) {
+                        // Para multiselección, crear una condición IN con los valores seleccionados
+                        $valuesString = "'" . implode("','", array_map('addslashes', $comboValue)) . "'";
+                        
+                        // Detectar el campo de la condición para construir un IN()
+                        if (preg_match('/([a-zA-Z0-9_]+\.?[a-zA-Z0-9_]+)\s*=\s*["\']?' . preg_quote($fullPattern, '/') . '["\']?/', $sqlQuery, $fieldMatch)) {
+                            $fieldName = $fieldMatch[1];
+                            $inCondition = "$fieldName IN ($valuesString)";
+                            
+                            // Reemplazar la condición de igualdad con IN
+                            $patterns = [
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "($inCondition)",
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $inCondition,
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"\)/i" => "($inCondition)",
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"/i" => $inCondition
+                            ];
+                            
+                            foreach ($patterns as $pattern => $replacement) {
+                                $sqlQueryBefore = $sqlQuery;
+                                $sqlQuery = preg_replace($pattern, $replacement, $sqlQuery);
+                                if ($sqlQueryBefore !== $sqlQuery) {
+                                    $debug_info[] = "Multiselección aplicada: $pattern -> $replacement";
+                                    break;
+                                }
+                            }
+                        } else {
+                            // Fallback: reemplazar directamente el patrón con IN
+                            $sqlQuery = str_replace($fullPattern, "IN ($valuesString)", $sqlQuery);
+                        }
                     } else {
-                        // Patrón sin comillas específicas - usar el valor tal como viene
-                        $sqlQuery = str_replace($fullPattern, $comboValue, $sqlQuery);
+                        // Single selection - mantener lógica original
+                        // SOLUCIÓN GENERAL: Asegurar comillas consistentes alrededor del valor
+                        // Detectar si el patrón está entre comillas simples o dobles y mantener consistencia
+                        if (strpos($sqlQuery, "'" . $fullPattern . "'") !== false) {
+                            // Patrón está entre comillas simples - reemplazar con comillas simples
+                            $sqlQuery = str_replace("'" . $fullPattern . "'", "'" . $comboValue . "'", $sqlQuery);
+                        } else if (strpos($sqlQuery, '"' . $fullPattern . '"') !== false) {
+                            // Patrón está entre comillas dobles - reemplazar con comillas dobles
+                            $sqlQuery = str_replace('"' . $fullPattern . '"', '"' . $comboValue . '"', $sqlQuery);
+                        } else {
+                            // Patrón sin comillas específicas - usar el valor tal como viene
+                            $sqlQuery = str_replace($fullPattern, $comboValue, $sqlQuery);
+                        }
                     }
                 }
             }
@@ -1807,6 +1990,46 @@ function buildSqlQuery($report, $filterValues) {
         
         // Limpieza general de SQL para prevenir errores de sintaxis
         $debug_info[] = "Aplicando limpieza general del SQL para prevenir errores de sintaxis";
+        
+        // Limpieza específica para multiselección - eliminar doble IN y comillas malformadas
+        $sqlQuery = preg_replace('/\s+IN\s+"IN\s*\(/i', ' IN (', $sqlQuery);
+        $sqlQuery = preg_replace('/\s+IN\s+\'IN\s*\(/i', ' IN (', $sqlQuery);
+        $sqlQuery = preg_replace('/IN\s*"IN\s*\(/i', 'IN (', $sqlQuery);
+        $sqlQuery = preg_replace('/IN\s*\'IN\s*\(/i', 'IN (', $sqlQuery);
+        
+        // Casos más específicos de comillas malformadas como IN "("9","10"" ))
+        $sqlQuery = preg_replace('/IN\s+"?\(\s*"/i', 'IN (', $sqlQuery);
+        $sqlQuery = preg_replace('/IN\s+\'\(\s*\'/i', 'IN (', $sqlQuery);
+        
+        // Patrón muy específico para IN "("valores"" ))
+        $sqlQuery = preg_replace('/IN\s*"\s*\(\s*"/i', 'IN ("', $sqlQuery);
+        $sqlQuery = preg_replace('/"\s*"\s*\)\s*\)/i', '")', $sqlQuery);
+        
+        // CORRECCIÓN ESPECIAL: Si el patrón está entre comillas, corregir IN "(...)" -> IN (...)
+        $sqlQuery = preg_replace('/IN\s+"\s*\(([^"]+)\)\s*"/i', 'IN ($1)', $sqlQuery);
+        
+        // LIMPIEZA UNIVERSAL COMPLETA: Usar la función universal para cualquier caso
+        $sqlQuery = cleanMultiselectionInConditions($sqlQuery);
+        
+        // Eliminar comillas dobles malformadas al final de condiciones IN
+        $sqlQuery = preg_replace('/""\s*\)\s*\)/i', '")', $sqlQuery);
+        $sqlQuery = preg_replace('/"\s*"\s*\)\s*\)/i', '")', $sqlQuery);
+        $sqlQuery = preg_replace('/,"\s*"\s*\)/i', ')', $sqlQuery);
+        $sqlQuery = preg_replace('/,""\s*\)/i', ')', $sqlQuery);
+        $sqlQuery = preg_replace('/"\s*\)\s*\)/i', ')', $sqlQuery);
+        
+        // Casos específicos de comillas dobles extra al final
+        $sqlQuery = preg_replace('/,\s*"\s*"\s*\)/i', ')', $sqlQuery);
+        $sqlQuery = preg_replace('/"\s*,\s*\)/i', ')', $sqlQuery);
+        
+        // Corregir problemas específicos con IN y paréntesis
+        $sqlQuery = preg_replace('/\(\s*IN\s*\(/i', '(', $sqlQuery);
+        $sqlQuery = preg_replace('/IN\s*\(\s*IN\s*\(/i', 'IN (', $sqlQuery);
+        
+        // Limpieza de espacios extra alrededor de IN
+        $sqlQuery = preg_replace('/\s+IN\s+\s+/i', ' IN ', $sqlQuery);
+        
+        $debug_info[] = "Aplicada limpieza específica para multiselección";
         
         // Corregir problemas de sintaxis SQL causados por los reemplazos
         $sqlQuery = preg_replace("/and\s+and/i", "and", $sqlQuery);
@@ -2363,8 +2586,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                     $filterValue = $filterValues[$filterKey];
                     $displayValue = $filterValue; // Por defecto, usamos el valor tal cual
                     
-                    // Si es un filtro tipo combo (select/dropdown), buscar el valor descriptivo
-                    if ($filter['type'] === 'combo' && isset($filter['options']) && is_array($filter['options'])) {
+                    // NUEVA LÓGICA: Manejar filtros de multiselección (arrays)
+                    if (is_array($filterValue)) {
+                        $displayValues = [];
+                        
+                        // Para cada valor seleccionado, buscar su descripción
+                        foreach ($filterValue as $singleValue) {
+                            $singleDisplayValue = $singleValue; // Valor por defecto
+                            
+                            // Si es un filtro tipo combo, buscar la descripción
+                            if ($filter['type'] === 'combo' && isset($filter['options']) && is_array($filter['options'])) {
+                                foreach ($filter['options'] as $option) {
+                                    if (isset($option['value']) && $option['value'] == $singleValue) {
+                                        $singleDisplayValue = $option['text'];
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            $displayValues[] = $singleDisplayValue;
+                        }
+                        
+                        $displayValue = implode(', ', $displayValues);
+                    }
+                    // LÓGICA ORIGINAL: Para filtros de selección individual
+                    else if ($filter['type'] === 'combo' && isset($filter['options']) && is_array($filter['options'])) {
                         // Primero intentamos buscar en las opciones del combo
                         foreach ($filter['options'] as $option) {
                             if (isset($option['value']) && $option['value'] == $filterValue) {
@@ -2383,93 +2629,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                             // Extraer tablas y columnas de la query original
                             $query = $filter['query'];
                             
-                            // Analizar si el query tiene estructura value,text o es una consulta completa
-                            if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
-                                $valueColumn = trim($matches[1]);
-                                $textColumn = trim($matches[2]);
-                                $tableName = trim($matches[3]);
+                            // NUEVA LÓGICA: Manejar multiselección con queries dinámicas
+                            if (is_array($filterValue)) {
+                                $displayValues = [];
                                 
-                                // Construir consulta para buscar el valor descriptivo
-                                $lookupQuery = "SELECT $textColumn FROM $tableName WHERE $valueColumn = ?";
-                                $stmt = $lookupPdo->prepare($lookupQuery);
-                                $stmt->execute([$filterValue]);
-                                
-                                if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                    $displayValue = reset($row); // Primer valor del array asociativo
+                                foreach ($filterValue as $singleValue) {
+                                    $singleDisplayValue = $singleValue; // Valor por defecto
+                                    
+                                    // Analizar si el query tiene estructura value,text o es una consulta completa
+                                    if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
+                                        $valueColumn = trim($matches[1]);
+                                        $textColumn = trim($matches[2]);
+                                        $tableName = trim($matches[3]);
+                                        
+                                        // Construir consulta para buscar el valor descriptivo
+                                        $lookupQuery = "SELECT $textColumn FROM $tableName WHERE $valueColumn = ?";
+                                        $stmt = $lookupPdo->prepare($lookupQuery);
+                                        $stmt->execute([$singleValue]);
+                                        
+                                        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            $singleDisplayValue = reset($row); // Primer valor del array asociativo
+                                        }
+                                    }
+                                    
+                                    $displayValues[] = $singleDisplayValue;
                                 }
+                                
+                                $displayValue = implode(', ', $displayValues);
                             }
-                            // Si el query es complejo, intentar extraer las tablas y columnas
-                            else if (preg_match('/FROM\s+([^\s;]+)/i', $query, $tableMatch)) {
-                                $tableName = trim($tableMatch[1]);
-                                
-                                // Extraer clave primaria de la tabla (asumiendo 'id' + nombre de tabla singular o 'id' genérico)
-                                $singularTable = preg_replace('/es$|s$/', '', $tableName);
-                                $possibleIdColumns = [
-                                    'id' . $singularTable,
-                                    $singularTable . 'id',
-                                    'id' . $tableName,
-                                    $tableName . 'id',
-                                    'id'
-                                ];
-                                
-                                // Intentar columnas descriptivas comunes
-                                $possibleDescColumns = [
-                                    'nombre' . $singularTable,
-                                    'nombre',
-                                    'descripcion',
-                                    'description',
-                                    'name'
-                                ];
-                                
-                                // Obtener primera columna que no sea ID como columna descriptiva
-                                $lookupQuery = "SHOW COLUMNS FROM $tableName";
-                                $stmt = $lookupPdo->query($lookupQuery);
-                                $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                
-                                $idColumn = null;
-                                $descColumn = null;
-                                
-                                // Primero buscar entre las columnas sugeridas
-                                foreach ($possibleIdColumns as $idCol) {
-                                    foreach ($columns as $col) {
-                                        if (strtolower($col['Field']) === strtolower($idCol)) {
-                                            $idColumn = $col['Field'];
-                                            break 2;
-                                        }
-                                    }
-                                }
-                                
-                                foreach ($possibleDescColumns as $descCol) {
-                                    foreach ($columns as $col) {
-                                        if (strtolower($col['Field']) === strtolower($descCol)) {
-                                            $descColumn = $col['Field'];
-                                            break 2;
-                                        }
-                                    }
-                                }
-                                
-                                // Si no encontramos columna descriptiva, usar la segunda columna (asumiendo que la primera es ID)
-                                if (!$descColumn && count($columns) > 1) {
-                                    if ($columns[0]['Field'] === $idColumn) {
-                                        $descColumn = $columns[1]['Field'];
-                                    } else {
-                                        $descColumn = $columns[0]['Field'];
-                                    }
-                                }
-                                
-                                // Si encontramos ambas columnas, buscar el valor descriptivo
-                                if ($idColumn && $descColumn) {
-                                    $lookupQuery = "SELECT $descColumn FROM $tableName WHERE $idColumn = ?";
+                            // LÓGICA ORIGINAL: Para filtros individuales
+                            else {
+                                // Analizar si el query tiene estructura value,text o es una consulta completa
+                                if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
+                                    $valueColumn = trim($matches[1]);
+                                    $textColumn = trim($matches[2]);
+                                    $tableName = trim($matches[3]);
+                                    
+                                    // Construir consulta para buscar el valor descriptivo
+                                    $lookupQuery = "SELECT $textColumn FROM $tableName WHERE $valueColumn = ?";
                                     $stmt = $lookupPdo->prepare($lookupQuery);
                                     $stmt->execute([$filterValue]);
                                     
                                     if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        $displayValue = reset($row);
+                                        $displayValue = reset($row); // Primer valor del array asociativo
                                     }
                                 }
                             }
                             
                             $lookupPdo = null;
+
+
                         } catch (Exception $e) {
                             // Si hay error, mantener el valor original
                             error_log("Error al buscar valor descriptivo: " . $e->getMessage());
@@ -2744,16 +2953,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                                        placeholder="<?php echo htmlspecialchars($filter['placeholder']); ?>">
                                        
                             <?php elseif ($filter['type'] === 'combo'): ?>
-                                <!-- Selector con búsqueda simple -->
+                                <!-- Selector con búsqueda simple o multiselección -->
                                 <div class="select-search-container">
                                     <select id="<?php echo htmlspecialchars($filter['id']); ?>" 
-                                            name="<?php echo htmlspecialchars($filter['id']); ?>" 
-                                            class="filter-select-search">
-                                        <option value="">-- Todos --</option>
+                                            name="<?php echo htmlspecialchars($filter['id']); ?><?php echo isset($filter['multiselection']) && $filter['multiselection'] ? '[]' : ''; ?>" 
+                                            class="filter-select-search"<?php echo isset($filter['multiselection']) && $filter['multiselection'] ? ' multiple' : ''; ?>>
+                                        <?php if (!isset($filter['multiselection']) || !$filter['multiselection']): ?>
+                                            <option value="">-- Todos --</option>
+                                        <?php endif; ?>
                                         <?php foreach ($filter['options'] as $option): ?>
-                                            <option value="<?php echo htmlspecialchars($option['value']); ?>">
-                                                <?php echo htmlspecialchars($option['text']); ?>
-                                            </option>
+                                            <?php if ($option['value'] !== '' || (!isset($filter['multiselection']) || !$filter['multiselection'])): ?>
+                                                <option value="<?php echo htmlspecialchars($option['value']); ?>">
+                                                    <?php echo htmlspecialchars($option['text']); ?>
+                                                </option>
+                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -2761,9 +2974,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                                 $(document).ready(function() {
                                     // Inicializa Select2 para este campo específico
                                     $("#<?php echo htmlspecialchars($filter['id']); ?>").select2({
-                                        placeholder: "-- Seleccione o escriba --",
+                                        placeholder: "<?php echo isset($filter['multiselection']) && $filter['multiselection'] ? '-- Seleccione múltiples opciones --' : '-- Seleccione o escriba --'; ?>",
                                         allowClear: true,
-                                        width: '100%'
+                                        width: '100%'<?php echo isset($filter['multiselection']) && $filter['multiselection'] ? ',
+                                        multiple: true' : ''; ?>
                                     });
                                 });
                                 </script>

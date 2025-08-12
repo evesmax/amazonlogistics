@@ -129,20 +129,25 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
         }
     }
     
-
-    //Nerid es bien Gay
     // Buscar todos los patrones de tipo [@nombre;val;des;...] que aún estén en la consulta
     // Esta parte es el reemplazo genérico original, mejorado
-    $patternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/';
+    // Ahora incluye soporte para patrones con @Multiselection
+    $patternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^;]+)(?:;([^;\]]+))?\]/';
     if (preg_match_all($patternRegex, $sql, $matches, PREG_SET_ORDER)) {
         error_log("Encontrados " . count($matches) . " patrones genéricos no sustituidos");
         
         foreach ($matches as $match) {
-            $fullPattern = $match[0]; // [@nombre;val;des;...]
+            $fullPattern = $match[0]; // [@nombre;val;des;...] o [@nombre;val;des;...;@Multiselection]
             $filterName = $match[1];  // nombre
             $valField = $match[2];    // val
             $desField = $match[3];    // des
             $sqlQuery = $match[4];    // SQL de consulta
+            
+            // Check if multiselection is enabled (5th parameter should be @Multiselection)
+            $isMultiselection = false;
+            if (isset($match[5]) && trim($match[5]) === '@Multiselection') {
+                $isMultiselection = true;
+            }
             
             // MEJORA: Imprimir el patrón completo para depuración
             error_log("Procesando patrón: $fullPattern");
@@ -329,13 +334,69 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                     }
                 }
                 else {
-                    // Para otros filtros, intentar reemplazos genéricos
-                    foreach ($patterns as $pattern) {
-                        $newSql = str_replace($pattern, $filterValue, $sql);
-                        if ($newSql !== $sql) {
-                            error_log("Reemplazado patrón genérico: $pattern con $filterValue");
-                            $sql = $newSql;
-                            break;
+                    // Para otros filtros, verificar si es multiselección
+                    $isFilterMultiselection = is_array($filterValue);
+                    
+                    if ($isFilterMultiselection) {
+                        // Para multiselección, crear una condición IN con los valores seleccionados
+                        $valuesString = "'" . implode("','", array_map('addslashes', $filterValue)) . "'";
+                        
+                        // Detectar el campo SQL para construir un IN()
+                        if (preg_match('/([a-zA-Z0-9_]+\.?[a-zA-Z0-9_]+)\s*=\s*["\']?' . preg_quote($fullPattern, '/') . '["\']?/', $sql, $fieldMatch)) {
+                            $fieldName = $fieldMatch[1];
+                            $inCondition = "$fieldName IN ($valuesString)";
+                            
+                            // Intentar reemplazos específicos para multiselección
+                            $multiPatterns = [
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"\)/i" => "($inCondition)",
+                                "/\(" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'\)/i" => "($inCondition)",
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*\"" . preg_quote($fullPattern, '/') . "\"/i" => $inCondition,
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*'" . preg_quote($fullPattern, '/') . "'/i" => $inCondition,
+                                "/" . preg_quote($fieldName, '/') . "\s*=\s*" . preg_quote($fullPattern, '/') . "/i" => $inCondition
+                            ];
+                            
+                            $replaced = false;
+                            foreach ($multiPatterns as $pattern => $replacement) {
+                                $newSql = preg_replace($pattern, $replacement, $sql);
+                                if ($newSql !== $sql) {
+                                    error_log("Multiselección: Reemplazado patrón $fullPattern con IN condition usando $pattern");
+                                    $sql = $newSql;
+                                    $replaced = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!$replaced) {
+                                // Fallback: reemplazar directamente el patrón con IN
+                                foreach ($patterns as $pattern) {
+                                    $newSql = str_replace($pattern, "IN ($valuesString)", $sql);
+                                    if ($newSql !== $sql) {
+                                        error_log("Multiselección fallback: Reemplazado patrón $pattern con IN ($valuesString)");
+                                        $sql = $newSql;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback directo para multiselección sin detectar campo
+                            foreach ($patterns as $pattern) {
+                                $newSql = str_replace($pattern, "IN ($valuesString)", $sql);
+                                if ($newSql !== $sql) {
+                                    error_log("Multiselección fallback directo: Reemplazado patrón $pattern con IN ($valuesString)");
+                                    $sql = $newSql;
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        // Single selection - lógica original
+                        foreach ($patterns as $pattern) {
+                            $newSql = str_replace($pattern, $filterValue, $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Reemplazado patrón genérico: $pattern con $filterValue");
+                                $sql = $newSql;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1858,7 +1919,11 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     <?php foreach ($appliedFilters as $filter): ?>
                         <span class="filter-item">
                             <span class="filter-label"><?php echo htmlspecialchars($filter['label']); ?>:</span>
-                            <?php echo htmlspecialchars($filter['value']); ?>
+                            <?php 
+                            // Asegurar que el valor sea string para htmlspecialchars
+                            $filterValue = is_array($filter['value']) ? implode(', ', $filter['value']) : strval($filter['value']);
+                            echo htmlspecialchars($filterValue); 
+                            ?>
                         </span>
                     <?php endforeach; ?>
                 </div>
@@ -1919,7 +1984,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                             // Definir clases CSS según el tipo de fila
                             $rowClass = '';
                             if ($isSubtotal) {
-                                $rowClass = $subtotalLevel === 1 ? 'subtotal-row' : 'total-row';
+                                $rowClass = $subtotalLevel === 1 ? 'subtotal-row no-format' : 'total-row no-format';
                             }
                             ?>
                             <tr class="<?php echo $rowClass; ?>">
@@ -2013,19 +2078,28 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                             
                                             if (in_array($column, $mappedSumFields)) {
-                                                // Formatear como número con 2 decimales (formato mexicano: 2,990.58)
-                                                // Formatear con separador de miles y 2 decimales
+                                                // Obtener decimales específicos de la configuración detectada
+                                                $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
+                                                $decimals = 2; // Por defecto 2 decimales
+                                                if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
+                                                    $decimals = $columnFormatInfo[$column]['decimals'];
+                                                }
+                                                $formattedResult = number_format(floatval($value), $decimals, '.', ',');
+                                                error_log("Formato subtotal para columna '$column': $decimals decimales, valor: $value, resultado: $formattedResult");
+                                                error_log("Clases CSS aplicadas a la fila: '$rowClass'");
+                                                
+                                                // Formatear con separador de miles y decimales específicos (formato americano: #,##0.00)
                                                 if (is_numeric($value)) {
-                                                    // Es un número, formatear con comas para miles y punto para decimales
-                                                    $formattedValue = number_format(floatval($value), 2, '.', ',');
+                                                    // Es un número, formatear con coma para miles y punto para decimales
+                                                    $formattedValue = number_format(floatval($value), $decimals, '.', ',');
                                                     echo '<strong>' . $formattedValue . '</strong>';
                                                 } else if (is_string($value)) {
-                                                    // Si ya tiene formato americano (1,234.56), asegurarse que tiene 2 decimales
+                                                    // Si ya tiene formato americano (1,234.56), asegurarse que tiene los decimales correctos
                                                     if (preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
                                                         // Extraer el número sin formateo para reformatearlo
                                                         $cleanValue = str_replace(',', '', $value);
                                                         if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                             echo '<strong>' . $formattedValue . '</strong>';
                                                         } else {
                                                             echo '<strong>' . htmlspecialchars($value) . '</strong>';
@@ -2035,7 +2109,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     else if (preg_match('/^\d+,\d+$/', $value)) {
                                                         $cleanValue = str_replace(',', '.', $value);
                                                         if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                             echo '<strong>' . $formattedValue . '</strong>';
                                                         } else {
                                                             echo '<strong>' . htmlspecialchars($value) . '</strong>';
@@ -2046,7 +2120,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                         $cleanValue = str_replace('.', '', $value);
                                                         $cleanValue = str_replace(',', '.', $cleanValue);
                                                         if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                             echo '<strong>' . $formattedValue . '</strong>';
                                                         } else {
                                                             echo '<strong>' . htmlspecialchars($value) . '</strong>';
@@ -2056,7 +2130,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     else {
                                                         $cleanValue = preg_replace('/[^\d.-]/', '', $value);
                                                         if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                             echo '<strong>' . $formattedValue . '</strong>';
                                                         } else {
                                                             echo '<strong>' . htmlspecialchars($value) . '</strong>';
