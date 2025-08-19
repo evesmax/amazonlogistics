@@ -66,6 +66,7 @@ if($formato!="-1"){
     //$sql_desencriptado = base64_decode(str_rot13($sql_encriptado));
     //$objeto.=$sql_encriptado." <br>".$sql_desencriptado;
     $objeto.="<script>";
+    $objeto.="alert('Ingrese');";
     $objeto.="  function btn_i".$idcampo."_click(){";
 
     $sql_dt = "select idestructura, descripcion from catalog_estructuras where nombreestructura='".$dependenciatabla."' ";
