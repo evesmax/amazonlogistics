@@ -184,7 +184,6 @@ $htmlpoliticas="
         $conexion->consultar($sqlinv);
         $conexion->cerrar_consulta($result);
 
-
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
@@ -328,7 +327,14 @@ $htmlpoliticas="
 				
 					//Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
-				
+			
+                   $nombreorganizacion= "ALMACENADORA MERCANTIL AMAZON";
+                   $domicilio="ANAXAGORAS 1329, LETRAN VALLE"; 
+                   $cp="03650";
+                   $municipio="MÉXICO";
+                   $estado="CIUDAD DE MÉXICO";
+                   $telefonos= "5519623102";
+
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
 						$html.="<b>".$nombreorganizacion."</b><br>";
