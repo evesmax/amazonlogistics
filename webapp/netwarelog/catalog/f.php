@@ -538,7 +538,7 @@
 					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
 					//alert('Afecta campo');
 
-					if(sidcampo=='i387'){
+					if(sidcampo='i387'){
 						alert('entro cambio Producto');
 					}
 
