@@ -495,7 +495,7 @@
 			
 			function dependenciascompuestas(idcampo){	
 				
-				/*document.getElementById('divdepurar').innerHTML =
+				document.getElementById('divdepurar').innerHTML =
 						document.getElementById('divdepurar').innerHTML + 
 						' --entro para:'+idcampo+' ';*/
 				
