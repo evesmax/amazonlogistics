@@ -538,9 +538,10 @@
 					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
 					//alert('Afecta campo');
 
-					if(idcampo='i387'){
+					if(idcampo=='i387'){
 						alert('entro cambio Producto');
 					}
+
 					dependenciascompuestas(idcampo);
 				}
 				
