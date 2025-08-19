@@ -539,7 +539,7 @@
 					//alert('Afecta campo');
 
 					if(sidcampo='i387'){
-						alert('entro cambio Producto');
+						alert('entro cambio Producto'+sidcampo+idcampo);
 					}
 
 					dependenciascompuestas(idcampo);
