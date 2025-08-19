@@ -533,8 +533,8 @@
 					calculaformulas();	
 					
 					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
+					alert(sidcampo);
 					if(sidcampo=='i387'){
-						alert(sidcampo);
 						document.getElementById('i389').value = "0";
 					}
 
