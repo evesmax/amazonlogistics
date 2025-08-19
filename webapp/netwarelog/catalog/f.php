@@ -497,7 +497,7 @@
 				
 				document.getElementById('divdepurar').innerHTML =
 						document.getElementById('divdepurar').innerHTML + 
-						' --entro para:'+idcampo+' ';*/
+						' --entro para:'+idcampo+' ';
 				
 				
 				<?php echo $script_dependenciacompuesta; ?>
