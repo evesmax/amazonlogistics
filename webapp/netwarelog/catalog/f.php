@@ -535,6 +535,9 @@
 					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
 					if(sidcampo=='387'){
 						document.getElementById('i389').value = "0";
+					    document.getElementById('i390').removeAttribute('disabled');
+						document.getElementById('i390').value = "0";
+
 					}
 
 					dependenciascompuestas(idcampo);
