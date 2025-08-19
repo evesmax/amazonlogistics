@@ -495,9 +495,6 @@
 			
 			function dependenciascompuestas(idcampo){	
 				
-				document.getElementById('divdepurar').innerHTML =
-						document.getElementById('divdepurar').innerHTML + 
-						' --entro para:'+idcampo+' ';
 				
 				
 				<?php echo $script_dependenciacompuesta; ?>
@@ -538,8 +535,8 @@
 					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
 					//alert('Afecta campo');
 
-					if(sidcampo='i387'){
-						alert('entro cambio Producto'+sidcampo+idcampo);
+					if(sidcampo == 'i387'){
+						document.getElementById('i389').value = "0";
 					}
 
 					dependenciascompuestas(idcampo);
