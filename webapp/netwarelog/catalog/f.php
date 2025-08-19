@@ -535,7 +535,8 @@
 					//CALCULANDO FORMULAS
 					calculaformulas();	
 					
-					//REVISANDO LAS DEPENDENCIAS COMPUESTAS
+					//REVISANDO LAS DEPENDENCIAS COMPUESTASi
+					alert('Afecta campo');
 					dependenciascompuestas(idcampo);
 				}
 				
