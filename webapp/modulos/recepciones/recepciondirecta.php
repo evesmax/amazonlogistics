@@ -395,7 +395,7 @@
 				
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>ALMACENADORA: ".$nombreorganizacionAMZ."</b><br>";
+						$html.="<b>".$nombreorganizacionAMZ."</b><br>";
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
 						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
@@ -471,21 +471,24 @@
                                                             $html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
                                                             $html.="<b>Propietario: ".$nombreorganizacion."<br> Marca: ".$marca."</b><br>";
                                                             
-                                                            $html.=" <strong>DOMICILIO:</strong> ".$domicilio;
-                                                            $html.="<br> <strong>C.P.</strong> ".$cp;
-                                                            $html.="<br> ".$municipio;
-                                                            $html.=" ".$estado;
-                                                                                    if($telefonos<>''){
-                                                                                        $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
-                                                                                    }
-                                                            $html.="<br>";					
-                                                        $html.="</td>";
+                                                            //$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
+                                                            //$html.="<br> <strong>C.P.</strong> ".$cp;
+                                                            //$html.="<br> ".$municipio;
+                                                            //$html.=" ".$estado;
+                                                            //                        if($telefonos<>''){
+                                                            //                            $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                            //                        }
+                                                            //$html.="<br>";					
+                                                        
+                                             $html.="<b> Bodega Origen".$bodegaorigen."</b><br>".$domicilio."<br>";
+ 
+                                            $html.="</td>";
 
-                                            $html.="<tr height='55' valign='top'>";
-                                                    $html.="<td>";
-                                                            $html.="<b> Bodega Origen".$bodegaorigen."</b><br>".$domicilio."<br>";
-                                                    $html.="</td>";																															
-                                            $html.="</tr>";
+                                            //$html.="<tr height='55' valign='top'>";
+                                            //        $html.="<td>";
+                                            //                $html.="<b> Bodega Origen".$bodegaorigen."</b><br>".$domicilio."<br>";
+                                            //        $html.="</td>";																															
+                                            //$html.="</tr>";
                                     $html.="</table>";																
                             $html.="</td>";
                             //INFORMACION DEL RECEPTOR
