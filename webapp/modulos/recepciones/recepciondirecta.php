@@ -136,14 +136,14 @@
 									'' consecutivobodega, '' folios, '' observaciones,
 									obd.responsable, '' licenciaoperador, vm.nombremarca
                              From logistica_traslados lt 
-                                inner join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
-                                inner join vista_marcas vm on lt.idmarca=vm.idmarca
-                                inner join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
-                                inner join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
-                                inner join inventarios_productos ip on ip.idproducto=lt.idproducto
-                                inner join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
-                                inner join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
-                                inner join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista 
+                                left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                                left join vista_marcas vm on lt.idmarca=vm.idmarca
+                                left join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
+                                left join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
+                                left join inventarios_productos ip on ip.idproducto=lt.idproducto
+                                left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
+                                left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
+                                left join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista 
                              Where lt.idtraslado=".$idtraslado;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
