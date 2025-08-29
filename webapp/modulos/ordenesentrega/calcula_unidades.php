@@ -18,7 +18,8 @@
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
                                 $('#lbl390').text(info[1]);
-                                $('#i390').val(info[2]);
+                                //$('#i390').val(info[2]);
+                                $('#i390').val(parseFloat(info[2]).toFixed(3));
                                 $('send').attr("disabled", false);
 
                                 if(info[3]==1){
