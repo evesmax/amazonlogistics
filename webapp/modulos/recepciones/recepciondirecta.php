@@ -484,11 +484,6 @@
  
                                             $html.="</td>";
 
-                                            //$html.="<tr height='55' valign='top'>";
-                                            //        $html.="<td>";
-                                            //                $html.="<b> Bodega Origen".$bodegaorigen."</b><br>".$domicilio."<br>";
-                                            //        $html.="</td>";																															
-                                            //$html.="</tr>";
                                     $html.="</table>";																
                             $html.="</td>";
                             //INFORMACION DEL RECEPTOR

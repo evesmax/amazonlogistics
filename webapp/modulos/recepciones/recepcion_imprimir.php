@@ -410,7 +410,8 @@
                             //INFORMACION DEL EMISOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA ORIGEN</td></tr>";
+                                     
+                                    $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA ORIGEN</td></tr>";
                                                             $html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
                                                             $html.="<b>Propietario: ".$nombreorganizacion."<br> Marca: ".$marca."</b><br>";
                                                             
