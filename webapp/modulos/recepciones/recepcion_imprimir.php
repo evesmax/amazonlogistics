@@ -336,7 +336,7 @@
 		$html.="<table width='100%'>";
 						
 				//Información del emisor
-							$html.="<tr>"; 
+					$html.="<tr>"; 
 
                                         $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
                                         $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 

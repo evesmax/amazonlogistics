@@ -238,8 +238,33 @@
 					//Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
+					//Datos Organizació
+                    					$html.="<tr>"; 
+
+                                        $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
+                                        $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 
+                                        $cpAMZ="03650";
+                                        $municipioAMZ="MÉXICO";
+                                        $estadoAMZ="CIUDAD DE MÉXICO";
+                                        $telefonosAMZ= "5519623102";
+					//Logotipo
+					$html.="<td width='15%'>".$imgtitulo."</td>";
+				
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
+						$html.="<b>".$nombreorganizacionAMZ."</b><br>";
+						
+						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
+						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
+						$html.="<br> ".$municipioiAMZ;
+						$html.=" ".$estadoAMZ;
+                                                if($telefonos<>''){
+                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                }
+						$html.="<br>";					
+					$html.="</td>";
+
+					/*$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
 						$html.="<b>Propietario: ".$nombreorganizacion."</b>";
 						$html.="<br><b>Marca: ".$marca."</b>";
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
@@ -251,7 +276,7 @@
                         }
 						$html.="<br>";					
 					$html.="</td>";
-				
+				*/
                 //Datos de Facturación
 				$html.="<td width='30%' align=right>";
 						
@@ -310,11 +335,20 @@
                             //INFORMACION DEL EMISOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>BODEGA</td></tr>";
+                                            $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
-                                                    $html.="<td>";
-                                                            $html.="<b>".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
-                                                    $html.="</td>";																															
+                                                $html.="<td>";
+                                                    $html.="<b>Propietario: ".$nombreorganizacion."</b>";
+                                                    $html.="<br><b>Marca: ".$marca."</b>";
+                                                    $html.=" <strong>DOMICILIO:</strong> ".$domicilio;
+                                                    $html.="<br> <strong>C.P.</strong> ".$cp;
+                                                    $html.="<br> ".$municipio;
+                                                    $html.=" ".$estado;
+                                                    if($telefonos<>''){
+                                                        $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                    }
+                                                            $html.="<b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
+                                                $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";																
                             $html.="</td>";
