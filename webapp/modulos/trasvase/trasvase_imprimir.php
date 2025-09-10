@@ -236,7 +236,7 @@
 				$html.="<tr>"; 
 				
 					//Logotipo
-					$html.="<td width='15%'>".$imgtitulo."</td>";
+					//$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organizació
                     					$html.="<tr>"; 
@@ -347,7 +347,7 @@
                                                     if($telefonos<>''){
                                                         $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
                                                     }
-                                                            $html.="<b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
+                                                    $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
                                                 $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";																
