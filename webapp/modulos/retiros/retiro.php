@@ -257,7 +257,7 @@ $htmlpoliticas="
                                 inner join general_municipios mu on mu.idmunicipio=a.idmunicipio
                                 Where a.idcliente=".$idcliente;
                 
-                $result = $conexion->consultar($sqlbodega);
+                $result = $conexion->consultar($sqlcliente);
                 while($rs = $conexion->siguiente($result)){
                         $domiciliocliente="Domicilio Cliente: ".$rs{"domicilio"}." ".$rs{"telefonos"}." ".$rs{"municipio"}." ".$rs{"estado"};
                 }
