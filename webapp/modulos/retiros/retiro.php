@@ -259,7 +259,7 @@ $htmlpoliticas="
                 
                 $result = $conexion->consultar($sqlcliente);
                 while($rs = $conexion->siguiente($result)){
-                        $domiciliocliente="Domicilio Cliente: ".$rs{"domicilio"}." ".$rs{"telefonos"}." ".$rs{"municipio"}." ".$rs{"estado"};
+                        $domiciliocliente=$rs{"domicilio"}." ".$rs{"telefonos"}." ".$rs{"municipio"}." ".$rs{"estado"};
                 }
                 $conexion->cerrar_consulta($result);                   
                 
