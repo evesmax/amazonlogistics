@@ -404,30 +404,42 @@
 											
 		//Inicia sección del receptor y info de folios y certificado digital
 		$html.="<tr><td>"; //Mega tabla
-                    $html.="<table width='100%'>";	
+                        $html.="<table width='100%'>";	
                             $html.="<tr>"; 
 
                             //INFORMACION DEL EMISOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                        $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA ORIGEN</td></tr>";
-                                        $html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-                                        $html.="<b>Propietario: ".$nombreorganizacion."<br> Marca: ".$marca."</b><br>";
-                                        $html.="<b> Bodega Origen: ".$bodegaorigen."</b><br>".$domicilio."<br>";
-                             $html.="</td>";
-                            
-                                    //INFORMACION DEL RECEPTOR
+                                            $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA ORIGEN</td></tr>";
+                                                            $html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
+                                                            $html.="<b>Propietario: ".$nombreorganizacion."<br> Marca: ".$marca."</b><br>";
+                                                            
+                                                            //$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
+                                                            //$html.="<br> <strong>C.P.</strong> ".$cp;
+                                                            //$html.="<br> ".$municipio;
+                                                            //$html.=" ".$estado;
+                                                            //                        if($telefonos<>''){
+                                                            //                            $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                            //                        }
+                                                            //$html.="<br>";					
+                                                        
+                                             $html.="<b> Bodega Origen: ".$bodegaorigen."</b><br>".$domicilio."<br>";
+ 
+                                            $html.="</td>";
+
+                                    $html.="</table>";																
+                            $html.="</td>";
+                            //INFORMACION DEL RECEPTOR
                             $html.="<td width='20%'>";
                                     $html.="<table class='reporte' width='100%'>";
                                             $html.="<tr class='trencabezado'><td>BODEGA DESTINO</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                     $html.="<td>";
-                                                            $html.="<b>".$bodegadestino."</b><br>".$domiciliobodegadestino."";
+                                                            $html.="<b>".$bodegadestino."</b><br>".$domiciliobodegadestino."<br>";
                                                     $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";																
-                            $html.="</td>";								
-			
+                            $html.="</td>";			
 
                         
 			//INFORMACION DEL CERTIFICADO DE LA EMPRESA
