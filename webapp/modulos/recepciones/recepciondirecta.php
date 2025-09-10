@@ -480,7 +480,7 @@
                                                             //                        }
                                                             //$html.="<br>";					
                                                         
-                                             $html.="<b> Bodega Origen".$bodegaorigen."</b><br>".$domicilio."<br>";
+                                             $html.="<b> Bodega Origen: ".$bodegaorigen."</b><br>".$domicilio."<br>";
  
                                             $html.="</td>";
 
