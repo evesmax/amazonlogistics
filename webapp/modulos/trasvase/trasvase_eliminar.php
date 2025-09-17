@@ -4,10 +4,10 @@
 	include("../../netwarelog/catalog/conexionbd.php");
 	
     //RECUPERANDO VARIABLES
-         $idrecepcion=$_GET["idrecepcion"];
+         $idtrasvase=$_GET["idtrasvase"];
         
          //LLamar SP
-         $sqlsp="call cancelacion_recepciones($idrecepcion);";
+         $sqlsp="call cancelarTrasvase($idtrasvase);";
          $resultado=$conexion->consultar($sqlsp);
         
         echo "$sqlsp";
