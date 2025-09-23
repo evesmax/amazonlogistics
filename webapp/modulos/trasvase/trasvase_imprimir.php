@@ -339,6 +339,13 @@
                                             $html.="<tr height='55' valign='top'>";
                                                 $html.="<td>";
                                                     $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
+                                                    $html.=" <strong>DOMICILIO:</strong> ".$domicilio;
+                                                    $html.="<br> <strong>C.P.</strong> ".$cp;
+                                                    $html.="<br> ".$municipio;
+                                                    $html.=" ".$estado;
+                                                    if($telefonos<>''){
+                                                        $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                    }
                                                 $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";
@@ -350,12 +357,12 @@
                                                 $html.="<td>";
                                                     $html.="<b>Propietario: ".$nombreorganizacion."</b>";
                                                     $html.="<br><b>Marca: ".$marca."</b>";
-                                                    $html.=" <strong>DOMICILIO:</strong> ".$domicilio;
-                                                    $html.="<br> <strong>C.P.</strong> ".$cp;
-                                                    $html.="<br> ".$municipio;
-                                                    $html.=" ".$estado;
-                                                    if($telefonos<>''){
-                                                        $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                    $html.=" <strong>DOMICILIO:</strong> ".$domiciliocli;
+                                                    $html.="<br> <strong>C.P.</strong> ".$cpcli;
+                                                    $html.="<br> ".$municipiocli;
+                                                    $html.=" ".$estadocli;
+                                                    if($telefonoscli<>''){
+                                                        $html.="<br><strong>TELEFONO:</strong> ".$telefonoscli;
                                                     }
                                                 $html.="</td>";																															
                                             $html.="</tr>";
