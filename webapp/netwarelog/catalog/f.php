@@ -537,8 +537,18 @@
 						document.getElementById('i389').value = "0";
 					    document.getElementById('i390').removeAttribute('disabled');
 						document.getElementById('i390').value = "0";
-
 					}
+					if(sidcampo=='664'){
+						document.getElementById('i667').value = "0";
+					    document.getElementById('i668').removeAttribute('disabled');
+						document.getElementById('i668').value = "0";
+					}
+					if(sidcampo=='669'){
+						document.getElementById('i670').value = "0";
+					    document.getElementById('i671').removeAttribute('disabled');
+						document.getElementById('i671').value = "0";
+					}
+
 
 					dependenciascompuestas(idcampo);
 				}
