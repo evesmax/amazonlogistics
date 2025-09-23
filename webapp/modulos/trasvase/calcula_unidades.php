@@ -105,6 +105,30 @@
                         );
                                         
                 });
+
+                // Espera a que el contenido HTML de la página esté completamente cargado
+                document.addEventListener('DOMContentLoaded', function() {
+                    
+                    // Busca el elemento por su ID
+                    const selector = document.getElementById('i664');
+                    // Le asigna el evento 'change'
+                    selector.addEventListener('change', function() {
+                        console.log("El selector ha cambiado (versión sin jQuery).");
+                        document.getElementById('i667').value = 0;
+                        document.getElementById('i668').value = 0;
+                    });
+
+                    // Busca el elemento por su ID
+                    const selector = document.getElementById('i669');
+                    // Le asigna el evento 'change'
+                    selector.addEventListener('change', function() {
+                        console.log("El selector ha cambiado (versión sin jQuery).");
+                        document.getElementById('i670').value = 0;
+                        document.getElementById('i671').value = 0;
+                    });
+
+                });
+
                 $('#send').bind('click', function() {  
                     $('#i668').removeAttr("disabled");  
                     $('#i671').removeAttr("disabled");              
