@@ -239,15 +239,15 @@
 					//$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organizació
-                    					$html.="<tr>"; 
+                    $html.="<tr>"; 
 
-                                        $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
-                                        $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 
-                                        $cpAMZ="03650";
-                                        $municipioAMZ="MÉXICO";
-                                        $estadoAMZ="CIUDAD DE MÉXICO";
-                                        $telefonosAMZ= "5519623102";
-					//Logotipo
+                    $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
+                    $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE, DEL. BENITO JUAREZ, CDMX."; 
+                    $cpAMZ="03650";
+                    $municipioAMZ="MÉXICO";
+                    $estadoAMZ="CIUDAD DE MÉXICO";
+                    $telefonosAMZ= "5519623102";
+                    //Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organización
@@ -256,11 +256,11 @@
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
 						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
-						$html.="<br> ".$municipioiAMZ;
+						$html.="<br> ".$municipioAMZ;
 						$html.=" ".$estadoAMZ;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
-                                                }
+                        if($telefonosAMZ<>''){
+                            $html.="<br><strong>TELEFONO:</strong> ".$telefonosAMZ;
+                        }
 						$html.="<br>";					
 					$html.="</td>";
 

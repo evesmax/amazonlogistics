@@ -271,23 +271,23 @@
 					//Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 			
-                                        $nombreorganizacion= "ALMACENADORA MERCANTIL AMAZON";
-                                        $domicilio="ANAXAGORAS 1329, LETRAN VALLE"; 
-                                        $cp="03650";
-                                        $municipio="MÉXICO";
-                                        $estado="CIUDAD DE MÉXICO";
-                                        $telefonos= "5519623102";
+                                        $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
+                                        $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE, DEL. BENITO JUAREZ, CDMX."; 
+                                        $cpAMZ="03650";
+                                        $municipioAMZ="MÉXICO";
+                                        $estadoAMZ="CIUDAD DE MÉXICO";
+                                        $telefonosAMZ= "5519623102";
 
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				
-						$html.="<b>".$nombreorganizacion."</b><br>";
+						$html.="<b>".$nombreorganizacionAMZ."</b><br>";
 						
-						$html.=" <strong>DOMICILIO:</strong> ".$domicilio;
-						$html.="<br> <strong>C.P.</strong> ".$cp;
-						$html.="<br> ".$municipio;
-						$html.=" ".$estado;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
+						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
+						$html.="<br> ".$municipioAMZ;
+						$html.=" ".$estadoAMZ;
+                                                if($telefonosAMZ<>''){
+                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonosAMZ;
                                                 }
 						$html.="<br>";					
 					$html.="</td>";
