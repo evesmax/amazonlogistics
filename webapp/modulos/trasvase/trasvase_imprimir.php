@@ -311,8 +311,8 @@
 					$html.="<tr class='trencabezado'><td><b>EMISIÓN</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
-					$fecha = new DateTime($fecha);
-					$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');									
+					//$fecha = new DateTime($fecha);
+					$fechainfo = $fecha->format('d-m-Y')." ".$fecha->format('H:i:s');									
 					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."'>";
 					$html.="</td>";
 					$html.="</tr>";
@@ -338,7 +338,7 @@
                                             $html.="<tr class='trencabezado'><td>BODEGA ORIGEN:</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                 $html.="<td>";
-                                                    $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegadestino."<br>";
+                                                    $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
                                                 $html.="</td>";																															
                                             $html.="</tr>";
                                     $html.="</table>";
