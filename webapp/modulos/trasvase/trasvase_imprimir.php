@@ -312,8 +312,8 @@
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
 					//$fecha = new DateTime($fecha);
-					$fechainfo = $fecha->format('d-m-Y')." ".$fecha->format('H:i:s');									
-					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."'>";
+					//$fechainfo = $fecha->format('d-m-Y')." ".$fecha->format('H:i:s');									
+					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fecha."'>";
 					$html.="</td>";
 					$html.="</tr>";
 					
