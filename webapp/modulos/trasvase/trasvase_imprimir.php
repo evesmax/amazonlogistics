@@ -341,8 +341,10 @@
                                                     $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
                                                 $html.="</td>";																															
                                             $html.="</tr>";
+                                    $html.="</table>";
                              $html.="</td>"; 
                              $html.="<td width='50%'>";
+                                    $html.="<table class='reporte' width='100%'>";
                                             $html.="<tr class='trencabezado'><td>CLIENTE:</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                 $html.="<td>";
@@ -357,6 +359,7 @@
                                                     }
                                                 $html.="</td>";																															
                                             $html.="</tr>";
+                                    $html.="</table>";
                             $html.="</td>";
                             $html.="</tr>";  
                                     $html.="</table>";																
