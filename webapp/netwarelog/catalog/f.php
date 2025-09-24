@@ -1,8 +1,7 @@
 <?php
 
 	//RECUERDA AGREGAR LA FUNCION $conexion->cerrar();
-	date_default_timezone_set('America/Mexico_City');
-
+	date_default_timezone_set('Etc/GMT+6');	
 	include("conexionbd.php");
 
 	require_once "../accelog_claccess.php";
