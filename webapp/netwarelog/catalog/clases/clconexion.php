@@ -459,7 +459,7 @@ class conexion{
                              (now(), '".$usuario."','".$nombreproceso."','".$sql."','".$_SERVER["REMOTE_ADDR"]."') ";
                 $this->consultar($sql);
 
-				echo "Transacción registrada correctamente.";
+				echo "Transacción registrada correctamente. $sql ";
 
         }
 

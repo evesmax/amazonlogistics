@@ -22,4 +22,5 @@
     // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
     //echo '<script>window.history.back();</script>';
 
+    
 ?>
