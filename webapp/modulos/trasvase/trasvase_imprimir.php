@@ -32,7 +32,7 @@
                     $foliosorigenreal="";
                     $foliosdestinoreal="";
 
-		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
+		$sqlestatus="select lt.idtrasvase Folio,lt.fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
                         obo.nombrebodega 'bodega', il.descripcionlote 'zafra', 
                         ip1.nombreproducto 'Productoorigen', ie.descripcionestado 'nombreestado', 
@@ -51,7 +51,7 @@
                         left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
                         left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
                     Where lt.idtrasvase=".$idtrasvase;
-                echo $sqlestatus;
+                //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
@@ -84,7 +84,6 @@
         }
 		$conexion->cerrar_consulta($result);                        
                         
-        echo "Fecha: ".$fecha;
 
                 $sqlimagen="";
                 $carpeta="";
