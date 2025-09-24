@@ -3,7 +3,7 @@
 
 	
 
-date_default_timezone_set('America/Mexico_City');
+date_default_timezone_set('UTC-6');
 
 // A partir de aquí, todo el código que use funciones de fecha/hora
 // utilizará la zona horaria de la Ciudad de México.
