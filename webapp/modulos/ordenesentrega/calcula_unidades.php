@@ -12,7 +12,7 @@
             $(document).ready(function(){
                         
                         // Elementos de Solo Lectura
-                        $('#i368_1, #i368_2, #i368_3').prop('readonly', true);
+                        $('#i368_1, #i368_2, #i368_3,#i368t').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i368_img').hide();
                         

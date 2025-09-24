@@ -10,7 +10,7 @@
             $(document).ready(function(){
 
                         // Elementos de Solo Lectura
-                        $('#i672_1, #i672_2, #i672_3').prop('readonly', true);
+                        $('#i672_1, #i672_2, #i672_3,#i672t').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i672_img').hide();
 

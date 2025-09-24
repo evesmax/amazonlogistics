@@ -11,7 +11,7 @@
             $(document).ready(function(){
 
                         // Elementos de Solo Lectura
-                        $('#i270_1, #i270_2, #i270_3').prop('readonly', true);
+                        $('#i270_1, #i270_2, #i270_3,#i270t_3').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i270_img').hide();
 
