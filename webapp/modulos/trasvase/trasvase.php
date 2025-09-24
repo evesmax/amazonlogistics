@@ -62,7 +62,7 @@
         
     //OBTENIENDO INFORMACION BASICA DE TRASLADOS
                     $fecha="";
-                    
+                    $fechatr=date("d-m-Y H:i:s");
                     $propietario="";
                     $marca="";
                     $bodega="";
