@@ -5,12 +5,12 @@ include("netwarelog/catalog/conexionbd.php");
 $sqlsp="call prueba_float();";
 $idfolio=1;
 
-$conexion->transaccion("CANCELACION Folio: $idfolio",$sqlsp);
    
          //LLamar SP
-         $sqlsp="call cancelarTrasvase($idtrasvase);";
+         $sqlsp="call cancelarTrasvase($idfolio);";
          $resultado=$conexion->consultar($sqlsp);
-        
+         $conexion->transaccion("CANCELACION Folio: $idfolio",$sqlsp);
+ 
 
 date_default_timezone_set('Etc/GMT+6');	
 
