@@ -86,7 +86,7 @@ $doctoorigen=6;
                             idestadodocumento=2,
                             foliosorigenreal='$foliosorigenreal',
                             foliosdestinoreal='$foliosdestinoreal',
-                            fechaop=fechadia
+                            fechaop='$fechadia'
                         Where idtrasvase=".$idtrasvase;
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);

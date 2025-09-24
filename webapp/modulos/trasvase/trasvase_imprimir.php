@@ -89,7 +89,7 @@
                 $carpeta="";
                 $imgtitulo="";
 
-				//$tipoimagen="a";
+				$tipoimagen="a";
                 if($tipoimagen=="i"){                        
                         $sqlimagen="select a.logotipo, concat(ifnull(a.rfc,''),' ',a.nombrefabricante) nombre, 
                             concat(a.calle,' ',ifnull(concat('No. ',a.noexterior),''),ifnull(concat('No Int. ',a.nointerior),'')) domicilio,  
@@ -346,7 +346,7 @@
                                             $html.="<tr class='trencabezado'><td>CLIENTE:</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                 $html.="<td>";
-                                                    $html.="<b>Propietario: ".$nombreorganizacion."</b>";
+                                                    $html.="<b>Propietario: ".$propietario."</b>";
                                                     $html.="<br><b>Marca: ".$marca."</b>";
                                                     $html.=" <strong>DOMICILIO:</strong> ".$domicilio;
                                                     $html.="<br> <strong>C.P.</strong> ".$cp;
