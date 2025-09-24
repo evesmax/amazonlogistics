@@ -345,7 +345,7 @@
 					$html.="<td align=center style='font-size:7pt'>";
 					$fechatr = new DateTime($fechatr);
 					$fechainfo = $fecha->format('Y-m-d')." ".$fechatr->format('H:i:s');									
-					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."' readonly>";
+					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."'>";
 					$html.="</td>";
 					$html.="</tr>";
 					
