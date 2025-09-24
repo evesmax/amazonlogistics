@@ -409,7 +409,7 @@ class conexion{
 				}
 
         function transaccion($nombreproceso,$sql){
-						date_default_timezone_set('America/Mexico_City');
+			date_default_timezone_set('Etc/GMT+6');	
             $fecha_actual = strtotime(date("d-m-Y H:i:00",time()));
             $fecha_s1 = strtotime("31-12-".(date("Y")-1)." 00:00:00"); //SEMESTRE 1
             $fecha_s2 = strtotime("30-06-".date("Y")." 23:59:59"); //SEMESTRE 2
@@ -458,6 +458,8 @@ class conexion{
                              values
                              (now(), '".$usuario."','".$nombreproceso."','".$sql."','".$_SERVER["REMOTE_ADDR"]."') ";
                 $this->consultar($sql);
+
+				echo "Transacción registrada correctamente.";
 
         }
 
