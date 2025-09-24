@@ -51,7 +51,7 @@
                         left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
                         left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
                     Where lt.idtrasvase=".$idtrasvase;
-                //echo $sqlestatus;
+                echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
@@ -85,7 +85,7 @@
 		$conexion->cerrar_consulta($result);                        
                         
         echo "Fecha: ".$fecha;
-                
+
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
