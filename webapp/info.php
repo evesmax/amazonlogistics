@@ -2,7 +2,13 @@
 	phpinfo();
 
 	
-	
+
+date_default_timezone_set('America/Mexico_City');
+
+// A partir de aquí, todo el código que use funciones de fecha/hora
+// utilizará la zona horaria de la Ciudad de México.
+
+echo date('Y-m-d H:i:s');
 	 
 if (PHP_SAPI != "cli") {
     die("Please run this test from CLI!

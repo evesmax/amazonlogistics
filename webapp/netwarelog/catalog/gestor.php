@@ -2,6 +2,8 @@
 	//RECUERDA AGREGAR LA FUNCION $conexion->cerrar();
 	include("conexionbd.php");
 	include("clases/clseguridad.php");		
+	date_default_timezone_set('America/Mexico_City');
+
 
 	if(session_id()=='') {
     session_start();
