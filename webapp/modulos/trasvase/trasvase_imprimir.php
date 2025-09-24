@@ -84,6 +84,7 @@
         }
 		$conexion->cerrar_consulta($result);                        
                         
+        echo "Fecha: ".$fecha;
                 
                 $sqlimagen="";
                 $carpeta="";
@@ -311,7 +312,6 @@
 					$html.="<tr class='trencabezado'><td><b>EMISIÓN</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
-                    echo "Fecha: ".$fecha;
 					$html.="<input type=text id='txtfecharec' name='txtfecharec' value='".$fecha."'>";
 					$html.="</td>";
 					$html.="</tr>";
