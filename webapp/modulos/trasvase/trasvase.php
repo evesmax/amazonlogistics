@@ -62,6 +62,7 @@
         
     //OBTENIENDO INFORMACION BASICA DE TRASLADOS
                     $fecha="";
+                    
                     $propietario="";
                     $marca="";
                     $bodega="";
@@ -108,7 +109,7 @@
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
-                    $fecha=$rs{"fecha"};
+                    $fecha=$rs{"Fecha"};
                     $propietario=$rs{"propietario"};
                     $marca=$rs{"marca"};
                     $bodega=$rs{"bodega"};
@@ -281,16 +282,16 @@
 					//Logotipo
 					//$html.="<td width='15%'>".$imgtitulo."</td>";
 				
-					//Datos Organizació
-                    					$html.="<tr>"; 
+				//Datos Organizació
+                    $html.="<tr>"; 
 
-                                        $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
-                                        $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 
-                                        $cpAMZ="03650";
-                                        $municipioAMZ="MÉXICO";
-                                        $estadoAMZ="CIUDAD DE MÉXICO";
-                                        $telefonosAMZ= "5519623102";
-					//Logotipo
+                    $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
+                    $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE, DEL. BENITO JUAREZ, CDMX."; 
+                    $cpAMZ="03650";
+                    $municipioAMZ="MÉXICO";
+                    $estadoAMZ="CIUDAD DE MÉXICO";
+                    $telefonosAMZ= "5519623102";
+                    //Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organización
@@ -299,13 +300,13 @@
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
 						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
-						$html.="<br> ".$municipioiAMZ;
+						$html.="<br> ".$municipioAMZ;
 						$html.=" ".$estadoAMZ;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
-                                                }
+                        if($telefonosAMZ<>''){
+                            $html.="<br><strong>TELEFONO:</strong> ".$telefonosAMZ;
+                        }
 						$html.="<br>";					
-					$html.="</td>";				
+					$html.="</td>";		
 				
 				
                 //Datos de Facturación
@@ -362,12 +363,20 @@
 		$html.="<tr><td>"; //Mega tabla
                     $html.="<table width='100%'>";	
                             $html.="<tr>"; 
-
-                            //INFORMACION DEL EMISOR			
-                         //INFORMACION DEL EMISOR
-                            $html.="<td width='20%'>";
+                             //INFORMACION DEL EMISOR
+                            $html.="<td width='50%'>";
                                     $html.="<table class='reporte' width='100%'>";
-                                            $html.="<tr class='trencabezado'><td>PROPIETARIO / BODEGA</td></tr>";
+                                            $html.="<tr class='trencabezado'><td>BODEGA ORIGEN:</td></tr>";
+                                            $html.="<tr height='55' valign='top'>";
+                                                $html.="<td>";
+                                                    $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
+                                                $html.="</td>";																															
+                                            $html.="</tr>";
+                                    $html.="</table>";
+                             $html.="</td>"; 
+                             $html.="<td width='50%'>";
+                                    $html.="<table class='reporte' width='100%'>";
+                                            $html.="<tr class='trencabezado'><td>CLIENTE:</td></tr>";
                                             $html.="<tr height='55' valign='top'>";
                                                 $html.="<td>";
                                                     $html.="<b>Propietario: ".$nombreorganizacion."</b>";
@@ -379,9 +388,11 @@
                                                     if($telefonos<>''){
                                                         $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
                                                     }
-                                                    $html.="<br><b>Bodega: ".$bodega."</b><br>".$domiciliobodegaorigen."<br>";
                                                 $html.="</td>";																															
                                             $html.="</tr>";
+                                    $html.="</table>";
+                            $html.="</td>";
+                            $html.="</tr>";  
                                     $html.="</table>";																
                             $html.="</td>";
                         
@@ -425,7 +436,7 @@
                                                             <td align=left><b>".$cantidad1." Bultos </b></td>
                                                         </tr>";                                               
                         $html.="<tr>
-                                                            <td width=30%>Cantidad a trasvasar:</td>
+                                                            <td width=30%>Cantidad a trasvasar TM:</td>
                                                             <td align=left><b>".$cantidad2." Toneladas </b></td>
                                                         </tr>";
                         $html.="<tr>
@@ -454,7 +465,7 @@
                                                         </tr>";                  
 
                         $html.="<tr>
-                                                            <td width=30%>Cantidad Esperada:</td>
+                                                            <td width=30%>Cantidad Esperada TM:</td>
                                                             <td align=left><b>".$cantidaddestino2." Toneladas </b></td>
                                                         </tr>";
 						$html.="<tr>
