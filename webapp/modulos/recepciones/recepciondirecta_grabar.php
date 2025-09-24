@@ -43,8 +43,7 @@
             $diferencia1=$_REQUEST["txtcantdif1"];
             $diferencia2=$_REQUEST["txtcantdif2"];
             $folios=$_REQUEST["txtfolios"];
-            $doctoorigen=4;
-            
+            $doctoorigen=4; 
 			
 			
             $cantdev1=0;
@@ -192,7 +191,8 @@ $fechaenvio=$fecharecepcion;
                             from logistica_traslados b 
                                 inner join logistica_envios a on a.idtraslado=b.idtraslado
                             Where b.idtraslado=".$idtraslado." And a.idenvio=".$idenvio;
-                echo $sQuery."<br>";
+        
+        echo $sQuery."<br>";
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"fabricante"};

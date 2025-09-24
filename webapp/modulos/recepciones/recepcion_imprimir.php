@@ -87,16 +87,16 @@
                                     lr.folios 'foliosr', lr.observaciones 'observacionesr',
                                     le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca
                              From logistica_traslados lt 
-                                inner join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
-                                inner join vista_marcas vm on lt.idmarca=vm.idmarca
-                                inner join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
-                                inner join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
-                                inner join inventarios_productos ip on ip.idproducto=lt.idproducto
-                                inner join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
-                                inner join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
-                                inner join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista 
-                                inner join logistica_envios le on le.idtraslado=lt.idtraslado
-                                inner join logistica_recepciones lr on lr.idtraslado=lt.idtraslado and lr.idenvio=le.idenvio
+                                left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
+                                left join vista_marcas vm on lt.idmarca=vm.idmarca
+                                left join operaciones_bodegas obo on obo.idbodega=lt.idbodegaorigen
+                                left join operaciones_bodegas obd on obd.idbodega=lt.idbodegadestino
+                                left join inventarios_productos ip on ip.idproducto=lt.idproducto
+                                left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
+                                left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
+                                left join logistica_envios le on le.idtraslado=lt.idtraslado
+                                left join operaciones_transportistas ot on ot.idtransportista=le.idtransportista 
+                                left join logistica_recepciones lr on lr.idtraslado=lt.idtraslado and lr.idenvio=le.idenvio
 								left join empleados em on em.idempleado=lr.idempleado
                              Where lr.idrecepcion=".$idrecepcion;
               //echo $sqlestatus;

@@ -385,7 +385,7 @@
 				$html.="<tr>"; 
 
                     $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
-                    $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 
+                    $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE, DEL. BENITO JUAREZ, CDMX."; 
                     $cpAMZ="03650";
                     $municipioAMZ="MÉXICO";
                     $estadoAMZ="CIUDAD DE MÉXICO";
@@ -401,8 +401,8 @@
 						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
 						$html.="<br> ".$municipioiAMZ;
 						$html.=" ".$estadoAMZ;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
+                                                if($telefonosAMZ<>''){
+                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonosAMZ;
                                                 }
 						$html.="<br>";					
 					$html.="</td>";
