@@ -3,6 +3,9 @@
     ini_set('session.cookie_httponly',1);
     set_time_limit(3600);
 
+    date_default_timezone_set('America/Mexico_City');
+
+
     //determinando el servidor
     if($_SERVER['SERVER_NAME']=="edu.netwarmonitor.com"){
             $servidor ="unmdbaurora.cyv2immv1rf9.us-west-2.rds.amazonaws.com";
