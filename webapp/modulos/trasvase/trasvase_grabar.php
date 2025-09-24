@@ -34,6 +34,11 @@
 		$conexion->cerrar_consulta($result);
         //echo $sQuery."<br>";
 
+        //COnsume SP para extraer Inventarios
+
+        //Consulta el inventario
+                //SOlo aplica los movimientos si hay inventario si no regresa y da error
+
 //trasvase
 $doctoorigen=6;       
 //Afectando Inventario con Documento.
@@ -80,7 +85,8 @@ $doctoorigen=6;
                             idcapturista=$capturista,
                             idestadodocumento=2,
                             foliosorigenreal='$foliosorigenreal',
-                            foliosdestinoreal='$foliosdestinoreal'
+                            foliosdestinoreal='$foliosdestinoreal',
+                            fechaop=fechadia
                         Where idtrasvase=".$idtrasvase;
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);
