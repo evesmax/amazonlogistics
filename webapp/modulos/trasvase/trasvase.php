@@ -62,12 +62,13 @@
         
     //OBTENIENDO INFORMACION BASICA DE TRASLADOS
                     $fecha="";
+                    $fechatr=date("d-m-Y H:i:s");
                     $propietario="";
                     $marca="";
                     $bodega="";
                     $zafra="";
                     $Productoorigen="";
-                    $nombreestado="";
+                    $nombreestado=""
                     $cantidad1=0;
                     $cantidad2=0;
                     $productodestino="";
@@ -281,16 +282,16 @@
 					//Logotipo
 					//$html.="<td width='15%'>".$imgtitulo."</td>";
 				
-					//Datos Organizació
-                    					$html.="<tr>"; 
+				//Datos Organizació
+                    $html.="<tr>"; 
 
-                                        $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
-                                        $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE"; 
-                                        $cpAMZ="03650";
-                                        $municipioAMZ="MÉXICO";
-                                        $estadoAMZ="CIUDAD DE MÉXICO";
-                                        $telefonosAMZ= "5519623102";
-					//Logotipo
+                    $nombreorganizacionAMZ= "ALMACENADORA MERCANTIL AMAZON";
+                    $domicilioAMZ="ANAXAGORAS 1329, LETRAN VALLE, DEL. BENITO JUAREZ, CDMX."; 
+                    $cpAMZ="03650";
+                    $municipioAMZ="MÉXICO";
+                    $estadoAMZ="CIUDAD DE MÉXICO";
+                    $telefonosAMZ= "5519623102";
+                    //Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
 					//Datos Organización
@@ -299,13 +300,13 @@
 						
 						$html.=" <strong>DOMICILIO:</strong> ".$domicilioAMZ;
 						$html.="<br> <strong>C.P.</strong> ".$cpAMZ;
-						$html.="<br> ".$municipioiAMZ;
+						$html.="<br> ".$municipioAMZ;
 						$html.=" ".$estadoAMZ;
-                                                if($telefonos<>''){
-                                                    $html.="<br><strong>TELEFONO:</strong> ".$telefonos;
-                                                }
+                        if($telefonosAMZ<>''){
+                            $html.="<br><strong>TELEFONO:</strong> ".$telefonosAMZ;
+                        }
 						$html.="<br>";					
-					$html.="</td>";				
+					$html.="</td>";		
 				
 				
                 //Datos de Facturación
@@ -342,9 +343,9 @@
 					$html.="<tr class='trencabezado'><td><b>EMISIÓN</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
-					$fecha = new DateTime($fecha);
-					$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');									
-					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."'>";
+					$fechatr = new DateTime($fechatr);
+					$fechainfo = $fecha->format('Y-m-d')." ".$fechatr->format('H:i:s');									
+					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."' readonly>";
 					$html.="</td>";
 					$html.="</tr>";
 					
