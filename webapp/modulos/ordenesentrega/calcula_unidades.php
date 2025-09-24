@@ -10,6 +10,12 @@
 	<script language="javascript">
             
             $(document).ready(function(){
+                        
+                        // Elementos de Solo Lectura
+                        $('#i368_1, #i368_2, #i368_3').prop('readonly', true);
+                        // Ocultar el elemento de la imagen
+                        $('#i368_img').hide();
+                        
                 $('#i389').bind('blur', function() {  
                         //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)

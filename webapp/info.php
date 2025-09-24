@@ -6,6 +6,11 @@ $sqlsp="call prueba_float();";
 $idfolio=1;
 
 $conexion->transaccion("CANCELACION Folio: $idfolio",$sqlsp);
+   
+         //LLamar SP
+         $sqlsp="call cancelarTrasvase($idtrasvase);";
+         $resultado=$conexion->consultar($sqlsp);
+        
 
 date_default_timezone_set('Etc/GMT+6');	
 

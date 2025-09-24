@@ -9,6 +9,12 @@
 	<script language="javascript">
             
             $(document).ready(function(){
+
+                        // Elementos de Solo Lectura
+                        $('#i270_1, #i270_2, #i270_3').prop('readonly', true);
+                        // Ocultar el elemento de la imagen
+                        $('#i270_img').hide();
+
                 $('#i268').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i265').val(),cantidadp:$('#i268').val(), tipo:1},function(datos)

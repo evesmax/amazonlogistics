@@ -8,6 +8,12 @@
 	<title></title>
 	<script language="javascript">
             $(document).ready(function(){
+
+                        // Elementos de Solo Lectura
+                        $('#i672_1, #i672_2, #i672_3').prop('readonly', true);
+                        // Ocultar el elemento de la imagen
+                        $('#i672_img').hide();
+
                 $('#i667').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
