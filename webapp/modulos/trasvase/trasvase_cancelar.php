@@ -10,6 +10,17 @@
          $sqlsp="call cancelarTrasvase($idtrasvase);";
          $resultado=$conexion->consultar($sqlsp);
         
-        echo "$sqlsp";
+         $conexion->transaccion("CANCELACION TRASVASE: idtrasvase",$sqlsp);
+
+        //echo "$sqlsp";
+
+    // mostrar un mensaje antes de redirigir
+    echo "Trasvase cancelado correctamente. Redirigiendo...";
+    
+    // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
+    echo '<script>window.history.back();</script>';
+    
+    exit();
+
         
 ?>
