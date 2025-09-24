@@ -1,7 +1,11 @@
 <?php
 	//phpinfo();
 
-	
+include("netwarelog/catalog/conexionbd.php");
+$sqlsp="call prueba_float();";
+$idfolio=1;
+
+$conexion->transaccion("CANCELACION Folio: $idfolio",$sqlsp);
 
 date_default_timezone_set('Etc/GMT+6');	
 

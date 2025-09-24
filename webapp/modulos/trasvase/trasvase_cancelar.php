@@ -10,7 +10,7 @@
          $sqlsp="call cancelarTrasvase($idtrasvase);";
          $resultado=$conexion->consultar($sqlsp);
         
-         $conexion->transaccion("CANCELACION TRASVASE: idtrasvase",$sqlsp);
+         $conexion->transaccion("CANCELACION TRASVASE: $idtrasvase",$sqlsp);
 
         //echo "$sqlsp";
 
