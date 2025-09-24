@@ -17,7 +17,7 @@
         //echo "$sqlsp";
 
     // mostrar un mensaje antes de redirigir
-    echo "Recepcion cancelado correctamente. Redirigiendo...";
+    echo "Recepcion cancelado correctamente. Redirigiendo.. $idrecepcion + $sqlsp ";
     
     // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
     //echo '<script>window.history.back();</script>';
