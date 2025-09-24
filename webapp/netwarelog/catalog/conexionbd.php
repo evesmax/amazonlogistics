@@ -6,5 +6,8 @@
 	
 		//$conexion = new conexion($servidor,$usuariobd,$clavebd,$bd,$instalarbase,$tipobd);
 		$conexion = new conexion($servidor,$usuariobd,$clavebd,$bd,$instalarbase,$tipobd);
+
+		date_default_timezone_set('America/Mexico_City');
+
        
 ?>
