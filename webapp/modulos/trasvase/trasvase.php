@@ -343,9 +343,9 @@
 					$html.="<tr class='trencabezado'><td><b>EMISIÓN</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
-					$fecha = new DateTime($fecha);
-					$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');									
-					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechainfo."'>";
+					//$fechatr = new DateTime($fechatr);
+					//$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');									
+					$html.="<input type=text ".$st." id='txtfecharec' name='txtfecharec' value='".$fechatr."'>";
 					$html.="</td>";
 					$html.="</tr>";
 					
