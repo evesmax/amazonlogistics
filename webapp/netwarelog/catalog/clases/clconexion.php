@@ -442,7 +442,7 @@ class conexion{
 												";
 												$sqltabla.="ENGINE = InnoDB;";
                         //echo $sql;
-                        $conexion->consultar($sqltabla);
+                        $this->consultar($sqltabla);
 												//mysql_query($sql, $this->cbase);
                 }
 			                $usuario = "N/A"; //Puede existir un proceso donde aún el usuario no se haya logeado.
@@ -457,7 +457,7 @@ class conexion{
                              (fecha, usuario, nombreproceso, sqlproceso, ip)
                              values
                              (now(), '".$usuario."','".$nombreproceso."','".$sql."','".$_SERVER["REMOTE_ADDR"]."') ";
-                $conexion->consultar($sql);
+                $this->consultar($sql);
 
 				echo "Transacción registrada correctamente. $sql ";
 
