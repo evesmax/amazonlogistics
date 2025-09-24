@@ -89,14 +89,14 @@
                 $carpeta="";
                 $imgtitulo="";
 
-				$tipoimagen="1";
+				//$tipoimagen="i";
                 if($tipoimagen=="i"){                        
                         $sqlimagen="select a.logotipo, concat(ifnull(a.rfc,''),' ',a.nombrefabricante) nombre, 
                             concat(a.calle,' ',ifnull(concat('No. ',a.noexterior),''),ifnull(concat('No Int. ',a.nointerior),'')) domicilio,  
                             mu.nombremunicipio municipio, es.nombreestado estado, a.codigopostal, '' telefonos  
 							from operaciones_fabricantes a
-                            inner join general_estados es on es.idestado=a.idestado
-                            inner join general_municipios mu on mu.idmunicipio=a.idmunicipio
+                            left join general_estados es on es.idestado=a.idestado
+                            left join general_municipios mu on mu.idmunicipio=a.idmunicipio
                             where idfabricante=".$idfabricante;
                         $carpeta="../../netwarelog/archivos/1/operaciones_fabricantes/";
 
