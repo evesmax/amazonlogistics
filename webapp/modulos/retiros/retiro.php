@@ -333,7 +333,7 @@ $htmlpoliticas="
                    $cp="03650";
                    $municipio="MÉXICO";
                    $estado="CIUDAD DE MÉXICO";
-                   $telefonos= "5519623102";
+                   $telefonos= "5575742291";
 
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				

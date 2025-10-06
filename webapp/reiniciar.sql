@@ -1,7 +1,7 @@
 truncate operaciones_almacenadoras;
 INSERT INTO `operaciones_almacenadoras` (`idalmacenadora`, `nombrealmacenadora`, `rfcalmacenadora`, `idestado`, `idmunicipio`, `calle`, `noexterior`, `colonia`, `nointerior`, `telefonos`, `telefonosmoviles`, `correoelectronico`, `paginaweb`, `notasadicionales`, `personaenlace`, `logotipo`)
 VALUES
-	(1, 'Almacenadora Mercantil Amazon', 'AMA111219AW6', 14, 538, 'ANAXAGORAS', '1329', 'LETRAN VALLE', NULL, '525519623102', NULL, 'ferhernandez@amz-logistics.com.mx', NULL, NULL, NULL, '');
+	(1, 'Almacenadora Mercantil Amazon', 'AMA111219AW6', 14, 538, 'ANAXAGORAS', '1329', 'LETRAN VALLE', NULL, '525575742291', NULL, 'ferhernandez@amz-logistics.com.mx', NULL, NULL, NULL, '');
 
 
 truncate operaciones_bodegas;

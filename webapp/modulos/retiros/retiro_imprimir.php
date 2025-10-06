@@ -276,7 +276,7 @@
                                         $cpAMZ="03650";
                                         $municipioAMZ="MÉXICO";
                                         $estadoAMZ="CIUDAD DE MÉXICO";
-                                        $telefonosAMZ= "5519623102";
+                                        $telefonosAMZ= "5575742291";
 
 					//Datos Organización
 					$html.="<td width='45%' align=left style='font-family:helvetica;font-size:9pt;'>";				

@@ -389,7 +389,7 @@
                     $cpAMZ="03650";
                     $municipioAMZ="MÉXICO";
                     $estadoAMZ="CIUDAD DE MÉXICO";
-                    $telefonosAMZ= "5519623102";
+                    $telefonosAMZ= "5575742291";
 					//Logotipo
 					$html.="<td width='15%'>".$imgtitulo."</td>";
 				
