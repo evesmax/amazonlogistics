@@ -18,7 +18,7 @@ $idestado="NULL";
 $idbodega="NULL";
 
 echo $_SESSION['applied_filters'];
-exit();
+//exit();
 
 if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters'])) {
 
