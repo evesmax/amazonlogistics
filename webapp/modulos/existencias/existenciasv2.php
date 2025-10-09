@@ -116,6 +116,7 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         $sqldelete="delete from inventarios_existencias where idempleado=".$usuario;
         $resultado=$conexion->consultar($sqldelete); 
         echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
+        exit();
         //LLamar SP
         $sqlsp="call generaExistenciasInventario('$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
