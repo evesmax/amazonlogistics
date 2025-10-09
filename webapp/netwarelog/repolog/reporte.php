@@ -1052,6 +1052,9 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         $originalQuery = $query;
         $query = cleanSqlUniversal($query);
         
+        // CRÍTICO: Eliminar TODOS los patrones [@...] no resueltos antes de ejecutar
+        $query = removeAllUnresolvedPatterns($query);
+        
         // Log solo si hubo cambios
         if ($originalQuery !== $query) {
             error_log("SQL limpiado universalmente para reporte " . (isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'desconocido'));
