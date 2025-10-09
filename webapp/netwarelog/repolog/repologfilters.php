@@ -975,6 +975,30 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                         }
                     }
                 }
+                else {
+                    // CASO GENERAL: Si es multiselección y no hay valor, eliminar la cláusula completa
+                    // Detectar si es multiselección verificando el patrón completo
+                    $esMultiseleccion = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
+                    
+                    if ($esMultiseleccion) {
+                        // Patrones genéricos para eliminar cláusulas IN vacías
+                        $removePatterns = [
+                            '/\s*and\s*\([^\(]*\s+IN\s+' . preg_quote($fullPattern, '/') . '\)/i',
+                            '/\s*AND\s*\([^\(]*\s+IN\s+' . preg_quote($fullPattern, '/') . '\)/i',
+                            '/\s*or\s*\([^\(]*\s+IN\s+' . preg_quote($fullPattern, '/') . '\)/i',
+                            '/\s*OR\s*\([^\(]*\s+IN\s+' . preg_quote($fullPattern, '/') . '\)/i'
+                        ];
+                        
+                        foreach ($removePatterns as $pattern) {
+                            $newSql = preg_replace($pattern, '', $sql);
+                            if ($newSql !== $sql) {
+                                error_log("Eliminada cláusula IN multiselección sin valor: $fullPattern");
+                                $sql = $newSql;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1029,8 +1053,9 @@ function buildSqlQuery($report, $filterValues) {
         $whereClause = fixMalformedComboPatterns($whereClause);
         
         // Then look for direct combo patterns [@Field;val;des;sql] and replace them with selected values
-        // This is a direct approach that should work more reliably
-        $comboPatternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^\]]+)\]/'; // [@Campo;val;des;SQL]
+        // CRÍTICO: Regex especial que permite [!variables] dentro del SQL
+        // Captura: caracteres normales O patrones [!...] completos, hasta llegar al ] final del patrón [@...]
+        $comboPatternRegex = '/\[@([^;]+);([^;]+);([^;]+);((?:[^\[\]]+|\[[^\]]+\])+)\]/s'; // [@Campo;val;des;SQL;@Multiselection?]
         
         // DEBUG: Mostrar el SQL WHERE antes de buscar patrones
         error_log("WHERE CLAUSE ORIGINAL antes de buscar patrones: " . $whereClause);
@@ -2192,7 +2217,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         // DEBUGGING: Registrar todos los valores de filtro recibidos para analizar el problema
         error_log("=== VALORES DE FILTROS RECIBIDOS (DEBUG) ===");
         foreach ($filterValues as $key => $value) {
-            error_log("Filtro: $key, Valor: " . ($value === '' ? '(vacío)' : $value));
+            // Manejar arrays (multiselección) correctamente
+            $displayValue = '';
+            if ($value === '') {
+                $displayValue = '(vacío)';
+            } elseif (is_array($value)) {
+                $displayValue = '[' . implode(', ', $value) . ']';
+            } else {
+                $displayValue = $value;
+            }
+            error_log("Filtro: $key, Valor: " . $displayValue);
         }
         
         // PASO 2: Aplicar todas las limpiezas generales
@@ -2398,7 +2432,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         $debugInfo .= "<h4>Valores de filtros recibidos:</h4>";
         $debugInfo .= "<pre>";
         foreach ($filterValues as $key => $value) {
-            $debugInfo .= htmlspecialchars($key . ": " . $value) . "\n";
+            // Manejar arrays (multiselección) correctamente
+            $displayValue = is_array($value) ? '[' . implode(', ', $value) . ']' : $value;
+            $debugInfo .= htmlspecialchars($key . ": " . $displayValue) . "\n";
         }
         $debugInfo .= "</pre>";
         
