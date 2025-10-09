@@ -913,44 +913,46 @@ function eliminarClausulasAndCompletas($sql, $emptyFilters = array()) {
     
     // Para cada filtro vacío, eliminar la cláusula AND completa
     foreach ($emptyFilters as $filterName) {
-        // Patrones para detectar cláusulas AND con el nombre del filtro
+        // CRÍTICO: Los patrones ahora capturan la comilla final en un grupo para preservarla
+        // Estructura: capturar todo el patrón [@...] pero preservar la comilla final
         $patterns = array(
             // Patrón 1: and (campo = "[@Filtro;...]")
-            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)/i',
             
             // Patrón 2: and (campo in ("[@Filtro;...]"))
-            '/\s+and\s+\([a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)\)/i',
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)\)/i',
             
             // Patrón 3: and campo = "[@Filtro;...]"
-            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?/i',
+            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)/i',
             
             // Patrón 4: and campo in ("[@Filtro;...]")
-            '/\s+and\s+[a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            '/\s+and\s+[a-zA-Z0-9_.]+\s+in\s+\("?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)/i',
             
             // Patrón 5: OR (campo = "[@Filtro;...]")
-            '/\s+or\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
+            '/\s+or\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)/i',
             
             // Patrón 6: OR campo = "[@Filtro;...]"
-            '/\s+or\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?/i',
+            '/\s+or\s+[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)/i',
             
             // Patrón 7: and (campo = 'valor') - para cualquier filtro vacío con valor específico
             '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*[\'\"][^\'\"]*' . preg_quote($filterName, '/') . '[^\'\"]*[\'\"]\s*\)/i',
             
-            // Patrón 7: Detectar cláusulas dentro de múltiples niveles de paréntesis
-            '/\s+and\s+\(\s*\(\s*[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)\s*\)/i',
+            // Patrón 8: Detectar cláusulas dentro de múltiples niveles de paréntesis
+            '/\s+and\s+\(\s*\(\s*[a-zA-Z0-9_.]+\s*=\s*"?\[@' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)\s*\)/i',
             
-            // Patrón 8: Patrones similares pero sin el signo @ (para reporte 4)
-            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\]"?\s*\)/i',
-            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\]"?/i'
+            // Patrón 9: Patrones similares pero sin el signo @ (para reporte 4)
+            '/\s+and\s+\([a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\](["\']?)\s*\)/i',
+            '/\s+and\s+[a-zA-Z0-9_.]+\s*=\s*"?\[' . preg_quote($filterName, '/') . '[^]]*\](["\']?)/i'
         );
         
-        // Aplicar cada patrón
+        // Aplicar cada patrón PRESERVANDO la comilla final
         foreach ($patterns as $pattern) {
             $oldSQL = $sql;
-            $sql = preg_replace($pattern, '', $sql);
+            // IMPORTANTE: $1 contiene la comilla final capturada, la preservamos en el reemplazo
+            $sql = preg_replace($pattern, '$1', $sql);
             // Si hubo un cambio, registrarlo
             if ($oldSQL !== $sql) {
-                error_log("Patrón aplicado: " . $pattern);
+                error_log("Patrón aplicado (preservando comilla final): " . $pattern);
                 error_log("SQL después del patrón: " . $sql);
             }
         }
@@ -1588,6 +1590,117 @@ function cleanMultiselectionInConditions($sql) {
     // Log solo si hubo cambios
     if ($sql !== $originalSql) {
         error_log("Aplicada limpieza universal de multiselección IN: corregidos patrones malformados para cualquier tipo de valor");
+    }
+    
+    return $sql;
+}
+
+/**
+ * Elimina TODOS los patrones [@...] no resueltos del SQL final
+ * Esta función se debe llamar justo antes de mostrar o ejecutar el SQL
+ * para asegurar que no queden patrones sin procesar
+ * 
+ * @param string $sql SQL query con posibles patrones no resueltos
+ * @return string SQL limpio sin patrones [@...]
+ */
+function removeAllUnresolvedPatterns($sql) {
+    $originalSql = $sql;
+    
+    // Patrón que detecta cualquier [@...] sin importar su contenido o ubicación
+    // CRÍTICO: Incluir las comillas que rodean el patrón para eliminarlas también
+    // Esto evita dejar comillas vacías que afecten a valores posteriores
+    
+    // Primero eliminar patrones CON comillas balanceadas: "[@...]" o '[@...]'
+    $patternDoubleQuotes = '/"[@[^\]]*]"/';  // Comillas dobles balanceadas
+    $patternSingleQuotes = "/'[@[^\]]*]'/";  // Comillas simples balanceadas
+    
+    if (preg_match_all($patternDoubleQuotes, $sql, $matches)) {
+        foreach ($matches[0] as $unresolvedPattern) {
+            error_log("Eliminando patrón con comillas dobles: " . substr($unresolvedPattern, 0, 50) . "...");
+        }
+        $sql = preg_replace($patternDoubleQuotes, '', $sql);
+    }
+    
+    if (preg_match_all($patternSingleQuotes, $sql, $matches)) {
+        foreach ($matches[0] as $unresolvedPattern) {
+            error_log("Eliminando patrón con comillas simples: " . substr($unresolvedPattern, 0, 50) . "...");
+        }
+        $sql = preg_replace($patternSingleQuotes, '', $sql);
+    }
+    
+    // Finalmente eliminar patrones SIN comillas (si quedó alguno)
+    $patternNoQuotes = '/\[@[^\]]*\]/';
+    if (preg_match_all($patternNoQuotes, $sql, $matches)) {
+        foreach ($matches[0] as $unresolvedPattern) {
+            error_log("Eliminando patrón sin comillas: " . substr($unresolvedPattern, 0, 50) . "...");
+        }
+        $sql = preg_replace($patternNoQuotes, '', $sql);
+    }
+    
+    // NUEVO: Eliminar residuos de patrones parcialmente removidos
+    // Estos residuos aparecen cuando un patrón @Multiselection queda sin resolver
+    // Ejemplo: " ORDER BY des;@Multiselection])" después de procesar otros filtros
+    
+    // Patrón específico 1: Eliminar " ORDER BY campo;@Multiselection])" o variantes
+    // CRÍTICO: Usar límite de palabra \b antes de ORDER para evitar retroceder
+    $residuePattern = '/\s+order\s+by\s+[a-zA-Z0-9_]+\s*;@Multiselection\]\)?/i';
+    if (preg_match_all($residuePattern, $sql, $matches)) {
+        foreach ($matches[0] as $residue) {
+            error_log("Eliminando residuo ORDER BY: " . substr($residue, 0, 50) . "...");
+        }
+        // Reemplazar con un espacio para no pegar palabras
+        $sql = preg_replace($residuePattern, ' ', $sql);
+    }
+    
+    // Patrón específico 2: Eliminar solo "des;@Multiselection])" o ";@Multiselection])" residuales
+    $simpleResiduePattern = '/\s*;@Multiselection\]\)?/';
+    if (preg_match($simpleResiduePattern, $sql)) {
+        error_log("Eliminando residuo simple ;@Multiselection]");
+        $sql = preg_replace($simpleResiduePattern, '', $sql);
+    }
+    
+    // Limpiar condiciones vacías que pueden quedar después de eliminar los patrones
+    // Ejemplo: "and (campo IN "")" -> se elimina
+    $sql = preg_replace('/\s+(and|AND|or|OR)\s+\([^)]*\s+(IN|=|LIKE)\s*["\']["\']?\s*\)/i', '', $sql);
+    
+    // CRÍTICO: Eliminar cláusulas IN vacías cuando no se seleccionó ningún valor en filtros multiselección
+    // Ejemplos: "and (ob.idbodega IN )" -> se elimina completamente
+    //          "OR (campo IN )" -> se elimina
+    $sql = preg_replace('/\s+(and|or)\s+\(\s*[a-zA-Z0-9_.]+\s+IN\s+\)/i', '', $sql);
+    
+    // También eliminar variaciones sin paréntesis externos: "and campo IN ()"
+    $sql = preg_replace('/\s+(and|or)\s+[a-zA-Z0-9_.]+\s+IN\s+\(\s*\)/i', '', $sql);
+    
+    // Limpiar paréntesis vacíos
+    $sql = preg_replace('/\(\s*\)/', '', $sql);
+    
+    // Limpiar AND/OR colgantes
+    $sql = preg_replace('/\s+(and|AND|or|OR)\s+(ORDER\s+BY|GROUP\s+BY|HAVING|\))/i', ' $2', $sql);
+    $sql = preg_replace('/\s+(and|AND|or|OR)\s*$/i', '', $sql);
+    
+    // Limpiar espacios múltiples
+    $sql = preg_replace('/\s+/', ' ', $sql);
+    $sql = trim($sql);
+    
+    // CRÍTICO: Verificar y corregir comillas desbalanceadas después de todas las limpiezas
+    // Patrón: detectar valores con comilla de apertura pero sin cierre antes de paréntesis y palabras clave SQL
+    // Ejemplo: (campo = "10) ORDER BY -> (campo = "10") ORDER BY
+    
+    // Caso 1: Comilla sin cerrar seguida de ) y luego palabra clave SQL
+    $sql = preg_replace('/([a-zA-Z0-9_.]+\s*=\s*")([^"]+)(\))\s+(ORDER\s+BY|GROUP\s+BY|HAVING|AND|OR|;)/i', '$1$2"$3 $4', $sql);
+    
+    // Caso 2: Comilla sin cerrar seguida directamente de palabra clave SQL (sin paréntesis)
+    $sql = preg_replace('/([a-zA-Z0-9_.]+\s*=\s*")([^"]+)\s+(ORDER\s+BY|GROUP\s+BY|HAVING|AND|OR|;)/i', '$1$2" $3', $sql);
+    
+    // También para comillas simples - Caso 1
+    $sql = preg_replace('/([a-zA-Z0-9_.]+\s*=\s*\')([^\']+)(\))\s+(ORDER\s+BY|GROUP\s+BY|HAVING|AND|OR|;)/i', '$1$2\'$3 $4', $sql);
+    
+    // También para comillas simples - Caso 2
+    $sql = preg_replace('/([a-zA-Z0-9_.]+\s*=\s*\')([^\']+)\s+(ORDER\s+BY|GROUP\s+BY|HAVING|AND|OR|;)/i', '$1$2\' $3', $sql);
+    
+    // Log solo si hubo cambios
+    if ($sql !== $originalSql) {
+        error_log("Se eliminaron patrones no resueltos del SQL para mostrar/ejecutar correctamente");
     }
     
     return $sql;
