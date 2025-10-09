@@ -17,7 +17,7 @@ $idloteproducto="NULL";
 $idestado="NULL";
 $idbodega="NULL";
 
-echo $_SESSION['applied_filters'];
+//echo $_SESSION['applied_filters'];
 //exit();
 
 if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters'])) {
@@ -115,8 +115,8 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         //Elimina Existencias 
         $sqldelete="delete from inventarios_existencias where idempleado=".$usuario;
         $resultado=$conexion->consultar($sqldelete); 
-        echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
-        exit();
+        //echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
+        //exit();
         //LLamar SP
         $sqlsp="call generaExistenciasInventario('$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         $resultado=$conexion->consultar($sqlsp);
