@@ -130,10 +130,9 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
     }
     
     // Buscar todos los patrones de tipo [@nombre;val;des;...] que aún estén en la consulta
-    // Esta parte es el reemplazo genérico original, mejorado
-    // Ahora incluye soporte para patrones con @Multiselection
-    $patternRegex = '/\[@([^;]+);([^;]+);([^;]+);([^;]+)(?:;([^;\]]+))?\]/';
-    if (preg_match_all($patternRegex, $sql, $matches, PREG_SET_ORDER)) {
+    // USAR extractBalancedPatterns en lugar de regex para manejo correcto de corchetes anidados
+    $matches = extractBalancedPatterns($sql);
+    if (count($matches) > 0) {
         error_log("Encontrados " . count($matches) . " patrones genéricos no sustituidos");
         
         foreach ($matches as $match) {
@@ -141,12 +140,16 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
             $filterName = $match[1];  // nombre
             $valField = $match[2];    // val
             $desField = $match[3];    // des
-            $sqlQuery = $match[4];    // SQL de consulta
+            $sqlQueryRaw = $match[4]; // SQL de consulta (puede incluir ;@Multiselection)
             
-            // Check if multiselection is enabled (5th parameter should be @Multiselection)
+            // Check if multiselection is enabled (check if SQL ends with ;@Multiselection)
             $isMultiselection = false;
-            if (isset($match[5]) && trim($match[5]) === '@Multiselection') {
+            if (preg_match('/;\s*@Multiselection\s*$/i', $sqlQueryRaw)) {
                 $isMultiselection = true;
+                // Remove ;@Multiselection from SQL for execution
+                $sqlQuery = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlQueryRaw);
+            } else {
+                $sqlQuery = $sqlQueryRaw;
             }
             
             // MEJORA: Imprimir el patrón completo para depuración
@@ -446,6 +449,23 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                                 break;
                             }
                         }
+                    }
+                }
+                else {
+                    // CASO GENERAL: Eliminar la cláusula completa si no hay valor
+                    // Detectar si es multiselección verificando el patrón completo
+                    $esMultiseleccion = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
+                    
+                    // Usar la función de eliminación de cláusulas completas que balancea paréntesis
+                    // Esto funciona tanto para IN como para = porque balancea correctamente
+                    $newSql = removeCompleteClause($sql, $fullPattern);
+                    if ($newSql !== $sql) {
+                        if ($esMultiseleccion) {
+                            error_log("Eliminada cláusula IN multiselección sin valor usando balance de paréntesis");
+                        } else {
+                            error_log("Eliminada cláusula = (simple) sin valor usando balance de paréntesis");
+                        }
+                        $sql = $newSql;
                     }
                 }
             }
@@ -1062,6 +1082,9 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
             $_SESSION['sql_problematic'] = $originalQuery;
             $_SESSION['sql_cleaned'] = $query;
         }
+        
+        // LOG CRÍTICO: Ver el SQL exacto que se va a ejecutar
+        error_log("SQL QUE SE VA A EJECUTAR: " . $query);
         
         // Prepare and execute the query
         $stmt = $pdo->query($query);
@@ -1906,7 +1929,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             <?php if (!empty($results)): ?>
                 <div class="action-buttons">
                     <a href="export.php" class="export-btn">Descargar CSV</a>
-                    <a href="export_excel.php" class="export-excel-btn">Descargar Excel</a>
+                    <a href="export_excel_template.php" class="export-excel-btn">Descargar Excel</a>
                     <a href="print.php" class="print-btn">Imprimir PDF</a>
                 </div>
             <?php endif; ?>

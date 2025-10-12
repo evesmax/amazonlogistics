@@ -80,6 +80,10 @@ header('Cache-Control: max-age=0');
     </xml>
     <![endif]-->
     <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -101,38 +105,65 @@ header('Cache-Control: max-age=0');
             display: table;
             width: 100%;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
         }
-        /* Logo eliminado por request del usuario */
+        .logo-container {
+            display: table-cell;
+            width: 200px;
+            vertical-align: middle;
+            padding-right: 20px;
+        }
+        .company-logo-text {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0066CC;
+            line-height: 1.2;
+            font-family: 'Arial Black', Arial, sans-serif;
+        }
         .title-container {
             display: table-cell;
             vertical-align: middle;
         }
         .report-title {
-            font-size: 18pt;
+            font-size: 20pt;
             font-weight: bold;
-            margin: 0;
+            margin: 0 0 5px 0;
         }
         .report-date {
-            font-size: 10pt;
+            font-size: 12pt;
             color: #666;
-            margin: 5px 0 0 0;
+            margin: 0;
+        }
+        .report-filters {
+            margin-top: 8px;
+            font-size: 12pt;
+            color: #666;
         }
         .footer {
             margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
             text-align: center;
-            font-size: 10pt;
+            font-size: 12pt;
             color: #666;
         }
     </style>
 </head>
 <body>
     <div class="header">
+        <div class="logo-container">
+            <div class="company-logo-text">
+                AMAZON<br>LOGISTICS
+            </div>
+        </div>
+        
         <div class="title-container">
             <h1 class="report-title"><?php echo htmlspecialchars($reportTitle); ?></h1>
             <p class="report-date">Generado el: <?php echo $currentDate; ?></p>
             
             <?php if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])): ?>
-                <div class="report-filters" style="margin-top: 8px; font-size: 10pt; color: #666;">
+                <div class="report-filters">
                     <strong>Filtros aplicados:</strong>
                     <?php 
                     $filterTexts = array();

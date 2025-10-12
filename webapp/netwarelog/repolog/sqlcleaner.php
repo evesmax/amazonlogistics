@@ -4,12 +4,298 @@
  */
 
 /**
+ * Extrae patrones [@...] con balance correcto de corchetes
+ * IGNORA corchetes de variables [!...] porque no son patrones anidados
+ * Evita capturar SQL fuera del patrón
+ * 
+ * @param string $sql SQL con patrones [@...]
+ * @return array Array de patrones extraídos con estructura similar a preg_match_all
+ */
+function extractBalancedPatterns($sql) {
+    $patterns = [];
+    $len = strlen($sql);
+    $i = 0;
+    
+    while ($i < $len) {
+        // Buscar inicio de patrón [@
+        if ($i < $len - 1 && $sql[$i] == '[' && $sql[$i+1] == '@') {
+            $start = $i;
+            $i += 2; // Saltar [@
+            $bracketCount = 1; // Empezamos con 1 porque ya tenemos [
+            $patternContent = '[@';
+            
+            // Recorrer hasta encontrar el ] que cierra el patrón
+            while ($i < $len && $bracketCount > 0) {
+                $char = $sql[$i];
+                
+                // CRÍTICO: Si encontramos [! es una variable de sesión, NO es patrón anidado
+                // Saltar toda la variable [!...] sin contar sus corchetes
+                if ($char == '[' && $i < $len - 1 && $sql[$i+1] == '!') {
+                    // Encontrar el ] que cierra esta variable
+                    $patternContent .= $char;
+                    $i++;
+                    while ($i < $len && $sql[$i] != ']') {
+                        $patternContent .= $sql[$i];
+                        $i++;
+                    }
+                    if ($i < $len) {
+                        $patternContent .= $sql[$i]; // Agregar el ] de cierre
+                        $i++;
+                    }
+                    continue;
+                }
+                
+                $patternContent .= $char;
+                
+                if ($char == '[') {
+                    $bracketCount++;
+                } elseif ($char == ']') {
+                    $bracketCount--;
+                }
+                
+                $i++;
+            }
+            
+            // Si los corchetes están balanceados, tenemos un patrón válido
+            if ($bracketCount == 0) {
+                // Parsear el patrón para extraer las partes
+                // Formato: [@Label;val;des;SQL...] o [@Label;val;des;SQL...;@Multiselection]
+                if (preg_match('/\[@([^;]+);([^;]+);([^;]+);(.+)\]/s', $patternContent, $match)) {
+                    $patterns[] = [
+                        0 => $match[0],  // Patrón completo
+                        1 => $match[1],  // Label
+                        2 => $match[2],  // val field
+                        3 => $match[3],  // des field
+                        4 => $match[4]   // SQL (puede incluir ;@Multiselection)
+                    ];
+                    error_log("Patrón extraído (longitud=" . strlen($match[0]) . "): " . substr($match[0], 0, 100) . "...");
+                }
+            }
+        } else {
+            $i++;
+        }
+    }
+    
+    return $patterns;
+}
+
+/**
+ * Elimina una cláusula AND/OR completa que contiene un patrón sin resolver
+ * Balancea paréntesis correctamente ignorando paréntesis dentro de patrones [@...]
+ * 
+ * @param string $sql SQL con patrón sin resolver
+ * @param string $pattern Patrón a buscar y eliminar con su cláusula
+ * @return string SQL sin la cláusula completa
+ */
+function removeCompleteClause($sql, $pattern) {
+    // Buscar la posición del patrón - intentar con y sin comillas
+    $patternPos = strpos($sql, $pattern);
+    
+    // Si no se encuentra el patrón directo, buscar con comillas alrededor
+    $patternWithQuotes = null;
+    if ($patternPos === false) {
+        // Intentar con comillas dobles
+        if (strpos($sql, '"' . $pattern . '"') !== false) {
+            $patternPos = strpos($sql, '"' . $pattern . '"');
+            $patternWithQuotes = '"' . $pattern . '"';
+        }
+        // Intentar con comillas simples
+        elseif (strpos($sql, "'" . $pattern . "'") !== false) {
+            $patternPos = strpos($sql, "'" . $pattern . "'");
+            $patternWithQuotes = "'" . $pattern . "'";
+        }
+        else {
+            return $sql; // No se encontró el patrón ni con comillas
+        }
+    }
+    
+    // Ajustar la posición si encontramos el patrón con comillas
+    if ($patternWithQuotes !== null) {
+        // Retroceder 1 carácter para incluir la comilla inicial
+        $patternPos = $patternPos;
+        error_log("removeCompleteClause: Patrón encontrado con comillas: $patternWithQuotes");
+    }
+    
+    // Retroceder para encontrar el inicio de la cláusula (AND o OR)
+    $clauseStart = $patternPos;
+    $searchStart = max(0, $patternPos - 300); // Buscar hasta 300 caracteres atrás
+    
+    // Buscar el AND/OR que precede al patrón
+    $substring = substr($sql, $searchStart, $patternPos - $searchStart);
+    if (preg_match_all('/(and|or)\s*\(/i', $substring, $matches, PREG_OFFSET_CAPTURE)) {
+        // Tomar la última coincidencia (la más cercana al patrón)
+        $lastMatch = end($matches[0]);
+        $clauseStart = $searchStart + $lastMatch[1];
+    }
+    
+    // Encontrar el paréntesis de apertura después de AND/OR
+    $openParenPos = $clauseStart;
+    while ($openParenPos < $patternPos && $sql[$openParenPos] != '(') {
+        $openParenPos++;
+    }
+    
+    if ($openParenPos >= $patternPos) {
+        // No se encontró el paréntesis de apertura, usar eliminación simple
+        error_log("No se encontró paréntesis de apertura, usando eliminación simple");
+        $result = str_replace($pattern, '', $sql);
+        return $result;
+    }
+    
+    // Desde el paréntesis de apertura, balancear hasta encontrar el cierre
+    // IMPORTANTE: Ignorar paréntesis dentro de patrones [@...]
+    $i = $openParenPos + 1;
+    $len = strlen($sql);
+    $parenCount = 1;
+    $insidePattern = false;
+    $insideVariable = false;
+    
+    while ($i < $len && $parenCount > 0) {
+        // Detectar inicio de patrón [@
+        if ($i < $len - 1 && $sql[$i] == '[' && $sql[$i+1] == '@') {
+            $insidePattern = true;
+        }
+        // Detectar inicio de variable [!
+        elseif ($i < $len - 1 && $sql[$i] == '[' && $sql[$i+1] == '!') {
+            $insideVariable = true;
+        }
+        // Detectar fin de patrón o variable ]
+        elseif ($sql[$i] == ']') {
+            if ($insidePattern) {
+                $insidePattern = false;
+            } elseif ($insideVariable) {
+                $insideVariable = false;
+            }
+        }
+        // Solo contar paréntesis si NO estamos dentro de un patrón o variable
+        elseif (!$insidePattern && !$insideVariable) {
+            if ($sql[$i] == '(') {
+                $parenCount++;
+            } elseif ($sql[$i] == ')') {
+                $parenCount--;
+            }
+        }
+        
+        $i++;
+    }
+    
+    // Eliminar desde $clauseStart hasta $i (incluye el ) de cierre)
+    $clauseEnd = $i;
+    
+    // CRITICAL FIX: Si hay un patrón [@...] que se extiende más allá del ), 
+    // necesitamos extender clauseEnd hasta el ] final del patrón
+    // El patrón puede incluir SQL como: ]) OR (...)) group by ... order by des]
+    $remainingSQL = substr($sql, $clauseEnd);
+    
+    // Buscar el ] de cierre del patrón usando balanceo de corchetes
+    // Esto asegura que capturamos solo el patrón actual, no patrones subsecuentes
+    $bracketCount = 0;
+    $extendTo = 0;
+    $foundBracket = false;
+    $len = strlen($remainingSQL);
+    
+    for ($k = 0; $k < $len && $k < 250; $k++) {
+        if ($remainingSQL[$k] == '[') {
+            $bracketCount++;
+            $foundBracket = true;
+        } elseif ($remainingSQL[$k] == ']') {
+            if ($bracketCount > 0) {
+                $bracketCount--;
+                if ($bracketCount == 0) {
+                    // Encontramos el cierre del patrón, extender hasta aquí + espacios
+                    $extendTo = $k + 1;
+                    // Consumir espacios en blanco después del ]
+                    while ($extendTo < $len && ctype_space($remainingSQL[$extendTo])) {
+                        $extendTo++;
+                    }
+                    break;
+                }
+            } else {
+                // ] sin [ previo - es el cierre del patrón
+                $extendTo = $k + 1;
+                while ($extendTo < $len && ctype_space($remainingSQL[$extendTo])) {
+                    $extendTo++;
+                }
+                break;
+            }
+        }
+    }
+    
+    if ($extendTo > 0) {
+        error_log("EXTENDED REMOVAL: Found pattern residue extending " . $extendTo . " chars: " . substr($remainingSQL, 0, min($extendTo, 80)));
+        $clauseEnd += $extendTo;
+    }
+    
+    $removedClause = substr($sql, $clauseStart, $clauseEnd - $clauseStart);
+    error_log("Eliminando cláusula completa (longitud=" . strlen($removedClause) . "): " . substr($removedClause, 0, 150) . "...");
+    
+    // CRÍTICO: Preservar comilla de cierre si hay una justo ANTES del inicio de la cláusula
+    // Ejemplo: ik.fecha <= "2025/10/10 23:59:59") and (campo IN [@...]) -> preservar la " antes de )
+    $beforeClause = substr($sql, 0, $clauseStart);
+    $afterClause = substr($sql, $clauseEnd);
+    
+    error_log("removeCompleteClause - BEFORE CLAUSE (last 60 chars): " . substr($beforeClause, -60));
+    error_log("removeCompleteClause - AFTER CLAUSE (first 60 chars): " . substr($afterClause, 0, 60));
+    
+    // Si lo último antes de la cláusula es ), verificar si hay una comilla antes del )
+    if ($clauseStart > 0 && preg_match('/([\"\'])(\))\s*$/i', $beforeClause, $matches)) {
+        error_log("removeCompleteClause - Found quote before ) at end of beforeClause: " . $matches[0]);
+        // Ya tiene la comilla, no hacer nada especial
+    }
+    
+    $result = $beforeClause . $afterClause;
+    error_log("removeCompleteClause - RESULT (around join, 120 chars): " . substr($result, max(0, $clauseStart - 60), 120));
+    
+    // Limpiar espacios y conectores duplicados
+    $result = preg_replace('/\s+(and|or)\s+(and|or)\s+/i', ' $2 ', $result);
+    $result = preg_replace('/\s+and\s+order\s+by/i', ' ORDER BY', $result);
+    $result = preg_replace('/\s+or\s+order\s+by/i', ' ORDER BY', $result);
+    $result = preg_replace('/WHERE\s+(and|or)\s+/i', 'WHERE ', $result);
+    
+    return $result;
+}
+
+/**
+ * Corrige el paréntesis faltante en cláusulas IN de multiselección
+ * Ejemplo: IN ("9","10" ORDER BY -> IN ("9","10") ORDER BY
+ * 
+ * @param string $sql Consulta SQL a corregir
+ * @return string Consulta SQL con paréntesis corregidos
+ */
+function fixMultiselectionInClause($sql) {
+    // Patrón para detectar IN con valores pero sin cierre correcto antes de ORDER BY, GROUP BY, etc.
+    // IN ("valores" ORDER BY -> IN ("valores") ORDER BY
+    $pattern = '/\bIN\s*\(\s*(["\'][^"\']+["\'](?:\s*,\s*["\'][^"\']+["\'])*)\s+(ORDER\s+BY|GROUP\s+BY|HAVING|LIMIT|\))/i';
+    
+    $fixed = preg_replace_callback($pattern, function($matches) {
+        $values = trim($matches[1]);
+        $nextClause = $matches[2];
+        
+        // Agregar el paréntesis de cierre del IN antes de la siguiente cláusula
+        $result = 'IN (' . $values . ') ' . $nextClause;
+        error_log("fixMultiselectionInClause: Corregido IN sin cierre - agregado ) antes de " . $nextClause);
+        return $result;
+    }, $sql);
+    
+    return $fixed;
+}
+
+/**
  * Función principal: Corrige todos los problemas conocidos en consultas SQL
  * 
  * @param string $sql Consulta SQL a limpiar
  * @return string Consulta SQL limpia
  */
 function cleanSqlUniversal($sql) {
+    // NUEVO: Si el SQL viene del sistema de 3 fases, solo aplicar limpiezas mínimas
+    if (isset($_SESSION['usar_sistema_tres_fases']) && $_SESSION['usar_sistema_tres_fases'] === true) {
+        error_log("cleanSqlUniversal: SQL viene del sistema de 3 fases - aplicando solo limpiezas mínimas");
+        // Solo decodificar HTML entities y normalizar espacios
+        $sql = html_entity_decode($sql, ENT_QUOTES, 'UTF-8');
+        $sql = preg_replace('/\s+/', ' ', $sql); // Normalizar múltiples espacios a uno solo
+        $sql = trim($sql);
+        return $sql;
+    }
+    
     // Log inicial para depuración
     error_log("SQL antes de limpieza: " . substr($sql, -200));
     
@@ -36,6 +322,14 @@ function cleanSqlUniversal($sql) {
     
     // NUEVA MEJORA: Limpieza específica para problemas de multiselección
     $sql = cleanMultiselectionInConditions($sql);
+    
+    // CRÍTICO: Corregir paréntesis faltante en IN de multiselección
+    $sql = fixMultiselectionInClause($sql);
+    
+    // LIMPIEZA FINAL: Eliminar TODOS los patrones residuales [@...] antes de devolver el SQL
+    error_log("cleanSqlUniversal: Ejecutando limpieza final de patrones residuales...");
+    $sql = removeAllUnresolvedPatterns($sql);
+    error_log("cleanSqlUniversal: Limpieza final completada");
     
     return $sql;
 }
@@ -253,6 +547,12 @@ function normalizeQuotesInSql($sql) {
 }
 
 function fixAllSqlIssues($sql) {
+    // NUEVO: Si el SQL viene del sistema de 3 fases, NO aplicar correcciones heurísticas
+    if (isset($_SESSION['usar_sistema_tres_fases']) && $_SESSION['usar_sistema_tres_fases'] === true) {
+        error_log("fixAllSqlIssues: SQL viene del sistema de 3 fases - NO se aplican correcciones heurísticas");
+        return $sql; // Devolver SQL sin modificar
+    }
+    
     // Guardamos el SQL original para depuración
     $originalSql = $sql;
     
@@ -1494,15 +1794,66 @@ function fixUnbalancedParenthesisBeforeOrderBy($sql) {
         error_log("Balance de paréntesis: $openCount abiertos, $closeCount cerrados");
         
         // Eliminar el exceso de paréntesis de cierre
+        // CRÍTICO: Preservar comillas que vienen antes del paréntesis
+        // Estrategia: Encontrar TODAS las posiciones de ) de derecha a izquierda,
+        // marcar cuáles tienen comilla antes, eliminar solo las que NO tienen comilla
         $diff = $closeCount - $openCount;
-        for ($i = 0; $i < $diff; $i++) {
-            $pos = strrpos($beforeOrder, ')');
-            if ($pos !== false) {
-                $beforeOrder = substr($beforeOrder, 0, $pos) . substr($beforeOrder, $pos + 1);
+        $removed = 0;
+        $tempSql = $beforeOrder;
+        
+        error_log("PARENTHESIS BALANCING: Necesito eliminar $diff paréntesis");
+        error_log("BEFORE SQL (last 100 chars): " . substr($tempSql, -100));
+        
+        // Encontrar posiciones de ) sin comilla antes, de derecha a izquierda
+        while ($removed < $diff && $tempSql !== '') {
+            $len = strlen($tempSql);
+            $found = false;
+            
+            // Buscar de derecha a izquierda el primer ) que NO tenga comilla ni valor antes
+            for ($i = $len - 1; $i >= 0; $i--) {
+                if ($tempSql[$i] === ')') {
+                    // Encontramos un )
+                    // Verificar si tiene comilla justo antes
+                    if ($i > 0 && ($tempSql[$i-1] === '"' || $tempSql[$i-1] === "'")) {
+                        // Tiene comilla, SALTAR este paréntesis, continuar buscando
+                        error_log("SKIP ) at position $i - has quote before: " . substr($tempSql, max(0, $i-5), 7));
+                        continue;
+                    }
+                    // NUEVO: Verificar si viene después de un valor (número o letra) - indicaría un filtro con valor
+                    // Patrón: (campo = valor) donde valor puede ser número o texto sin comillas
+                    elseif ($i > 0 && preg_match('/[a-zA-Z0-9]$/', $tempSql[$i-1])) {
+                        // Viene después de número o letra, podría ser un filtro con valor
+                        // Verificar si hay un patrón = antes para confirmar
+                        $context = substr($tempSql, max(0, $i-20), 20);
+                        if (preg_match('/=\s*[a-zA-Z0-9]+$/', $context)) {
+                            // Es un filtro con valor, SALTAR este paréntesis
+                            error_log("SKIP ) at position $i - closes filter value: " . substr($tempSql, max(0, $i-10), 12));
+                            continue;
+                        }
+                    }
+                    
+                    // NO tiene comilla ni es cierre de filtro, ELIMINAR este paréntesis
+                    error_log("REMOVE ) at position $i - no protection: " . substr($tempSql, max(0, $i-5), 7));
+                    $tempSql = substr($tempSql, 0, $i) . substr($tempSql, $i + 1);
+                    $removed++;
+                    $found = true;
+                    break;
+                }
+            }
+            
+            // Si no encontramos ningún ) sin comilla, terminar
+            if (!$found) {
+                error_log("NO MORE ) without quote found. Removed $removed of $diff needed");
+                break;
             }
         }
+        
+        error_log("AFTER SQL (last 100 chars): " . substr($tempSql, -100));
+        error_log("Successfully removed $removed parentheses");
+        
+        $beforeOrder = $tempSql;
         error_log("Corregida condición sin cerrar");
-        error_log("Eliminado un paréntesis excesivo");
+        error_log("Eliminado un paréntesis excesivo preservando comillas");
     }
     
     // SOLUCIÓN PARA "AND" COLGANTE AL FINAL DE LA CLÁUSULA WHERE
@@ -1531,6 +1882,11 @@ function fixUnbalancedParenthesisBeforeOrderBy($sql) {
     
     // Reconstruir la consulta nuevamente con la parte corregida
     $fixedSql = trim($beforeOrder) . ' ORDER BY ' . $afterOrder;
+    
+    // CORRECCIÓN FINAL CRÍTICA: Restaurar comillas de cierre faltantes en fechas
+    // Patrón: "YYYY/MM/DD HH:MM:SS) -> "YYYY/MM/DD HH:MM:SS")
+    // Buscar fechas con comilla de apertura pero sin comilla de cierre antes del paréntesis
+    $fixedSql = preg_replace('/(\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2})(\))/i', '$1"$2', $fixedSql);
     
     error_log("Balance de paréntesis: $openCount abiertos, $closeCount cerrados");
     error_log("SQL reconstruido completamente: $fixedSql");
@@ -1604,6 +1960,14 @@ function cleanMultiselectionInConditions($sql) {
  * @return string SQL limpio sin patrones [@...]
  */
 function removeAllUnresolvedPatterns($sql) {
+    // PROTECCIÓN: Si el SQL viene del sistema de 3 fases, NO aplicar eliminaciones destructivas
+    if (isset($_SESSION['usar_sistema_tres_fases']) && $_SESSION['usar_sistema_tres_fases'] === true) {
+        error_log("removeAllUnresolvedPatterns: SQL viene del sistema de 3 fases - aplicando solo eliminaciones mínimas de patrones no resueltos");
+        // Solo eliminar patrones [@...] reales no resueltos, sin tocar paréntesis
+        $sql = preg_replace('/\[@[^\]]*\]/', '', $sql);
+        return $sql;
+    }
+    
     $originalSql = $sql;
     
     // Patrón que detecta cualquier [@...] sin importar su contenido o ubicación
@@ -1611,53 +1975,75 @@ function removeAllUnresolvedPatterns($sql) {
     // Esto evita dejar comillas vacías que afecten a valores posteriores
     
     // Primero eliminar patrones CON comillas balanceadas: "[@...]" o '[@...]'
-    $patternDoubleQuotes = '/"[@[^\]]*]"/';  // Comillas dobles balanceadas
-    $patternSingleQuotes = "/'[@[^\]]*]'/";  // Comillas simples balanceadas
+    // CRÍTICO: Preservar comilla de cierre cuando está después del patrón (caso: "valor") con patrón entre valor y ))
+    $patternDoubleQuotes = '/"[@[^\]]*]"(["\']?)/';  // Captura comilla opcional después del cierre
+    $patternSingleQuotes = "/'[@[^\]]*]'([\"']?)/";  // Captura comilla opcional después del cierre
     
     if (preg_match_all($patternDoubleQuotes, $sql, $matches)) {
         foreach ($matches[0] as $unresolvedPattern) {
             error_log("Eliminando patrón con comillas dobles: " . substr($unresolvedPattern, 0, 50) . "...");
         }
-        $sql = preg_replace($patternDoubleQuotes, '', $sql);
+        // Preservar la comilla capturada en $1
+        $sql = preg_replace($patternDoubleQuotes, '$1', $sql);
     }
     
     if (preg_match_all($patternSingleQuotes, $sql, $matches)) {
         foreach ($matches[0] as $unresolvedPattern) {
             error_log("Eliminando patrón con comillas simples: " . substr($unresolvedPattern, 0, 50) . "...");
         }
-        $sql = preg_replace($patternSingleQuotes, '', $sql);
+        // Preservar la comilla capturada en $1
+        $sql = preg_replace($patternSingleQuotes, '$1', $sql);
     }
     
     // Finalmente eliminar patrones SIN comillas (si quedó alguno)
-    $patternNoQuotes = '/\[@[^\]]*\]/';
+    // CRÍTICO: También preservar comilla si viene después del patrón
+    $patternNoQuotes = '/\[@[^\]]*\](["\']?)/';
     if (preg_match_all($patternNoQuotes, $sql, $matches)) {
         foreach ($matches[0] as $unresolvedPattern) {
             error_log("Eliminando patrón sin comillas: " . substr($unresolvedPattern, 0, 50) . "...");
         }
-        $sql = preg_replace($patternNoQuotes, '', $sql);
+        // Preservar la comilla capturada en $1
+        $sql = preg_replace($patternNoQuotes, '$1', $sql);
     }
     
     // NUEVO: Eliminar residuos de patrones parcialmente removidos
     // Estos residuos aparecen cuando un patrón @Multiselection queda sin resolver
     // Ejemplo: " ORDER BY des;@Multiselection])" después de procesar otros filtros
     
-    // Patrón específico 1: Eliminar " ORDER BY campo;@Multiselection])" o variantes
-    // CRÍTICO: Usar límite de palabra \b antes de ORDER para evitar retroceder
+    // Patrón 1: Eliminar fragmentos "group by [campos] order by [campo]]" residuales
+    // Estos quedan cuando se eliminan cláusulas con patrones complejos
+    $groupByResidue = '/\s+group\s+by\s+[a-zA-Z0-9_,\s]+\s+order\s+by\s+[a-zA-Z0-9_]+\s*\]*/i';
+    if (preg_match_all($groupByResidue, $sql, $matches)) {
+        foreach ($matches[0] as $residue) {
+            error_log("Eliminando residuo GROUP BY...ORDER BY: " . substr($residue, 0, 60) . "...");
+        }
+        $sql = preg_replace($groupByResidue, ' ', $sql);
+    }
+    
+    // Patrón 2: Eliminar " ORDER BY campo;@Multiselection])" o variantes
     $residuePattern = '/\s+order\s+by\s+[a-zA-Z0-9_]+\s*;@Multiselection\]\)?/i';
     if (preg_match_all($residuePattern, $sql, $matches)) {
         foreach ($matches[0] as $residue) {
-            error_log("Eliminando residuo ORDER BY: " . substr($residue, 0, 50) . "...");
+            error_log("Eliminando residuo ORDER BY;@Multiselection: " . substr($residue, 0, 50) . "...");
         }
-        // Reemplazar con un espacio para no pegar palabras
         $sql = preg_replace($residuePattern, ' ', $sql);
     }
     
-    // Patrón específico 2: Eliminar solo "des;@Multiselection])" o ";@Multiselection])" residuales
-    $simpleResiduePattern = '/\s*;@Multiselection\]\)?/';
+    // Patrón 3: Eliminar solo ";@Multiselection])" o "@Multiselection]" residuales
+    $simpleResiduePattern = '/\s*;?@Multiselection\]\)?/';
     if (preg_match($simpleResiduePattern, $sql)) {
-        error_log("Eliminando residuo simple ;@Multiselection]");
+        error_log("Eliminando residuo @Multiselection");
         $sql = preg_replace($simpleResiduePattern, '', $sql);
     }
+    
+    // Patrón 4: Eliminar corchetes ] sueltos que pueden quedar
+    $sql = preg_replace('/\s*\]\s*(?=(ORDER|GROUP|WHERE|AND|OR|;|\s*$))/i', ' ', $sql);
+    
+    // CRÍTICO: Eliminar paréntesis extras con comillas que quedan después de eliminar múltiples cláusulas
+    // Ejemplo 1: ik.fecha <= "2025/10/12 23:59:59" ) ") and -> ik.fecha <= "2025/10/12 23:59:59" and
+    // Ejemplo 2: ik.fecha <= "2025/10/12 23:59:59" ") ORDER BY -> ik.fecha <= "2025/10/12 23:59:59" ORDER BY
+    $sql = preg_replace('/\s*\)\s*["\']?\s*\)\s+(and|or)\s+/i', ' $1 ', $sql);
+    $sql = preg_replace('/\s*["\']?\s*\)\s+(ORDER\s+BY|GROUP\s+BY)/i', ' $1', $sql);
     
     // Limpiar condiciones vacías que pueden quedar después de eliminar los patrones
     // Ejemplo: "and (campo IN "")" -> se elimina
@@ -1666,7 +2052,12 @@ function removeAllUnresolvedPatterns($sql) {
     // CRÍTICO: Eliminar cláusulas IN vacías cuando no se seleccionó ningún valor en filtros multiselección
     // Ejemplos: "and (ob.idbodega IN )" -> se elimina completamente
     //          "OR (campo IN )" -> se elimina
-    $sql = preg_replace('/\s+(and|or)\s+\(\s*[a-zA-Z0-9_.]+\s+IN\s+\)/i', '', $sql);
+    // MEJORA: Preservar comilla de cierre si hay una antes del patrón eliminado
+    // Ejemplo: ik.fecha <= "2025/10/10 23:59:59") and (campo IN ) -> preservar la " antes de )
+    $sql = preg_replace_callback('/(["\']?)(\))\s+(and|or)\s+\(\s*[a-zA-Z0-9_.]+\s+IN\s+\)/i', function($matches) {
+        // Preservar la comilla si existe
+        return $matches[1] . $matches[2];
+    }, $sql);
     
     // También eliminar variaciones sin paréntesis externos: "and campo IN ()"
     $sql = preg_replace('/\s+(and|or)\s+[a-zA-Z0-9_.]+\s+IN\s+\(\s*\)/i', '', $sql);
@@ -1704,5 +2095,504 @@ function removeAllUnresolvedPatterns($sql) {
     }
     
     return $sql;
+}
+
+/**
+ * ============================================================================
+ * NUEVO SISTEMA DE 3 FASES PARA PROCESAMIENTO DE FILTROS
+ * Compatible con PHP 5.5.9 y MySQL 5.5.62
+ * ============================================================================
+ */
+
+/**
+ * FASE 1: PARSEO - Extrae definiciones estructuradas de filtros del WHERE
+ * 
+ * Analiza el WHERE clause y extrae cada condición de filtro con sus límites exactos,
+ * creando una estructura de datos que permite manipulación precisa sin regex heurísticos
+ * 
+ * @param string $whereClause Cláusula WHERE original con patrones [@...]
+ * @return array Array de FilterDefinition con estructura:
+ *   [
+ *     'type' => 'combo'|'fixed',  // tipo de cláusula
+ *     'pattern' => '[@...]',       // patrón a buscar/reemplazar
+ *     'clause' => 'and (campo = pattern)', // cláusula SQL completa
+ *     'connector' => 'and'|'or',   // conector lógico
+ *     'field' => 'campo',          // nombre del campo SQL
+ *     'operator' => '='|'IN',      // operador SQL
+ *     'is_multiselection' => bool, // si es IN clause
+ *     'label' => 'Nombre',         // label del filtro
+ *     'start_pos' => int,          // posición inicio en WHERE original
+ *     'end_pos' => int             // posición fin en WHERE original
+ *   ]
+ */
+function extractFilterDefinitions($whereClause) {
+    $definitions = array();
+    
+    // Log para debugging
+    error_log("======= FASE 1: EXTRACCIÓN DE FILTER DEFINITIONS =======");
+    error_log("WHERE CLAUSE ORIGINAL: " . substr($whereClause, 0, 200) . "...");
+    
+    // 1. Extraer patrones combo [@...] usando el parser de brackets balanceados
+    $comboPatterns = extractBalancedPatterns($whereClause);
+    
+    foreach ($comboPatterns as $pattern) {
+        $fullPattern = $pattern[0];  // [@...]
+        $label = $pattern[1];
+        $sqlPart = $pattern[4];
+        
+        // Determinar si es multiselección
+        $isMultiselection = (stripos($sqlPart, ';@Multiselection') !== false);
+        
+        // Buscar la cláusula completa que contiene este patrón
+        // Formato típico: and (campo = 'patrón') o and (campo IN patrón)
+        $clause = extractCompleteClause($whereClause, $fullPattern);
+        
+        if ($clause) {
+            // Extraer el conector (and/or) y el campo
+            if (preg_match('/(and|or)\s*\(\s*([a-zA-Z0-9_.]+)\s*(=|IN)\s*/i', $clause['text'], $match)) {
+                $connector = strtolower($match[1]);
+                $field = $match[2];
+                $operator = strtoupper($match[3]);
+                
+                $definitions[] = array(
+                    'type' => 'combo',
+                    'pattern' => $fullPattern,
+                    'clause' => $clause['text'],
+                    'connector' => $connector,
+                    'field' => $field,
+                    'operator' => $operator,
+                    'is_multiselection' => $isMultiselection,
+                    'label' => $label,
+                    'start_pos' => $clause['start'],
+                    'end_pos' => $clause['end']
+                );
+                
+                error_log("Combo Filter extraído: Label='$label', Operator=$operator, Multi=" . ($isMultiselection ? 'YES' : 'NO'));
+            }
+        }
+    }
+    
+    // NOTA: Los patrones de fecha [#...] ya NO se extraen aquí
+    // Se reemplazan ANTES del sistema de 3 fases en buildSqlQueryThreePhase
+    // para evitar tratarlos como filtros opcionales
+    
+    // 3. Extraer patrones de texto [FilterName] (que no sean #, @, !)
+    if (preg_match_all('/\[([^\]#@!]+)\]/i', $whereClause, $textMatches, PREG_OFFSET_CAPTURE)) {
+        foreach ($textMatches[0] as $idx => $match) {
+            $fullPattern = $match[0];
+            $label = $textMatches[1][$idx][0];
+            
+            $clause = extractCompleteClause($whereClause, $fullPattern);
+            if ($clause) {
+                if (preg_match('/(and|or)\s*\(\s*([a-zA-Z0-9_.]+)\s+(LIKE|=)\s*/i', $clause['text'], $m)) {
+                    $definitions[] = array(
+                        'type' => 'text',
+                        'pattern' => $fullPattern,
+                        'clause' => $clause['text'],
+                        'connector' => strtolower($m[1]),
+                        'field' => $m[2],
+                        'operator' => strtoupper($m[3]),
+                        'is_multiselection' => false,
+                        'label' => $label,
+                        'start_pos' => $clause['start'],
+                        'end_pos' => $clause['end']
+                    );
+                    error_log("Text Filter extraído: Label='$label'");
+                }
+            }
+        }
+    }
+    
+    // 4. Identificar cláusulas fijas (sin patrones) que siempre deben estar presentes
+    $fixedClauses = extractFixedClauses($whereClause, $definitions);
+    foreach ($fixedClauses as $fixed) {
+        $definitions[] = $fixed;
+    }
+    
+    // 5. También extraer variables de sesión [!...] para reemplazo directo (no son filtros)
+    // Las variables de sesión se reemplazan antes del procesamiento de 3 fases
+    
+    // Ordenar por posición para mantener el orden original
+    usort($definitions, function($a, $b) {
+        return $a['start_pos'] - $b['start_pos'];
+    });
+    
+    error_log("Total Filter Definitions extraídos: " . count($definitions));
+    
+    return $definitions;
+}
+
+/**
+ * Extrae la cláusula SQL completa que contiene un patrón
+ * Busca hacia atrás para encontrar el 'and' o 'or', y hacia adelante hasta el siguiente 'and'/'or' o final
+ * 
+ * @param string $whereClause WHERE clause completo
+ * @param string $pattern Patrón a buscar
+ * @return array|null Array con 'text', 'start', 'end' o null si no se encuentra
+ */
+function extractCompleteClause($whereClause, $pattern) {
+    $patternPos = strpos($whereClause, $pattern);
+    if ($patternPos === false) {
+        return null;
+    }
+    
+    // Buscar hacia atrás para encontrar el inicio de la cláusula (and/or o inicio del WHERE)
+    $start = 0;
+    $beforePattern = substr($whereClause, 0, $patternPos);
+    
+    // Buscar el último 'and' o 'or' antes del patrón
+    if (preg_match_all('/(and|or)\s+\(/i', $beforePattern, $matches, PREG_OFFSET_CAPTURE)) {
+        $lastMatch = end($matches[0]);
+        $start = $lastMatch[1]; // posición del último and/or
+    }
+    
+    // Buscar hacia adelante para encontrar el final de la cláusula
+    // El final es: el siguiente 'and'/'or' al mismo nivel, o el final del WHERE
+    $afterPatternStart = $patternPos + strlen($pattern);
+    $afterPattern = substr($whereClause, $afterPatternStart);
+    
+    // Buscar el cierre de paréntesis que balancea la cláusula
+    $end = strlen($whereClause);
+    $level = 0;
+    $inClause = false;
+    
+    for ($i = $start; $i < strlen($whereClause); $i++) {
+        $char = $whereClause[$i];
+        
+        if ($char == '(') {
+            $level++;
+            $inClause = true;
+        } elseif ($char == ')') {
+            $level--;
+            if ($inClause && $level == 0) {
+                // Encontramos el cierre de la cláusula
+                $end = $i + 1;
+                
+                // Verificar si hay más contenido después que pertenece a esta cláusula
+                // Ejemplo: patrón con GROUP BY, ORDER BY fuera del paréntesis
+                $remaining = substr($whereClause, $end);
+                if (preg_match('/^\s*(group\s+by|order\s+by)[^\]]*\]/i', $remaining, $match)) {
+                    $end += strlen($match[0]);
+                }
+                
+                break;
+            }
+        }
+    }
+    
+    $clauseText = substr($whereClause, $start, $end - $start);
+    
+    return array(
+        'text' => $clauseText,
+        'start' => $start,
+        'end' => $end
+    );
+}
+
+/**
+ * Extrae cláusulas fijas (sin patrones de filtro) del WHERE
+ * Estas son condiciones que siempre deben estar presentes
+ * Usa balance de paréntesis para manejar subconsultas complejas
+ * 
+ * @param string $whereClause WHERE clause original
+ * @param array $filterDefs Definiciones de filtro ya extraídas
+ * @return array Array de cláusulas fijas
+ */
+function extractFixedClauses($whereClause, $filterDefs) {
+    $fixedClauses = array();
+    
+    // Crear un mapa de posiciones ocupadas por filtros
+    $occupiedRanges = array();
+    foreach ($filterDefs as $def) {
+        $occupiedRanges[] = array($def['start_pos'], $def['end_pos']);
+    }
+    
+    // Buscar conectores AND/OR opcionalmente seguidos de NOT EXISTS y luego paréntesis
+    // Maneja casos como: AND (...), OR (...), AND NOT EXISTS (...), OR NOT EXISTS (...)
+    $offset = 0;
+    while (preg_match('/(and|or)\s+(?:not\s+)?(?:exists\s+)?\(/i', $whereClause, $match, PREG_OFFSET_CAPTURE, $offset)) {
+        // Extraer el conector (AND/OR) del match
+        preg_match('/(and|or)/i', $match[0][0], $connectorMatch);
+        $connector = $connectorMatch[1];
+        $clauseStart = $match[0][1];
+        $parenStart = $match[0][1] + strlen($match[0][0]) - 1; // posición del '('
+        
+        // Usar stack para encontrar el paréntesis de cierre balanceado
+        $parenStack = 1;
+        $pos = $parenStart + 1;
+        $clauseEnd = $parenStart + 1;
+        
+        while ($pos < strlen($whereClause) && $parenStack > 0) {
+            if ($whereClause[$pos] == '(') {
+                $parenStack++;
+            } elseif ($whereClause[$pos] == ')') {
+                $parenStack--;
+                if ($parenStack == 0) {
+                    $clauseEnd = $pos + 1; // incluir el ')'
+                    break;
+                }
+            }
+            $pos++;
+        }
+        
+        // Extraer el texto completo de la cláusula
+        $clauseText = substr($whereClause, $clauseStart, $clauseEnd - $clauseStart);
+        
+        // Verificar si esta posición está ocupada por un filtro
+        $isOccupied = false;
+        foreach ($occupiedRanges as $range) {
+            // Verificar si hay overlap con ranges ocupados
+            if (!(($clauseEnd <= $range[0]) || ($clauseStart >= $range[1]))) {
+                $isOccupied = true;
+                break;
+            }
+        }
+        
+        // Si no está ocupada y no contiene patrones, es una cláusula fija
+        if (!$isOccupied && 
+            strpos($clauseText, '[@') === false && 
+            strpos($clauseText, '[#') === false &&
+            strpos($clauseText, '[!') === false) {
+            
+            $fixedClauses[] = array(
+                'type' => 'fixed',
+                'pattern' => '',
+                'clause' => $clauseText,
+                'connector' => strtolower($connector),
+                'field' => '',
+                'operator' => '',
+                'is_multiselection' => false,
+                'label' => 'fixed',
+                'start_pos' => $clauseStart,
+                'end_pos' => $clauseEnd,
+                'is_active' => true  // Las fijas siempre están activas
+            );
+            
+            error_log("Fixed clause encontrado: " . substr($clauseText, 0, 80) . "...");
+        }
+        
+        // Continuar buscando desde el final de esta cláusula
+        $offset = $clauseEnd;
+    }
+    
+    // BÚSQUEDA ADICIONAL: Capturar cláusulas SIN paréntesis
+    // Ejemplo: "And ik.fecha <= "[#Al]  23:59:59""
+    // Estas cláusulas no tienen paréntesis pero deben preservarse
+    $offset = 0;
+    while (preg_match('/(and|or)\s+([a-zA-Z0-9_.]+)\s*([<>=!]+)\s*["\']?\[#[^\]]+\][^and|or]*/i', $whereClause, $match, PREG_OFFSET_CAPTURE, $offset)) {
+        $clauseStart = $match[0][1];
+        $clauseText = $match[0][0];
+        $clauseEnd = $clauseStart + strlen($clauseText);
+        $connector = strtolower($match[1][0]);
+        
+        // Verificar que no esté ocupada por un filtro
+        $isOccupied = false;
+        foreach ($occupiedRanges as $range) {
+            if (!(($clauseEnd <= $range[0]) || ($clauseStart >= $range[1]))) {
+                $isOccupied = true;
+                break;
+            }
+        }
+        
+        if (!$isOccupied) {
+            $fixedClauses[] = array(
+                'type' => 'fixed',
+                'pattern' => '',
+                'clause' => trim($clauseText),
+                'connector' => $connector,
+                'field' => '',
+                'operator' => '',
+                'is_multiselection' => false,
+                'label' => 'fixed_date',
+                'start_pos' => $clauseStart,
+                'end_pos' => $clauseEnd,
+                'is_active' => true
+            );
+            
+            error_log("Fixed clause sin paréntesis encontrado: " . substr($clauseText, 0, 80) . "...");
+        }
+        
+        $offset = $clauseEnd;
+    }
+    
+    return $fixedClauses;
+}
+
+/**
+ * FASE 2: EVALUACIÓN - Determina qué filtros están activos y prepara valores de reemplazo
+ * 
+ * @param array $filterDefinitions Array de FilterDefinition de la Fase 1
+ * @param array $filterValues Valores de filtros desde $_POST
+ * @param array $filters Array global de filtros con metadata
+ * @return array Array de filtros evaluados con 'is_active' y 'replacement_value'
+ */
+function evaluateFilters($filterDefinitions, $filterValues, $filters) {
+    $evaluated = array();
+    
+    error_log("======= FASE 2: EVALUACIÓN DE FILTROS =======");
+    
+    foreach ($filterDefinitions as $def) {
+        // Las cláusulas fijas siempre están activas
+        if ($def['type'] == 'fixed') {
+            $evaluated[] = array_merge($def, array(
+                'is_active' => true,
+                'replacement_value' => $def['clause']
+            ));
+            continue;
+        }
+        
+        // Determinar la clave del filtro según el tipo
+        $filterKey = 'filter_' . sanitizeId($def['label']);
+        $hasValue = false;
+        $value = null;
+        
+        // Verificar si el filtro tiene valor según su tipo
+        // NOTA: 'date' ya no se maneja aquí - se procesa antes del sistema de 3 fases
+        if ($def['type'] == 'text') {
+            // Para texto, verificar que no esté vacío
+            $hasValue = isset($filterValues[$filterKey]) && trim($filterValues[$filterKey]) !== '';
+            $value = isset($filterValues[$filterKey]) ? $filterValues[$filterKey] : '';
+        } elseif ($def['type'] == 'combo') {
+            // Para combos, verificar valor o array
+            $hasValue = isset($filterValues[$filterKey]) && $filterValues[$filterKey] !== '';
+            
+            // Para multiselección, también verificar si es array no vacío
+            if ($def['is_multiselection'] && isset($filterValues[$filterKey])) {
+                if (is_array($filterValues[$filterKey])) {
+                    $hasValue = !empty($filterValues[$filterKey]);
+                }
+            }
+            $value = isset($filterValues[$filterKey]) ? $filterValues[$filterKey] : '';
+        }
+        
+        if ($hasValue) {
+            // Filtro activo - preparar valor de reemplazo según tipo
+            $replacementValue = '';
+            
+            if ($def['is_multiselection'] && is_array($value)) {
+                // Construir IN clause: IN ('val1','val2','val3') - MySQL 5.5 compatible
+                $quotedValues = array_map(function($v) {
+                    return "'" . addslashes($v) . "'";
+                }, $value);
+                $replacementValue = 'IN (' . implode(',', $quotedValues) . ')';
+                error_log("Filter '$filterKey' activo (multiselección): " . $replacementValue);
+            } elseif ($def['type'] == 'text' && $def['operator'] == 'LIKE') {
+                // Texto con LIKE - agregar wildcards si no los tiene
+                if (strpos($value, '%') === false) {
+                    $replacementValue = "'%" . addslashes($value) . "%'";
+                } else {
+                    $replacementValue = "'" . addslashes($value) . "'";
+                }
+                error_log("Filter '$filterKey' activo (text/LIKE): " . $replacementValue);
+            } else {
+                // Valor simple con comillas simples MySQL 5.5
+                $replacementValue = "'" . addslashes($value) . "'";
+                error_log("Filter '$filterKey' activo (simple): " . $replacementValue);
+            }
+            
+            $evaluated[] = array_merge($def, array(
+                'is_active' => true,
+                'replacement_value' => $replacementValue
+            ));
+        } else {
+            // Filtro inactivo - no se incluirá en el WHERE final
+            error_log("Filter '$filterKey' INACTIVO - será eliminado");
+            $evaluated[] = array_merge($def, array(
+                'is_active' => false,
+                'replacement_value' => ''
+            ));
+        }
+    }
+    
+    return $evaluated;
+}
+
+/**
+ * FASE 3: REGENERACIÓN - Reconstruye el WHERE clause desde cero con solo filtros activos
+ * 
+ * @param array $evaluatedFilters Filtros evaluados de la Fase 2
+ * @param string $originalWhere WHERE original (para preservar cláusulas fijas)
+ * @return string WHERE clause limpio y regenerado
+ */
+function regenerateWhereClause($evaluatedFilters, $originalWhere) {
+    error_log("======= FASE 3: REGENERACIÓN DE WHERE CLAUSE =======");
+    
+    $activeClauses = array();
+    
+    foreach ($evaluatedFilters as $filter) {
+        if (!$filter['is_active']) {
+            continue; // Saltar filtros inactivos
+        }
+        
+        if ($filter['type'] == 'fixed') {
+            // Cláusula fija - agregar tal cual
+            $activeClauses[] = $filter['clause'];
+        } else {
+            // Cláusula de filtro - construir desde cero
+            $connector = $filter['connector'];
+            $field = $filter['field'];
+            $operator = $filter['operator'];
+            $value = $filter['replacement_value'];
+            
+            // Construir cláusula usando el operador correcto (=, <=, >=, LIKE, IN, etc.)
+            if ($operator == 'IN') {
+                // Para IN, el valor ya incluye "IN (...)"
+                $clause = "$connector ($field $value)";
+            } elseif ($operator == 'LIKE') {
+                // Para LIKE, usar el operador LIKE
+                $clause = "$connector ($field LIKE $value)";
+            } else {
+                // Para otros operadores (=, <=, >=, <>, etc.) usar el operador tal cual
+                $clause = "$connector ($field $operator $value)";
+            }
+            
+            $activeClauses[] = $clause;
+            error_log("Cláusula regenerada: $clause");
+        }
+    }
+    
+    // Unir todas las cláusulas activas
+    if (empty($activeClauses)) {
+        error_log("No hay cláusulas activas - WHERE vacío");
+        return '';
+    }
+    
+    $whereClause = implode(' ', $activeClauses);
+    
+    // Limpiar el primer conector si empieza con 'and' o 'or'
+    $whereClause = preg_replace('/^\s*(and|or)\s+/i', '', $whereClause);
+    
+    error_log("WHERE regenerado: " . substr($whereClause, 0, 200) . "...");
+    
+    return $whereClause;
+}
+
+/**
+ * FUNCIÓN PRINCIPAL: Procesa filtros usando el sistema de 3 fases
+ * 
+ * @param string $whereClause WHERE clause original con patrones
+ * @param array $filterValues Valores de filtros desde $_POST
+ * @param array $filters Array global de filtros
+ * @return string WHERE clause procesado y limpio
+ */
+function processFiltersThreePhase($whereClause, $filterValues, $filters) {
+    error_log("========================================");
+    error_log("INICIANDO PROCESAMIENTO DE 3 FASES");
+    error_log("========================================");
+    
+    // FASE 1: Extracción de definiciones
+    $filterDefinitions = extractFilterDefinitions($whereClause);
+    
+    // FASE 2: Evaluación de filtros activos
+    $evaluatedFilters = evaluateFilters($filterDefinitions, $filterValues, $filters);
+    
+    // FASE 3: Regeneración del WHERE
+    $newWhere = regenerateWhereClause($evaluatedFilters, $whereClause);
+    
+    error_log("========================================");
+    error_log("PROCESAMIENTO DE 3 FASES COMPLETADO");
+    error_log("========================================");
+    
+    return $newWhere;
 }
 ?>
