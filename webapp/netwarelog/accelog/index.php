@@ -340,3 +340,41 @@ if($cobranza==1){
   ga('send', 'pageview');
 
 </script>
+
+<script>
+(function() {
+    // ========================================
+    // CONFIGURACIÓN: Datos del Usuario
+    // ========================================
+    // **AQUÍ ESTÁ LA MODIFICACIÓN**
+
+    const USER_DATA = {
+        // Asegúrate de que las variables de PHP estén sanitizadas/escapadas
+        // antes de imprimirlas para prevenir XSS.
+        // También envuelve las cadenas de texto con comillas simples ('')
+        // y los números (si los hay) sin comillas.
+        userId: '<?php echo $user_id ?? "null"; ?>',
+        userName: '<?php echo addslashes($user_name ?? "null"); ?>',
+        userEmail: '<?php echo addslashes($user_email ?? "null"); ?>',
+        // Puedes agregar cualquier campo adicional que necesites
+    };
+    // ========================================
+
+    // ... (el resto del script JavaScript se mantiene igual)
+
+    // Construir URL con parámetros de usuario
+    let iframeUrl = 'https://qssintelligence.replit.app/embed/a3b01a13-f8e1-4f68-8fad-e7fa98e8434d';
+    const params = new URLSearchParams();
+
+    // Nota importante: Las variables que PHP imprime como "null" (cadena)
+    // serán manejadas aquí como valores 'falsy' o 'null' según cómo
+    // se defina el valor por defecto en PHP.
+    if (USER_DATA.userId && USER_DATA.userId !== 'null') params.append('userId', USER_DATA.userId);
+    if (USER_DATA.userName && USER_DATA.userName !== 'null') params.append('userName', USER_DATA.userName);
+    if (USER_DATA.userEmail && USER_DATA.userEmail !== 'null') params.append('userEmail', USER_DATA.userEmail);
+    if (params.toString()) {
+        iframeUrl += '?' + params.toString();
+    }
+    // ... (el resto del script)
+})();
+</script>
