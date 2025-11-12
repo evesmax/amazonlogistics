@@ -1,0 +1,181 @@
+<?php
+/**
+ * Export SQL query results to Excel using external API
+ * 
+ * Este script consume un API externo para generar reportes Excel profesionales
+ * con formato avanzado, logo y estilos predefinidos.
+ * 
+ * API: https://qssools.replit.app/api/generate-excel/
+ * Compatible con PHP 5.5.9
+ */
+
+ini_set('memory_limit', '256M');
+
+require_once 'config.php';
+
+if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
+    die("No hay resultados para exportar.");
+}
+
+$results = $_SESSION['query_results'];
+$columns = $_SESSION['query_columns'];
+
+$reportTitle = "Reporte de Consulta";
+if (isset($_SESSION['repolog_report_id'])) {
+    try {
+        $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $stmt = $pdo->prepare("SELECT nombrereporte FROM repolog_reportes WHERE idreporte = ?");
+        $stmt->execute([$_SESSION['repolog_report_id']]);
+        $reportInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($reportInfo && isset($reportInfo['nombrereporte'])) {
+            $reportTitle = $reportInfo['nombrereporte'];
+        }
+        
+        $pdo = null;
+    } catch (PDOException $e) {
+    }
+}
+
+$currentDate = date('d/m/Y H:i:s');
+
+$filterInfo = "";
+if (isset($_SESSION['user_selected_date_filter_al'])) {
+    $filterInfo = "Al: " . $_SESSION['user_selected_date_filter_al'];
+}
+
+$titleHtml = "<strong>" . htmlspecialchars($reportTitle) . "</strong><br>Generado el: " . $currentDate;
+if (!empty($filterInfo)) {
+    $titleHtml .= "<br>Filtros aplicados: " . htmlspecialchars($filterInfo);
+}
+
+$logoUrl = "https://qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/administracion_usuarios/logoamz.jpg";
+
+$customerInfo = "<strong>AMAZON LOGISTICS</strong>";
+
+$formatInfo = array();
+if (isset($_SESSION['format_info'])) {
+    $formatInfo = $_SESSION['format_info'];
+}
+
+$dataFormatted = array();
+foreach ($results as $dataRow) {
+    $row = array();
+    foreach ($columns as $columnName) {
+        $value = isset($dataRow[$columnName]) ? $dataRow[$columnName] : '';
+        
+        if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+            $value = strip_tags($value);
+        }
+        
+        if (is_numeric(str_replace(',', '', $value))) {
+            $cleanValue = str_replace(',', '', $value);
+            
+            $decimals = 2;
+            if (isset($formatInfo[$columnName]) && isset($formatInfo[$columnName]['decimals'])) {
+                $decimals = $formatInfo[$columnName]['decimals'];
+            }
+            
+            $value = number_format(floatval($cleanValue), $decimals, '.', ',');
+        }
+        
+        $row[] = $value;
+    }
+    $dataFormatted[] = $row;
+}
+
+$apiUrl = 'https://qssools.replit.app/api/generate-excel/68e2452b-ae58-47f7-a857-ae16a96b19e5';
+
+$payload = array(
+    'title' => $titleHtml,
+    'logoUrl' => $logoUrl,
+    'customerInfo' => $customerInfo,
+    'headers' => $columns,
+    'data' => $dataFormatted
+);
+
+error_log("=== EXCEL API REQUEST ===");
+error_log("API URL: " . $apiUrl);
+error_log("Report Title: " . $reportTitle);
+error_log("Columns count: " . count($columns));
+error_log("Data rows count: " . count($dataFormatted));
+error_log("Headers: " . implode(", ", $columns));
+
+$jsonPayload = json_encode($payload);
+error_log("Payload size: " . strlen($jsonPayload) . " bytes");
+error_log("Payload preview (first 500 chars): " . substr($jsonPayload, 0, 500));
+
+$ch = curl_init($apiUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($jsonPayload)
+));
+curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
+curl_close($ch);
+
+error_log("=== EXCEL API RESPONSE ===");
+error_log("HTTP Code: " . $httpCode);
+
+if ($response === false) {
+    error_log("ERROR: CURL failed - " . $curlError);
+    die('Error al conectar con el API: ' . $curlError);
+}
+
+if ($httpCode !== 200) {
+    error_log("ERROR: API returned HTTP " . $httpCode);
+    error_log("Response: " . substr($response, 0, 1000));
+    die('Error del API (HTTP ' . $httpCode . '): ' . $response);
+}
+
+error_log("Response size: " . strlen($response) . " bytes");
+error_log("Response starts with: " . substr($response, 0, 10));
+
+if (substr($response, 0, 2) === 'PK') {
+    error_log("Response is direct binary Excel file (XLSX)");
+    $excelContent = $response;
+} else {
+    error_log("Response is JSON, trying to decode");
+    $responseData = json_decode($response, true);
+    
+    if (!isset($responseData['file'])) {
+        error_log("ERROR: Response does not contain 'file' field");
+        if (is_array($responseData)) {
+            error_log("Response keys: " . implode(", ", array_keys($responseData)));
+        }
+        die('Error: La respuesta del API no contiene el archivo en base64');
+    }
+    
+    $base64File = $responseData['file'];
+    error_log("Base64 file length: " . strlen($base64File) . " chars");
+    
+    $excelContent = base64_decode($base64File);
+    
+    if ($excelContent === false) {
+        error_log("ERROR: Failed to decode base64");
+        die('Error al decodificar el archivo base64');
+    }
+}
+
+error_log("Excel content size: " . strlen($excelContent) . " bytes");
+
+$filename = str_replace(' ', '_', $reportTitle) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+error_log("Generated filename: " . $filename);
+error_log("=== EXCEL DOWNLOAD SUCCESS ===");
+
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+header('Content-Length: ' . strlen($excelContent));
+
+echo $excelContent;
+exit;
+?>

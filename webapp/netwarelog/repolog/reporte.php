@@ -1929,7 +1929,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             <?php if (!empty($results)): ?>
                 <div class="action-buttons">
                     <a href="export.php" class="export-btn">Descargar CSV</a>
-                    <a href="export_excel_template.php" class="export-excel-btn">Descargar Excel</a>
+                    <a href="export_excel_api.php" class="export-excel-btn">Descargar Excel</a>
                     <a href="print.php" class="print-btn">Imprimir PDF</a>
                 </div>
             <?php endif; ?>
