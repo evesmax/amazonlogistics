@@ -147,6 +147,7 @@
     $_SESSION['accelog_variable']=$accelog_variable;
     $_SESSION['estatus_cobranza']=$estatus_cobranza;
     $pathcliente = "/warehouse/" . $strInstanciaG . "/";
+
     $tipobd = "mysql";
     $instalarbase= "0";
     $link_regreso= "../accelog/";
