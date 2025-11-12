@@ -107,33 +107,45 @@ $jsonPayload = json_encode($payload);
 error_log("Payload size: " . strlen($jsonPayload) . " bytes");
 error_log("Payload preview (first 500 chars): " . substr($jsonPayload, 0, 500));
 
-$ch = curl_init($apiUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Content-Type: application/json',
-    'Content-Length: ' . strlen($jsonPayload)
-));
-curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+$options = array(
+    'http' => array(
+        'method' => 'POST',
+        'header' => 'Content-Type: application/json' . "\r\n" .
+                    'Content-Length: ' . strlen($jsonPayload) . "\r\n",
+        'content' => $jsonPayload,
+        'timeout' => 60,
+        'ignore_errors' => true
+    )
+);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
+$context = stream_context_create($options);
+$response = @file_get_contents($apiUrl, false, $context);
 
 error_log("=== EXCEL API RESPONSE ===");
-error_log("HTTP Code: " . $httpCode);
 
 if ($response === false) {
-    error_log("ERROR: CURL failed - " . $curlError);
-    die('Error al conectar con el API: ' . $curlError);
+    $error = error_get_last();
+    error_log("ERROR: Request failed - " . ($error ? $error['message'] : 'Unknown error'));
+    die('Error al conectar con el API. Verifique su conexión a internet.');
 }
 
-if ($httpCode !== 200) {
-    error_log("ERROR: API returned HTTP " . $httpCode);
-    error_log("Response: " . substr($response, 0, 1000));
-    die('Error del API (HTTP ' . $httpCode . '): ' . $response);
+if (isset($http_response_header)) {
+    $httpCode = 0;
+    foreach ($http_response_header as $header) {
+        if (preg_match('/^HTTP\/\d\.\d\s+(\d+)/', $header, $matches)) {
+            $httpCode = intval($matches[1]);
+            break;
+        }
+    }
+    error_log("HTTP Code: " . $httpCode);
+    
+    if ($httpCode !== 200) {
+        error_log("ERROR: API returned HTTP " . $httpCode);
+        error_log("Response: " . substr($response, 0, 1000));
+        die('Error del API (HTTP ' . $httpCode . '): ' . $response);
+    }
+} else {
+    error_log("WARNING: Could not determine HTTP status code");
 }
 
 error_log("Response size: " . strlen($response) . " bytes");
