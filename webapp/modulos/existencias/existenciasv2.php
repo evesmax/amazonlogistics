@@ -18,7 +18,8 @@ $idestado="NULL";
 $idbodega="NULL";
 
 echo $_SESSION['applied_filters']."<br>";
-echo $_SESSION['sql_where_clause']."<br>"
+echo $_SESSION['sql_where_clause']."<br>";
+
 exit();
 
 
