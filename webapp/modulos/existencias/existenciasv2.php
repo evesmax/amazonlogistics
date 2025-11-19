@@ -17,8 +17,10 @@ $idloteproducto="NULL";
 $idestado="NULL";
 $idbodega="NULL";
 
-//echo $_SESSION['applied_filters'];
-//exit();
+echo $_SESSION['applied_filters']."<br>";
+echo $_SESSION['sql_where_clause']."<br>"
+exit();
+
 
 if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters'])) {
 
