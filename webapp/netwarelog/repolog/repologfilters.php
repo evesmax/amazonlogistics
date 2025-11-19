@@ -70,6 +70,46 @@ try {
 }
 
 /**
+ * Extrae la cláusula WHERE de una consulta SQL completa
+ * 
+ * @param string $sql Consulta SQL completa
+ * @return string Solo la cláusula WHERE (sin la palabra WHERE)
+ */
+function extractWhereClause($sql) {
+    if (empty($sql)) {
+        return '';
+    }
+    
+    // Buscar WHERE hasta ORDER BY
+    if (preg_match('/\bWHERE\s+(.+?)\s+ORDER\s+BY\b/is', $sql, $matches)) {
+        return trim($matches[1]);
+    }
+    
+    // Buscar WHERE hasta GROUP BY
+    if (preg_match('/\bWHERE\s+(.+?)\s+GROUP\s+BY\b/is', $sql, $matches)) {
+        return trim($matches[1]);
+    }
+    
+    // Buscar WHERE hasta HAVING
+    if (preg_match('/\bWHERE\s+(.+?)\s+HAVING\b/is', $sql, $matches)) {
+        return trim($matches[1]);
+    }
+    
+    // Buscar WHERE hasta LIMIT
+    if (preg_match('/\bWHERE\s+(.+?)\s+LIMIT\b/is', $sql, $matches)) {
+        return trim($matches[1]);
+    }
+    
+    // Buscar WHERE hasta el final (sin ORDER BY ni otras cláusulas)
+    if (preg_match('/\bWHERE\s+(.+)$/is', $sql, $matches)) {
+        return trim($matches[1]);
+    }
+    
+    // No se encontró WHERE
+    return '';
+}
+
+/**
  * Corrige patrones combo mal formados que pueden tener paréntesis desbalanceados
  * o sintaxis incorrecta en el SQL interno
  * 
@@ -1547,6 +1587,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
         
         // Guardar una copia original para referencia
         $_SESSION['sql_consulta_original'] = $finalSql;
+        
+        // NUEVO: Extraer y guardar solo la cláusula WHERE para procesos separados
+        $_SESSION['sql_where_clause'] = extractWhereClause($finalSql);
+        error_log("WHERE clause extraído y guardado en sesión: " . $_SESSION['sql_where_clause']);
         
         // Guardar el ID del reporte
         $_SESSION['repolog_report_id'] = $reportId;
