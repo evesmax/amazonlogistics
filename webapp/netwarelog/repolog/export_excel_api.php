@@ -18,7 +18,7 @@ if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
 }
 
 $results = $_SESSION['query_results'];
-$columns = $_SESSION['query_columns'];
+$columns = isset($_SESSION['visible_columns']) ? $_SESSION['visible_columns'] : $_SESSION['query_columns'];
 
 $reportTitle = "Reporte de Consulta";
 if (isset($_SESSION['repolog_report_id'])) {
@@ -42,14 +42,26 @@ if (isset($_SESSION['repolog_report_id'])) {
 $currentDate = date('d/m/Y H:i:s');
 
 $filterInfo = "";
-if (isset($_SESSION['user_selected_date_filter_al'])) {
+if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])) {
+    $filterParts = [];
+    foreach ($_SESSION['applied_filters'] as $filter) {
+        if (isset($filter['label']) && isset($filter['value'])) {
+            $value = is_array($filter['value']) ? implode(', ', $filter['value']) : $filter['value'];
+            $filterParts[] = $filter['label'] . ": " . $value;
+        }
+    }
+    if (!empty($filterParts)) {
+        $filterInfo = implode("    ", $filterParts);
+    }
+} elseif (isset($_SESSION['user_selected_date_filter_al'])) {
     $filterInfo = "Al: " . $_SESSION['user_selected_date_filter_al'];
 }
 
-$titleHtml = "<strong>" . htmlspecialchars($reportTitle) . "</strong><br>Generado el: " . $currentDate;
+$titleHtml = "<strong>" . htmlspecialchars($reportTitle) . "</strong>";
 if (!empty($filterInfo)) {
-    $titleHtml .= "<br>Filtros aplicados: " . htmlspecialchars($filterInfo);
+    $titleHtml .= "<br><strong>Filtros aplicados:</strong> " . htmlspecialchars($filterInfo);
 }
+$titleHtml .= "<br>Generado el: " . $currentDate;
 
 $logoUrl = "https://qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/administracion_usuarios/logoamz.jpg";
 

@@ -485,6 +485,77 @@ function sanitizeId($string) {
     return $string;
 }
 
+/**
+ * Filtra las columnas para excluir aquellas con filtros de un solo valor
+ * Mantiene las columnas si el filtro tiene múltiples valores
+ * 
+ * @param array $columns Lista de columnas disponibles
+ * @param array $appliedFilters Filtros aplicados con label y value
+ * @return array Columnas a mostrar
+ */
+function getVisibleColumns($columns, $appliedFilters) {
+    if (empty($appliedFilters)) {
+        return $columns;
+    }
+    
+    // Construir lista de columnas a excluir (filtros con solo un valor)
+    $columnsToHide = [];
+    
+    foreach ($appliedFilters as $filter) {
+        if (!isset($filter['label']) || !isset($filter['value'])) {
+            continue;
+        }
+        
+        $filterLabel = $filter['label'];
+        $filterValue = $filter['value'];
+        
+        // Determinar si el filtro tiene múltiples valores
+        $isMultiValue = is_array($filterValue) && count($filterValue) > 1;
+        
+        // Si es un valor único (no array o array con 1 elemento), marcar para excluir
+        if (!$isMultiValue) {
+            // Búsqueda 1: Coincidencia exacta (case-insensitive)
+            foreach ($columns as $column) {
+                if (strcasecmp($filterLabel, $column) === 0) {
+                    $columnsToHide[] = $column;
+                    error_log("Columna excluida (coincidencia exacta): " . $column . " (filtro: " . $filterLabel . ")");
+                    break;
+                }
+            }
+            
+            // Búsqueda 2: Si filterLabel está contenido en column o column en filterLabel
+            if (!in_array($filterLabel, $columnsToHide)) {
+                foreach ($columns as $column) {
+                    $labelLower = strtolower($filterLabel);
+                    $columnLower = strtolower($column);
+                    
+                    // Buscar coincidencias parciales (palabras clave)
+                    if (strpos($columnLower, $labelLower) !== false || 
+                        strpos($labelLower, $columnLower) !== false) {
+                        $columnsToHide[] = $column;
+                        error_log("Columna excluida (coincidencia parcial): " . $column . " contiene '" . $filterLabel . "'");
+                        break;
+                    }
+                }
+            }
+        } else {
+            error_log("Columna MOSTRADA (filtro multi-valor): " . $filterLabel . " tiene " . count($filterValue) . " valores");
+        }
+    }
+    
+    // Retornar solo las columnas que no están en la lista de exclusión
+    $visibleColumns = [];
+    foreach ($columns as $column) {
+        if (!in_array($column, $columnsToHide)) {
+            $visibleColumns[] = $column;
+        }
+    }
+    
+    error_log("Columnas visibles: " . implode(", ", $visibleColumns) . " (Total: " . count($visibleColumns) . " de " . count($columns) . ")");
+    
+    return $visibleColumns;
+}
+
 // Initialize variables
 $results = [];
 $columns = [];
@@ -1343,9 +1414,13 @@ if (!empty($results)) {
 
 // Se ha eliminado la función fixHtmlInQueryResults para mostrar el HTML tal cual
 
+// Filtrar columnas: excluir aquellas con filtros de un solo valor
+$visibleColumns = getVisibleColumns($columns, $appliedFilters);
+
 // Store results in session for export functionality
 $_SESSION['query_results'] = $results;
-$_SESSION['query_columns'] = $columns;
+$_SESSION['query_columns'] = $columns;  // Guardar todas las columnas originales
+$_SESSION['visible_columns'] = $visibleColumns;  // Guardar columnas visibles para mostrar
 
 /**
  * Procesa los resultados para agregar subtotales según las configuraciones especificadas
@@ -1989,7 +2064,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                 <table id="resultsTable">
                     <thead>
                         <tr>
-                            <?php foreach ($columns as $column): ?>
+                            <?php foreach ($visibleColumns as $column): ?>
                                 <th>
                                     <?php echo htmlspecialchars($column); ?>
                                     <div class="column-filter">
@@ -2014,7 +2089,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                             }
                             ?>
                             <tr class="<?php echo $rowClass; ?>">
-                                <?php foreach ($columns as $column): ?>
+                                <?php foreach ($visibleColumns as $column): ?>
                                     <td>
                                     <?php 
                                         // Ignorar campos especiales de control
@@ -2274,7 +2349,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         <script>
             // Store data for JavaScript processing (usando var en lugar de const para compatibilidad)
             var tableData = <?php echo json_encode($results); ?>;
-            var tableColumns = <?php echo json_encode($columns); ?>;
+            var tableColumns = <?php echo json_encode($visibleColumns); ?>;  // Usar solo columnas visibles
             
             // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
             // para evitar ejecuciones múltiples que pueden causar duplicación de datos

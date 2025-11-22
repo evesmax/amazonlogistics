@@ -27,7 +27,7 @@ if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
 }
 
 $results = $_SESSION['query_results'];
-$columns = $_SESSION['query_columns'];
+$columns = isset($_SESSION['visible_columns']) ? $_SESSION['visible_columns'] : $_SESSION['query_columns'];
 
 // Get report title if available
 $reportTitle = "Reporte de Consulta";
