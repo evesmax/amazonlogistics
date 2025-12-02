@@ -57,15 +57,15 @@ if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters']))
     $filterInfo = "Al: " . $_SESSION['user_selected_date_filter_al'];
 }
 
-$titleHtml = "<strong>" . htmlspecialchars($reportTitle) . "</strong>";
+$titleHtml = "";
 if (!empty($filterInfo)) {
-    $titleHtml .= "<br><strong>Filtros aplicados:</strong> " . htmlspecialchars($filterInfo);
+    $titleHtml .= "<strong>Filtros aplicados:</strong> " . htmlspecialchars($filterInfo) . "    ";
 }
-$titleHtml .= "<br>Generado el: " . $currentDate;
+$titleHtml .= "Generado el: " . $currentDate;
 
 $logoUrl = "https://qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/archivos/1/administracion_usuarios/logoamz.jpg";
 
-$customerInfo = "<strong>AMAZON LOGISTICS</strong>";
+$customerInfo = "<strong>" . htmlspecialchars($reportTitle) . "</strong>";
 
 $formatInfo = array();
 if (isset($_SESSION['format_info'])) {
