@@ -592,7 +592,7 @@ class Configuraciong extends Common
                                 }                                                      
         $html .=  '     </select>
                     </div> 
-                    <div class="col-md-3">
+                    <div class="col-md-3 d-none hidden">
                         <label>Cliente:</label>
                         <select id="cliente" class="form-control">
                             <!--<option value="0">Selecciona el Puesto</option>-->';                                 
