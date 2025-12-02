@@ -240,7 +240,7 @@ class ConfiguraciongModel extends Connection
             }
         */
         $usuario = $_POST['nombreUser'];
-        $sql5 = "UPDATE administracion_usuarios SET idempleado='".$id2."' where nombreusuario='".$usuario."'";
+        $sql5 = "UPDATE administracion_usuarios SET idempleado='".$id2."' where idadmin=$idadmin";
         $result5 = $this->queryArray($sql5);
         return $result5;
 
