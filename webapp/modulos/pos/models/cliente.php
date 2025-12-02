@@ -411,7 +411,7 @@ class ClienteModel extends Connection
 
 	}
 
-	function guardarUsuarioPortal($correoportal,$userportal,$passportal,$nombre){
+	function guardarUsuarioPortal2($correoportal,$userportal,$passportal,$nombre){
 		//2406 menu portal cliente en configuracion
 
 		session_start();

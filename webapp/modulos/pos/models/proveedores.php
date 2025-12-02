@@ -356,7 +356,7 @@ class ProveedoresModel extends Connection {
 		return $resultado;
 	}
 
-	function guardarUsuarioPortal($correoportal,$userportal,$passportal,$nombre){
+	function guardarUsuarioPortal2($correoportal,$userportal,$passportal,$nombre){
 		
 		//2407 menu portal proveedores en configuracion
 
