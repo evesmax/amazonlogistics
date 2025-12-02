@@ -2348,11 +2348,16 @@ function extractFixedClauses($whereClause, $filterDefs) {
             }
         }
         
-        // Si no está ocupada y no contiene patrones, es una cláusula fija
-        if (!$isOccupied && 
-            strpos($clauseText, '[@') === false && 
-            strpos($clauseText, '[#') === false &&
-            strpos($clauseText, '[!') === false) {
+        // Si no está ocupada y no contiene patrones de COMBO [@...], es una cláusula fija
+        // IMPORTANTE: Las cláusulas con [#Del]/[#Al] SÍ son fijas (fechas siempre se aplican)
+        // Solo excluimos [!...] (variables de sesión que ya fueron reemplazadas antes) y [@...] (combos)
+        $containsComboPattern = (strpos($clauseText, '[@') !== false);
+        $containsDatePattern = (strpos($clauseText, '[#') !== false);
+        
+        if (!$isOccupied && !$containsComboPattern) {
+            // Es cláusula fija si:
+            // 1. No tiene patrones de combo [@...]
+            // 2. Puede tener patrones de fecha [#...] que se reemplazan después
             
             $fixedClauses[] = array(
                 'type' => 'fixed',
@@ -2362,13 +2367,13 @@ function extractFixedClauses($whereClause, $filterDefs) {
                 'field' => '',
                 'operator' => '',
                 'is_multiselection' => false,
-                'label' => 'fixed',
+                'label' => $containsDatePattern ? 'fixed_date' : 'fixed',
                 'start_pos' => $clauseStart,
                 'end_pos' => $clauseEnd,
                 'is_active' => true  // Las fijas siempre están activas
             );
             
-            error_log("Fixed clause encontrado: " . substr($clauseText, 0, 80) . "...");
+            error_log("Fixed clause encontrado" . ($containsDatePattern ? " (con fecha)" : "") . ": " . substr($clauseText, 0, 80) . "...");
         }
         
         // Continuar buscando desde el final de esta cláusula
