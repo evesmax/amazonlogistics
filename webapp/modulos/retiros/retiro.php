@@ -61,7 +61,7 @@ $htmlpoliticas="
         </script>";
 		
 //RECUPERANDO VARIABLES
-         $idordenentrega=$_GET["folio"];
+    $idordenentrega=$_GET["folio"];
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
         
@@ -176,14 +176,21 @@ $htmlpoliticas="
         $sqlinv="call generaExistenciasInventario('".$fecha_final."',".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
         //echo "<br> Consulta Inventario".$sqlinv."<br>";
         $conexion->consultar($sqlinv);
-        $sqlinv="Select * from inventarios_existencias where idempleado=".$idempleado;
+        $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         $result = $conexion->consultar($sqlinv);
         while($rs = $conexion->siguiente($result)){
             $inventario=$rs{"inventarioinicial"};
         }
         $conexion->consultar($sqlinv);
         $conexion->cerrar_consulta($result);
-
+        if($inventario<$cantidad1){
+            echo "<script>
+                    alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
+                    window.close();
+                  </script>";
+            //exit();
+        }
+        //Genera Datos de la Organización        
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
@@ -743,12 +750,12 @@ $htmlpoliticas="
                                                                                 }
 									</script>";
 		//Botones
-        if ($inventario>=$cantidad1) {
+        if ($inventario>$cantidad1) {
             $html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
                             <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
         } else {
             $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
-                                    No hay inventario sificiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1."
+                                    No hay inventario suficiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1."
                                 </span>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
         }					

@@ -843,14 +843,14 @@
                                                                                     if((cant1<=jsaldo1) && (cant2<=jsaldo2)){
                                                                                         cant1=valor(document.getElementById('txtcantrec1').value);
                                                                                         cant2=cant1*jfactor;
-                                                                                        document.envio.txtcantrec2.value=format_number(cant2,2);                                                                                        
+                                                                                        document.envio.txtcantrec2.value=format_number(cant2,3);                                                                                        
                                                                                     }else{ 
                                                                                         alert('Las cantidades Exeden el Saldo de la Instruccion');
                                                                                         document.envio.txtcantrec1.value=format_number(0,2);
-                                                                                        document.envio.txtcantrec2.value=format_number(0,2);
+                                                                                        document.envio.txtcantrec2.value=format_number(0,3);
                                                                                     }
                                                                                     document.envio.txtcantdif1.value=format_number(scant1-cant1,2);
-                                                                                    document.envio.txtcantdif2.value=format_number(scant2-cant2,2);
+                                                                                    document.envio.txtcantdif2.value=format_number(scant2-cant2,3);
                                                                                 }
                                                                                 function printSelec() {
                                                                                         var c, tmp;
