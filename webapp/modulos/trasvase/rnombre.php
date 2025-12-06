@@ -40,7 +40,7 @@ if(isset($_GET["producto"])){
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|";
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|";
         }
 }
 
