@@ -449,7 +449,7 @@ class ClienteModel extends Connection
 		$sql = "INSERT INTO accelog_usuarios (idempleado, usuario, clave, css) values ('$id_empleado', '$userportal', '$calve', 'default')";
 		$this->query($sql);
 
-		$sql = "INSERT INTO administracion_usuarios (nombre, apellidos, nombreusuario, clave, confirmaclave, correoelectronico, foto, idperfil, idempleado,  idSuc) values ('$nombre', '', '$userportal', '$passportal', '$passportal', '$correoportal', '', '$idperfil', '$id_empleado',  NULL)";
+		$sql = "INSERT INTO administracion_usuarios2 (nombre, apellidos, nombreusuario, clave, confirmaclave, correoelectronico, foto, idperfil, idempleado,  idSuc) values ('$nombre', '', '$userportal', '$passportal', '$passportal', '$correoportal', '', '$idperfil', '$id_empleado',  NULL)";
 		$this->query($sql);
 
 		$sql = "INSERT INTO accelog_usuarios_per (idperfil, idempleado) values ('$idperfil', '$id_empleado')";
