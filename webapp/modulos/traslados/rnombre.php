@@ -10,7 +10,7 @@ if(isset($_GET["producto"])){
         //Asignacion de Etiqueta Cantidad Principal
         if ($tipo==1){
                 //Obtiene Etiqueta Descripcion Cantidad principal
-                $desc1="Cantidad1";
+                $desc1="Cantidad 1";
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
@@ -23,7 +23,7 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result);
                 //Asignacion de Etiqueta Cantidad Secundaria
                 //$edita=0;
-                $desc2="Cantidad2";
+                $desc2="Cantidad 2";
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
