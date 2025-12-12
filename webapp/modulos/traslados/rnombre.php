@@ -14,7 +14,8 @@ if(isset($_GET["producto"])){
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
-                echo $sQuery."<br>";  
+                //echo $sQuery."<br>"; 
+                $edita=$sQuery."/ - /"; 
                     $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
@@ -26,8 +27,9 @@ if(isset($_GET["producto"])){
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
-                echo "<script>alert('".$sQuery."');</script>";
-                    $result = $conexion->consultar($sQuery);
+                //echo "<script>alert('".$sQuery."');</script>";
+                $edita.=$sQuery;
+                $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc2 = $rs["descripcionunidad"];
                         $factor= $rs["factor"];
@@ -43,7 +45,7 @@ if(isset($_GET["producto"])){
                 $idtransportista=$_GET["idtransportista"];
                 $duplicada=0;
                 $sQuery = "Select count(cartaporte) cuantas from logistica_ordenesentrega where idtransportista=".$idtransportista." and cartaporte='".$cartaporte."'";
-                echo "<script>alert('".$sQuery."');</script>";
+                //echo "<script>alert('".$sQuery."');</script>";
                 $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $duplicada = $rs["cuantas"];
