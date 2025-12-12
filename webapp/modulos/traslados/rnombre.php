@@ -16,13 +16,13 @@ if(isset($_GET["producto"])){
                     where i.idproducto=".$producto;
                 //echo $sQuery."<br>"; 
                 $edita=$sQuery."/ - /"; 
-                    $result = $conexion->consultar($sQuery);
+                $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
                 }
                 $conexion->cerrar_consulta($result);
                 //Asignacion de Etiqueta Cantidad Secundaria
-                $edita=0;
+                //$edita=0;
                 $desc2="Cantidad";
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
