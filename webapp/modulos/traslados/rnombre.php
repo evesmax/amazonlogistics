@@ -7,8 +7,8 @@ if(isset($_GET["producto"])){
         $cantidadp=$_GET["cantidadp"];  //Cantidad Principal
         $tipo=$_GET["tipo"];
         $cartaporte=$_GET["cartaporte"];
-        echo $tipo;
-        exit();    
+        //echo $tipo;
+        //exit();    
         //Asignacion de Etiqueta Cantidad Principal
         if ($tipo==1){
                 //Obtiene Etiqueta Descripcion Cantidad principal
