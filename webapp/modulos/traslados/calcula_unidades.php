@@ -20,11 +20,6 @@
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i265').val(),cantidadp:$('#i268').val(), tipo:1},function(datos)
                             {
                                 var info = datos.split("|");
-                                alert(info[0]);
-                                alert(info[1]);
-                                alert(info[2]);
-                                alert(info[3]);
-
                                 $('#lbl268').text(info[0]);
                                 $('#lbl269').text(info[1]);
                                 $('#i269').val(info[2]);
