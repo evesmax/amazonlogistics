@@ -17,7 +17,7 @@ if(isset($_GET["producto"])){
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
 
-                echo $sQuery."<br>"; 
+                //echo $sQuery."<br>"; 
                 $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
@@ -30,7 +30,7 @@ if(isset($_GET["producto"])){
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
 
-                echo $sQuery."<br>";
+                //echo $sQuery."<br>";
                 $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc2 = $rs["descripcionunidad"];
