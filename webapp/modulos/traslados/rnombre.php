@@ -18,7 +18,6 @@ if(isset($_GET["producto"])){
                     where i.idproducto=".$producto;
 
                 //echo $sQuery."<br>"; 
-                $edita=$sQuery."/ - /"; 
                 $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
@@ -46,7 +45,7 @@ if(isset($_GET["producto"])){
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
            
-            $duplicada=0;s
+            $duplicada=0;
             if(isset($_GET["cartaporte"])){
                 $cartaporte=$_GET["cartaporte"];
                 $idtransportista=$_GET["idtransportista"];
