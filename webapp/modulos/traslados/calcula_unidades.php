@@ -1,6 +1,6 @@
 <?php
 	ini_set ('error_reporting', E_ALL);
-        $urlapp=$url_dominio."/modulos/traslados/rnombre.php";
+        $urlapp=$url_dominio."modulos/traslados/rnombre.php";
      //echo $urlapp; 
 ?>
 <html >
