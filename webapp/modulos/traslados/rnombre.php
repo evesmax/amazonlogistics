@@ -14,6 +14,7 @@ if(isset($_GET["producto"])){
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
+
                 //echo $sQuery."<br>"; 
                 $edita=$sQuery."/ - /"; 
                 $result = $conexion->consultar($sQuery);
@@ -24,6 +25,10 @@ if(isset($_GET["producto"])){
                 //Asignacion de Etiqueta Cantidad Secundaria
                 //$edita=0;
                 $desc2="Cantidad 2";
+                $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
+                    inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
+                    where i.idproducto=".$producto." Limit 1";
+
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
@@ -39,7 +44,7 @@ if(isset($_GET["producto"])){
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
            
-            $duplicada=0;
+            $duplicada=0;s
             if(isset($_GET["cartaporte"])){
                 $cartaporte=$_GET["cartaporte"];
                 $idtransportista=$_GET["idtransportista"];
@@ -51,8 +56,9 @@ if(isset($_GET["producto"])){
                         $duplicada = $rs["cuantas"];
                 }
                 $conexion->cerrar_consulta($result); 
-            } 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|E".$edita."|".$duplicada."|";
+            }
+            $edita=0; 
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|".$duplicada."|";
         }
 }
 ?>
