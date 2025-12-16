@@ -128,7 +128,7 @@
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
                                 obd.nombrebodega 'bodegadestino', il.descripcionlote 'zafra', 
                                 ip.nombreproducto 'producto', ie.descripcionestado 'estado', 
-                                format(lt.cantidad1,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada1,0),3) 'retirada',
+                                lt.cantidad1 'saldoinicial', format(IFNULL(lt.cantidadretirada1,0),3) 'retirada',
                                 (Select sum(cantidadrecibida1) total from logistica_recepciones where idtraslado=lt.idtraslado and idestadodocumento=1) 'recibida', 
                                 format(lt.cantidad1-IFNULL(lt.cantidadretirada1,0),3) 'saldo', 
                                     case when obd.idbodega in (select idbodega from relaciones_almacenadoras_bodegas t 
