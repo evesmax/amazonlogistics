@@ -25,8 +25,8 @@
                         }else{
                             $('#devfalt').css('display', 'none');
                         }
-                        if($('#txtcantrec1').val()>$('#txtsaldotraslado').val()){
-                            alert('No puede recibir una cantidad mayor al Saldo de la Orden de Traslado');
+                        if($('#txtcantrec1').val()*1>$('#txtsaldotraslado').val()*1){
+                            alert('No puede recibir una cantidad mayor al Saldo de la Orden de Traslado Cant.' + $('#txtcantrec1').val() + ' Saldo Traslado: ' + $('#txtsaldotraslado').val());
                             $('#txtcantrec1').val()=0;
                             $('#txtcantrec1').focus();
                         }                                                
@@ -128,9 +128,9 @@
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
                                 obd.nombrebodega 'bodegadestino', il.descripcionlote 'zafra', 
                                 ip.nombreproducto 'producto', ie.descripcionestado 'estado', 
-                                format(lt.cantidad2,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada2,0),3) 'retirada',
-                                (Select sum(cantidadrecibida2) total from logistica_recepciones where idtraslado=lt.idtraslado and idestadodocumento=1) 'recibida', 
-                                format(lt.cantidad2-IFNULL(lt.cantidadretirada2,0),3) 'saldo', 
+                                format(lt.cantidad1,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada1,0),3) 'retirada',
+                                (Select sum(cantidadrecibida1) total from logistica_recepciones where idtraslado=lt.idtraslado and idestadodocumento=1) 'recibida', 
+                                format(lt.cantidad1-IFNULL(lt.cantidadretirada1,0),3) 'saldo', 
                                     case when obd.idbodega in (select idbodega from relaciones_almacenadoras_bodegas t 
                                         inner join relaciones_almacenadoras_bodegas_detalle d on t.idalmacenadorabodega=d.idalmacenadorabodega 
                                         where idbodega=lt.idbodegadestino) then 'a' else 'i' end 'logo', ot.razonsocial transportista,
@@ -170,7 +170,7 @@
                                     $saldoinicial= $rs{"saldoinicial"};
                                     $retirada= $rs{"retirada"};
                                     $recibida= $rs{"recibida"};
-                                    $saldo=$retirada-$recibida;
+                                    $saldo=$saldoinicial-$recibida;
                                     $tipoimagen=$rs{"logo"};
                                     $transportista=$rs{"transportista"};
                                     $idtransportista=$rs{"idtransportista"};
