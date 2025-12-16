@@ -24,7 +24,12 @@
                             $('#txtestatus2').val($('#txtcantdif2').val());
                         }else{
                             $('#devfalt').css('display', 'none');
-                        }                        
+                        }
+                        if($('#txtcantrec1').val()>$('#txtsaldotraslado').val()){
+                            alert('No puede recibir una cantidad mayor al Saldo de la Orden de Traslado');
+                            $('#txtcantrec1').val()=0;
+                            $('#txtcantrec1').focus();
+                        }                                                
                     });    
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
@@ -123,8 +128,8 @@
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
                                 obd.nombrebodega 'bodegadestino', il.descripcionlote 'zafra', 
                                 ip.nombreproducto 'producto', ie.descripcionestado 'estado', 
-                                format(lt.cantidad2,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada2,0),3) 'retirada'
-                                ,format(IFNULL(lt.cantidadrecibida2,0),3) 'recibida', 
+                                format(lt.cantidad2,3) 'saldoinicial', format(IFNULL(lt.cantidadretirada2,0),3) 'retirada',
+                                (Select sum(cantidadrecibida2) total from logistica_recepciones where idtraslado=lt.idtraslado and idestadodocumento=1) 'recibida', 
                                 format(lt.cantidad2-IFNULL(lt.cantidadretirada2,0),3) 'saldo', 
                                     case when obd.idbodega in (select idbodega from relaciones_almacenadoras_bodegas t 
                                         inner join relaciones_almacenadoras_bodegas_detalle d on t.idalmacenadorabodega=d.idalmacenadorabodega 
@@ -165,7 +170,7 @@
                                     $saldoinicial= $rs{"saldoinicial"};
                                     $retirada= $rs{"retirada"};
                                     $recibida= $rs{"recibida"};
-                                    $saldo=$rs{"saldo"};
+                                    $saldo=$retirada-$recibida;
                                     $tipoimagen=$rs{"logo"};
                                     $transportista=$rs{"transportista"};
                                     $idtransportista=$rs{"idtransportista"};
@@ -359,7 +364,7 @@
 	$html.= "  td{font-size:7pt}";
 	$html.= "</style>";
 	$html.= "</head>";
-        
+        $html.="<input type='hidden' value=".$saldo." id='txtsaldotraslado' name='txtsaldotraslado'>";    
         $html.=$htmlpoliticas;	
 
         $html.=" <FORM id='envio' name='envio' method='post' action='recepciondirecta_grabar.php' onsubmit='deshabilitarBoton()'>
@@ -669,7 +674,7 @@
             //Inicia sección de conceptos
 		$html.="<tr><td>"; //Mega tabla
 		$html.="<center><table class='reporte' width='100%'>";
-
+        
 			//Armando encabezado
 			$html.="
                                 <tr class='trencabezado'><td colspan=6>DATOS DEL PRODUCTO</td></tr>
