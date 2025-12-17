@@ -20,8 +20,8 @@
     echo "Retiro cancelado correctamente. Redirigiendo...";
     
     // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
-    echo '<script>window.history.back();</script>';
+    echo "<script>window.history.back();</script>";
     
-    exit();
+    //exit();
  
 ?>
