@@ -174,7 +174,8 @@
                 $sqlimagen="";
                 $carpeta="";
                 $imgtitulo="";
-				//$tipoimagen="a";
+                
+                $tipoimagen="i";
                 if($tipoimagen=="i"){                        
                         $sqlimagen="select a.logotipo, concat(ifnull(a.rfc,''),' ',a.nombrefabricante) nombre, 
                             concat(a.calle,' ',ifnull(concat('No. ',a.noexterior),''),ifnull(concat('No Int. ',a.nointerior),'')) domicilio,  
