@@ -16,11 +16,11 @@
 
         //echo "$sqlsp";
 
-    // mostrar un mensaje antes de redirigir
-    echo "Retiro cancelado correctamente. Redirigiendo...";
-    
+    // mostrar un mensaje antes de redirigir    
     // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
-    echo "<script>window.history.back();</script>";
+
+    echo '<script>alert("Salida cancelada correctamente");</script>';
+    echo '<script>window.history.back();</script>';
     
     //exit();
  
