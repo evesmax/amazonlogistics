@@ -16,7 +16,8 @@
     echo "<br><br> Recepcion cancelado correctamente. Redirigiendo.. $idrecepcion + $sqlsp ";
     
     // INSTRUCCIÓN PARA REGRESAR A LA PÁGINA ANTERIOR
-    echo '<script>window.history.back();</script>';
+    //echo '<script>window.history.back();</script>';
+    echo '<script>alert("Recepcion cancelado correctamente");</script>';
 
 
 ?>
