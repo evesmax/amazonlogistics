@@ -124,6 +124,7 @@
 					$capturista=$usuario;
 					$responsable="";
 					$licenciaoperador="";
+                    $nombrefamilia="";
 
 		$sqlestatus="Select lt.idtraslado,lt.referencia1 otfc, lt.fecha,  
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
@@ -140,7 +141,7 @@
                                     '' placasremolque,'' horallegada,'' ticketbascula,'' banco, '' estiba, 
                                     format(0,2) cantidad1, format(0,2) cantidad2, 
 									'' consecutivobodega, '' folios, '' observaciones,
-									obd.responsable, '' licenciaoperador, vm.nombremarca
+									obd.responsable, '' licenciaoperador, vm.nombremarca, ifa.nombrefamilia
                              From logistica_traslados lt 
                                 left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                                 left join vista_marcas vm on lt.idmarca=vm.idmarca
@@ -149,12 +150,14 @@
                                 left join inventarios_productos ip on ip.idproducto=lt.idproducto
                                 left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
                                 left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
-                                left join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista 
+                                left join operaciones_transportistas ot on ot.idtransportista=lt.idtransportista
+                                left join inventarios_familias ifa on ip.idfamilia=ifa.idfamilia 
                              Where lt.idtraslado=".$idtraslado;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
+                                    $nombrefamilia=$rs{"nombrefamilia"};
                                     $idtraslado=$rs{"idtraslado"};
                                     $otfc=$rs{"otfc"};
                                     $fechaotfc=$rs{"fecha"}; 
@@ -697,7 +700,7 @@
 				$html.="<tr class=trcontenido>";
                                         $html.="<td align=center>".$marca."</td>";
 					$html.="<td align=center>".$zafra."</td>";
-                                        $html.="<td align=center>".$nombreproducto."</td>";
+                                        $html.="<td align=center>".$nombrefamilia." ".$nombreproducto."</td>";
                                         $html.="<td align=center>".$nombreestado."</td>";			
 				$html.="</tr>";				
 			$html.="</table></center>";	

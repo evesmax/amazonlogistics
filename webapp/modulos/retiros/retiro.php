@@ -95,6 +95,7 @@ $htmlpoliticas="
                     $idempleado="";
 				$sqlcan="";
 				$sqldev="";
+                $nombrefamilia="";
 				
                 $sqlcan="(select ifnull(sum(c.cantidad2),0) from logistica_cancelacionordenesentrega c 
                         where c.fechacancelacion<=now() and c.idordenentrega=lo.idordenentrega and c.idestadodocumento=1)";                        
@@ -115,7 +116,7 @@ $htmlpoliticas="
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, 
 								lo.idproducto,ob.responsable, vm.nombremarca, 
                                 lo.idtransportista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,
-                                lo.cantidad1,lo.cantidad2,now() fecha_final,lo.idfabricante,lo.idmarca,lo.idbodega,lo.idproducto,lo.idloteproducto,lo.idestadoproducto,$usuario idempleado
+                                lo.cantidad1,lo.cantidad2,now() fecha_final,lo.idfabricante,lo.idmarca,lo.idbodega,lo.idproducto,lo.idloteproducto,lo.idestadoproducto,$usuario idempleado, ifa.nombrefamilia
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -124,12 +125,14 @@ $htmlpoliticas="
                                 inner join inventarios_productos ip on ip.idproducto=lo.idproducto
                                 inner join  inventarios_estados ie on ie.idestadoproducto=lo.idestadoproducto
                                 inner join inventarios_lotes il on il.idloteproducto=lo.idloteproducto
+                                left join inventarios_familias ifa on ip.idfamilia=ifa.idfamilia
                              Where lo.idordenentrega=".$idordenentrega;
                 
 				//echo $sqlestatus;
                 
         $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
+                                    $nombrefamilia=$rs{"nombrefamilia"};
 									$devuelto=$rs{"devuelto"};
                                     $cancelado=$rs{"cancelado"};
                                     $otfc=$rs{"oefc"};
@@ -620,7 +623,7 @@ $htmlpoliticas="
 				$html.="<tr class=trcontenido>";
                                         $html.="<td align=center>".$temp."</td>";
 					$html.="<td align=center>".$zafra."</td>";
-                                        $html.="<td align=center>".$nombreproducto."</td>";
+                                        $html.="<td align=center>".$nombrefamilia." ".$nombreproducto."</td>";
                                         //$html.="<td align=center>".$nombreestado."</td>";
                                         $html.="<td align=right><input readonly type=text id='txtcantidad1' name='txtcantidad1' size=30  value='".$cantidad1."'></td>";
 					$html.="<td align=right><input readonly type=text id='txtcantidad2' name='txtcantidad2' size=30 value='".$cantidad2."'></td>";			

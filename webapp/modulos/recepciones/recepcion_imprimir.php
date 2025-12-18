@@ -62,10 +62,11 @@
                     $diferencia1="";
                     $diferencia2="";
                     $foliosr="";
-					$licenciaoperador="";
-					$responsable="";
-					$consecutivobodega=0;
-            
+                    $licenciaoperador="";
+                    $responsable="";
+                    $consecutivobodega=0;
+                        $nombrefamilia="";
+
 		$sqlestatus="Select le.idenvio,lt.idtraslado,lt.referencia1 otfc, lt.fecha,  
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
                                 obd.nombrebodega 'bodegadestino', il.descripcionlote 'zafra', 
@@ -85,7 +86,7 @@
                                     lr.referencia 'referenciar',lr.almacenista,lr.supervisor,lr.cabocuadrilla,
                                     lr.cantidadrecibida1,lr.cantidadrecibida2,lr.diferencia1,lr.diferencia2,
                                     lr.folios 'foliosr', lr.observaciones 'observacionesr',
-                                    le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca
+                                    le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca, ifa.nombrefamilia
                              From logistica_traslados lt 
                                 left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                                 left join vista_marcas vm on lt.idmarca=vm.idmarca
@@ -97,13 +98,15 @@
                                 left join logistica_envios le on le.idtraslado=lt.idtraslado
                                 left join operaciones_transportistas ot on ot.idtransportista=le.idtransportista 
                                 left join logistica_recepciones lr on lr.idtraslado=lt.idtraslado and lr.idenvio=le.idenvio
-								left join empleados em on em.idempleado=lr.idempleado
+				left join empleados em on em.idempleado=lr.idempleado
+                                left join inventarios_familias ifa on ip.idfamilia=ifa.idfamilia
                              Where lr.idrecepcion=".$idrecepcion;
               //echo $sqlestatus;
 
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
+                                    $nombrefamilia=$rs{"nombrefamilia"};
                                     $idtraslado=$rs{"idtraslado"};
                                     $otfc=$rs{"otfc"};
                                     $fechaotfc=$rs{"fecha"}; 
@@ -623,7 +626,7 @@
 				$html.="<tr class=trcontenido>";
                                         $html.="<td align=center>".$marca."</td>";
 					$html.="<td align=center>".$zafra."</td>";
-                                        $html.="<td align=center>".$nombreproducto."</td>";
+                                        $html.="<td align=center>".$nombrefamilia." ".$nombreproducto."</td>";
                                         $html.="<td align=center>".$nombreestado."</td>";			
 				$html.="</tr>";				
 			$html.="</table></center>";	

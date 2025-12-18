@@ -44,6 +44,7 @@
                     $consecutivobodega=0;
                     $folios="";
                     $observaciones="";
+                    $nombrefamilia="";
 		
 				$sqlcan="";
 				$sqldev="";
@@ -70,17 +71,18 @@
                                 format(lr.cantidad1,2) cantidad1, 
                                 format(lr.cantidad2,2) cantidad2, lr.folios,
                                 lr.observaciones,lr.licenciaoperador,ob.responsable,
-                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos,lr.cuadrilla 
+                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos,lr.cuadrilla, ifa.nombrefamilia 
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
-								inner join vista_marcas vm on vm.idmarca=lo.idmarca
+				inner join vista_marcas vm on vm.idmarca=lo.idmarca
                                 inner join operaciones_bodegas ob on ob.idbodega=lo.idbodega
                                 inner join ventas_clientes vc on vc.idcliente=lo.idcliente
                                 inner join inventarios_productos ip on ip.idproducto=lo.idproducto
                                 inner join  inventarios_estados ie on ie.idestadoproducto=lo.idestadoproducto
                                 inner join inventarios_lotes il on il.idloteproducto=lo.idloteproducto
                                 inner join logistica_retiros lr on lr.idordenentrega=lo.idordenentrega
-								left join empleados em on em.idempleado=lr.idempleado
+				left join empleados em on em.idempleado=lr.idempleado
+                                left join inventarios_familias ifa on ip.idfamilia=ifa.idfamilia
                              Where lr.idretiro=".$idretiro;
                 
                 //echo $sqlestatus;
@@ -88,6 +90,7 @@
                 
                 $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
+                                    $nombrefamilia=$rs{"nombrefamilia"};
                                     $cancelado=$rs{"cancelado"};
                                     $devuelto=$rs{"devuelto"};
                                     $otfc=$rs{"oefc"};
@@ -548,7 +551,7 @@
 				$html.="<tr class=trcontenido>";
                                         $html.="<td align=center>".$temp."</td>";
 					$html.="<td align=center>".$zafra."</td>";
-                                        $html.="<td align=center>".$nombreproducto."</td>";
+                                        $html.="<td align=center>".$nombrefamilia." ".$nombreproducto."</td>";
                                         //$html.="<td align=center>".$nombreestado."</td>";
                                         $html.="<td align=right>".$cantidad1."</td>";
 					$html.="<td align=right>".$cantidad2."</td>";			
