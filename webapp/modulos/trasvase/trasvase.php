@@ -86,7 +86,8 @@
                     $cantidadmerma2=0;
                     $foliosorigenreal="";
                     $foliosdestinoreal="";
-
+                    $nombrefamiliaorigen="";
+                    $nombrefamiliadestino="";
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.Fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -95,7 +96,8 @@
                         lt.cantidad1 'cantidad1', lt.cantidad2 'cantidad2', 
                         ip2.nombreproducto 'productodestino',
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
-                        lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal
+                        lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal,
+                        ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino'
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -103,12 +105,16 @@
                         left join inventarios_productos ip1 on ip1.idproducto=lt.idproducto
                         left join inventarios_productos ip2 on ip2.idproducto=lt.idproductodestino
                         left join  inventarios_estados ie on ie.idestadoproducto=lt.idestadoproducto
-                        left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto  
+                        left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
+                        left join inventarios_familias ifa1 on ip1.idfamilia=ifa1.idfamilia
+                        left join inventarios_familias ifa2 on ip2.idfamilia=ifa2.idfamilia
                     Where lt.idtrasvase=".$idtrasvase;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
+                    $nombrefamiliaorigen=$rs{"nombrefamiliaorigen"};
+                    $nombrefamiliadestino=$rs{"nombrefamiliadestino"};
                     $fecha=$rs{"Fecha"};
                     $propietario=$rs{"propietario"};
                     $marca=$rs{"marca"};
@@ -425,7 +431,7 @@
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>Producto Origen:</td>
-                                                            <td align=left>".$Productoorigen."</td>
+                                                            <td align=left>".$nombrefamiliaorigen." ".$Productoorigen."</td>
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>Estado Producto Origen:</td>
@@ -457,7 +463,7 @@
 					$html.="<table class='reporte' width='100%'>";
  						$html.="<tr>
                                                             <td width=30%>Producto Esperado:</td>
-                                                            <td align=left><b>".$productodestino."</b></td>
+                                                            <td align=left><b>".$nombrefamiliadestino." ".$productodestino."</b></td>
                                                         </tr>";                                       
                         $html.="<tr>
                                                             <td width=30%>Cantidad Esperada:</td>
