@@ -121,16 +121,18 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         //echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
         //Ajuste de Fecha:
        
-        echo $fechafinal;
+        //echo $fechafinal;
         if (!empty($fechafinal)) {
-            // 1. Convertimos el string "DD/MM/AAAA" a un objeto
-            $objetoFecha = DateTime::createFromFormat('d/m/Y', $fechafinal);
+            // 1. Le decimos a PHP que espere FECHA y HORA
+            $objetoFecha = DateTime::createFromFormat('d/m/Y H:i:s', $fechafinal);
             
-            // 2. Sobreescribimos la variable con el string formateado "AAAA/MM/DD"
-            // Nota: Si vas a insertar en MySQL, cambia '/' por '-' (Y-m-d)
-            $fechafinal = $objetoFecha->format('Y/m/d');
+            // 2. Verificamos si se pudo crear el objeto (para evitar el error fatal)
+            if ($objetoFecha) {
+                // 3. Formateamos a AAAA/MM/DD (Ignorando la hora en la salida final)
+                //$fechafinal = $objetoFecha->format('Y/m/d');
+                $fechafinal = $objetoFecha->format('Y/m/d H:i:s');
+            }
         }
-
 
         //exit();
         //LLamar SP
