@@ -1661,6 +1661,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                     $filterValue = $filterValues[$filterKey];
                     $displayValue = $filterValue; // Por defecto, usamos el valor tal cual
                     
+                    // CONVERSIÓN DE FORMATO DE FECHA: YYYY/MM/DD o YYYY-MM-DD a DD/MM/YYYY
+                    if ($filter['type'] === 'date') {
+                        // Convertir fecha a formato DD/MM/YYYY para mostrar
+                        $dateValue = str_replace('/', '-', $filterValue); // Normalizar separador
+                        $dateObj = DateTime::createFromFormat('Y-m-d', $dateValue);
+                        if ($dateObj) {
+                            $displayValue = $dateObj->format('d/m/Y');
+                        }
+                    }
+                    
                     // NUEVA LÓGICA: Manejar filtros de multiselección (arrays)
                     if (is_array($filterValue)) {
                         $displayValues = [];

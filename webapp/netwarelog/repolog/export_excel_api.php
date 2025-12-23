@@ -39,6 +39,8 @@ if (isset($_SESSION['repolog_report_id'])) {
     }
 }
 
+// Fecha actual con timezone de Ciudad de México
+date_default_timezone_set('America/Mexico_City');
 $currentDate = date('d/m/Y H:i:s');
 
 $filterInfo = "";

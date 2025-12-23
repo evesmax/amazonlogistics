@@ -2094,6 +2094,15 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+            
+            <?php 
+            // Fecha y hora de generación con timezone de Ciudad de México
+            date_default_timezone_set('America/Mexico_City');
+            $generatedDate = date('d/m/Y H:i:s');
+            ?>
+            <div class="report-generated" style="font-size: 12px; color: #666; margin-top: 8px;">
+                <strong>Generado el:</strong> <?php echo $generatedDate; ?>
+            </div>
         </div>
 
         <?php if (!empty($error)): ?>
