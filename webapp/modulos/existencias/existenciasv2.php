@@ -120,7 +120,8 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         $resultado=$conexion->consultar($sqldelete); 
         //echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
         //Ajuste de Fecha:
-        
+       
+        echo $fechafinal;
         if (!empty($fechafinal)) {
             // 1. Convertimos el string "DD/MM/AAAA" a un objeto
             $objetoFecha = DateTime::createFromFormat('d/m/Y', $fechafinal);
