@@ -1267,6 +1267,71 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
             }
         }
 
+        // 5. NUEVO: Analizar los datos REALES para detectar decimales máximos por columna
+        // IMPORTANTE: Los datos del SQL ya vienen formateados con los decimales correctos
+        // Por ejemplo: "3.000" significa 3 decimales, NO debemos eliminar los ceros
+        if (!empty($results)) {
+            foreach ($columns as $columnName) {
+                $maxDecimalsFromData = 0;
+                $isNumericColumn = false;
+                $sampleCount = 0;
+                
+                // Analizar un máximo de 100 filas para eficiencia
+                $rowsToCheck = array_slice($results, 0, min(100, count($results)));
+                
+                foreach ($rowsToCheck as $row) {
+                    if (isset($row[$columnName])) {
+                        $value = $row[$columnName];
+                        
+                        // Trabajar con el valor ORIGINAL como string para preservar formato
+                        $originalValue = (string)$value;
+                        
+                        // Quitar comas de miles pero PRESERVAR punto decimal
+                        $cleanValue = str_replace(',', '', $originalValue);
+                        
+                        // Verificar si es numérico (incluir valores cero)
+                        if (is_numeric($cleanValue)) {
+                            $isNumericColumn = true;
+                            $sampleCount++;
+                            
+                            // CRÍTICO: Detectar decimales del valor ORIGINAL (sin rtrim)
+                            // Los datos del SQL vienen formateados, ej: "3.000" = 3 decimales
+                            if (strpos($originalValue, '.') !== false) {
+                                $parts = explode('.', $originalValue);
+                                // NO usar rtrim - conservar la longitud completa del decimal
+                                $decimalPart = isset($parts[1]) ? $parts[1] : '';
+                                $decimalsInValue = strlen($decimalPart);
+                                if ($decimalsInValue > $maxDecimalsFromData) {
+                                    $maxDecimalsFromData = $decimalsInValue;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Si encontramos datos numéricos, actualizar la información de formato
+                if ($isNumericColumn && $sampleCount > 0 && $maxDecimalsFromData > 0) {
+                    // Actualizar o crear la entrada de formato
+                    if (!isset($formatInfo[$columnName]) || $formatInfo[$columnName]['detection_type'] === 'column_name_pattern') {
+                        // Sobrescribir si no hay detección del SQL o es por patrón de nombre
+                        $formatInfo[$columnName] = [
+                            'field' => $columnName,
+                            'decimals' => $maxDecimalsFromData,
+                            'has_format' => true,
+                            'detection_type' => 'data_analysis'
+                        ];
+                        error_log("Detectado por análisis de datos para columna '$columnName': decimales: $maxDecimalsFromData (muestras: $sampleCount)");
+                    } else if ($formatInfo[$columnName]['decimals'] < $maxDecimalsFromData) {
+                        // Si los datos tienen más decimales que lo detectado del SQL, usar los datos
+                        $oldDecimals = $formatInfo[$columnName]['decimals'];
+                        $formatInfo[$columnName]['decimals'] = $maxDecimalsFromData;
+                        $formatInfo[$columnName]['detection_type'] .= '+data_analysis';
+                        error_log("Actualizado formato para columna '$columnName': $oldDecimals -> $maxDecimalsFromData decimales (por datos reales)");
+                    }
+                }
+            }
+        }
+
         // Guardar la información de formato detectada para usar en el cliente
         $_SESSION['column_format_info'] = $formatInfo;
         
@@ -2299,18 +2364,25 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                         }
                                         
-                                        // Procesamiento normal para filas regulares
+                                        // Procesamiento normal para filas regulares (subtotales/totales)
+                                        // Obtener decimales específicos de la configuración detectada
+                                        $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
+                                        $decimals = 2; // Por defecto 2 decimales
+                                        if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
+                                            $decimals = $columnFormatInfo[$column]['decimals'];
+                                        }
+                                        
                                         // Verificar si es un número o parece un número formateado
                                         if (is_numeric($value)) {
                                             // Es un número, formatear con comas para miles y punto para decimales
-                                            $formattedValue = number_format(floatval($value), 2, '.', ',');
+                                            $formattedValue = number_format(floatval($value), $decimals, '.', ',');
                                             echo '<strong>' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
                                         else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
-                                            $formattedValue = number_format(floatval($cleanValue), 2, '.', ','); // Formato americano/mexicano
+                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
                                             echo '<strong>' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato americano (1,234.56)
@@ -2318,7 +2390,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             // Extraer el número sin formateo para reformatearlo
                                             $cleanValue = str_replace(',', '', $value);
                                             if (is_numeric($cleanValue)) {
-                                                $formattedValue = number_format(floatval($cleanValue), 2, '.', ',');
+                                                $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                 echo '<strong>' . $formattedValue . '</strong>';
                                             } else {
                                                 // No escapar HTML si parece contener etiquetas

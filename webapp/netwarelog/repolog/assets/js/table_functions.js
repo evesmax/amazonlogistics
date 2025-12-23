@@ -11,9 +11,20 @@ var rowsPerPage = 10;
 var filteredData = [];
 // Variable para evitar inicialización múltiple
 var tableInitialized = false;
+// Variable global para información de formato de columnas (compartida con formatNumbersFix.js)
+var columnFormatInfo = {};
 
 // Initialize the table when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // CRÍTICO: Cargar información de formato de columnas ANTES de renderizar
+    var formatInfoElement = document.getElementById('column-format-info');
+    if (formatInfoElement) {
+        try {
+            columnFormatInfo = JSON.parse(formatInfoElement.textContent);
+        } catch (e) {
+            console.error("Error al parsear información de formato:", e);
+        }
+    }
     // Evitar inicialización múltiple
     if (tableInitialized) {
         console.log("Tabla ya inicializada, saltando inicialización duplicada");
@@ -254,10 +265,15 @@ function renderTable() {
                 }
                 
                 if (isSumField) {
-                    // Formatear números con 2 decimales
+                    // Formatear números con los decimales detectados desde el SQL
                     if (!isNaN(parseFloat(value))) {
                         var num = parseFloat(value);
-                        value = '<strong>' + num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong>';
+                        // CRÍTICO: Usar la información de formato de columna si está disponible
+                        var decimals = 2; // Por defecto 2 decimales
+                        if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
+                            decimals = columnFormatInfo[column].decimals;
+                        }
+                        value = '<strong>' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
                         cell.innerHTML = value;
                         row.appendChild(cell);
                         return;
