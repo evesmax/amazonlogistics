@@ -317,9 +317,14 @@ function renderTable() {
                 // Convertir de formato europeo a formato mexicano
                 var valor = parseFloat(value.replace(',', '.'));
                 if (!isNaN(valor)) {
+                    // Usar decimales del SQL si están disponibles
+                    var decimalsForColumn = 2;
+                    if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
+                        decimalsForColumn = columnFormatInfo[column].decimals;
+                    }
                     var formateado = valor.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                        minimumFractionDigits: decimalsForColumn,
+                        maximumFractionDigits: decimalsForColumn
                     });
                     cell.innerHTML = '<strong>' + formateado + '</strong>';
                 } else {

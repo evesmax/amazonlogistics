@@ -1180,11 +1180,13 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         $_SESSION['debug_sql_query'] = $query;
         
         // 1. Buscar patrones FORMAT(campo, X) AS columna - formato directo de la función MySQL
-        if (preg_match_all('/FORMAT\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+[\'\"]?([^\'\"(),\s]+)/i', $query, $matches, PREG_SET_ORDER)) {
+        // Soporta aliases con y sin comillas, incluyendo espacios: AS "Saldo (TM)", AS alias_simple
+        if (preg_match_all('/FORMAT\s*\(\s*([^,\s]+)(?:\s*[\*\/\+\-]\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $field = $match[1];
                 $decimals = intval($match[2]);
-                $columnName = $match[3];
+                // El alias puede estar en match[3] (comillas dobles), match[4] (comillas simples) o match[5] (sin comillas)
+                $columnName = !empty($match[3]) ? $match[3] : (!empty($match[4]) ? $match[4] : $match[5]);
                 
                 // Guardar información de formato para cada columna
                 $formatInfo[$columnName] = [
@@ -1223,11 +1225,12 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         }
         
         // 3. Buscar otras funciones numéricas como ROUND, TRUNCATE
-        if (preg_match_all('/ROUND\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+(?:AS\s+)?[\'\"]?([^\'\"(),\s]+)/i', $query, $matches, PREG_SET_ORDER)) {
+        // Soporta aliases con y sin comillas, incluyendo espacios
+        if (preg_match_all('/ROUND\s*\(\s*([^,\s]+)(?:\s*[\*\/\+\-]\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $field = $match[1];
                 $decimals = intval($match[2]);
-                $columnName = $match[3];
+                $columnName = !empty($match[3]) ? $match[3] : (!empty($match[4]) ? $match[4] : $match[5]);
                 
                 // Guardar información de formato para cada columna
                 $formatInfo[$columnName] = [
