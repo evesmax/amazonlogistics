@@ -121,17 +121,19 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         //echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
         //Ajuste de Fecha:
         
-
-        // Creamos el objeto fecha
-        $objFecha = DateTime::createFromFormat('d/m/Y', $fechafinal);
-
-        // Lo convertimos al formato AAAA/MM/DD
-        $fecha_nueva = $objFecha->format('Y/m/d');
+        if (!empty($fechainicial)) {
+            // 1. Convertimos el string "DD/MM/AAAA" a un objeto
+            $objetoFecha = DateTime::createFromFormat('d/m/Y', $fechainicial);
+            
+            // 2. Sobreescribimos la variable con el string formateado "AAAA/MM/DD"
+            // Nota: Si vas a insertar en MySQL, cambia '/' por '-' (Y-m-d)
+            $fechainicial = $objetoFecha->format('Y/m/d');
+        }
 
 
         //exit();
         //LLamar SP
-        $sqlsp="call generaExistenciasInventario('$fecha_nueva',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        $sqlsp="call generaExistenciasInventario('$fechainicial',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
         //echo "<script>console.log('".$fechainicial."');</script>";  
         echo $sqlsp;
         //exit();
