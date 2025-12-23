@@ -2420,6 +2420,46 @@ function extractFixedClauses($whereClause, $filterDefs) {
         $offset = $clauseEnd;
     }
     
+    // BÚSQUEDA ADICIONAL 2: Capturar cláusulas BETWEEN con fechas
+    // Ejemplo: "And ik.fecha between "[#Del] 00:00:00" And "[#Al] 23:59:59""
+    // Estas cláusulas usan BETWEEN...AND y deben preservarse
+    $offset = 0;
+    while (preg_match('/(and|or)\s+([a-zA-Z0-9_.]+)\s+between\s+["\'][^\'"]*\[#[^\]]+\][^\'"]*["\']\s+and\s+["\'][^\'"]*\[#[^\]]+\][^\'"]*["\']/i', $whereClause, $match, PREG_OFFSET_CAPTURE, $offset)) {
+        $clauseStart = $match[0][1];
+        $clauseText = $match[0][0];
+        $clauseEnd = $clauseStart + strlen($clauseText);
+        $connector = strtolower($match[1][0]);
+        
+        // Verificar que no esté ocupada por un filtro
+        $isOccupied = false;
+        foreach ($occupiedRanges as $range) {
+            if (!(($clauseEnd <= $range[0]) || ($clauseStart >= $range[1]))) {
+                $isOccupied = true;
+                break;
+            }
+        }
+        
+        if (!$isOccupied) {
+            $fixedClauses[] = array(
+                'type' => 'fixed',
+                'pattern' => '',
+                'clause' => trim($clauseText),
+                'connector' => $connector,
+                'field' => '',
+                'operator' => 'between',
+                'is_multiselection' => false,
+                'label' => 'fixed_date_between',
+                'start_pos' => $clauseStart,
+                'end_pos' => $clauseEnd,
+                'is_active' => true
+            );
+            
+            error_log("Fixed clause BETWEEN con fechas encontrado: " . substr($clauseText, 0, 100) . "...");
+        }
+        
+        $offset = $clauseEnd;
+    }
+    
     return $fixedClauses;
 }
 

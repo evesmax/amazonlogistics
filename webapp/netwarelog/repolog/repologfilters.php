@@ -1095,16 +1095,53 @@ function buildSqlQueryThreePhase($report, $filterValues) {
         // 3.2. Procesar filtros con el sistema de 3 fases (fechas aún tienen patrones [#...])
         $processedWhere = processFiltersThreePhase($whereClause, $filterValues, $filters);
         
-        // 3.3. DESPUÉS del sistema de 3 fases, reemplazar patrones de fecha
-        // IMPORTANTE: Solo reemplazar el patrón con la FECHA, el timestamp ya está en el SQL
-        // Ejemplo: "[#Al]  23:59:59" -> "2024/10/12  23:59:59"
-        $startDate = isset($filterValues['filter_del']) ? $filterValues['filter_del'] : date('Y/m/d');
-        $endDate = isset($filterValues['filter_al']) ? $filterValues['filter_al'] : date('Y/m/d');
+        // 3.3. DESPUÉS del sistema de 3 fases, reemplazar TODOS los patrones de fecha dinámicamente
+        // IMPORTANTE: Iterar sobre todos los filtros de tipo 'date' y reemplazar sus patrones
+        // Esto soporta cualquier nombre de filtro de fecha, no solo Del/Al
+        foreach ($filters as $filter) {
+            if ($filter['type'] === 'date') {
+                $filterKey = $filter['id']; // ej: filter_del, filter_al, filter_fechainicio, etc.
+                $sqlPattern = isset($filter['sql_pattern']) ? $filter['sql_pattern'] : '[#' . $filter['original_name'] . ']';
+                
+                // Obtener el valor del filtro o usar fecha actual como fallback
+                $dateValue = isset($filterValues[$filterKey]) && !empty($filterValues[$filterKey]) 
+                    ? $filterValues[$filterKey] 
+                    : date('Y/m/d');
+                
+                // NORMALIZACIÓN: Asegurar formato YYYY/MM/DD para SQL
+                $dateValue = str_replace('-', '/', $dateValue);
+                
+                // Si viene en DD/MM/YYYY, convertir a YYYY/MM/DD
+                if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $dateValue, $matches)) {
+                    $dateValue = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                    error_log("Fecha '$filterKey' convertida de DD/MM/YYYY a YYYY/MM/DD: $dateValue");
+                }
+                
+                // Reemplazar el patrón en el SQL
+                $processedWhere = str_replace($sqlPattern, $dateValue, $processedWhere);
+                error_log("Reemplazado patrón de fecha $sqlPattern con valor: $dateValue");
+            }
+        }
         
-        // Reemplazar solo los patrones [#Del] y [#Al] con las fechas SIN timestamp
-        $processedWhere = str_replace('[#Del]', $startDate, $processedWhere);
-        $processedWhere = str_replace('[#Al]', $endDate, $processedWhere);
-        error_log("Reemplazadas fechas DESPUÉS de 3 fases: [#Del]=$startDate, [#Al]=$endDate");
+        // También reemplazar patrones [#Del] y [#Al] si existen pero no fueron detectados como filtros
+        // (compatibilidad hacia atrás)
+        if (strpos($processedWhere, '[#Del]') !== false || strpos($processedWhere, '[#Al]') !== false) {
+            $startDate = isset($filterValues['filter_del']) ? $filterValues['filter_del'] : date('Y/m/d');
+            $endDate = isset($filterValues['filter_al']) ? $filterValues['filter_al'] : date('Y/m/d');
+            $startDate = str_replace('-', '/', $startDate);
+            $endDate = str_replace('-', '/', $endDate);
+            
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $startDate, $matches)) {
+                $startDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+            }
+            if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $endDate, $matches)) {
+                $endDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+            }
+            
+            $processedWhere = str_replace('[#Del]', $startDate, $processedWhere);
+            $processedWhere = str_replace('[#Al]', $endDate, $processedWhere);
+            error_log("Reemplazadas fechas fallback: [#Del]=$startDate, [#Al]=$endDate");
+        }
         
         // 3.3. Solo agregar WHERE si hay contenido
         if (!empty(trim($processedWhere))) {
@@ -1376,6 +1413,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                     $endDate = $value;
                 }
             }
+        }
+        
+        // NORMALIZACIÓN: Asegurar que las fechas estén en formato YYYY/MM/DD para SQL
+        $startDate = str_replace('-', '/', $startDate);
+        $endDate = str_replace('-', '/', $endDate);
+        
+        // VALIDACIÓN: Si la fecha parece estar en formato DD/MM/YYYY, convertirla a YYYY/MM/DD
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $startDate, $matches)) {
+            $startDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        }
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $endDate, $matches)) {
+            $endDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
         }
         
         // 2. Aplicar fechas a la consulta SQL
@@ -2123,11 +2172,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
             <script>
                 $(document).ready(function() {
                     // Initialize datepicker for date fields
-                    $('.filter-date').datepicker({
-                        dateFormat: 'yy-mm-dd',
-                        changeMonth: true,
-                        changeYear: true,
-                        yearRange: "1900:2100"
+                    // Usuario ve: DD/MM/YYYY (formato mexicano)
+                    // Servidor recibe: YYYY-MM-DD (formato SQL)
+                    $('.filter-date').each(function() {
+                        var $input = $(this);
+                        var inputName = $input.attr('name');
+                        var inputId = $input.attr('id');
+                        var currentValue = $input.val();
+                        
+                        // Crear campo oculto para el valor real (YYYY-MM-DD)
+                        var $hidden = $('<input type="hidden" name="' + inputName + '" id="' + inputId + '_hidden">');
+                        $input.after($hidden);
+                        $input.removeAttr('name'); // Remover name del campo visible
+                        
+                        // Si hay valor inicial (YYYY-MM-DD), convertir a DD/MM/YYYY para mostrar
+                        if (currentValue && /^\d{4}-\d{2}-\d{2}$/.test(currentValue)) {
+                            var parts = currentValue.split('-');
+                            $input.val(parts[2] + '/' + parts[1] + '/' + parts[0]);
+                            $hidden.val(currentValue);
+                        }
+                        
+                        $input.datepicker({
+                            dateFormat: 'dd/mm/yy',    // Visual: DD/MM/YYYY
+                            altField: $hidden,
+                            altFormat: 'yy-mm-dd',     // Enviado: YYYY-MM-DD
+                            changeMonth: true,
+                            changeYear: true,
+                            yearRange: "1900:2100"
+                        });
                     });
                     
                     // Add select2 for better combo experience if select2 is available
@@ -2138,27 +2210,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                         });
                     }
                     
-                    // Validate date format
+                    // Validate date format (ahora acepta DD/MM/YYYY)
                     $('.filter-date').blur(function() {
                         const dateValue = $(this).val();
-                        if (dateValue && !isValidDate(dateValue)) {
-                            alert('Por favor, ingrese una fecha válida en formato YYYY-MM-DD');
+                        if (dateValue && !isValidDateDMY(dateValue)) {
+                            alert('Por favor, ingrese una fecha válida en formato DD/MM/AAAA');
                             $(this).val('');
+                            // Limpiar también el campo oculto
+                            $(this).next('input[type="hidden"]').val('');
                         }
                     });
                     
-                    // Date validation function
-                    function isValidDate(dateString) {
-                        // First check for the pattern
-                        if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(dateString)) {
+                    // Date validation function for DD/MM/YYYY format
+                    function isValidDateDMY(dateString) {
+                        // Check for DD/MM/YYYY pattern
+                        if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
                             return false;
                         }
                         
                         // Parse the date parts to integers
-                        const parts = dateString.split("-");
-                        const year = parseInt(parts[0], 10);
+                        const parts = dateString.split("/");
+                        const day = parseInt(parts[0], 10);
                         const month = parseInt(parts[1], 10);
-                        const day = parseInt(parts[2], 10);
+                        const year = parseInt(parts[2], 10);
                         
                         // Check the ranges of month and day
                         if(year < 1000 || year > 3000 || month == 0 || month > 12) {
