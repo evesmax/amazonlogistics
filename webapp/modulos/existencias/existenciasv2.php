@@ -122,17 +122,17 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         //Ajuste de Fecha:
        
         //echo $fechafinal;
-        if (!empty($fechafinal)) {
+        //if (!empty($fechafinal)) {
             // 1. Le decimos a PHP que espere FECHA y HORA
-            $objetoFecha = DateTime::createFromFormat('d/m/Y H:i:s', $fechafinal);
+        //    $objetoFecha = DateTime::createFromFormat('d/m/Y H:i:s', $fechafinal);
             
             // 2. Verificamos si se pudo crear el objeto (para evitar el error fatal)
-            if ($objetoFecha) {
+        //    if ($objetoFecha) {
                 // 3. Formateamos a AAAA/MM/DD (Ignorando la hora en la salida final)
                 //$fechafinal = $objetoFecha->format('Y/m/d');
-                $fechafinal = $objetoFecha->format('Y/m/d H:i:s');
-            }
-        }
+        //        $fechafinal = $objetoFecha->format('Y/m/d H:i:s');
+        //    }
+        //}
 
         //exit();
         //LLamar SP
