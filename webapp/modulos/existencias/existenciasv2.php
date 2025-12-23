@@ -119,10 +119,20 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
         $sqldelete="delete from inventarios_existencias where idempleado=".$usuario;
         $resultado=$conexion->consultar($sqldelete); 
         //echo "<br>".$fechainicial." ".$fechafinal." ".$idfabricante." ".$idmarca." ".$idproducto." ".$idloteproducto." ".$idestado." ".$idbodega."<br>";
+        //Ajuste de Fecha:
+        
+
+        // Creamos el objeto fecha
+        $objFecha = DateTime::createFromFormat('d/m/Y', $fechafinal);
+
+        // Lo convertimos al formato AAAA/MM/DD
+        $fecha_nueva = $objFecha->format('Y/m/d');
+
+
         //exit();
         //LLamar SP
-        $sqlsp="call generaExistenciasInventario('$fechafinal',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
-        echo "<script>console.log('".$fechainicial."');</script>";  
+        $sqlsp="call generaExistenciasInventario('$fecha_nueva',$idfabricante,$idmarca,$idbodega,$idproducto,$idloteproducto,$idestado,$usuario);";
+        //echo "<script>console.log('".$fechainicial."');</script>";  
         echo $sqlsp;
         //exit();
         $resultado=$conexion->consultar($sqlsp);
