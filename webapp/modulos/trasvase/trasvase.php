@@ -446,7 +446,7 @@
                                                             <td align=left><b>".$cantidad2." Toneladas </b></td>
                                                         </tr>";
                         $html.="<tr>
-                                                        <td width=30%>Folios Bultos Origen:</td>
+                                                        <td width=30%>Folios Origen:</td>
                                                         <td align=left><textarea type=text id='txtfoliosorigenreal' name='txtfoliosorigenreal' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                     </tr>";                                                                              
                         $html.="</table>";
@@ -480,7 +480,7 @@
                                                         </tr>";
                         
                         $html.="<tr>
-                                                        <td width=30%>Folios Bultos Destino Real:</td>
+                                                        <td width=30%>Folios Final:</td>
                                                         <td align=left><textarea type=text id='txtfoliosdestinoreal' name='txtfoliosdestinoreal' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                     </tr>"; 
 							

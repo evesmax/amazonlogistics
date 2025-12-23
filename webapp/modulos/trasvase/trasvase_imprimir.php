@@ -414,7 +414,7 @@
                                                             <td align=left><b>".$cantidad2." Toneladas </b></td>
                                                         </tr>";
                         $html.="<tr>
-                                                        <td width=30%>Folios Bultos Origen:</td>
+                                                        <td width=30%>Folios Origen:</td>
                                                         <td align=left><b>".$foliosorigenreal." </b></td>
                                                     </tr>";
 
@@ -449,7 +449,7 @@
                                                             <td align=left>$observaciones</td>
                                                         </tr>";
                         $html.="<tr>
-                                                        <td width=30%>Folios Bultos Destino:</td>
+                                                        <td width=30%>Folios Final:</td>
                                                         <td align=left><b>".$foliosdestinoreal." </b></td>
                                                     </tr>";
 							
