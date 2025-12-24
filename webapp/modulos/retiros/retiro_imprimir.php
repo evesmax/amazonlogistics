@@ -439,7 +439,7 @@
                                                         </tr>";
 	                                                   
 						$html.="<tr>
-                                                            <td width=30%>FOLIO EXTERNO:</td>
+                                                            <td width=30%>FOLIO CLIENTE:</td>
                                                             <td align=left>".$referencia1."</td>
                                                         </tr>";
                                                
@@ -463,7 +463,7 @@
                                                             </td>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td>TICKET BASCULA:</td>
+                                                            <td>REMISIÓN INGENIO:</td>
                                                             <td align=left>".$ticketbascula."
                                                         </tr>";                                                
 						$html.="<tr>

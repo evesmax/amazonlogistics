@@ -508,7 +508,7 @@ $htmlpoliticas="
                                                         </tr>";
 	                                                   
 						$html.="<tr>
-                                                            <td width=30%>FOLIO EXTERNO:</td>
+                                                            <td width=30%>FOLIO CLIENTE:</td>
                                                             <td align=left><input readonly type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
                                                         </tr>";
                                                
@@ -532,7 +532,7 @@ $htmlpoliticas="
                                                             </td>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td>TICKET BASCULA:</td>
+                                                            <td>REMISIÓN INGENIO:</td>
                                                             <td align=left><input type=text id='txtticketbascula' name='txtticketbascula' value='' Size=20></td>
                                                         </tr>";                                                
 						$html.="<tr>
