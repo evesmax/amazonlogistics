@@ -615,8 +615,8 @@
                                                         </tr>";
 						$html.="<tr align=left>
                                                             <td colspan=2 align=left>
-                                                                FOLIO EXTERNO:<input type=text id='txtreferencia' name='txtreferencia' value='' Size=20>
-                                                                TICKET BASiCULA:<input type=text id='txtticketbascula' name='txtticketbascula' value='' Size=20>
+                                                                FOLIO CLIENTE:<input type=text id='txtreferencia' name='txtreferencia' value='' Size=20>
+                                                                REMISIÓN INGENIO:<input type=text id='txtticketbascula' name='txtticketbascula' value='' Size=20>
                                                             </td>
                                                         </tr>";
 
