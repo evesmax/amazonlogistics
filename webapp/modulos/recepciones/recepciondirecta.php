@@ -766,7 +766,7 @@
             $cmbestados.= "</select>";
 
 
-                $investatus=" readonly style='text-align:right;color:red;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
+            $investatus=" readonly style='text-align:right;color:red;background-color: #FFFFFF;border-width:0;font-size: 12px;'";
 		$html.="<tr><td>"; //Mega tabla
 		$html.="<right><div id=devfalt style='display:none;'><table class='reporte' width='40%' align=right>";
 			//Armando encabezado
