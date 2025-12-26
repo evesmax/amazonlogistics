@@ -105,7 +105,7 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result); 
             }
             $edita=2; 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|".$duplicada."|";
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|";
         }
 
 

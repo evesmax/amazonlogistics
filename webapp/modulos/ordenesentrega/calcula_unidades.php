@@ -53,7 +53,7 @@
                         //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i390').val(), tipo:2, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
                             {
-                                console.log(datos);
+                                //console.log(datos);
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
                                 $('#lbl390').text(info[1]);
