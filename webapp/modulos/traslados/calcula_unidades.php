@@ -30,7 +30,8 @@
                                 }
                                 if(info[3]==2){
                                     $('#i269').removeAttr("disabled");
-                                    $('#i269').focus();
+                                    $('#i272').focus();
+                                    //$('#i269').focus();
                                 }
                                 
                             }
@@ -52,7 +53,8 @@
                                 }
                                 if(info[3]==2){
                                     $('#i269').removeAttr("disabled");
-                                    $('#i269').focus();
+                                    $('#i272').focus();
+                                    //$('#i269').focus();                                    
                                 }
                                 
                             }
