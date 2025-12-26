@@ -37,6 +37,28 @@
                         );
                                         
                 });
+                $('#i269').bind('blur', function() {  
+                        //Agrega nombre de unidad principal
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i265').val(),cantidadp:$('#i269').val(), tipo:2},function(datos)
+                            {
+                                var info = datos.split("|");
+                                $('#lbl268').text(info[0]);
+                                $('#lbl269').text(info[1]);
+                                $('#i268').val(info[2]);
+
+                                if(info[3]==1){
+                                    $('#i269').attr("disabled", true);
+                                    $('#i272').focus();
+                                }
+                                if(info[3]==2){
+                                    $('#i269').removeAttr("disabled");
+                                    $('#i269').focus();
+                                }
+                                
+                            }
+                        );
+                                        
+                });
                 
                 $('#send').bind('click', function() {  
                     $('#i269').removeAttr("disabled");              
