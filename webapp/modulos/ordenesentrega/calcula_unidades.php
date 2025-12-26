@@ -120,7 +120,7 @@
                                 var info = datos.split("|");
                                 $('#lbl389').text(info[0]);
                                 $('#lbl390').text(info[1]);
-                                $('#i390').text(parseFloat(info[2]).toFixed(3)); 
+                                $('#i390').text(info[2]); 
                                 //$('#i390').val(info[2]);
 
                                 if(info[3]==1){
