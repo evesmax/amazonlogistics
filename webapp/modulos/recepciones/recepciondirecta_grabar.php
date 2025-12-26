@@ -59,11 +59,14 @@
             if($diferencia1>0) {
                     $cantdev1=$_REQUEST["txtcantdev1"];
                     $cantdev2=$_REQUEST["txtcantdev2"];
-                    $cantfalt1=$_REQUEST["txtcantfalt1"];
-                    $cantfalt2=$_REQUEST["txtcantfalt2"];
+
                     $estatus1=$_REQUEST["txtestatus1"]*1;
                     $estatus2=$_REQUEST["txtestatus2"]*1; 
-                    $idestadoproducto=$_REQUEST["cmbestados"];                 
+
+                    //Fix para registrar cantidades correctas faltantes
+                    $cantfalt1=$estatus1;   //$_REQUEST["txtcantfalt1"];
+                    $cantfalt2=$estatus2;   //$_REQUEST["txtcantfalt2"];
+                    $idestadoproducto=$_REQUEST["cmbestados"];
             }
             
 
@@ -85,7 +88,7 @@
 			$msg="";
             
 
-			if(($difestatus1*1>0)){
+			//if(($difestatus1*1>0)){
                 $politica=1;
                 $msg="Falto aclarar la diferencia de envio con recepcion";
             }
