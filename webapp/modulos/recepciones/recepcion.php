@@ -24,7 +24,6 @@
                             $('#devfalt').css('display', 'none');
                         }
                         if($('#txtcantdif1').val()<0){
-                            alert($('#txtcantdif1').val());
                             alert('No puede recibir mas de lo que se envio');
                             $('#txtcantrec1').val(0);
                             $('#txtcantrec1').focus();
