@@ -758,7 +758,8 @@
             $cmbestados = "<select id='cmbestados' name='cmbestados'>";
             $sqlest = "Select idestadoproducto,descripcionestado from inventarios_estados where espnc=-1";
             $result = $conexion->consultar($sqlest);
-
+            
+            $cmbestados= "<option value='-1'>--Seleccionar--</option>";
             while ($rs = $conexion->siguiente($result)) {
                 $cmbestados.= "<option value='" . $rs{"idestadoproducto"} . "'>" . $rs{"descripcionestado"} . "</option>";
             }
