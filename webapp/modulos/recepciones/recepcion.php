@@ -32,6 +32,7 @@
                         }
 
                         // 3. Logica de visualizacion (Solo si paso las validaciones anteriores)
+                        alert('Diferencia: '+diffVal);
                         if(diffVal > 0){
                             $('#devfalt').show(); // Mas limpio que css display block
                             $('#txtestatus1').val(diffVal);
