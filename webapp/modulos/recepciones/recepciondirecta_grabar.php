@@ -64,8 +64,8 @@
                     $estatus2=$_REQUEST["txtestatus2"]*1; 
 
                     //Fix para registrar cantidades correctas faltantes
-                    $cantfalt1=$estatus1;   //$_REQUEST["txtcantfalt1"];
-                    $cantfalt2=$estatus2;   //$_REQUEST["txtcantfalt2"];
+                    $cantfalt1=$estatus1;  //$_REQUEST["txtcantfalt1"];
+                    $cantfalt2=$estatus2;  //$_REQUEST["txtcantfalt2"];
                     $idestadoproducto=$_REQUEST["cmbestados"];
             }
             
@@ -88,10 +88,10 @@
 			$msg="";
             
 
-			//if(($difestatus1*1>0)){
-                $politica=1;
-                $msg="Falto aclarar la diferencia de envio con recepcion";
-            }
+			//if(($difestatus1*1<0)){
+            //    $politica=1;
+            //    $msg="Falto aclarar la diferencia de envio con recepcion";
+            //}
 			if($cantidadrecibida1==0 or $cantidadrecibida2==0){
 				$politica=1;
 				$msg=" Falto escribir una cantidad valida";
