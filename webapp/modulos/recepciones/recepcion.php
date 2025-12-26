@@ -22,7 +22,12 @@
                             $('#txtestatus2').val($('#txtcantdif2').val());
                         }else{
                             $('#devfalt').css('display', 'none');
-                        }                        
+                        }
+                        if($('#txtcantdif1').val()<0){
+                            alert('No puede recibir mas de lo que se envio');
+                            $('#txtcantrec1').val(0);
+                            $('#txtcantrec1').focus();
+                        }                                                    
                     });    
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));

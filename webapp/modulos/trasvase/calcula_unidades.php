@@ -1,6 +1,6 @@
 <?php
 	ini_set ('error_reporting', E_ALL);
-        $urlapp=$url_dominio."/modulos/trasvase/rnombre.php";
+        $urlapp=$url_dominio."modulos/traslados/rnombre.php";
      //echo $urlapp; 
 ?>
 <html >
@@ -14,6 +14,7 @@
                         // Ocultar el elemento de la imagen
                         $('#i672_img').hide();
 
+            //Calcula bultos a toneladas
                 $('#i667').bind('change', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
