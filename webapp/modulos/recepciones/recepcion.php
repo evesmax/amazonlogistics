@@ -32,7 +32,6 @@
                         }
 
                         // 3. Logica de visualizacion (Solo si paso las validaciones anteriores)
-                        alert('Diferencia: '+diffVal);
                         if(diffVal > 0){
                             $('#devfalt').show(); // Mas limpio que css display block
                             $('#txtestatus1').val(diffVal);
@@ -40,8 +39,10 @@
                         } else {
                             $('#devfalt').hide();
                         }
-                    });
-                    
+                    });                   
+                
+
+
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
                         $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
