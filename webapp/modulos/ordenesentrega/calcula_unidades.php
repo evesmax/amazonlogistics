@@ -15,7 +15,9 @@
                         $('#i368_1, #i368_2, #i368_3,#i368t').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i368_img').hide();
+                
                         
+                //Calcula bultos a toneladas
                 $('#i389').bind('blur', function() {  
                         //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i389').val(), tipo:1, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
@@ -34,7 +36,38 @@
                                 }
                                 if(info[3]==2){
                                     $('#i390').removeAttr("disabled");
-                                    $('#i390').focus();
+                                    $('#i391').focus();
+                                }
+                               if(info[4]>0){
+                                    $('#i654').val(0);
+                                    alert("Carta Porte Duplicada");
+                                    $('#i654').focus();
+                                    $('send').attr("disabled", false);
+                               }
+                               //console.log("Duplicada:"+info[4]+" CartaPorte:"+$('#i654').val()+" Transportista"+$('#i653').val());
+                            }
+                        );           
+                });
+                //Calcula toneladas a bultos
+                        $('#i390').bind('blur', function() {  
+                        //Agrega nombre de unidad principal , cartaporte:$('#i654').val(), idtransportista:$('#select2-i653-container').val()
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i387').val(),cantidadp:$('#i390').val(), tipo:2, cartaporte:$('#i654').val(), idtransportista:$('#i653').val()},function(datos)
+                            {
+                                //console.log(datos);
+                                var info = datos.split("|");
+                                $('#lbl389').text(info[0]);
+                                $('#lbl390').text(info[1]);
+                                //$('#i390').val(info[2]);
+                                $('#i390').val(parseFloat(info[2]).toFixed(3));
+                                $('send').attr("disabled", false);
+
+                                if(info[3]==1){
+                                    $('#i390').attr("disabled", true);
+                                    $('#i391').focus();
+                                }
+                                if(info[3]==2){
+                                    $('#i390').removeAttr("disabled");
+                                    $('#i391').focus();
                                 }
                                if(info[4]>0){
                                     $('#i654').val(0);
