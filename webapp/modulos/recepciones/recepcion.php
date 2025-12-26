@@ -23,13 +23,13 @@
                         }else{
                             $('#devfalt').css('display', 'none');
                         }
-                        alert($('#txtcantdif1').val());
+                        alert('Diferencia: ' + $('#txtcantdif1').val());
                         if($('#txtcantdif1').val()<0){
                             alert('No puede recibir mas de lo que se envio');
                             $('#txtcantrec1').val(0);
                             $('#txtcantrec1').focus();
                         }                                                    
-                    });    
+                    });
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
                         $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
