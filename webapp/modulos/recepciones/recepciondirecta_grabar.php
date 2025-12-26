@@ -79,7 +79,7 @@
             echo "Cantfalt1: " . $cantfalt1 . " - Cantfalt2: " . $cantfalt2."<br>";
             echo "Estatus1: " . $estatus1 . " - Estatus2: " . $estatus2."<br>";
             echo "IdEstadoProducto: " . $idestadoproducto."<br>";       
-            exit();
+            //exit();
 
  
 //VALIDA INFORMACION DE VALORES
