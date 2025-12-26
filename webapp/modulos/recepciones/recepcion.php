@@ -11,25 +11,36 @@
                         }            
                     });
                 //VALIDANDO ACLARACIONES
-                    $('#txtcantrec1').bind('focusout', function() {  
-                        if($('#txtcantrec1').val()==0 || $('#txtcantrec1').val()==''){
+                    $('#txtcantrec1').on('blur', function() {
+                        var inputVal = $(this).val();
+                        var diffVal = parseFloat($('#txtcantdif1').val()) || 0; // Aseguramos que sea numero
+
+                        // 1. Validacion: Vacio o Cero
+                        if(inputVal == 0 || inputVal == ''){
                             alert('Debe escribir una cantidad mayor a cero');
-                            $('#txtcantrec1').focus();
+                            // El setTimeout evita que el navegador se trabe en un bucle de alertas
+                            setTimeout(function(){ $('#txtcantrec1').focus(); }, 100);
+                            return false;
                         }
-                        if($('#txtcantdif1').val()>0){
-                            $('#devfalt').css('display', 'block');
-                            $('#txtestatus1').val($('#txtcantdif1').val());
-                            $('#txtestatus2').val($('#txtcantdif2').val());
-                        }else{
-                            $('#devfalt').css('display', 'none');
-                        }
-                        alert('Diferencia: ' + $('#txtcantdif1').val());
-                        if($('#txtcantdif1').val()<0){
+
+                        // 2. Validacion: Recibido mayor a enviado (Diferencia negativa)
+                        if(diffVal < 0){
                             alert('No puede recibir mas de lo que se envio');
-                            $('#txtcantrec1').val(0);
-                            $('#txtcantrec1').focus();
-                        }                                                    
+                            $(this).val(0); // Reseteamos a 0
+                            setTimeout(function(){ $('#txtcantrec1').focus(); }, 100);
+                            return false;
+                        }
+
+                        // 3. Logica de visualizacion (Solo si paso las validaciones anteriores)
+                        if(diffVal > 0){
+                            $('#devfalt').show(); // Mas limpio que css display block
+                            $('#txtestatus1').val(diffVal);
+                            $('#txtestatus2').val($('#txtcantdif2').val());
+                        } else {
+                            $('#devfalt').hide();
+                        }
                     });
+                    
                     $('#txtcantdev1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
                         $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
