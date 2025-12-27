@@ -20,6 +20,10 @@
                                 $('#lbl667').text(info[0]);
                                 $('#lbl668').text(info[1]);
                                 $('#i668').val(info[2]);
+
+                                //Como cambiaron deben de regresar a cero por que pueden afectarse
+                                $('#i670').val(0);
+                                $('#i671').val(0);
                                 //$('#i668').val(parseFloat(info[2]).toFixed(3));
 
                                 if(info[3]==1){
@@ -119,6 +123,10 @@
                                 $('#lbl667').text(info[0]);
                                 $('#lbl668').text(info[1]);
                                 $('#i667').val(info[2]);
+
+                                //Como cambiaron deben de regresar a cero por que pueden afectarse
+                                $('#i670').val(0);
+                                $('#i671').val(0);
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
