@@ -42,7 +42,8 @@
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,
                         lt.cantidaddestinoreal1,lt.cantidaddestinoreal2,lt.cantidadpnc1,lt.cantidadpnc2,lt.cantidadmerma1,lt.cantidadmerma2,lt.idcapturista,
-                        lt.foliosorigenreal,lt.foliosdestinoreal, ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino'
+                        lt.foliosorigenreal,lt.foliosdestinoreal, ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino',
+                        obo.responsable
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -86,7 +87,8 @@
                     $capturista=$rs{"idcapturista"};
                     $foliosorigenreal=$rs{"foliosorigenreal"};
                     $foliosdestinoreal=$rs{"foliosdestinoreal"};
-        }
+                    $responsable=$rs{"responsable");
+        }           
 		$conexion->cerrar_consulta($result);                        
                         
 
