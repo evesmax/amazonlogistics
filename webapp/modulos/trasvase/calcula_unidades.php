@@ -162,7 +162,7 @@
 
 
 
-            alert('Entre a funcion: ' + $('#i667').val());
+            alert('Entre a funcion parte final: ' + $('#i667').val());
 
 
             });
