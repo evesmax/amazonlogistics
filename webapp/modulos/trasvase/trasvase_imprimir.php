@@ -316,7 +316,8 @@
 					$html.="<tr class='trencabezado'><td><b>EMISIÓN</b></td></tr>";
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
-					$html.="<input type=text id='txtfecharec' name='txtfecharec' value='".$fecha."' Readonly>";
+                    $fecha_formateada = date("d/m/Y H:i:s", strtotime($fecha));
+					$html.="<input type=text id='txtfecharec' name='txtfecharec' value='".$fecha_formateada."' Readonly>";
 					$html.="</td>";
 					$html.="</tr>";
 					
