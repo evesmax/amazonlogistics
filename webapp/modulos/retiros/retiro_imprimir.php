@@ -332,8 +332,11 @@
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:13pt'>";
 					$fecha = new DateTime($fecha);
-					$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');									
-					$html.="<b>".$fecharetiro."</b>";
+					$fechainfo = $fecha->format('Y-m-d')." ".$fecha->format('H:i:s');	
+                                        
+                                        $fecha_formateada = date("d/m/Y H:i:s", strtotime($fecharetiro));
+                                        $html.="<b>".$fecha_formateada."</b>";
+					//$html.="<b>".$fecharetiro."</b>";
 					$html.="</td>";
 					$html.="</tr>";
 					
