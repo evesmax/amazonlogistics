@@ -9,10 +9,6 @@
 	<script language="javascript">
             $(document).ready(function(){
 
-                        // Elementos de Solo Lectura
-                        $('#i672_1, #i672_2, #i672_3,#i672t').prop('readonly', true);
-                        // Ocultar el elemento de la imagen
-                        $('#i672_img').hide();
             //Calcula bultos a toneladas
                 $('#i667').bind('blur', function() {  
                         //Agrega nombre de unidad principal
