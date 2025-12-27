@@ -25,6 +25,12 @@
                         }else{
                             $('#devfalt').css('display', 'none');
                         }
+                        if($('#txtcantdif1').val()<0){
+                            alert('La cantidad recibida no puede ser mayor a la cantidad enviada');
+                            $('#txtcantrec1').val(0);
+                            $('#txtcantrec2').val(0);
+                            $('#txtcantrec1').focus();
+                        }
                         if($('#txtcantrec1').val()*1>$('#txtsaldotraslado').val()*1){
                             alert('No puede recibir una cantidad mayor al Saldo de la Orden de Traslado Cant.' + $('#txtcantrec1').val() + ' Saldo Traslado: ' + $('#txtsaldotraslado').val());
                             $('#txtcantrec1').val(0);
