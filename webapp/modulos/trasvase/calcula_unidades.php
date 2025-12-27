@@ -128,6 +128,9 @@
                                 $('#i670').val(0);
                                 $('#i671').val(0);
 
+                                //Calclare el aproximado de conversion
+                                
+
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
                                     //$('#i671').focus();
