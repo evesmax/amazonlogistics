@@ -37,8 +37,7 @@
                                 }
                                 
                             }
-                        );
-                                        
+                        );               
                 });
                 $('#i670').bind('change', function() {  
                         //Agrega nombre de unidad principal
@@ -112,6 +111,56 @@
                         );
                                         
                 });
+
+
+            //Calcula de toneladas a Bultos
+                $('#i668').bind('change', function() {  
+                        //Agrega nombre de unidad principal
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i668').val(), tipo:2},function(datos)
+                            {
+                                //console.log("Producto:", $('#i664').val(), "Cantidad:", $('#i667').val());
+                                //alert($('#i664').val());
+                                var info = datos.split("|");
+                                $('#lbl667').text(info[0]);
+                                $('#lbl668').text(info[1]);
+                                $('#i667').val(info[2]);
+
+                                if(info[3]==1){
+                                    $('#i668').attr("disabled", true);
+                                    $('#i671').focus();
+                                }
+                                if(info[3]==2){
+                                    $('#i668').removeAttr("disabled");
+                                    $('#i671').focus();
+                                }
+                                
+                            }
+                        );               
+                });
+                $('#i671').bind('change', function() {  
+                        //Agrega nombre de unidad principal
+                        $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i671').val(), tipo:2},function(datos)
+                            {
+                                //console.log("Producto:", $('#i669').val(), "Cantidad:", $('#i670').val());
+                                //alert('i669'+$('#i669').val());
+                                var info = datos.split("|");
+                                $('#lbl670').text(info[0]);
+                                $('#lbl671').text(info[1]);
+                                $('#i670').val(info[2]);
+
+                                if(info[3]==1){
+                                    $('#i671').attr("disabled", true);
+                                    $('#i673').focus();
+                                }
+                                if(info[3]==2){
+                                    $('#i671').removeAttr("disabled");
+                                    $('#i673').focus();
+                                }
+                            }
+                        );
+                                        
+                });     
+
 
                 // Espera a que el contenido HTML de la página esté completamente cargado
                 document.addEventListener('DOMContentLoaded', function() {
