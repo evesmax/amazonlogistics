@@ -13,7 +13,7 @@
                         $('#i672_1, #i672_2, #i672_3,#i672t').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i672_img').hide();
-            alert('Entre a funcion');
+            alert('Entre a funcion: ' + $('#i667').val());
             //Calcula bultos a toneladas
                 $('#i667').bind('blur', function() {  
                         //Agrega nombre de unidad principal
@@ -101,11 +101,11 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    $('#i673').focus();
+                                    //$('#i673').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
-                                    $('#i673').focus();
+                                    //$('#i673').focus();
                                 }
                             }
                         );
