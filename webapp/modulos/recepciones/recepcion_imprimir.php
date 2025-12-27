@@ -395,7 +395,7 @@
                                         
                                         // 3. Concatenamos la variable ya limpia
 					//$html.="<b>".$fecharecepcion."</b>";
-                                        $fecha_formateada = date("d/m/Y", strtotime($fecharecepcion));
+                                        $fecha_formateada = date("d/m/Y H:i:s", strtotime($fecharecepcion));
                                         $html.="<b>".$fecha_formateada."</b>";
 
 					$html.="</td>";
