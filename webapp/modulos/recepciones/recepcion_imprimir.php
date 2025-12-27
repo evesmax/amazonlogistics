@@ -393,19 +393,11 @@
 					$html.="<tr>";
 					$html.="<td align=center style='font-size:7pt'>";
                                         
-                                        
-                                                // 1. Convertimos el string origen (Mes/Dia/Año) a Objeto
-                                                $objetoFecha = DateTime::createFromFormat('m/d/Y', $fecharecepcion);
-                                                // 2. Si la conversión fue exitosa, le damos el nuevo formato (Dia/Mes/Año)
-                                                if ($objetoFecha) {
-                                                $fecha_formateada = $objetoFecha->format('d/m/Y');
-                                                } else {
-                                                // Si falla (fecha vacía o invalida), dejamos la original para no romper nada
-                                                $fecha_formateada = $fecharecepcion;
-                                                }
                                         // 3. Concatenamos la variable ya limpia
-                                        $html.="<b>".$fecha_formateada."</b>";
 					//$html.="<b>".$fecharecepcion."</b>";
+                                        $fecha_formateada = date("d/m/Y", strtotime($fecharecepcion));
+                                        $html.="<b>".$fecha_formateada."</b>";
+
 					$html.="</td>";
 					$html.="</tr>";
 					
