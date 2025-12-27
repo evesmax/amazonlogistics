@@ -545,7 +545,7 @@
 						//document.getElementById('i668').value = "0";
 					}
 					if(sidcampo=='669'){
-						console.log("Ahora cambia el 671");
+						console.log("Ahora cambia el 671" + document.getElementById('i669').value);
 						//document.getElementById('i670').value = "0";
 					    document.getElementById('i671').removeAttribute('disabled');
 						//document.getElementById('i671').value = "0";
