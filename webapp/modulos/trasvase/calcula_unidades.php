@@ -15,7 +15,7 @@
                         $('#i672_img').hide();
 
             //Calcula bultos a toneladas
-                $('#i667').bind('change', function() {  
+                $('#i667').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
@@ -39,7 +39,7 @@
                             }
                         );               
                 });
-                $('#i670').bind('change', function() {  
+                $('#i670').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
@@ -62,7 +62,7 @@
                         );
                                         
                 });     
-                $('#i664').bind('change', function() {  
+                $('#i664').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i667').val(), tipo:1},function(datos)
                             {
@@ -88,7 +88,7 @@
                         );
                                         
                 });
-                $('#i669').bind('change', function() {  
+                $('#i669').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i670').val(), tipo:1},function(datos)
                             {
@@ -114,7 +114,7 @@
 
 
             //Calcula de toneladas a Bultos
-                $('#i668').bind('change', function() {  
+                $('#i668').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i664').val(),cantidadp:$('#i668').val(), tipo:2},function(datos)
                             {
@@ -137,7 +137,7 @@
                             }
                         );               
                 });
-                $('#i671').bind('change', function() {  
+                $('#i671').bind('blur', function() {  
                         //Agrega nombre de unidad principal
                         $.get('<?php echo $urlapp; ?>',{producto:$('#i669').val(),cantidadp:$('#i671').val(), tipo:2},function(datos)
                             {
