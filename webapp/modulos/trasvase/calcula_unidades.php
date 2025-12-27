@@ -127,11 +127,11 @@
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    $('#i671').focus();
+                                    //$('#i671').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    $('#i671').focus();
+                                    //$('#i671').focus();
                                 }
                                 
                             }
@@ -150,11 +150,11 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    $('#i673').focus();
+                                    //$('#i673').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
-                                    $('#i673').focus();
+                                    //$('#i673').focus();
                                 }
                             }
                         );
@@ -162,19 +162,6 @@
                 });     
 
 
-                // Espera a que el contenido HTML de la página esté completamente cargado
-                document.addEventListener('DOMContentLoaded', function() {
-                    
-                    // Busca el elemento por su ID
-                    const selector = document.getElementById('i664');
-                    // Le asigna el evento 'change'
-                    selector.addEventListener('change', function() {
-                        console.log("El selector ha cambiado (versión sin jQuery).");
-                        document.getElementById('i667').value = 0;
-                        document.getElementById('i668').value = 0;
-                    });
-
-                });
 
                 $('#send').bind('click', function() {  
                     $('#i668').removeAttr("disabled");  
