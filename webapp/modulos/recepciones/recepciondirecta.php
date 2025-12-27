@@ -38,19 +38,57 @@
                             $('#txtcantrec1').focus();
                         }                                                
                     });    
-                    $('#txtcantdev1').bind('focusout', function() {
-                        $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
-                        $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
-                        if($('#txtestatus1').val()==0 && $('#txtestatus2').val()==0){
-                            $('#txtestatus1').css('color', 'blue');
-                            $('#txtestatus2').css('color', 'blue');
-                            $('#divestatus').css('display', 'block');
-                        }else{
-                            $('#txtestatus1').css('color', 'red');
-                            $('#txtestatus2').css('color', 'red');
-                            $('#divestatus').css('display', 'none');
+                    
+                    $('#txtcantdev1').on('blur', function() {
+                        // 1. OBTENCIÓN DE DATOS (Convertir a número decimal)
+                        var dif1 = parseFloat($('#txtcantdif1').val()) || 0;
+                        var dev1 = parseFloat($(this).val()) || 0; // El valor que acabas de escribir
+                        var falt1 = parseFloat($('#txtcantfalt1').val()) || 0;
+
+                        // Datos del segundo grupo (asumo que existen según tu código original)
+                        var dif2 = parseFloat($('#txtcantdif2').val()) || 0;
+                        var dev2 = parseFloat($('#txtcantdev2').val()) || 0; 
+                        var falt2 = parseFloat($('#txtcantfalt2').val()) || 0;
+
+                        // 2. CÁLCULO DE ESTATUS (Saldos)
+                        // Formula: Diferencia - (Devolución + Faltante)
+                        var status1 = dif1 - (dev1 + falt1);
+                        var status2 = dif2 - (dev2 + falt2);
+
+                        // 3. VALIDACIÓN DE NEGATIVOS (Tu requerimiento)
+                        // Si alguno de los dos estatus quedó negativo, significa que te pasaste
+                        if (status1 < 0 || status2 < 0) {
+                            alert('Error: No puede registrar una cantidad mayor a la disponible (El saldo quedaría negativo).');
+                            
+                            // Opcional: Borramos el valor incorrecto visualmente
+                            $(this).val(0); 
+                            
+                            // Recalculamos el status1 para que no quede el número negativo en pantalla
+                            $('#txtestatus1').val(dif1 - falt1); 
+
+                            // Regresamos el foco de forma segura
+                            setTimeout(function() { $('#txtcantdev1').focus(); }, 100);
+                            return false;
+                        }
+
+                        // 4. ACTUALIZACIÓN DE CAMPOS Y COLORES (Si pasó la validación)
+                        $('#txtestatus1').val(status1);
+                        $('#txtestatus2').val(status2);
+
+                        // Si ambos saldos están en CERO (Exacto)
+                        // Nota: Usamos una tolerancia pequeña por si hay decimales (opcional), 
+                        // pero con == 0 funciona si los numeros son exactos.
+                        if (status1 == 0 && status2 == 0) {
+                            $('#txtestatus1, #txtestatus2').css('color', 'blue');
+                            $('#divestatus').show(); // .show() es mejor que css display block
+                        } else {
+                            // Si sobra o falta (Saldo positivo)
+                            $('#txtestatus1, #txtestatus2').css('color', 'red');
+                            $('#divestatus').hide();
                         }
                     });
+
+
                     $('#txtcantfalt1').bind('focusout', function() {
                         $('#txtestatus1').val($('#txtcantdif1').val()*1-($('#txtcantdev1').val()*1+$('#txtcantfalt1').val()*1));
                         $('#txtestatus2').val($('#txtcantdif2').val()*1-($('#txtcantdev2').val()*1+$('#txtcantfalt2').val()*1));
