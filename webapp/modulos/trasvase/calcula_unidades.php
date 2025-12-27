@@ -13,7 +13,7 @@
                         $('#i672_1, #i672_2, #i672_3,#i672t').prop('readonly', true);
                         // Ocultar el elemento de la imagen
                         $('#i672_img').hide();
-
+            alert('Entre a funcion');
             //Calcula bultos a toneladas
                 $('#i667').bind('blur', function() {  
                         //Agrega nombre de unidad principal
