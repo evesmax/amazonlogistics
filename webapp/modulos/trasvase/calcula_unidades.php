@@ -24,8 +24,8 @@
                                 var info = datos.split("|");
                                 $('#lbl667').text(info[0]);
                                 $('#lbl668').text(info[1]);
-                                //$('#i668').val(info[2]);
-                                $('#i668').val(parseFloat(info[2]).toFixed(3));
+                                $('#i668').val(info[2]);
+                                //$('#i668').val(parseFloat(info[2]).toFixed(3));
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
@@ -71,8 +71,8 @@
                                 var info = datos.split("|");
                                 $('#lbl667').text(info[0]);
                                 $('#lbl668').text(info[1]);
-                                //$('#i668').val(info[2]);
-                                $('#i668').val(parseFloat(info[2]).toFixed(3));
+                                $('#i668').val(info[2]);
+                                //$('#i668').val(parseFloat(info[2]).toFixed(3));
 
 
                                 if(info[3]==1){
