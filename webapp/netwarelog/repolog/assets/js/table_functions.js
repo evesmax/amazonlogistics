@@ -145,7 +145,10 @@ function filterTable() {
     updatePagination();
     renderTable();
     
-    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
+    // Re-aplicar formato de números después de filtrar
+    if (typeof resetAndFormatNumbers === 'function') {
+        resetAndFormatNumbers();
+    }
 }
 
 /**
@@ -157,7 +160,10 @@ function changeRowsPerPage() {
     updatePagination();
     renderTable();
     
-    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
+    // Re-aplicar formato de números después de re-renderizar la tabla
+    if (typeof resetAndFormatNumbers === 'function') {
+        resetAndFormatNumbers();
+    }
 }
 
 /**
@@ -178,7 +184,10 @@ function changePage(delta) {
     updatePagination();
     renderTable();
     
-    // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
+    // Re-aplicar formato de números después de re-renderizar la tabla
+    if (typeof resetAndFormatNumbers === 'function') {
+        resetAndFormatNumbers();
+    }
 }
 
 /**

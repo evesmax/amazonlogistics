@@ -70,8 +70,15 @@ $logoUrl = "https://qsoftwaresolutions.net/clientes/amazon/webapp/netwarelog/arc
 $customerInfo = "<strong>" . htmlspecialchars($reportTitle) . "</strong>";
 
 $formatInfo = array();
-if (isset($_SESSION['format_info'])) {
-    $formatInfo = $_SESSION['format_info'];
+if (isset($_SESSION['column_format_info'])) {
+    $formatInfo = $_SESSION['column_format_info'];
+}
+error_log("=== FORMATO DE COLUMNAS PARA EXCEL ===");
+error_log("Format Info disponible: " . (empty($formatInfo) ? "NO" : "SI"));
+if (!empty($formatInfo)) {
+    foreach ($formatInfo as $col => $info) {
+        error_log("Columna: " . $col . " -> decimales: " . (isset($info['decimals']) ? $info['decimals'] : 'no definido'));
+    }
 }
 
 $dataFormatted = array();
