@@ -86,7 +86,7 @@
                                     lr.referencia 'referenciar',lr.almacenista,lr.supervisor,lr.cabocuadrilla,
                                     lr.cantidadrecibida1,lr.cantidadrecibida2,lr.diferencia1,lr.diferencia2,
                                     lr.folios 'foliosr', lr.observaciones 'observacionesr',
-                                    le.licenciaoperador,obd.responsable,concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca, ifa.nombrefamilia
+                                    le.licenciaoperador,obd.responsable,concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista', lr.consecutivobodega, vm.nombremarca, ifa.nombrefamilia
                              From logistica_traslados lt 
                                 left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                                 left join vista_marcas vm on lt.idmarca=vm.idmarca
