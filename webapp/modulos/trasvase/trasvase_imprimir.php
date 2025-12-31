@@ -43,7 +43,7 @@
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,
                         lt.cantidaddestinoreal1,lt.cantidaddestinoreal2,lt.cantidadpnc1,lt.cantidadpnc2,lt.cantidadmerma1,lt.cantidadmerma2,lt.idcapturista,
                         lt.foliosorigenreal,lt.foliosdestinoreal, ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino',
-                        obo.responsable
+                        obo.responsable, concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista'
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -54,6 +54,7 @@
                         left join inventarios_lotes il on il.idloteproducto=lt.idloteproducto
                         left join inventarios_familias ifa1 on ip1.idfamilia=ifa1.idfamilia
                         left join inventarios_familias ifa2 on ip2.idfamilia=ifa2.idfamilia
+                        left join empleados em on em.idempleado=lt.idcapturista
                     Where lt.idtrasvase=".$idtrasvase;
                 //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
