@@ -71,7 +71,7 @@
                                 format(lr.cantidad1,2) cantidad1, 
                                 format(lr.cantidad2,2) cantidad2, lr.folios,
                                 lr.observaciones,lr.licenciaoperador,ob.responsable,
-                                concat(em.nombre,' ',em.apellido1,' ',em.apellido2) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos,lr.cuadrilla, ifa.nombrefamilia 
+                                concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista', lr.consecutivobodega, vm.nombremarca,lr.sellos,lr.cuadrilla, ifa.nombrefamilia 
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 				inner join vista_marcas vm on vm.idmarca=lo.idmarca
