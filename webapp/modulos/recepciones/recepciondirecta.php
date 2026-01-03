@@ -27,8 +27,8 @@
                         }
                         if($('#txtcantdif1').val()<0){
                             alert('La cantidad recibida no puede ser mayor a la cantidad enviada');
-                            $('#txtcantrec1').val($('#txtcantenv1').val());
-                            $('#txtcantrec2').val($('#txtcantenv2').val());
+                            $('#txtcantrec1').val(0);
+                            $('#txtcantrec2').val(0);
                             $('#txtcantrec2').focus();
                         }
                         if($('#txtcantrec1').val()*1>$('#txtsaldotraslado').val()*1){
