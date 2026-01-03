@@ -29,7 +29,7 @@
                             alert('La cantidad recibida no puede ser mayor a la cantidad enviada');
                             $('#txtcantrec1').val($('#txtcantenv1').val());
                             $('#txtcantrec2').val($('#txtcantenv2').val());
-                            $('#txtcantrec1').focus();
+                            $('#txtcantrec2').focus();
                         }
                         if($('#txtcantrec1').val()*1>$('#txtsaldotraslado').val()*1){
                             alert('No puede recibir una cantidad mayor al Saldo de la Orden de Traslado Cant.' + $('#txtcantrec1').val() + ' Saldo Traslado: ' + $('#txtsaldotraslado').val());
