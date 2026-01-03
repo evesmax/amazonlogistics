@@ -540,15 +540,20 @@
 						document.getElementById('i390').value = "0";
 					}
 					if(sidcampo=='664'){
-						//document.getElementById('i667').value = "0";
+						//Reinicia en cero los campos de cantidades origen y cantidades destino
+						document.getElementById('i667').value = "0";
 					    document.getElementById('i668').removeAttribute('disabled');
-						//document.getElementById('i668').value = "0";
+						document.getElementById('i668').value = "0";
+
+						document.getElementById('i670').value = "0";
+					    document.getElementById('i671').removeAttribute('disabled');
+						document.getElementById('i671').value = "0";
 					}
 					if(sidcampo=='669'){
-						console.log("Ahora cambia el 671:" + document.getElementById('i669').value);
-						//document.getElementById('i670').value = "0";
+						document.getElementById('i670').value = "0";
 					    document.getElementById('i671').removeAttribute('disabled');
-						//document.getElementById('i671').value = "0";
+						document.getElementById('i671').value = "0";
+						document.getElementById('i389').focus();	
 					}
 
 
