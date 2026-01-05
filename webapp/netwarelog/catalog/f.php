@@ -553,9 +553,8 @@
 						document.getElementById('i670').value = "0";
 					    document.getElementById('i671').removeAttribute('disabled');
 						document.getElementById('i671').value = "0";
-						document.getElementById('i389').focus();	
+						document.getElementById('i389').focus();
 					}
-
 
 					dependenciascompuestas(idcampo);
 				}
