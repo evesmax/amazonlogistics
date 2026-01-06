@@ -42,7 +42,7 @@ if(isset($_GET["producto"])){
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
                 
                 //Obteniendo el Factor de Conversion del Producto Destino
-                $factorPD=1;
+                $factorD=1;
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$productoD." Limit 1";
