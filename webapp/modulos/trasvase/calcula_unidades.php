@@ -27,7 +27,7 @@
 
                                 //Como cambiaron deben de regresar a cero por que pueden afectarse
                                 cantPD2=parseFloat(info[2])/parseFloat(factorPD);
-                                cantPD1=parseFloat(info[2])*parseFloat(factorPD); 
+                                cantPD1=parseFloat(cantPD2)*parseFloat(factorPD); 
                                 console.log("FactorPD:", factorPD, "info2:", info[2]); 
 
                                 $('#i670').val(cantPD2.toFixed(3));
