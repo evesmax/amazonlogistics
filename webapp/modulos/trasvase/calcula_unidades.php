@@ -17,7 +17,7 @@
                                 //console.log("Producto:", $('#i664').val(), "Cantidad:", $('#i667').val());
                                 //alert($('#i664').val());
                                 var info = datos.split("|");
-                                var factorPD=info[4];
+                                var factorPD=info[5];
                                 var cantPD1=0;
                                 var cantPD2=0;
 

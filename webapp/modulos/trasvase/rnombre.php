@@ -1,37 +1,39 @@
 <?php
 include("bd.php");
 
-            $desc1="";
-            $desc2="";
-            $cantidadconversion=0; 
-
 if(isset($_GET["producto"])){   
         $desc="Cantidad";
         $producto=$_GET["producto"]; //Producto Origen
-        $productoD=$_GET["productoD"]; //Producto Destino 
+        $productoD=$_GET["productoD"]; //Producto Destino   
         $cantidadp=$_GET["cantidadp"];  //Cantidad Principal
         $tipo=$_GET["tipo"];
+        $cartaporte=$_GET["cartaporte"];
+        //echo $tipo;
+        //exit();    
         //Asignacion de Etiqueta Cantidad Principal
+        //Si el calculo es por Bultos a Toneladas
         if ($tipo==1){
                 //Obtiene Etiqueta Descripcion Cantidad principal
-                $desc1="Cantidad";
+                $desc1="Cantidad 1";
                 $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto;
-                //echo $sQuery."<br>";  
-                    $result = $conexion->consultar($sQuery);
+
+                //echo $sQuery."<br>"; 
+                $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc1 = $rs["descripcionunidad"];
                 }
                 $conexion->cerrar_consulta($result);
                 //Asignacion de Etiqueta Cantidad Secundaria
-                $edita=0;
-                $desc2="Cantidad";
+                //$edita=0;
+                $desc2="Cantidad 2";
                 $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$producto." Limit 1";
+
                 //echo $sQuery."<br>";
-                    $result = $conexion->consultar($sQuery);
+                $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $desc2 = $rs["descripcionunidad"];
                         $factor= $rs["factor"];
@@ -40,22 +42,97 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result);
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
-                
-                //Obteniendo el Factor de Conversion del Producto Destino
-                $factorD=1;
-                $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
+           
+            $duplicada=0;
+            if(isset($_GET["cartaporte"])){
+                $cartaporte=$_GET["cartaporte"];
+                $idtransportista=$_GET["idtransportista"];
+                $duplicada=0;
+                $sQuery = "Select count(cartaporte) cuantas from logistica_ordenesentrega where idtransportista=".$idtransportista." and cartaporte='".$cartaporte."'";
+                //echo "<script>alert('".$sQuery."');</script>";
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $duplicada = $rs["cuantas"];
+                }
+                $conexion->cerrar_consulta($result); 
+            }
+
+            //Obteniendo el Factor D
+            $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
                     inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
                     where i.idproducto=".$productoD." Limit 1";
-                //echo $sQuery."<br>";
+                $factorD=1;
                 $result = $conexion->consultar($sQuery);
                 while($rs = $conexion->siguiente($result)){
                         $factorD= $rs["factor"];
                 }
                 $conexion->cerrar_consulta($result);
 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|".$factorD;
+            $edita=2; 
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|".$duplicada."|".$factorD."|";
         }
+
+        //Si el calculo es por Toneladas a Bultos
+        if ($tipo==2){
+                //Obtiene Etiqueta Descripcion Cantidad principal
+                $desc1="Cantidad 1";
+                $sQuery = "SELECT u.descripcionunidad,u.factor FROM inventarios_productos i 
+                    inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
+                    where i.idproducto=".$producto;
+
+                //echo $sQuery."<br>"; 
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $desc1 = $rs["descripcionunidad"];
+                }
+                $conexion->cerrar_consulta($result);
+                //Asignacion de Etiqueta Cantidad Secundaria
+                //$edita=0;
+                $desc2="Cantidad 2";
+                $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
+                    inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
+                    where i.idproducto=".$producto." Limit 1";
+
+                //echo $sQuery."<br>";
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $desc2 = $rs["descripcionunidad"];
+                        $factor= $rs["factor"];
+                        $edita=$rs{"edita"};
+                }
+                $conexion->cerrar_consulta($result);
+                $cantidadconversion=0;
+                $cantidadconversion=str_replace(',','',$cantidadp)/str_replace(',','',$factor);
+           
+            $duplicada=0;
+            if(isset($_GET["cartaporte"])){
+                $cartaporte=$_GET["cartaporte"];
+                $idtransportista=$_GET["idtransportista"];
+                $duplicada=0;
+                $sQuery = "Select count(cartaporte) cuantas from logistica_ordenesentrega where idtransportista=".$idtransportista." and cartaporte='".$cartaporte."'";
+                //echo "<script>alert('".$sQuery."');</script>";
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $duplicada = $rs["cuantas"];
+                }
+                $conexion->cerrar_consulta($result); 
+            }
+
+            //Obteniendo el Factor D
+            $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
+                    inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
+                    where i.idproducto=".$productoD." Limit 1";
+                $factorD=1;
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $factorD= $rs["factor"];
+                }
+                $conexion->cerrar_consulta($result);
+
+            $edita=2; 
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,2)."|".$edita."|".$duplicada."|".$factorD."|";
+        }
+
+
 }
-
-
 ?>
