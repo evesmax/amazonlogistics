@@ -37,11 +37,11 @@
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    $('#i668').focus();
+                                    $('#i670').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    $('#i668').focus();
+                                    $('#i670').focus();
                                 }
                                 
                             }
@@ -61,11 +61,11 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    $('#i667').focus();
+                                    $('#i673').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
-                                    $('#i667').focus();
+                                    $('#i673').focus();
                                 }
                             }
                         );
