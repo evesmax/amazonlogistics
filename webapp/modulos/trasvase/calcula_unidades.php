@@ -37,11 +37,11 @@
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    $('#i669').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    $('#i669').focus();
+                                    $('#i667').focus();
                                 }
                                 
                             }
@@ -61,11 +61,11 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    $('#i673').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
-                                    $('#i673').focus();
+                                    $('#i667').focus();
                                 }
                             }
                         );
@@ -92,11 +92,11 @@
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    $('#i669').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    $('#i669').focus();
+                                    $('#i667').focus();
                                 }
                                 
                             }
@@ -123,7 +123,7 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    //$('#i673').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
@@ -159,14 +159,14 @@
                                 console.log("FactorPD:", factorPD, "info2:", info[2]); 
                                 $('#i670').val(cantPD2.toFixed(3));
                                 $('#i671').val(cantPD1);
-                                
+
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    //$('#i671').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    //$('#i671').focus();
+                                    $('#i667').focus();
                                 }
                                 
                             }
@@ -185,11 +185,11 @@
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
-                                    //$('#i673').focus();
+                                    $('#i667').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i671').removeAttr("disabled");
-                                    //$('#i673').focus();
+                                    $('#i667').focus();
                                 }
                             }
                         );
