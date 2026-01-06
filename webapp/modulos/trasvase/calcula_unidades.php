@@ -29,7 +29,6 @@
                                 cantPD2=parseFloat(info[2])/parseFloat(factorPD);
                                 cantPD1=parseFloat(cantPD2)*parseFloat(factorPD); 
                                 console.log("FactorPD:", factorPD, "info2:", info[2]); 
-
                                 $('#i670').val(cantPD2.toFixed(3));
                                 $('#i671').val(cantPD1);
                                 //$('#i670').val(0);
@@ -59,6 +58,7 @@
                                 $('#lbl671').text(info[1]);
                                 $('#i671').val(info[2]);
 
+
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
                                     $('#i673').focus();
@@ -83,6 +83,12 @@
                                 $('#i668').val(info[2]);
                                 //$('#i668').val(parseFloat(info[2]).toFixed(3));
 
+                                //Como cambiaron deben de regresar a cero por que pueden afectarse
+                                cantPD2=parseFloat(info[2])/parseFloat(factorPD);
+                                cantPD1=parseFloat(cantPD2)*parseFloat(factorPD); 
+                                console.log("FactorPD:", factorPD, "info2:", info[2]); 
+                                $('#i670').val(cantPD2.toFixed(3));
+                                $('#i671').val(cantPD1);
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
@@ -107,6 +113,13 @@
                                 $('#lbl670').text(info[0]);
                                 $('#lbl671').text(info[1]);
                                 $('#i671').val(info[2]);
+
+                                //Como cambiaron deben de regresar a cero por que pueden afectarse
+                                cantPD2=parseFloat(info[2])/parseFloat(factorPD);
+                                cantPD1=parseFloat(cantPD2)*parseFloat(factorPD); 
+                                console.log("FactorPD:", factorPD, "info2:", info[2]); 
+                                $('#i670').val(cantPD2.toFixed(3));
+                                $('#i671').val(cantPD1);
 
                                 if(info[3]==1){
                                     $('#i671').attr("disabled", true);
@@ -140,7 +153,13 @@
 
                                 //Calclare el aproximado de conversion
                                 
-
+                                //Como cambiaron deben de regresar a cero por que pueden afectarse
+                                cantPD2=parseFloat(info[2])/parseFloat(factorPD);
+                                cantPD1=parseFloat(cantPD2)*parseFloat(factorPD); 
+                                console.log("FactorPD:", factorPD, "info2:", info[2]); 
+                                $('#i670').val(cantPD2.toFixed(3));
+                                $('#i671').val(cantPD1);
+                                
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
                                     //$('#i671').focus();
