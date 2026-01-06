@@ -7,7 +7,8 @@ include("bd.php");
 
 if(isset($_GET["producto"])){   
         $desc="Cantidad";
-        $producto=$_GET["producto"];
+        $producto=$_GET["producto"]; //Producto Origen
+        $productoD=$_GET["productoD"]; //Producto Destino 
         $cantidadp=$_GET["cantidadp"];  //Cantidad Principal
         $tipo=$_GET["tipo"];
         //Asignacion de Etiqueta Cantidad Principal
@@ -39,8 +40,20 @@ if(isset($_GET["producto"])){
                 $conexion->cerrar_consulta($result);
                 $cantidadconversion=0;
                 $cantidadconversion=str_replace(',','',$cantidadp)*str_replace(',','',$factor);
+                
+                //Obteniendo el Factor de Conversion del Producto Destino
+                $factorPD=1;
+                $sQuery = "SELECT u.descripcionunidad,ifnull(i.factor,0) factor ,i.idtipounidadmedida edita FROM inventarios_unidadesproductos i 
+                    inner join inventarios_unidadesmedida u on u.idunidadmedida=i.idunidadmedida 
+                    where i.idproducto=".$productoD." Limit 1";
+                //echo $sQuery."<br>";
+                $result = $conexion->consultar($sQuery);
+                while($rs = $conexion->siguiente($result)){
+                        $factorD= $rs["factor"];
+                }
+                $conexion->cerrar_consulta($result);
 
-            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|";
+            echo $desc1."|".$desc2."|".number_format($cantidadconversion,3)."|".$edita."|".$factorD;
         }
 }
 
