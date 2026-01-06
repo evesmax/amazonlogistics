@@ -37,11 +37,11 @@
 
                                 if(info[3]==1){
                                     $('#i668').attr("disabled", true);
-                                    $('#i667').focus();
+                                    $('#i668').focus();
                                 }
                                 if(info[3]==2){
                                     $('#i668').removeAttr("disabled");
-                                    $('#i667').focus();
+                                    $('#i668').focus();
                                 }
                                 
                             }
