@@ -501,6 +501,10 @@ function getVisibleColumns($columns, $appliedFilters) {
     // Construir lista de columnas a excluir (filtros con solo un valor)
     $columnsToHide = [];
     
+    // Lista de etiquetas de filtros de fecha que NO deben usarse para ocultar columnas
+    // Estos son filtros de rango de fecha, no filtros de columnas
+    $dateFilterLabels = ['del', 'al', 'desde', 'hasta', 'fecha', 'fecha_inicio', 'fecha_fin'];
+    
     foreach ($appliedFilters as $filter) {
         if (!isset($filter['label']) || !isset($filter['value'])) {
             continue;
@@ -508,6 +512,12 @@ function getVisibleColumns($columns, $appliedFilters) {
         
         $filterLabel = $filter['label'];
         $filterValue = $filter['value'];
+        
+        // Ignorar filtros de fecha - estos no corresponden a columnas a ocultar
+        if (in_array(strtolower($filterLabel), $dateFilterLabels)) {
+            error_log("Filtro de fecha ignorado para ocultamiento: " . $filterLabel);
+            continue;
+        }
         
         // Determinar si el filtro tiene múltiples valores
         $isMultiValue = is_array($filterValue) && count($filterValue) > 1;
@@ -523,8 +533,9 @@ function getVisibleColumns($columns, $appliedFilters) {
                 }
             }
             
-            // Búsqueda 2: Si filterLabel está contenido en column o column en filterLabel
-            if (!in_array($filterLabel, $columnsToHide)) {
+            // Búsqueda 2: Coincidencia parcial - SOLO si el label tiene al menos 4 caracteres
+            // Esto evita que labels cortos como "Al" oculten columnas como "Saldo Inicial"
+            if (!in_array($filterLabel, $columnsToHide) && strlen($filterLabel) >= 4) {
                 foreach ($columns as $column) {
                     $labelLower = strtolower($filterLabel);
                     $columnLower = strtolower($column);
@@ -835,6 +846,21 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
     // Si llegamos aquí sin fechas, usar el día actual
     if (!$fechasEncontradas) {
         error_log("No se encontraron fechas en SESSION, POST ni SQL. Usando fechas del día actual: $startDate - $endDate");
+    }
+    
+    // NORMALIZACIÓN: Asegurar que las fechas estén en formato YYYY/MM/DD para SQL
+    // El datepicker envía YYYY-MM-DD, convertimos guiones a slashes para consistencia
+    $startDate = str_replace('-', '/', $startDate);
+    $endDate = str_replace('-', '/', $endDate);
+    
+    // VALIDACIÓN: Si la fecha parece estar en formato DD/MM/YYYY, convertirla a YYYY/MM/DD
+    if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $startDate, $matches)) {
+        $startDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        error_log("Fecha inicio convertida de DD/MM/YYYY a YYYY/MM/DD: $startDate");
+    }
+    if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $endDate, $matches)) {
+        $endDate = $matches[3] . '/' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '/' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+        error_log("Fecha fin convertida de DD/MM/YYYY a YYYY/MM/DD: $endDate");
     }
     
     // Información de depuración
