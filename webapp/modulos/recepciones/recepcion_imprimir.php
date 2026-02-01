@@ -517,6 +517,12 @@
                                                             </td>
                                                         </tr>";
  						$html.="<tr>
+                                                            <td width=30%>CONTENEDOR:</td>
+                                                            <td align=left><b>".$horallegada."</b></td>
+                                                        </tr>"; 
+
+
+ 						$html.="<tr>
                                                             <td width=30%>SELLOS:</td>
                                                             <td align=left><b>".$observacionesEnv."</b></td>
                                                         </tr>"; 

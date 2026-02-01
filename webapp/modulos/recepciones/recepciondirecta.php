@@ -626,7 +626,7 @@
                                                         </tr>";
 	                                                   
 						$html.="<tr>
-                                                            <td width=30%>LLEGADA APROXIMADA:</td>
+                                                            <td width=30%>CONTENEDOR:</td>
                                                             <td align=left><b><input type=text id='txthorallegada' name='txthorallegada' value='' Size=20></b>
                                                         </tr>";
 						$html.="<tr>
