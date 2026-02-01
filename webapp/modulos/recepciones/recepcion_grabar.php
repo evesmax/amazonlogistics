@@ -28,8 +28,10 @@
             $folios=$_REQUEST["txtfolios"];
             $doctoorigen=4;
             
-			
-			
+            $pbruto=str_replace(",","",$_REQUEST["txtbruto"]);
+            $ptara=str_replace(",","",$_REQUEST["txttara"]);
+            $pneto=str_replace(",","",$_REQUEST["txtneto"]);
+            
             $cantdev1=0;
             $cantdev2=0;
             $cantfalt1=0;
@@ -63,7 +65,7 @@
 			while($rs = $conexion->siguiente($result)){
 				$idrecepcion=$rs{"idrecepcion"};
 				$politica=1;
-				$msg="Ya esta registrada la recepción relacionada a este envio con el folio: $idrecepcion"; 
+				$msg="Ya esta registrada la recepciï¿½n relacionada a este envio con el folio: $idrecepcion"; 
 			}
 			$conexion->cerrar_consulta($result);
             

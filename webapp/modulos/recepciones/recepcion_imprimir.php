@@ -65,7 +65,10 @@
                     $licenciaoperador="";
                     $responsable="";
                     $consecutivobodega=0;
-                        $nombrefamilia="";
+                    $nombrefamilia="";
+                    $pbruto=0;
+                    $ptara=0;
+                    $pneto=0;
 
 		$sqlestatus="Select le.idenvio,lt.idtraslado,lt.referencia1 otfc, lt.fecha,  
                                 of.nombrefabricante 'nombreingenio', obo.nombrebodega 'bodegaorigen',
@@ -86,7 +89,8 @@
                                     lr.referencia 'referenciar',lr.almacenista,lr.supervisor,lr.cabocuadrilla,
                                     lr.cantidadrecibida1,lr.cantidadrecibida2,lr.diferencia1,lr.diferencia2,
                                     lr.folios 'foliosr', lr.observaciones 'observacionesr',
-                                    le.licenciaoperador,obd.responsable,concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista', lr.consecutivobodega, vm.nombremarca, ifa.nombrefamilia
+                                    le.licenciaoperador,obd.responsable,concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista', lr.consecutivobodega, 
+                                    vm.nombremarca, ifa.nombrefamilia, lr.pbruto, lr.ptara, lr.pneto
                              From logistica_traslados lt 
                                 left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                                 left join vista_marcas vm on lt.idmarca=vm.idmarca
@@ -167,9 +171,9 @@
 					$nombrecapturista=$rs{"capturista"};
                                     $marca=$rs{"nombremarca"};
                                     $observacionesr=$rs{"observacionesr"};
-
-									
-									
+                                    $pbruto=$rs{"pbruto"};
+                                    $ptara=$rs{"ptara"};
+                                    $pneto=$rs{"pneto"};				
 		}
 		$conexion->cerrar_consulta($result);                        
                         
@@ -565,6 +569,14 @@
                                                             <td>FOLIOS:</td>
                                                             <td align=left><b>".$foliosr."</b></td>
                                                         </tr>";	                                                
+
+      						$html.="<tr align=left>
+                                                            <td colspan=2>
+                                                                PESO BRUTO:<b>".$pbruto."</b>
+                                                                PESO TARA:<b>".$ptara."</>
+                                                                PESO NETO:<b>".$pneto."</>
+                                                            </td>
+                                                        </tr>";    
 
 						$html.="<tr>
                                                             <td>OBSERVACIONES:</td>

@@ -671,7 +671,15 @@
 						$html.="<tr>
                                                             <td>FOLIOS:</tid>
                                                             <td align=lefti><textarea type=text id='txtfolios' name='txtfolios' rows=2 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
-                                                        </tr>";                                     
+                                                        </tr>";
+                                                        
+						$html.="<tr align=left
+                                                            <td colspan=3>
+                                                                PESO BRUTO:<input type=text id='txtbruto' name='txtbruto' value='' Size=20>
+                                                                PESO TARA:<input type=text id='txttara' name='txttara' value='' Size=20>
+                                                                PESO NETO:<input type=text id='txtneto' name='txtneto' value='' Size=20>
+                                                            </td>
+                                                        </tr>";                                                        
 
 						$html.="<tr>
                                                             <td>OBSERVACIOiNES:</td>
