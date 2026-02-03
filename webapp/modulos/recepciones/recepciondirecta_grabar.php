@@ -45,7 +45,10 @@
             $folios=$_REQUEST["txtfolios"];
             $doctoorigen=4; 
 			
-			
+            $pbruto=$_REQUEST["txtbruto"];
+            $ptara=$_REQUEST["txttara"];
+            $pneto=$_REQUEST["txtneto"];
+            
             $cantdev1=0;
             $cantdev2=0;
             $cantfalt1=0;
@@ -168,12 +171,12 @@ $fechaenvio=$fecharecepcion;
                     (idtraslado,idenvio,fecharecepcion,banco,estiba,
                     ticketbascula,referencia,observaciones,almacenista,supervisor,
                     cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
-                    idbodega, diferencia1,diferencia2,folios,idempleado
+                    idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
                     ) VALUES 
                     ('".$idtraslado."','".$idenvio."','".$fecharecepcion."','".$banco."','".$estiba."','".
                     $ticketbascula."','".$referencia."','".$observaciones."','".$almacenista."','".$supervisor."','".
                     $cabocuadrilla."','".$cantidadenviada1."','".$cantidadenviada2."','".$cantidadrecibida1."','".$cantidadrecibida2."','".
-                    $idbodega."','".$diferencia1."','".$diferencia2."','".$folios."','".$capturista."')";
+                    $idbodega."','".$diferencia1."','".$diferencia2."','".$folios."','".$capturista."'".$pbruto."','".$ptara."','".$pneto."')";
         echo $sql;
 
         $conexion->consultar($sql);
