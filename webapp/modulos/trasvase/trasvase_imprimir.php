@@ -88,7 +88,7 @@
                     $capturista=$rs{"idcapturista"};
                     $foliosorigenreal=$rs{"foliosorigenreal"};
                     $foliosdestinoreal=$rs{"foliosdestinoreal"};
-                    $responsable=$rs{"responsable");
+                    $responsable=$rs{"responsable"};
         }           
 		$conexion->cerrar_consulta($result);                        
                         
