@@ -682,7 +682,7 @@
                                                         </tr>";                                                        
 
 						$html.="<tr>
-                                                            <td>OBSERVACIOiNES:</td>
+                                                            <td>OBSERVACIONES:</td>
                                                             <td align=lefti><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Escriba los folios de los bultos Ejemplo: 89999,898928,990920 '></textarea></td>
                                                         </tr>";
 							
