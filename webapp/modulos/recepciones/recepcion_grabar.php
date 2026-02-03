@@ -234,8 +234,8 @@
                 //echo "Proceso Finalizado con Exito";
                 
 
-                exit();
+                //exit();
                 
-                header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
+                //header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
          
 ?>
