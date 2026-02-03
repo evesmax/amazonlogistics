@@ -573,8 +573,8 @@
       						$html.="<tr align=left>
                                                             <td colspan=2>
                                                                 PESO BRUTO:<b>".$pbruto."</b>
-                                                                PESO TARA:<b>".$ptara."</>
-                                                                PESO NETO:<b>".$pneto."</>
+                                                                PESO TARA:<b>".$ptara."</b>
+                                                                PESO NETO:<b>".$pneto."</b>
                                                             </td>
                                                         </tr>";    
 

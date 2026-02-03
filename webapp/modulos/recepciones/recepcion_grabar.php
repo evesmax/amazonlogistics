@@ -28,9 +28,9 @@
             $folios=$_REQUEST["txtfolios"];
             $doctoorigen=4;
             
-            $pbruto=str_replace(",","",$_REQUEST["txtbruto"]);
-            $ptara=str_replace(",","",$_REQUEST["txttara"]);
-            $pneto=str_replace(",","",$_REQUEST["txtneto"]);
+            $pbruto=$_REQUEST["txtbruto"];
+            $ptara=$_REQUEST["txttara"];
+            $pneto=$_REQUEST["txtneto"];
 
             $cantdev1=0;
             $cantdev2=0;
@@ -234,7 +234,7 @@
                 //echo "Proceso Finalizado con Exito";
                 
 
-                
+                exit();
                 
                 header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
          
