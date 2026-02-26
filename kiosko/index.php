@@ -21,7 +21,7 @@
 	//Carga el contenido cambiante de las vistas generadas por los controladores, $_GET['f'] contiene el nombre del controlador
 	$controller->content(@$_GET['f']);
 
-	//Carga el contenido de la vista footer
+	//Carga el contenido de la vista footer sss
 	$controller->footer();
 ?>
 
