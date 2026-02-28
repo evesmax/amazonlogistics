@@ -181,9 +181,9 @@ $htmlpoliticas="
         $conexion->consultar($sqlinv);
         $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         
-        //echo "<br> Consulta Inventario".$sqlinv."<br>";
-        //echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
-        //echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
+        echo "<br> Consulta Inventario".$sqlinv."<br>";
+        echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
+        echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
 
 
         //exit();
@@ -195,8 +195,8 @@ $htmlpoliticas="
         $conexion->consultar($sqlinv);
         $conexion->cerrar_consulta($result);
 
-        //echo "<br> Inventario Disponible: ".$inventario."<br>";
-        //echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
+        echo "<br> Inventario Disponible: ".$inventario."<br>";
+        echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
 
         if($inventario<$cantidad1){
             echo "<script>

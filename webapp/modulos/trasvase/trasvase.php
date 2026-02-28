@@ -97,7 +97,7 @@
                         ip2.nombreproducto 'productodestino',
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal,
-                        ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino'
+                        ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino', now() fecha_final,lt.idmarca,lt.idloteproducto
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -132,10 +132,51 @@
                     $observaciones=$rs{"observaciones"};
                     $idproducto=$rs{"idproducto"};
                     $idproductodestino=$rs{"idproductodestino"};
-
+                    $fecha_final=$rs{"fecha_final"};
+                    $idmarca=$rs{"idmarca"};
+                    $idloteproducto=$rs{"idloteproducto"};
         }
 		$conexion->cerrar_consulta($result);                        
-                        
+
+//PROCESO DE VALIDACION DE INVENTARIO 
+
+        //Verifica Inventario
+        $inventario=0;
+        $sqlinv="call generaExistenciasInventario('".$fecha_final."',".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
+        echo "<br> Consulta Inventario".$sqlinv."<br>";
+        $conexion->consultar($sqlinv);
+        $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
+        
+        //echo "<br> Consulta Inventario".$sqlinv."<br>";
+        //echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
+        //echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
+
+
+        //exit();
+        
+        $result = $conexion->consultar($sqlinv);
+        while($rs = $conexion->siguiente($result)){
+            $inventario=$rs{"inventarioinicial"};
+        }
+        $conexion->consultar($sqlinv);
+        $conexion->cerrar_consulta($result);
+
+        //echo "<br> Inventario Disponible: ".$inventario."<br>";
+        //echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
+
+        if($inventario<$cantidad1){
+            echo "<script>
+                    alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
+                    window.close();
+                  </script>";
+            //exit();
+        }
+
+
+//FIN PROCESO DE VALIDACION DE INVENTARIO
+
+
+
                 
                 $sqlimagen="";
                 $carpeta="";
