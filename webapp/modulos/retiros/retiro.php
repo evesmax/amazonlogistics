@@ -64,12 +64,8 @@ $htmlpoliticas="
     $idordenentrega=$_GET["folio"];
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
-    echo "Usuario: ".$usuario."<br>";
     
-    $usuario="2";
-    $idempleado=$usuario;
 
-    exit();
     //OBTENIENDO INFORMACION BASICA
                     $oe="";
                     $fecha=date("d-m-Y H:i:s");
@@ -182,14 +178,14 @@ $htmlpoliticas="
         //Verifica Inventario
         $inventario=0;
         $sqlinv="call generaExistenciasInventario('".$fecha_final."',".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
-        echo $usuario." - ".$fecha_final." - ".$idfabricante." - ".$idmarca." - ".$idbodega." - ".$idproducto." - ".$idloteproducto." - ".$idestadoproducto." - ".$idempleado."<br>";
-        echo "<br> Consulta Inventario: ".$sqlinv."<br>";
+        //echo $usuario." - ".$fecha_final." - ".$idfabricante." - ".$idmarca." - ".$idbodega." - ".$idproducto." - ".$idloteproducto." - ".$idestadoproducto." - ".$idempleado."<br>";
+        //echo "<br> Consulta Inventario: ".$sqlinv."<br>";
         $conexion->consultar($sqlinv);
         $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         
-        echo "<br> Consulta Inventario".$sqlinv."<br>";
-        echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
-        echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
+        //echo "<br> Consulta Inventario".$sqlinv."<br>";
+        //echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
+        //echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
 
 
         //exit();
@@ -201,8 +197,8 @@ $htmlpoliticas="
         $conexion->consultar($sqlinv);
         $conexion->cerrar_consulta($result);
 
-        echo "<br> Inventario Disponible: ".$inventario."<br>";
-        echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
+        //echo "<br> Inventario Disponible: ".$inventario."<br>";
+        //echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
 
         if($inventario<$cantidad1){
             echo "<script>

@@ -109,7 +109,7 @@
                         left join inventarios_familias ifa1 on ip1.idfamilia=ifa1.idfamilia
                         left join inventarios_familias ifa2 on ip2.idfamilia=ifa2.idfamilia
                     Where lt.idtrasvase=".$idtrasvase;
-                //echo $sqlestatus;
+                echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
