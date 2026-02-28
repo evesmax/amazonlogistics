@@ -65,7 +65,11 @@ $htmlpoliticas="
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
     echo "Usuario: ".$usuario."<br>";
-        
+    
+    $usuario="2";
+    $idempleado=$usuario;
+
+
     //OBTENIENDO INFORMACION BASICA
                     $oe="";
                     $fecha=date("d-m-Y H:i:s");
