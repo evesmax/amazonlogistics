@@ -3,6 +3,10 @@
     $htmlpoliticas="	
         <script language='javascript'>
             $(document).ready(function(){
+                //Forzar Mayusculas
+                $('input[type=text], textarea').on('input', function() {
+                    this.value = this.value.toUpperCase();
+                });                
                 //folios
                     $('#txtfolios').bind('focusout', function() {  
                         if($('#txtfolios').val()==0 || $('#txtfolios').val()==''){
