@@ -129,7 +129,7 @@ $htmlpoliticas="
                                 left join inventarios_familias ifa on ip.idfamilia=ifa.idfamilia
                              Where lo.idordenentrega=".$idordenentrega;
                 
-				echo $sqlestatus."<br>";
+				//echo $sqlestatus."<br>";
                 
         $result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
