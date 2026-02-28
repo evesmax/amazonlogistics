@@ -182,8 +182,8 @@ $htmlpoliticas="
         $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         echo "<br> Consulta Inventario".$sqlinv."<br>";
         echo "<br> Cantidad a Retirar: ".$cantidad1."<br>";
-        echo "<br> Inventario Disponible: ".$inventario."<br>";
         
+
 
         //exit();
         
@@ -193,6 +193,9 @@ $htmlpoliticas="
         }
         $conexion->consultar($sqlinv);
         $conexion->cerrar_consulta($result);
+
+        echo "<br> Inventario Disponible: ".$inventario."<br>";
+
         if($inventario<$cantidad1){
             echo "<script>
                     alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
