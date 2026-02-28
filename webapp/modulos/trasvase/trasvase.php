@@ -110,7 +110,7 @@
                         left join inventarios_familias ifa1 on ip1.idfamilia=ifa1.idfamilia
                         left join inventarios_familias ifa2 on ip2.idfamilia=ifa2.idfamilia
                     Where lt.idtrasvase=".$idtrasvase;
-                echo $sqlestatus;
+                //echo $sqlestatus;
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
@@ -767,6 +767,15 @@
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
 
+        if ($inventario>=$cantidad1) {
+            $html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
+                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
+        } else {
+            $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
+                                    No hay inventario suficiente para procesar el trasvase, Disponible: ".$inventario." Requerido:".$cantidad1."
+                                </span>
+                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+        }				
 
                 
                 echo $html_funcionesjavascript;  
