@@ -64,6 +64,7 @@ $htmlpoliticas="
     $idordenentrega=$_GET["folio"];
 	session_start();
 	$usuario= $_SESSION["accelog_idempleado"];
+    echo "Usuario: ".$usuario."<br>";
         
     //OBTENIENDO INFORMACION BASICA
                     $oe="";
