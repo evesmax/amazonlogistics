@@ -32,6 +32,7 @@
                     $foliosorigenreal="";
                     $foliosdestinoreal="";
                     $nombrefamilia="";
+                    $obsproceso="";
 
 		$sqlestatus="select lt.idtrasvase Folio,lt.fecha,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
@@ -43,7 +44,7 @@
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,
                         lt.cantidaddestinoreal1,lt.cantidaddestinoreal2,lt.cantidadpnc1,lt.cantidadpnc2,lt.cantidadmerma1,lt.cantidadmerma2,lt.idcapturista,
                         lt.foliosorigenreal,lt.foliosdestinoreal, ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino',
-                        obo.responsable, concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista'
+                        obo.responsable, concat(ifnull(em.nombre,''),' ',ifnull(em.apellido1,''),' ',ifnull(em.apellido2,'')) 'capturista',lt.obsproceso
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -88,7 +89,8 @@
                     $capturista=$rs{"idcapturista"};
                     $foliosorigenreal=$rs{"foliosorigenreal"};
                     $foliosdestinoreal=$rs{"foliosdestinoreal"};
-                    $responsable=$rs{"responsable"};
+                    $responsable=$rs{"responsable"};\
+                    $obsproceso=$rs{"obsproceso"};
         }           
 		$conexion->cerrar_consulta($result);                        
                         
@@ -449,8 +451,8 @@
                                                         </tr>";  
 						
 						$html.="<tr>
-                                                            <td>Observaciones:</td>
-                                                            <td align=left>$observaciones</td>
+                                                            <td>Observaciones Proceso:</td>
+                                                            <td align=left>$obsproceso</td>
                                                         </tr>";
                         $html.="<tr>
                                                         <td width=30%>Folios Final:</td>

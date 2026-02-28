@@ -15,7 +15,8 @@
             $capturista=$_REQUEST["txtcapturista"];
             $foliosorigenreal=$_REQUEST["txtfoliosorigenreal"];
             $foliosdestinoreal=$_REQUEST["txtfoliosdestinoreal"];
-                   
+            $txtobservaciones=$_REQUEST["txtobservaciones"];      
+
 //Recupera valores de consulta
         $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase=".$idtrasvase;
 		$result = $conexion->consultar($sQuery);
@@ -86,7 +87,8 @@ $doctoorigen=6;
                             idestadodocumento=2,
                             foliosorigenreal='$foliosorigenreal',
                             foliosdestinoreal='$foliosdestinoreal',
-                            fechaop='$fechadia'
+                            fechaop='$fechadia',
+                            obsproceso='$txtobservaciones'
                         Where idtrasvase=".$idtrasvase;
         //echo $sqlafecta;
         $conexion->consultar($sqlafecta);

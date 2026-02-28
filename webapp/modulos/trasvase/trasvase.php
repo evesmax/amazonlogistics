@@ -147,7 +147,7 @@
         //Verifica Inventario
         $inventario=0;
         $sqlinv="call generaExistenciasInventario('".$fecha_final."',".$idfabricante.",".$idmarca.",".$idbodega.",".$idproducto.",".$idloteproducto.",".$idestadoproducto.",".$idempleado.")";
-        echo "<br> Consulta Inventario".$sqlinv."<br>";
+        //echo "<br> Consulta Inventario".$sqlinv."<br>";
         $conexion->consultar($sqlinv);
         $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         
@@ -522,6 +522,7 @@
 						$html.="<tr>
                                                             <td>Observaciones:</td>
                                                             <td align=left>$observaciones</td>
+                                                            <td align=left><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Observaciones del proceso de trasvase '></textarea></td>
                                                         </tr>";
                         
                         $html.="<tr>
