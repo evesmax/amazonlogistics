@@ -57,8 +57,8 @@
                         left join inventarios_familias ifa2 on ip2.idfamilia=ifa2.idfamilia
                         left join empleados em on em.idempleado=lt.idcapturista
                     Where lt.idtrasvase=".$idtrasvase;
-                echo $sqlestatus;
-                exit();
+                //echo $sqlestatus;
+                //exit();
 		$result = $conexion->consultar($sqlestatus);
 		while($rs = $conexion->siguiente($result)){
                         //Asignando Valores del Traslado
@@ -147,7 +147,11 @@
                         $telefonos=$rs{"telefonos"};
                 }
                 $conexion->cerrar_consulta($result);  
+               
                 
+echo "Llegue";
+exit();
+
                 //Si existe la imagen la dibuja
                 if(is_dir($carpeta.$logotipo)){
                     $imgtitulo.="";
