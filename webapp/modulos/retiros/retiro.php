@@ -182,6 +182,7 @@ $htmlpoliticas="
         $sqlinv="Select inventarioinicial from inventarios_existencias where idempleado=".$idempleado;
         echo "<br> Consulta Inventario".$sqlinv."<br>";
         echo "<br> Cantidad a Retirar: ".$cantidad1."<br>";
+        echo "<br> Cantidad a Retirar: ".$cantidad2."<br>";
         
 
 
