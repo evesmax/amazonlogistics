@@ -8,6 +8,10 @@ include("../../netwarelog/catalog/conexionbd.php");
 $htmlpoliticas="	
         <script language='javascript'>
             $(document).ready(function(){
+                //Forzar Mayusculas
+                $('input[type=text], textarea').on('input', function() {
+                    this.value = this.value.toUpperCase();
+                });                
                 //CARTA PORTE
                     $('#txtcartaporte').bind('focusout', function() {  
                         if($('#txtcartaporte').val()==0 || $('#txtcartaporte').val()==''){
