@@ -69,7 +69,7 @@ $htmlpoliticas="
     $usuario="2";
     $idempleado=$usuario;
 
-
+    exit();
     //OBTENIENDO INFORMACION BASICA
                     $oe="";
                     $fecha=date("d-m-Y H:i:s");
