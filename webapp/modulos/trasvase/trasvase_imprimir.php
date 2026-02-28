@@ -90,7 +90,7 @@
                     $capturista=$rs{"idcapturista"};
                     $foliosorigenreal=$rs{"foliosorigenreal"};
                     $foliosdestinoreal=$rs{"foliosdestinoreal"};
-                    $responsable=$rs{"responsable"};\
+                    $responsable=$rs{"responsable"};
                     $obsproceso=$rs{"obsproceso"};
         }           
 		$conexion->cerrar_consulta($result);                        
@@ -148,9 +148,7 @@
                 }
                 $conexion->cerrar_consulta($result);  
                
-                
-echo "Llegue";
-exit();
+
 
                 //Si existe la imagen la dibuja
                 if(is_dir($carpeta.$logotipo)){
