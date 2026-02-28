@@ -520,9 +520,8 @@
                                                             <td align=left><b>".$cantidaddestino2." Toneladas </b></td>
                                                         </tr>";
 						$html.="<tr>
-                                                            <td>Observaciones:</td>
-                                                            <td align=left>$observaciones</td>
-                                                            <td align=left><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Observaciones del proceso de trasvase '></textarea></td>
+                                                            <td>Observaciones Proceso:</td>
+                                                            <td align=left><textarea type=text id='txtobservaciones' name='txtobservaciones' rows=3 cols=45  title='Observaciones del proceso de trasvase '>$obsproceso</textarea></td>
                                                         </tr>";
                         
                         $html.="<tr>
