@@ -196,7 +196,7 @@ $htmlpoliticas="
 
         echo "<br> Inventario Disponible: ".$inventario."<br>";
 
-        if($inventario<$cantidad1){
+        if($inventario<$cantidad2){
             echo "<script>
                     alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
                     window.close();
