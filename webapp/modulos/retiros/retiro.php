@@ -183,7 +183,7 @@ $htmlpoliticas="
         echo "<br> Consulta Inventario".$sqlinv."<br>";
         echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
         echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
-        echo $inventario-$cantidad1;
+        echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
 
 
         //exit();
