@@ -183,7 +183,7 @@ $htmlpoliticas="
         echo "<br> Consulta Inventario".$sqlinv."<br>";
         echo "<br> Cantidad a Cantidad1: ".$cantidad1."<br>";
         echo "<br> Cantidad a Cantidad2: ".$cantidad2."<br>";
-        
+        echo $inventario-$cantidad1;
 
 
         //exit();
@@ -197,7 +197,7 @@ $htmlpoliticas="
 
         echo "<br> Inventario Disponible: ".$inventario."<br>";
 
-        if($inventario<$cantidad2){
+        if($inventario<$cantidad1){
             echo "<script>
                     alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
                     window.close();
