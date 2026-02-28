@@ -97,7 +97,8 @@
                         ip2.nombreproducto 'productodestino',
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal,
-                        ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino', now() fecha_final,lt.idmarca,lt.idloteproducto
+                        ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino', now() fecha_final,lt.idmarca,lt.idloteproducto,
+                        lt.idestadoproducto, $usuario idempleado
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -135,6 +136,9 @@
                     $fecha_final=$rs{"fecha_final"};
                     $idmarca=$rs{"idmarca"};
                     $idloteproducto=$rs{"idloteproducto"};
+                    $idestadoproducto=$rs{"idestadoproducto"};
+                    $capturista=$rs{"idempleado"};
+                    $idempleado=$rs{"idempleado"};
         }
 		$conexion->cerrar_consulta($result);                        
 
