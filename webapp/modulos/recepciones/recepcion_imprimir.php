@@ -545,7 +545,7 @@
 					$html.="<table class='reporte' width='100%'>";
  						$html.="<tr>
                                                             <td width=30%>BODEGA DESTINO REAL:</td>
-                                                            <td align=left>".$cmbbodega."</td>
+                                                            <td align=left>".$bodegadestino."</td>
                                                         </tr>";                                       
                                         
 						$html.="<tr align=left>
