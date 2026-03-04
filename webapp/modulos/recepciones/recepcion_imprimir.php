@@ -543,7 +543,7 @@
                                         $html.="<tr class='trencabezado'><td>DATOS RECEPCION</td></tr>";
 					$html.="</table>";
 					$html.="<table class='reporte' width='100%'>";
- 						$html.="<tr style='display: none;>
+ 						$html.="<tr>
                                                             <td width=30%>BODEGA DESTINO REAL:</td>
                                                             <td align=left>".$cmbbodega."</td>
                                                         </tr>";                                       
