@@ -18,7 +18,8 @@
             $txtobservaciones=$_REQUEST["txtobservaciones"];      
 
 //Recupera valores de consulta
-        $sQuery = "Select *,CURDATE() fechadia from inventarios_trasvase where idtrasvase=".$idtrasvase;
+
+        $sQuery = "Select *,DATE_FORMAT(CURDATE(), '%d-%m-%Y %H:%i:%s') 'fechadia' from inventarios_trasvase where idtrasvase=".$idtrasvase;
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"idfabricante"};
