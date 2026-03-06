@@ -19,7 +19,7 @@
 
 //Recupera valores de consulta
 
-        $sQuery = "Select *,DATE_FORMAT(NOW(), '%d-%m-%Y %H:%i:%s') 'fechadia' from inventarios_trasvase where idtrasvase=".$idtrasvase;
+        $sQuery = "Select *,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') 'fechadia' from inventarios_trasvase where idtrasvase=".$idtrasvase;
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"idfabricante"};
