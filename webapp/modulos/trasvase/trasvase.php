@@ -715,8 +715,6 @@
                                                                                     scanttotal1=canttotal1;
                                                                                     jfactor=factor;
 
-                                                                                    if(jfactor==0){ jfactord=1; }
-
                                                                                     cantdestino1=valor(document.getElementById('txtcantidaddestino1').value);
                                                                                     cantdestino2=valor(cantdestino1*jfactor);
                                                                                     cantpnc1=valor(document.getElementById('txtcantidadpnc1').value);
@@ -724,14 +722,12 @@
                                                                                     cantmerma1=valor(document.getElementById('txtcantidadmerma1').value);
                                                                                     cantmerma2=valor(cantmerma1*jfactor);
 
-                                                                                    // Actualiza las cajas secundarias (Toneladas)
                                                                                     document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
                                                                                     document.envio.txtcantidadpnc2.value=format_number(cantpnc2,2);
                                                                                     document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
                                                                                     
                                                                                     suma = cantdestino1 + cantpnc1 + cantmerma1;
 
-                                                                                    // Solo alertamos si se excede en tiempo real para que no siga sumando
                                                                                     if(scanttotal1 < suma){
                                                                                         alert('La suma de las cantidades excede la cantidad esperada total (' + scanttotal1 + ')');
                                                                                         document.envio.txtcantidadpnc1.value=0;
@@ -740,34 +736,27 @@
                                                                                         document.envio.txtcantidadmerma2.value=0;
                                                                                         document.envio.txtcantidaddestino1.focus();
                                                                                     }
-                                                                                    // NOTA: Se eliminó la alerta de Falta aclarar productos para no molestar 
-                                                                                    // al usuario mientras cambia de casilla. La validación real se hará al guardar.
                                                                                 }
+
                                                                                 function validarCuadre() {
-                                                                                    // 1. Obtenemos el valor original que imprimió PHP usando defaultValue
                                                                                     var esperado = valor(document.getElementById('txtcantidaddestino1').defaultValue);
-                                                                                    
-                                                                                    // 2. Obtenemos lo que el usuario escribió en las 3 cajas
                                                                                     var destino = valor(document.getElementById('txtcantidaddestino1').value);
                                                                                     var pnc = valor(document.getElementById('txtcantidadpnc1').value);
                                                                                     var merma = valor(document.getElementById('txtcantidadmerma1').value);
                                                                                     
                                                                                     var suma = destino + pnc + merma;
                                                                                     
-                                                                                    // 3. Redondeamos a 2 decimales para evitar el clásico error matemático de JS (ej. 3.9999999)
                                                                                     suma = Math.round(suma * 100) / 100;
                                                                                     esperado = Math.round(esperado * 100) / 100;
 
-                                                                                    // 4. Comparamos que la suma cuadre exactamente con el total esperado
                                                                                     if (suma !== esperado) {
-                                                                                        alert('¡LAS CANTIDADES NO CUADRAN! La suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + ' Para poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
-                                                                                        return false; // Detiene el guardado
+                                                                                        alert('¡LAS CANTIDADES NO CUADRAN!\\n\\nLa suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + '\\n\\nPara poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
+                                                                                        return false; 
                                                                                     }
                                                                                     
-                                                                                    // Si todo cuadra perfectamente, bloqueamos el botón y enviamos
                                                                                     deshabilitarBoton();
                                                                                     return true; 
-                                                                                }    
+                                                                                }   
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
                                                                                         ref=idenvio;
