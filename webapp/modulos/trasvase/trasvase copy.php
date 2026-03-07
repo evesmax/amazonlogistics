@@ -605,15 +605,12 @@
                                 }
 				
                     $html.="<tr class=trcontenido>";
-                    //$html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
-                    $html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
-                    //html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
-                    $html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
-                    //$html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
-                    $html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
+                    $html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
 				$html.="</tr>";	
                               
 			$html.="</table></center>";
@@ -708,44 +705,46 @@
                                                                                     return result;
                                                                                 }
                                                                                 function recalcula(factor, edita, canttotal1) {
-                                                                                    var canttotal2 = 0;
+                                                                                    var canttotal2 = 0; // Define canttotal2
                                                                                     var cantdestino1=0, cantdestino2=0,
-                                                                                        cantpnc1=0, cantpnc2=0,
-                                                                                        cantmerma1=0, cantmerma2=0,
-                                                                                        jfactor=0, suma=0, diferencia=0;
+                                                                                        cantpnc1=0,cantpnc2=0,
+                                                                                        cantmerma1=0,cantmerma2=0,
+                                                                                        scanttotal1=0, scanttotal2=0, jfactor=0, suma=0, total=0;
 
-                                                                                    jfactor = (factor == 0) ? 1 : factor;
-                                                                                    canttotal1 = valor(canttotal1);
+                                                                                    scanttotal1=canttotal1;
+                                                                                    scanttotal2=canttotal2;
+                                                                                    jfactor=factor;
 
-                                                                                    cantdestino1 = valor(document.getElementById('txtcantidaddestino1').value);
-                                                                                    cantpnc1     = valor(document.getElementById('txtcantidadpnc1').value);
-                                                                                    cantmerma1   = valor(document.getElementById('txtcantidadmerma1').value);
-
-                                                                                    suma = cantdestino1 + cantpnc1 + cantmerma1;
-                                                                                    diferencia = canttotal1 - suma;
-
-                                                                                    // Si hay diferencia, la absorbe primero PNC, luego Merma
-                                                                                    if (diferencia != 0) {
-                                                                                        if (cantpnc1 + diferencia >= 0) {
-                                                                                            cantpnc1 = cantpnc1 + diferencia;
-                                                                                        } else {
-                                                                                            // Si PNC no alcanza, lo que sobre va a Merma
-                                                                                            diferencia = diferencia + cantpnc1;
-                                                                                            cantpnc1 = 0;
-                                                                                            cantmerma1 = cantmerma1 + diferencia;
-                                                                                        }
-                                                                                        document.envio.txtcantidadpnc1.value   = format_number(cantpnc1, 2);
-                                                                                        document.envio.txtcantidadmerma1.value = format_number(cantmerma1, 2);
+                                                                                    if(jfactor==0){
+                                                                                        jfactord=1;
                                                                                     }
 
-                                                                                    // Recalcula secundarios con factor
-                                                                                    cantdestino2 = valor(cantdestino1 * jfactor);
-                                                                                    cantpnc2     = valor(cantpnc1 * jfactor);
-                                                                                    cantmerma2   = valor(cantmerma1 * jfactor);
+                                                                                    cantdestino1=valor(document.getElementById('txtcantidaddestino1').value);
+                                                                                    cantdestino2=valor(cantdestino1*jfactor);
+                                                                                    cantpnc1=valor(document.getElementById('txtcantidadpnc1').value);
+                                                                                    cantpnc2=valor(cantpnc1*jfactor);
+                                                                                    cantmerma1=valor(document.getElementById('txtcantidadmerma1').value);
+                                                                                    cantmerma2=valor(cantmerma1*jfactor);
 
-                                                                                    document.envio.txtcantidaddestino2.value = format_number(cantdestino2, 2);
-                                                                                    document.envio.txtcantidadpnc2.value     = format_number(cantpnc2, 2);
-                                                                                    document.envio.txtcantidadmerma2.value   = format_number(cantmerma2, 2);
+                                                                                    document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
+                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantpnc2,2);
+                                                                                    document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
+                                                                                    
+                                                                                    suma=cantdestino1+cantpnc1+cantmerma1;
+                                                                                    total=scanttotal1;
+
+                                                                                    if(scanttotal1 < suma){
+                                                                                        alert('Las suma de las cantidades exceden la cantidad esperada total');
+                                                                                        document.envio.txtcantidadpnc1.value=0;
+                                                                                        document.envio.txtcantidadpnc2.value=0;
+                                                                                        document.envio.txtcantidadmerma1.value=0;
+                                                                                        document.envio.txtcantidadmerma2.value=0;
+                                                                                        document.envio.txtcantidaddestino1.focus();
+                                                                                    }
+                                                                                    if(scanttotal1 > suma){
+                                                                                        alert('Falta aclarar productos hay una diferencia');
+                                                                                        document.envio.txtcantidaddestino1.focus();
+                                                                                    }                                                                                    
                                                                                 }
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
