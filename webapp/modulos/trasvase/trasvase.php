@@ -760,7 +760,7 @@
 
                                                                                     // 4. Comparamos que la suma cuadre exactamente con el total esperado
                                                                                     if (suma !== esperado) {
-                                                                                        alert('¡LAS CANTIDADES NO CUADRAN!\n\nLa suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + '\n\nPara poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
+                                                                                        alert('¡LAS CANTIDADES NO CUADRAN! La suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + ' Para poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
                                                                                         return false; // Detiene el guardado
                                                                                     }
                                                                                     
