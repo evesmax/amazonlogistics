@@ -34,7 +34,7 @@
                     $nombrefamilia="";
                     $obsproceso="";
 
-		$sqlestatus="select lt.idtrasvase Folio,lt.fecha,
+		$sqlestatus="select lt.idtrasvase Folio,lt.fecha,lt.fechaop,
                         of.nombrefabricante 'propietario', vm.nombremarca 'marca',
                         obo.nombrebodega 'bodega', il.descripcionlote 'zafra', 
                         ip1.nombreproducto 'Productoorigen', ie.descripcionestado 'nombreestado', 
@@ -64,7 +64,8 @@
                         //Asignando Valores del Traslado
                     $nombrefamiliaorigen=$rs{"nombrefamiliaorigen"};
                     $nombrefamiliadestino=$rs{"nombrefamiliadestino"};                        
-                    $fecha=$rs{"fecha"};
+                    $fecha=$rs{"fechaop"};
+                    $fechaop=$rs{"fechaop"};
                     $propietario=$rs{"propietario"};
                     $marca=$rs{"marca"};
                     $bodega=$rs{"bodega"};
