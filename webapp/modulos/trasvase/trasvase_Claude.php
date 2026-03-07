@@ -314,8 +314,7 @@
 	$html.= "</style>";
 	$html.= "</head>";
         $html.=$htmlpoliticas;	
-        //$html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='deshabilitarBoton()'>
-        $html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='return validarCuadre()'>
+        $html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='deshabilitarBoton()'>
                     <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>";
 		$html.=$txtcapturista;
 
@@ -606,12 +605,15 @@
                                 }
 				
                     $html.="<tr class=trcontenido>";
-                    $html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
-                    $html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
-                    $html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
-					$html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
+                    //$html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidaddestino1." id='txtcantidaddestino1' name='txtcantidaddestino1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidaddestino2." id='txtcantidaddestino2' name='txtcantidaddestino2' size=20 ".$politica."></td>";			
+                    //html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadpnc1." id='txtcantidadpnc1' name='txtcantidadpnc1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidadpnc2." id='txtcantidadpnc2' name='txtcantidadpnc2' size=20 ".$politica."></td>";			
+                    //$html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidaddestino1.")'></td>";
+					$html.="<td align=right><input type=text value=".$cantidadmerma1." id='txtcantidadmerma1' name='txtcantidadmerma1' size=20 onChange='recalcula(".$factor.",".$edita.",".$cantidad1.")'></td>";
+                    $html.="<td align=right><input type=text value=".$cantidadmerma2." id='txtcantidadmerma2' name='txtcantidadmerma2' size=20 ".$politica."></td>";			
 				$html.="</tr>";	
                               
 			$html.="</table></center>";
@@ -706,68 +708,45 @@
                                                                                     return result;
                                                                                 }
                                                                                 function recalcula(factor, edita, canttotal1) {
-                                                                                    var canttotal2 = 0; 
+                                                                                    var canttotal2 = 0;
                                                                                     var cantdestino1=0, cantdestino2=0,
-                                                                                        cantpnc1=0,cantpnc2=0,
-                                                                                        cantmerma1=0,cantmerma2=0,
-                                                                                        scanttotal1=0, scanttotal2=0, jfactor=0, suma=0, total=0;
+                                                                                        cantpnc1=0, cantpnc2=0,
+                                                                                        cantmerma1=0, cantmerma2=0,
+                                                                                        jfactor=0, suma=0, diferencia=0;
 
-                                                                                    scanttotal1=canttotal1;
-                                                                                    jfactor=factor;
+                                                                                    jfactor = (factor == 0) ? 1 : factor;
+                                                                                    canttotal1 = valor(canttotal1);
 
-                                                                                    if(jfactor==0){ jfactord=1; }
+                                                                                    cantdestino1 = valor(document.getElementById('txtcantidaddestino1').value);
+                                                                                    cantpnc1     = valor(document.getElementById('txtcantidadpnc1').value);
+                                                                                    cantmerma1   = valor(document.getElementById('txtcantidadmerma1').value);
 
-                                                                                    cantdestino1=valor(document.getElementById('txtcantidaddestino1').value);
-                                                                                    cantdestino2=valor(cantdestino1*jfactor);
-                                                                                    cantpnc1=valor(document.getElementById('txtcantidadpnc1').value);
-                                                                                    cantpnc2=valor(cantpnc1*jfactor);
-                                                                                    cantmerma1=valor(document.getElementById('txtcantidadmerma1').value);
-                                                                                    cantmerma2=valor(cantmerma1*jfactor);
-
-                                                                                    // Actualiza las cajas secundarias (Toneladas)
-                                                                                    document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
-                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantpnc2,2);
-                                                                                    document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
-                                                                                    
                                                                                     suma = cantdestino1 + cantpnc1 + cantmerma1;
+                                                                                    diferencia = canttotal1 - suma;
 
-                                                                                    // Solo alertamos si se excede en tiempo real para que no siga sumando
-                                                                                    if(scanttotal1 < suma){
-                                                                                        alert('La suma de las cantidades excede la cantidad esperada total (' + scanttotal1 + ')');
-                                                                                        document.envio.txtcantidadpnc1.value=0;
-                                                                                        document.envio.txtcantidadpnc2.value=0;
-                                                                                        document.envio.txtcantidadmerma1.value=0;
-                                                                                        document.envio.txtcantidadmerma2.value=0;
-                                                                                        document.envio.txtcantidaddestino1.focus();
+                                                                                    // Si hay diferencia, la absorbe primero PNC, luego Merma
+                                                                                    if (diferencia != 0) {
+                                                                                        if (cantpnc1 + diferencia >= 0) {
+                                                                                            cantpnc1 = cantpnc1 + diferencia;
+                                                                                        } else {
+                                                                                            // Si PNC no alcanza, lo que sobre va a Merma
+                                                                                            diferencia = diferencia + cantpnc1;
+                                                                                            cantpnc1 = 0;
+                                                                                            cantmerma1 = cantmerma1 + diferencia;
+                                                                                        }
+                                                                                        document.envio.txtcantidadpnc1.value   = format_number(cantpnc1, 2);
+                                                                                        document.envio.txtcantidadmerma1.value = format_number(cantmerma1, 2);
                                                                                     }
-                                                                                    // NOTA: Se eliminó la alerta de Falta aclarar productos para no molestar 
-                                                                                    // al usuario mientras cambia de casilla. La validación real se hará al guardar.
+
+                                                                                    // Recalcula secundarios con factor
+                                                                                    cantdestino2 = valor(cantdestino1 * jfactor);
+                                                                                    cantpnc2     = valor(cantpnc1 * jfactor);
+                                                                                    cantmerma2   = valor(cantmerma1 * jfactor);
+
+                                                                                    document.envio.txtcantidaddestino2.value = format_number(cantdestino2, 2);
+                                                                                    document.envio.txtcantidadpnc2.value     = format_number(cantpnc2, 2);
+                                                                                    document.envio.txtcantidadmerma2.value   = format_number(cantmerma2, 2);
                                                                                 }
-                                                                                function validarCuadre() {
-                                                                                    // 1. Obtenemos el valor original que imprimió PHP usando defaultValue
-                                                                                    var esperado = valor(document.getElementById('txtcantidaddestino1').defaultValue);
-                                                                                    
-                                                                                    // 2. Obtenemos lo que el usuario escribió en las 3 cajas
-                                                                                    var destino = valor(document.getElementById('txtcantidaddestino1').value);
-                                                                                    var pnc = valor(document.getElementById('txtcantidadpnc1').value);
-                                                                                    var merma = valor(document.getElementById('txtcantidadmerma1').value);
-                                                                                    
-                                                                                    var suma = destino + pnc + merma;
-                                                                                    
-                                                                                    // 3. Redondeamos a 2 decimales para evitar el clásico error matemático de JS (ej. 3.9999999)
-                                                                                    suma = Math.round(suma * 100) / 100;
-                                                                                    esperado = Math.round(esperado * 100) / 100;
-
-                                                                                    // 4. Comparamos que la suma cuadre exactamente con el total esperado
-                                                                                    if (suma !== esperado) {
-                                                                                        alert('¡LAS CANTIDADES NO CUADRAN!\n\nLa suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + '\n\nPara poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
-                                                                                        return false; // Detiene el guardado
-                                                                                    }
-                                                                                    
-                                                                                    // Si todo cuadra perfectamente, bloqueamos el botón y enviamos
-                                                                                    deshabilitarBoton();
-                                                                                    return true; 
-                                                                                }    
                                                                                 function pdf(idenvio){
                                                                                         var ref=0;
                                                                                         ref=idenvio;
