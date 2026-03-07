@@ -6,7 +6,43 @@
                 //Forzar Mayusculas
                 $('input[type=text], textarea').on('input', function() {
                     this.value = this.value.toUpperCase();
-                });                
+                });
+                // >>> NUEVA VALIDACIÓN INQUEBRANTABLE <<<
+                $('#envio').on('submit', function(e) {
+                    // 1. Helper para leer números vacíos o con comas de forma segura
+                    function getVal(id) {
+                        var val = $(id).val() || '0';
+                        return parseFloat(val.toString().replace(/,/g, '')) || 0;
+                    }
+
+                    // 2. Extraer el 'defaultValue' es la magia: recuerda el número original (ej. 4) 
+                    //    incluso si el usuario borró la caja y puso un 3.
+                    var cajaOriginal = document.getElementById('txtcantidaddestino1');
+                    var cantTotal = cajaOriginal ? (parseFloat((cajaOriginal.defaultValue || '0').replace(/,/g, '')) || 0) : 0;
+                    
+                    // 3. Sumar lo que el usuario capturó
+                    var valDest  = getVal('#txtcantidaddestino1');
+                    var valPnc   = getVal('#txtcantidadpnc1');
+                    var valMerma = getVal('#txtcantidadmerma1');
+                    
+                    // Redondear para evitar decimales infinitos en Javascript
+                    var sumaReal = Math.round((valDest + valPnc + valMerma) * 100) / 100;
+                    cantTotal = Math.round(cantTotal * 100) / 100;
+                    
+                    // 4. Si NO son idénticos, BLOQUEAMOS el envío.
+                    if (sumaReal !== cantTotal) {
+                        e.preventDefault(); // Esta es la instrucción que detiene el guardado a la fuerza
+                        alert('¡ERROR: LAS CANTIDADES NO CUADRAN!\\n\\nSuma actual (Resultado + PNC + Merma): ' + sumaReal + '\\nCantidad esperada: ' + cantTotal + '\\n\\nDebes ajustar los valores para que la suma sea exacta antes de procesar.');
+                        
+                        // Rehabilitamos el botón visualmente para que lo sigan intentando
+                        $('#btngrabar').prop('disabled', false).val('Procesar');
+                        return false;
+                    }
+                    // 5. Si todo está cuadrado, bloqueamos el botón para evitar doble clic y dejamos que se guarde
+                    $('#btngrabar').prop('disabled', true).val('Procesando...');
+                    $('#txtcantidaddestino2, #txtcantidadpnc2, #txtcantidadmerma2').prop('disabled', false);
+                    return true;
+                }); 
                 //folios
                     $('#txtfolios').bind('focusout', function() {  
                         if($('#txtfolios').val()==0 || $('#txtfolios').val()==''){
@@ -315,8 +351,10 @@
 	$html.= "</head>";
         $html.=$htmlpoliticas;	
         //$html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='deshabilitarBoton()'>
-        $html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='return validarCuadre()'>
-                    <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>";
+        //$html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php' onsubmit='return validarCuadre()'>
+        $html.=" <FORM id='envio' name='envio' method='post' action='trasvase_grabar.php'>
+        <input type=hidden id='txtidtrasvase' name='txtidtrasvase' value='".$idtrasvase."'>";
+
 		$html.=$txtcapturista;
 
         $html.= "<BODY style='font-family:helvetica'>
