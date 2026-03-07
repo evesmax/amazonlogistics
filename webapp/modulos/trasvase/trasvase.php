@@ -664,134 +664,141 @@
 
 
                 //funciones javascript		
-		$html_funcionesjavascript=" <script type='text/javascript'>
-										function redireccion() {
-											var pagina = '../../netwarelog/repolog/reporte.php';
-											document.location.href=pagina;
-										}
-                                                                                function valor(num) {
-                                                                                    if (typeof num !== 'string') {
-                                                                                        num = num.toString();
-                                                                                    }
-                                                                                    var numerostring='', numero=0;
-                                                                                    numero=num.replace(/,/g,'');
-                                                                                    return parseFloat(numero);
-                                                                                }
-                                                                                function format_number(pnumber,decimals){
-                                                                                    if (isNaN(pnumber)) { return 0};
-                                                                                    if (pnumber=='') { return 0};
-                                                                                    var snum = new String(pnumber);
-                                                                                    var sec = snum.split('.');
-                                                                                    var whole = parseFloat(sec[0]);
-                                                                                    var result = '';
-                                                                                    if(sec.length > 1){
-                                                                                        var dec = new String(sec[1]);
-                                                                                        dec = String(parseFloat(sec[1])/Math.pow(10,(dec.length - decimals)));
-                                                                                        dec = String(whole + Math.round(parseFloat(dec))/Math.pow(10,decimals));
-                                                                                        var dot = dec.indexOf('.');
-                                                                                        if(dot == -1){
-                                                                                            dec += '.';
-                                                                                            dot = dec.indexOf('.');
-                                                                                        }
-                                                                                        while(dec.length <= dot + decimals) { dec += '0'; }
-                                                                                        result = dec;
-                                                                                    } else{
-                                                                                        var dot;
-                                                                                        var dec = new String(whole);
-                                                                                        dec += '.';
-                                                                                        dot = dec.indexOf('.');
-                                                                                        while(dec.length <= dot + decimals) { dec += '0'; }
-                                                                                        result = dec;
-                                                                                    }
-                                                                                    return result;
-                                                                                }
-                                                                                function recalcula(factor, edita, canttotal1) {
-                                                                                    var canttotal2 = 0; 
-                                                                                    var cantdestino1=0, cantdestino2=0,
-                                                                                        cantpnc1=0,cantpnc2=0,
-                                                                                        cantmerma1=0,cantmerma2=0,
-                                                                                        scanttotal1=0, scanttotal2=0, jfactor=0, suma=0, total=0;
+//funciones javascript		
+$html_funcionesjavascript=" <script type='text/javascript'>
+                                function redireccion() {
+                                    var pagina = '../../netwarelog/repolog/reporte.php';
+                                    document.location.href=pagina;
+                                }
 
-                                                                                    scanttotal1=canttotal1;
-                                                                                    jfactor=factor;
+                                function valor(num) {
+                                    // Si la caja está vacía, la tratamos como un CERO para que no rompa la matemática
+                                    if (num === undefined || num === null || num === '') return 0;
+                                    if (typeof num !== 'string') {
+                                        num = num.toString();
+                                    }
+                                    var numero = num.replace(/,/g, '');
+                                    var parsed = parseFloat(numero);
+                                    return isNaN(parsed) ? 0 : parsed;
+                                }
 
-                                                                                    cantdestino1=valor(document.getElementById('txtcantidaddestino1').value);
-                                                                                    cantdestino2=valor(cantdestino1*jfactor);
-                                                                                    cantpnc1=valor(document.getElementById('txtcantidadpnc1').value);
-                                                                                    cantpnc2=valor(cantpnc1*jfactor);
-                                                                                    cantmerma1=valor(document.getElementById('txtcantidadmerma1').value);
-                                                                                    cantmerma2=valor(cantmerma1*jfactor);
+                                function format_number(pnumber,decimals){
+                                    if (isNaN(pnumber)) { return 0};
+                                    if (pnumber=='') { return 0};
+                                    var snum = new String(pnumber);
+                                    var sec = snum.split('.');
+                                    var whole = parseFloat(sec[0]);
+                                    var result = '';
+                                    if(sec.length > 1){
+                                        var dec = new String(sec[1]);
+                                        dec = String(parseFloat(sec[1])/Math.pow(10,(dec.length - decimals)));
+                                        dec = String(whole + Math.round(parseFloat(dec))/Math.pow(10,decimals));
+                                        var dot = dec.indexOf('.');
+                                        if(dot == -1){
+                                            dec += '.';
+                                            dot = dec.indexOf('.');
+                                        }
+                                        while(dec.length <= dot + decimals) { dec += '0'; }
+                                        result = dec;
+                                    } else{
+                                        var dot;
+                                        var dec = new String(whole);
+                                        dec += '.';
+                                        dot = dec.indexOf('.');
+                                        while(dec.length <= dot + decimals) { dec += '0'; }
+                                        result = dec;
+                                    }
+                                    return result;
+                                }
 
-                                                                                    document.envio.txtcantidaddestino2.value=format_number(cantdestino2,2);
-                                                                                    document.envio.txtcantidadpnc2.value=format_number(cantpnc2,2);
-                                                                                    document.envio.txtcantidadmerma2.value=format_number(cantmerma2,2);
-                                                                                    
-                                                                                    suma = cantdestino1 + cantpnc1 + cantmerma1;
+                                function recalcula(factor, edita, canttotal1) {
+                                    var jfactor = factor || 1; 
 
-                                                                                    if(scanttotal1 < suma){
-                                                                                        alert('La suma de las cantidades excede la cantidad esperada total (' + scanttotal1 + ')');
-                                                                                        document.envio.txtcantidadpnc1.value=0;
-                                                                                        document.envio.txtcantidadpnc2.value=0;
-                                                                                        document.envio.txtcantidadmerma1.value=0;
-                                                                                        document.envio.txtcantidadmerma2.value=0;
-                                                                                        document.envio.txtcantidaddestino1.focus();
-                                                                                    }
-                                                                                }
+                                    var cantdestino1 = valor(document.getElementById('txtcantidaddestino1').value);
+                                    var cantdestino2 = cantdestino1 * jfactor;
+                                    
+                                    var cantpnc1 = valor(document.getElementById('txtcantidadpnc1').value);
+                                    var cantpnc2 = cantpnc1 * jfactor;
+                                    
+                                    var cantmerma1 = valor(document.getElementById('txtcantidadmerma1').value);
+                                    var cantmerma2 = cantmerma1 * jfactor;
 
-                                                                                function validarCuadre() {
-                                                                                    var esperado = valor(document.getElementById('txtcantidaddestino1').defaultValue);
-                                                                                    var destino = valor(document.getElementById('txtcantidaddestino1').value);
-                                                                                    var pnc = valor(document.getElementById('txtcantidadpnc1').value);
-                                                                                    var merma = valor(document.getElementById('txtcantidadmerma1').value);
-                                                                                    
-                                                                                    var suma = destino + pnc + merma;
-                                                                                    
-                                                                                    suma = Math.round(suma * 100) / 100;
-                                                                                    esperado = Math.round(esperado * 100) / 100;
+                                    document.envio.txtcantidaddestino2.value = format_number(cantdestino2, 2);
+                                    document.envio.txtcantidadpnc2.value = format_number(cantpnc2, 2);
+                                    document.envio.txtcantidadmerma2.value = format_number(cantmerma2, 2);
+                                    
+                                    var suma = cantdestino1 + cantpnc1 + cantmerma1;
 
-                                                                                    if (suma !== esperado) {
-                                                                                        alert('¡LAS CANTIDADES NO CUADRAN!\\n\\nLa suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + '\\n\\nPara poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
-                                                                                        return false; 
-                                                                                    }
-                                                                                    
-                                                                                    deshabilitarBoton();
-                                                                                    return true; 
-                                                                                }   
-                                                                                function pdf(idenvio){
-                                                                                        var ref=0;
-                                                                                        ref=idenvio;
-                                                                                        document.location = 'pdf.php?idenvio='+ref;
-                                                                                }
-                                                                                function deshabilitarBoton() {
-                                                                                    var cantidaddestino2 = document.getElementById('txtcantidaddestino2');
-                                                                                    var cantidadpnc2 = document.getElementById('txtcantidadpnc2');
-                                                                                    var cantidadmerma2 = document.getElementById('txtcantidadmerma2');
-                                                                                    var btngrabar = document.getElementById('btngrabar');
+                                    if(canttotal1 < suma){
+                                        alert('La suma de las cantidades excede la cantidad esperada total (' + canttotal1 + ')');
+                                        document.envio.txtcantidadpnc1.value=0;
+                                        document.envio.txtcantidadpnc2.value=0;
+                                        document.envio.txtcantidadmerma1.value=0;
+                                        document.envio.txtcantidadmerma2.value=0;
+                                        document.envio.txtcantidaddestino1.focus();
+                                    }
+                                }
 
-                                                                                    if (cantidaddestino2 && cantidadpnc2 && cantidadmerma2 && btngrabar) {
-                                                                                        cantidaddestino2.disabled = false;
-                                                                                        cantidadpnc2.disabled = false;
-                                                                                        cantidadmerma2.disabled = false;
-                                                                                        btngrabar.disabled = true;
-                                                                                        btngrabar.value = 'Procesando...';
-                                                                                    }
-                                                                                }
-									</script>";
-		//Botones							
-		$html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
-                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
+                                function validarCuadre() {
+                                    // Le inyectamos EXACTAMENTE el valor original que viene de tu consulta en PHP
+                                    var esperado = parseFloat('$cantidaddestino1') || 0;
+                                    
+                                    var destino = valor(document.getElementById('txtcantidaddestino1').value);
+                                    var pnc = valor(document.getElementById('txtcantidadpnc1').value);
+                                    var merma = valor(document.getElementById('txtcantidadmerma1').value);
+                                    
+                                    var suma = destino + pnc + merma;
+                                    
+                                    // Redondeamos para evitar errores matemáticos de JavaScript
+                                    suma = Math.round(suma * 100) / 100;
+                                    esperado = Math.round(esperado * 100) / 100;
+
+                                    if (suma !== esperado) {
+                                        alert('¡LAS CANTIDADES NO CUADRAN!\\n\\nLa suma actual de Resultado ('+destino+') + PNC ('+pnc+') + Merma ('+merma+') es igual a: ' + suma + '\\n\\nPara poder Procesar, la suma debe ser exactamente igual a la cantidad original esperada: ' + esperado);
+                                        return false; 
+                                    }
+                                    
+                                    deshabilitarBoton();
+                                    return true; 
+                                }   
+
+                                function pdf(idenvio){
+                                    var ref=0;
+                                    ref=idenvio;
+                                    document.location = 'pdf.php?idenvio='+ref;
+                                }
+
+                                function deshabilitarBoton() {
+                                    var btngrabar = document.getElementById('btngrabar');
+                                    if (btngrabar) {
+                                        btngrabar.disabled = true;
+                                        btngrabar.value = 'Procesando...';
+                                    }
+                                    
+                                    // Asegurar que las cajas secundarias viajen en el POST
+                                    var cant2 = document.getElementById('txtcantidaddestino2');
+                                    var pnc2 = document.getElementById('txtcantidadpnc2');
+                                    var merma2 = document.getElementById('txtcantidadmerma2');
+                                    if(cant2) cant2.disabled = false;
+                                    if(pnc2) pnc2.disabled = false;
+                                    if(merma2) merma2.disabled = false;
+                                }
+                            </script>";
+
+                //Botones							
+                $html_botones="	<INPUT id='btngrabar' name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
+                                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
 
-        if ($inventario>=$cantidad1) {
-            $html_botones="	<INPUT name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
-                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
-        } else {
-            $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
-                                    No hay inventario suficiente para procesar el trasvase, Disponible: ".$inventario." Requerido:".$cantidad1."
-                                </span>
-                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
-        }				
-
+                if ($inventario>=$cantidad1) {
+                    $html_botones="	<INPUT id='btngrabar' name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
+                                                <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
+                } else {
+                    $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
+                                            No hay inventario suficiente para procesar el trasvase, Disponible: ".$inventario." Requerido:".$cantidad1."
+                                        </span>
+                                        <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+                }
                 
                 echo $html_funcionesjavascript;  
                 
