@@ -7,12 +7,12 @@
 		include 'support.php';
 		include dirname(__FILE__).'/../webconfig.php';
 		include 'clases/clconexion.php';
-		$url=dirname(__FILE__);
+		$url="https://qsoftwaresolutions.net/";
 		// --- INICIO DE VALIDACIÓN DE SESIÓN ---
 		if (!isset($_SESSION["accelog_idempleado"]) || empty($_SESSION["accelog_idempleado"])) {
 			echo "<script type='text/javascript'>
 					alert('Se caduco la sesion');
-					window.location.href = '".$url."/webapp/netwarelog/accelog/index.php';
+					window.location.href = '".$url."';
 				  </script>";
 			exit(); // Detiene la ejecución para que no se procese la base de datos ni el resto del HTML
 		}
