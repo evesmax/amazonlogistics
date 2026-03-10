@@ -3,6 +3,7 @@
  * Valida la contraseña del usuario.
  */
 session_start();
+$_SESSION["accelog_idempleado"]=-1;
 include("webconfig_accelog.php");
 
 //CSRF
