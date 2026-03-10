@@ -9,5 +9,6 @@
 
 		date_default_timezone_set('Etc/GMT+6');	
 
+		echo $_SESSION["accelog_idempleado"];
        
 ?>
