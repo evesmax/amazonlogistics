@@ -12,7 +12,7 @@
 		if (!isset($_SESSION["accelog_idempleado"]) || empty($_SESSION["accelog_idempleado"])) {
 			echo "<script type='text/javascript'>
 					alert('Se caduco la sesion');
-					window.location.href = '../../webapp/netwarelog/accelog/index.php';
+					window.location.href = '/webapp/netwarelog/accelog/index.php';
 				  </script>";
 			exit(); // Detiene la ejecución para que no se procese la base de datos ni el resto del HTML
 		}
