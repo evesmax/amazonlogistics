@@ -2494,9 +2494,10 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         </script>
         <?php endif; ?>
         
-        <script src="assets/js/table_functions.js"></script>
-        <script src="assets/js/formatNumbersFix.js"></script>
-        <script src="assets/js/formatSpecifics.js"></script>
+        <?php $cacheBuster = time(); ?>
+        <script src="assets/js/table_functions.js?v=<?php echo $cacheBuster; ?>"></script>
+        <script src="assets/js/formatNumbersFix.js?v=<?php echo $cacheBuster; ?>"></script>
+        <script src="assets/js/formatSpecifics.js?v=<?php echo $cacheBuster; ?>"></script>
         <!-- Se eliminó la referencia a html_renderer.js para mostrar el HTML tal cual -->
     <?php endif; ?>
     
