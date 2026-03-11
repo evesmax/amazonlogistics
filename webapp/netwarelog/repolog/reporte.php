@@ -2347,7 +2347,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             } else if ($subtotalLevel === 2) {
                                                 // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
                                                 if ($column === reset($columns)) {
-                                                    echo '<strong>TOTAL GENERAL</strong>';
+                                                    echo '<div style="text-align: center;"><strong>TOTAL GENERAL</strong></div>';
                                                     continue;
                                                 }
                                             } else if ($subtotalLevel === 1) {
@@ -2393,9 +2393,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 
                                                 if (in_array($column, $mappedGroupFields)) {
                                                     if ($column === reset($mappedGroupFields)) {
-                                                        echo '<strong>Subtotal: ' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<div style="text-align: center;"><strong>Subtotal: ' . htmlspecialchars($value) . '</strong></div>';
                                                     } else {
-                                                        echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<div style="text-align: center;"><strong>' . htmlspecialchars($value) . '</strong></div>';
                                                     }
                                                     continue;
                                                 }
@@ -2431,18 +2431,18 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                 echo '<strong>' . $formattedValue . '</strong>';
                                             } else {
-                                                // No escapar HTML si parece contener etiquetas
+                                                // No escapar HTML si parece contener etiquetas, pero centrar
                                                 if (strpos($value, '<') !== false && strpos($value, '>') !== false) {
-                                                    echo $value;
+                                                    echo '<div style="text-align: center;">' . $value . '</div>';
                                                 } else {
-                                                    echo htmlspecialchars($value);
+                                                    echo '<div style="text-align: center;">' . htmlspecialchars($value) . '</div>';
                                                 }
                                             }
                                         }
                                         // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR)
                                         else {
-                                            // Mostrar el HTML directamente para que sea interpretado por el navegador
-                                            echo $value;
+                                            // Mostrar el HTML directamente para que sea interpretado por el navegador, centrado.
+                                            echo '<div style="text-align: center;">' . $value . '</div>';
                                         }
                                     ?>
                                     </td>
