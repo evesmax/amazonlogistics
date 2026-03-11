@@ -265,7 +265,7 @@ function applyNumberFormat(cell, number, decimals) {
     });
     
     // Aplicamos el formato (se fuerza internamente a alineación izquierda)
-    cell.innerHTML = '<strong class="text-left" style="text-align: left !important; display: block; width: 100%;">' + formatted + '</strong>';
+    cell.innerHTML = '<strong class="text-left" style="text-align: left !important;">' + formatted + '</strong>';
     cell.style.cssText = 'text-align: left !important;';
     cell.className = 'text-left';
 }

@@ -181,8 +181,6 @@ body {
 #resultsTable td.text-left,
 #resultsTable td.text-left strong {
     text-align: left !important;
-    display: block !important;
-    width: 100% !important;
 }
 
 .column-filter {

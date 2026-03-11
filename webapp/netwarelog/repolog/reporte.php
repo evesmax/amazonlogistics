@@ -2377,7 +2377,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             } else if ($subtotalLevel === 2) {
                                                 // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
                                                 if ($column === reset($columns)) {
-                                                    echo '<strong style="text-align: center !important; display: block; width: 100%;">TOTAL GENERAL</strong>';
+                                                    echo '<strong style="text-align: center !important;">TOTAL GENERAL</strong>';
                                                     continue;
                                                 }
                                             } else if ($subtotalLevel === 1) {
@@ -2423,9 +2423,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 
                                                 if (in_array($column, $mappedGroupFields)) {
                                                     if ($column === reset($mappedGroupFields)) {
-                                                        echo '<strong style="text-align: center !important; display: block; width: 100%;">Subtotal: ' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<strong style="text-align: center !important;">Subtotal: ' . htmlspecialchars($value) . '</strong>';
                                                     } else {
-                                                        echo '<strong style="text-align: center !important; display: block; width: 100%;">' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<strong style="text-align: center !important;">' . htmlspecialchars($value) . '</strong>';
                                                     }
                                                     continue;
                                                 }
@@ -2444,14 +2444,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         if (is_numeric($value)) {
                                             // Es un número, formatear con comas para miles y punto para decimales
                                             $formattedValue = number_format(floatval($value), $decimals, '.', ',');
-                                            echo '<strong class="text-left" style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
+                                            echo '<strong class="text-left" style="text-align: left !important;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
                                         else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
                                             $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
-                                            echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
+                                            echo '<strong style="text-align: left !important;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato americano (1,234.56)
                                         else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
@@ -2459,7 +2459,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             $cleanValue = str_replace(',', '', $value);
                                             if (is_numeric($cleanValue)) {
                                                 $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
+                                                echo '<strong style="text-align: left !important;">' . $formattedValue . '</strong>';
                                             } else {
                                                 // No escapar HTML si parece contener etiquetas
                                                 if (strpos($value, '<') !== false && strpos($value, '>') !== false) {

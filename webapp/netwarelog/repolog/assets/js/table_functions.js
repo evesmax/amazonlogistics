@@ -310,7 +310,7 @@ function renderTable() {
                         if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
                             decimals = columnFormatInfo[column].decimals;
                         }
-                        value = '<strong style="text-align: left !important; display: block; width: 100%;">' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
+                        value = '<strong style="text-align: left !important;">' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
                         cell.innerHTML = value;
                         cell.style.cssText = 'text-align: left !important;';
                         row.appendChild(cell);
@@ -324,7 +324,7 @@ function renderTable() {
                     }
                 } else if (subtotalLevel === 2 && column === tableColumns[0]) {
                     // Para fila de total general, mostrar "TOTAL GENERAL" en la primera columna
-                    cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">TOTAL GENERAL</strong>';
+                    cell.innerHTML = '<strong style="text-align: center !important;">TOTAL GENERAL</strong>';
                     row.appendChild(cell);
                     return;
                 } else if (subtotalLevel === 1) {
@@ -340,9 +340,9 @@ function renderTable() {
                     
                     if (isGroupField) {
                         if (column === groupFields[0]) {
-                            cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">Subtotal: ' + escapeHtml(value) + '</strong>';
+                            cell.innerHTML = '<strong style="text-align: center !important;">Subtotal: ' + escapeHtml(value) + '</strong>';
                         } else {
-                            cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">' + escapeHtml(value) + '</strong>';
+                            cell.innerHTML = '<strong style="text-align: center !important;">' + escapeHtml(value) + '</strong>';
                         }
                         row.appendChild(cell);
                         return;
@@ -365,7 +365,7 @@ function renderTable() {
                         minimumFractionDigits: decimalsForColumn,
                         maximumFractionDigits: decimalsForColumn
                     });
-                    cell.innerHTML = '<strong class="text-left" style="text-align: left !important; display: block; width: 100%;">' + formateado + '</strong>';
+                    cell.innerHTML = '<strong class="text-left" style="text-align: left !important;">' + formateado + '</strong>';
                     cell.style.cssText = 'text-align: left !important;';
                     cell.className = 'text-left';
                 } else {
