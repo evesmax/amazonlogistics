@@ -2029,7 +2029,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($reportTitle); ?> - Resultados</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=<?php echo time(); ?>">
     <style>
         /* Estilos adicionales para el título y los filtros */
         .report-header {
@@ -2318,8 +2318,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     $decimals = $columnFormatInfo[$column]['decimals'];
                                                 }
                                                 $formattedResult = number_format(floatval($value), $decimals, '.', ',');
-                                                error_log("Formato subtotal para columna '$column': $decimals decimales, valor: $value, resultado: $formattedResult");
-                                                error_log("Clases CSS aplicadas a la fila: '$rowClass'");
+                                                
+                                                // CRÍTICO: Asegurar alineación izquierda en el atributo del TD si es numérico
+                                                $alignAttr = ' class="text-left" style="text-align: left !important;"';
                                                 
                                                 // Formatear con separador de miles y decimales específicos (formato americano: #,##0.00)
                                                 if (is_numeric($value)) {
@@ -2443,7 +2444,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         if (is_numeric($value)) {
                                             // Es un número, formatear con comas para miles y punto para decimales
                                             $formattedValue = number_format(floatval($value), $decimals, '.', ',');
-                                            echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
+                                            echo '<strong class="text-left" style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
                                         else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {

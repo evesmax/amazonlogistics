@@ -365,7 +365,9 @@ function renderTable() {
                         minimumFractionDigits: decimalsForColumn,
                         maximumFractionDigits: decimalsForColumn
                     });
-                    cell.innerHTML = '<strong style="text-align: left !important; display: block; width: 100%;">' + formateado + '</strong>';
+                    cell.innerHTML = '<strong class="text-left" style="text-align: left !important; display: block; width: 100%;">' + formateado + '</strong>';
+                    cell.style.cssText = 'text-align: left !important;';
+                    cell.className = 'text-left';
                 } else {
                     cell.textContent = value;
                 }
