@@ -264,8 +264,8 @@ function applyNumberFormat(cell, number, decimals) {
         maximumFractionDigits: decimals
     });
     
-    // Aplicamos el formato
-    cell.innerHTML = '<strong>' + formatted + '</strong>';
+    // Aplicamos el formato (se fuerza internamente a alineación izquierda)
+    cell.innerHTML = '<strong style="text-align: left !important; display: block; width: 100%;">' + formatted + '</strong>';
 }
 
 // Función para procesar filas con formatos o reglas especiales

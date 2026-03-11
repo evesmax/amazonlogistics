@@ -363,7 +363,7 @@ function renderTable() {
                         minimumFractionDigits: decimalsForColumn,
                         maximumFractionDigits: decimalsForColumn
                     });
-                    cell.innerHTML = '<strong>' + formateado + '</strong>';
+                    cell.innerHTML = '<strong style="text-align: left !important; display: block; width: 100%;">' + formateado + '</strong>';
                 } else {
                     cell.textContent = value;
                 }

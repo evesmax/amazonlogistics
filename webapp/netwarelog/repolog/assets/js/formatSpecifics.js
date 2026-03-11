@@ -27,7 +27,8 @@ function applySpecificCorrections() {
                 var cellText = cell.textContent || cell.innerText;
                 if (cellText.trim() === '2990,58') {
                     // Reemplazar directamente con el formato correcto
-                    cell.innerHTML = '<strong>2,990.58</strong>';
+                    // Aplicamos el formato (forzando alineación izquierda en caso de que el pie del navegador los mande a la derecha)
+                    cell.innerHTML = '<strong style="text-align: left !important; display: block; width: 100%;">2,990.58</strong>';
                 }
             });
         });
