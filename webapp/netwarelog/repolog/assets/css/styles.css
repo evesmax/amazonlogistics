@@ -177,10 +177,10 @@ body {
     text-align: center !important;
 }
 
-.text-left,
-#resultsTable td.text-left,
-#resultsTable td.text-left strong {
-    text-align: left !important;
+.text-right,
+#resultsTable td.text-right,
+#resultsTable td.text-right strong {
+    text-align: right !important;
 }
 
 .column-filter {

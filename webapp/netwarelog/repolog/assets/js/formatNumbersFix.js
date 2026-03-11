@@ -264,10 +264,10 @@ function applyNumberFormat(cell, number, decimals) {
         maximumFractionDigits: decimals
     });
     
-    // Aplicamos el formato (se fuerza internamente a alineación izquierda)
-    cell.innerHTML = '<strong class="text-left" style="text-align: left !important;">' + formatted + '</strong>';
-    cell.style.cssText = 'text-align: left !important;';
-    cell.className = 'text-left';
+    // Aplicamos el formato (se fuerza internamente a alineación derecha)
+    cell.innerHTML = '<strong class="text-right" style="text-align: right !important;">' + formatted + '</strong>';
+    cell.style.cssText = 'text-align: right !important;';
+    cell.className = 'text-right';
 }
 
 // Función para procesar filas con formatos o reglas especiales

@@ -281,8 +281,8 @@ function renderTable() {
                 cell.style.cssText = 'text-align: center !important;';
                 cell.className = 'text-center';
             } else if (cleanCheck !== '') {
-                cell.style.cssText = 'text-align: left !important;';
-                cell.className = 'text-left';
+                cell.style.cssText = 'text-align: right !important;';
+                cell.className = 'text-right';
             }
             
             // Si es una fila de subtotal o total, dar formato especial
@@ -310,15 +310,15 @@ function renderTable() {
                         if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
                             decimals = columnFormatInfo[column].decimals;
                         }
-                        value = '<strong style="text-align: left !important;">' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
+                        value = '<strong style="text-align: right !important;">' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
                         cell.innerHTML = value;
-                        cell.style.cssText = 'text-align: left !important;';
+                        cell.style.cssText = 'text-align: right !important;';
                         row.appendChild(cell);
                         return;
                     } else {
-                        value = '<strong style="text-align: left !important; display: block; width: 100%;">' + value + '</strong>';
+                        value = '<strong style="text-align: right !important;">' + value + '</strong>';
                         cell.innerHTML = value;
-                        cell.style.cssText = 'text-align: left !important;';
+                        cell.style.cssText = 'text-align: right !important;';
                         row.appendChild(cell);
                         return;
                     }
@@ -365,9 +365,9 @@ function renderTable() {
                         minimumFractionDigits: decimalsForColumn,
                         maximumFractionDigits: decimalsForColumn
                     });
-                    cell.innerHTML = '<strong class="text-left" style="text-align: left !important;">' + formateado + '</strong>';
-                    cell.style.cssText = 'text-align: left !important;';
-                    cell.className = 'text-left';
+                    cell.innerHTML = '<strong class="text-right" style="text-align: right !important;">' + formateado + '</strong>';
+                    cell.style.cssText = 'text-align: right !important;';
+                    cell.className = 'text-right';
                 } else {
                     cell.textContent = value;
                 }
