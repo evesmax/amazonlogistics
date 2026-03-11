@@ -257,6 +257,27 @@ function renderTable() {
             // Convertir a string si no lo es
             value = String(value);
             
+            // Evaluar de antemano si la celda es de texto
+            var isTextCell = true;
+            var cleanCheck = value.trim();
+            if (cleanCheck === '') {
+                isTextCell = false;
+            } else if (!isNaN(parseFloat(cleanCheck)) && isFinite(cleanCheck)) {
+                isTextCell = false;
+            } else if (/^[\d]+,[\d]+$/.test(cleanCheck)) {
+                isTextCell = false; // Formato europeo simple
+            } else if (/^\d{1,3}(,\d{3})*(\.\d+)?$/.test(cleanCheck)) {
+                var cleanNumber = cleanCheck.replace(/,/g, '');
+                if (!isNaN(parseFloat(cleanNumber)) && isFinite(cleanNumber)) {
+                    isTextCell = false;
+                }
+            }
+            
+            if (isTextCell) {
+                cell.style.cssText = 'text-align: center !important;';
+                cell.className = 'text-center';
+            }
+            
             // Si es una fila de subtotal o total, dar formato especial
             if (isSubtotal) {
                 // En filas de subtotales, los valores numéricos deben mostrarse en negrita
@@ -294,7 +315,7 @@ function renderTable() {
                     }
                 } else if (subtotalLevel === 2 && column === tableColumns[0]) {
                     // Para fila de total general, mostrar "TOTAL GENERAL" en la primera columna
-                    cell.innerHTML = '<strong>TOTAL GENERAL</strong>';
+                    cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">TOTAL GENERAL</strong>';
                     row.appendChild(cell);
                     return;
                 } else if (subtotalLevel === 1) {
@@ -310,9 +331,9 @@ function renderTable() {
                     
                     if (isGroupField) {
                         if (column === groupFields[0]) {
-                            cell.innerHTML = '<strong>Subtotal: ' + escapeHtml(value) + '</strong>';
+                            cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">Subtotal: ' + escapeHtml(value) + '</strong>';
                         } else {
-                            cell.innerHTML = '<strong>' + escapeHtml(value) + '</strong>';
+                            cell.innerHTML = '<strong style="text-align: center !important; display: block; width: 100%;">' + escapeHtml(value) + '</strong>';
                         }
                         row.appendChild(cell);
                         return;
