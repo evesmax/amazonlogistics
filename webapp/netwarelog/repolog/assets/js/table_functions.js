@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     tableInitialized = true;
+    console.log("==========================================");
+    console.log("🚀 AMAZON LOGISTICS: PARCHE JS V4 CARGADO");
+    console.log("✓ Modificaciones CSS texto centrado ONLINE");
+    console.log("==========================================");
     // NO PROCESAR los datos aquí - solo usar los datos originales
     // El formateo se maneja en formatNumbersFix.js para evitar duplicaciones
     console.log("Inicializando tabla con", tableData.length, "registros originales");

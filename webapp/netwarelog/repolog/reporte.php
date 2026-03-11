@@ -2522,6 +2522,10 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     
     <!-- Script para ocultar el div de carga en ambiente productivo -->
     <script>
+        console.log("==========================================");
+        console.log("🚀 BACKEND PHP V4 CARGADO AL SERVIDOR");
+        console.log("==========================================");
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Buscar el div de carga por su ID
             var loaderDiv = document.getElementById('nmloader_div');
