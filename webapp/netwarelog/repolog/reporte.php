@@ -2174,7 +2174,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                     // El cliente solicitó "letras centradas", aplicaremos al TH globalmente en la clase text-center por simplicidad
                                     // ya que no hay valores sino nombres de columnas.
                                 ?>
-                                    <th class="text-center">
+                                    <th style="text-align: center !important;" class="text-center">
                                         <?php echo htmlspecialchars($column); ?>
                                         <div class="column-filter">
                                             <input type="text" placeholder="Filtrar <?php echo htmlspecialchars($column); ?>..." 
@@ -2221,7 +2221,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                         }
                                         
-                                        $alignAttr = ($isTextCell && $value !== '') ? ' class="text-center"' : '';
+                                        $alignAttr = ($isTextCell && $value !== '') ? ' style="text-align: center !important;" class="text-center"' : '';
                                     ?>
                                     <td<?php echo $alignAttr; ?>>
                                     <?php 
@@ -2369,7 +2369,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             } else if ($subtotalLevel === 2) {
                                                 // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
                                                 if ($column === reset($columns)) {
-                                                    echo '<strong>TOTAL GENERAL</strong>';
+                                                    echo '<strong style="text-align: center !important; display: block; width: 100%;">TOTAL GENERAL</strong>';
                                                     continue;
                                                 }
                                             } else if ($subtotalLevel === 1) {
@@ -2415,9 +2415,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 
                                                 if (in_array($column, $mappedGroupFields)) {
                                                     if ($column === reset($mappedGroupFields)) {
-                                                        echo '<strong>Subtotal: ' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<strong style="text-align: center !important; display: block; width: 100%;">Subtotal: ' . htmlspecialchars($value) . '</strong>';
                                                     } else {
-                                                        echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                        echo '<strong style="text-align: center !important; display: block; width: 100%;">' . htmlspecialchars($value) . '</strong>';
                                                     }
                                                     continue;
                                                 }
