@@ -2167,15 +2167,21 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                 <table id="resultsTable">
                     <thead>
                         <tr>
-                            <?php foreach ($visibleColumns as $column): ?>
-                                <th>
-                                    <?php echo htmlspecialchars($column); ?>
-                                    <div class="column-filter">
-                                        <input type="text" placeholder="Filtrar <?php echo htmlspecialchars($column); ?>..." 
-                                               onkeyup="filterTable()" data-column="<?php echo htmlspecialchars($column); ?>">
-                                    </div>
-                                </th>
-                            <?php endforeach; ?>
+                                <?php foreach ($visibleColumns as $column): ?>
+                                <?php
+                                    // Para alinear las cabeceras TH centralmente si sospechamos que son de texto,
+                                    // por defecto las centraremos todas para que hagan match visual o solo aplicamos al TD.
+                                    // El cliente solicitó "letras centradas", aplicaremos al TH globalmente en la clase text-center por simplicidad
+                                    // ya que no hay valores sino nombres de columnas.
+                                ?>
+                                    <th class="text-center">
+                                        <?php echo htmlspecialchars($column); ?>
+                                        <div class="column-filter">
+                                            <input type="text" placeholder="Filtrar <?php echo htmlspecialchars($column); ?>..." 
+                                                   onkeyup="filterTable()" data-column="<?php echo htmlspecialchars($column); ?>">
+                                        </div>
+                                    </th>
+                                <?php endforeach; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -2193,16 +2199,32 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                             ?>
                             <tr class="<?php echo $rowClass; ?>">
                                 <?php foreach ($visibleColumns as $column): ?>
-                                    <td>
                                     <?php 
                                         // Ignorar campos especiales de control
                                         if ($column === '__is_subtotal' || $column === '__subtotal_level') {
-                                            echo '';
+                                            echo '<td></td>';
                                             continue;
                                         }
                                         
                                         $value = isset($row[$column]) ? $row[$column] : '';
                                         
+                                        // Pre-determinar si es texto para alinear la celda al centro (excepto si es numérico)
+                                        $isTextCell = true;
+                                        if (is_numeric($value)) {
+                                            $isTextCell = false;
+                                        } else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
+                                            $isTextCell = false;
+                                        } else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', trim($value))) {
+                                            $cleanCheck = str_replace(',', '', trim($value));
+                                            if (is_numeric($cleanCheck)) {
+                                                $isTextCell = false;
+                                            }
+                                        }
+                                        
+                                        $alignAttr = ($isTextCell && $value !== '') ? ' class="text-center"' : '';
+                                    ?>
+                                    <td<?php echo $alignAttr; ?>>
+                                    <?php 
                                         // Si es una fila de subtotal o total, dar formato especial
                                         if ($isSubtotal) {
                                             // Si es un campo numérico (aparece en los campos a totalizar)
@@ -2347,7 +2369,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             } else if ($subtotalLevel === 2) {
                                                 // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
                                                 if ($column === reset($columns)) {
-                                                    echo '<div style="text-align: center;"><strong>TOTAL GENERAL</strong></div>';
+                                                    echo '<strong>TOTAL GENERAL</strong>';
                                                     continue;
                                                 }
                                             } else if ($subtotalLevel === 1) {
@@ -2393,9 +2415,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 
                                                 if (in_array($column, $mappedGroupFields)) {
                                                     if ($column === reset($mappedGroupFields)) {
-                                                        echo '<div style="text-align: center;"><strong>Subtotal: ' . htmlspecialchars($value) . '</strong></div>';
+                                                        echo '<strong>Subtotal: ' . htmlspecialchars($value) . '</strong>';
                                                     } else {
-                                                        echo '<div style="text-align: center;"><strong>' . htmlspecialchars($value) . '</strong></div>';
+                                                        echo '<strong>' . htmlspecialchars($value) . '</strong>';
                                                     }
                                                     continue;
                                                 }
@@ -2431,18 +2453,18 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
                                                 echo '<strong>' . $formattedValue . '</strong>';
                                             } else {
-                                                // No escapar HTML si parece contener etiquetas, pero centrar
+                                                // No escapar HTML si parece contener etiquetas
                                                 if (strpos($value, '<') !== false && strpos($value, '>') !== false) {
-                                                    echo '<div style="text-align: center;">' . $value . '</div>';
+                                                    echo $value;
                                                 } else {
-                                                    echo '<div style="text-align: center;">' . htmlspecialchars($value) . '</div>';
+                                                    echo htmlspecialchars($value);
                                                 }
                                             }
                                         }
                                         // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR)
                                         else {
-                                            // Mostrar el HTML directamente para que sea interpretado por el navegador, centrado.
-                                            echo '<div style="text-align: center;">' . $value . '</div>';
+                                            // Mostrar el HTML directamente para que sea interpretado por el navegador
+                                            echo $value;
                                         }
                                     ?>
                                     </td>

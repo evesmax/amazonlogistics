@@ -173,6 +173,10 @@ body {
 }
 
 /* Column filter inputs */
+.text-center {
+    text-align: center !important;
+}
+
 .column-filter {
     margin-top: 5px;
 }
