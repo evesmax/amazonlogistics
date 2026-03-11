@@ -280,6 +280,9 @@ function renderTable() {
             if (isTextCell) {
                 cell.style.cssText = 'text-align: center !important;';
                 cell.className = 'text-center';
+            } else if (cleanCheck !== '') {
+                cell.style.cssText = 'text-align: left !important;';
+                cell.className = 'text-left';
             }
             
             // Si es una fila de subtotal o total, dar formato especial

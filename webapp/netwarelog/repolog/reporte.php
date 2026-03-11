@@ -2221,7 +2221,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                         }
                                         
-                                        $alignAttr = ($isTextCell && $value !== '') ? ' style="text-align: center !important;" class="text-center"' : '';
+                                        $alignAttr = '';
+                                        if ($value !== '') {
+                                            if ($isTextCell) {
+                                                $alignAttr = ' style="text-align: center !important;" class="text-center"';
+                                            } else {
+                                                $alignAttr = ' style="text-align: left !important;" class="text-left"';
+                                            }
+                                        }
                                     ?>
                                     <td<?php echo $alignAttr; ?>>
                                     <?php 
