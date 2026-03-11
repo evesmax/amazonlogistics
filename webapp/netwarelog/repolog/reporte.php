@@ -2443,14 +2443,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         if (is_numeric($value)) {
                                             // Es un número, formatear con comas para miles y punto para decimales
                                             $formattedValue = number_format(floatval($value), $decimals, '.', ',');
-                                            echo '<strong>' . $formattedValue . '</strong>';
+                                            echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
                                         else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
                                             $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
-                                            echo '<strong>' . $formattedValue . '</strong>';
+                                            echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato americano (1,234.56)
                                         else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
@@ -2458,7 +2458,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             $cleanValue = str_replace(',', '', $value);
                                             if (is_numeric($cleanValue)) {
                                                 $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                echo '<strong>' . $formattedValue . '</strong>';
+                                                echo '<strong style="text-align: left !important; display: block; width: 100%;">' . $formattedValue . '</strong>';
                                             } else {
                                                 // No escapar HTML si parece contener etiquetas
                                                 if (strpos($value, '<') !== false && strpos($value, '>') !== false) {

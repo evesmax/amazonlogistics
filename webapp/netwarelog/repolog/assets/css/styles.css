@@ -177,6 +177,12 @@ body {
     text-align: center !important;
 }
 
+.text-left strong {
+    text-align: left !important;
+    display: block;
+    width: 100%;
+}
+
 .column-filter {
     margin-top: 5px;
 }

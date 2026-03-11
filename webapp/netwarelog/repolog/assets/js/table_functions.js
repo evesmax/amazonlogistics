@@ -285,10 +285,6 @@ function renderTable() {
                 cell.className = 'text-left';
             }
             
-            if (column === 'Existencia' || column === 'ExistenciaTM') {
-                 console.log(`[Columna ${column}]: Valor="${value}", isTextCell=${isTextCell}, style="${cell.style.cssText}"`);
-            }
-            
             // Si es una fila de subtotal o total, dar formato especial
             if (isSubtotal) {
                 // En filas de subtotales, los valores numéricos deben mostrarse en negrita
@@ -314,13 +310,15 @@ function renderTable() {
                         if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
                             decimals = columnFormatInfo[column].decimals;
                         }
-                        value = '<strong>' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
+                        value = '<strong style="text-align: left !important; display: block; width: 100%;">' + num.toLocaleString('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}) + '</strong>';
                         cell.innerHTML = value;
+                        cell.style.cssText = 'text-align: left !important;';
                         row.appendChild(cell);
                         return;
                     } else {
-                        value = '<strong>' + value + '</strong>';
+                        value = '<strong style="text-align: left !important; display: block; width: 100%;">' + value + '</strong>';
                         cell.innerHTML = value;
+                        cell.style.cssText = 'text-align: left !important;';
                         row.appendChild(cell);
                         return;
                     }
