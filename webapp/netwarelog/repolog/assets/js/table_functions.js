@@ -285,6 +285,10 @@ function renderTable() {
                 cell.className = 'text-left';
             }
             
+            if (column === 'Existencia' || column === 'ExistenciaTM') {
+                 console.log(`[Columna ${column}]: Valor="${value}", isTextCell=${isTextCell}, style="${cell.style.cssText}"`);
+            }
+            
             // Si es una fila de subtotal o total, dar formato especial
             if (isSubtotal) {
                 // En filas de subtotales, los valores numéricos deben mostrarse en negrita
