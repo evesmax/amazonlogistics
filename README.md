@@ -3,8 +3,9 @@
 Este proyecto tiene requerimientos y limitantes específicos de infraestructura que deben ser estrictamente respetados por cualquier desarrollador o IA (Asistente de Código) durante su desarrollo y mantenimiento.
 
 ## ⚠️ Entorno de Ejecución (CRÍTICO)
-- **Sistema Operativo:** Ubuntu 14.04
+- **Sistema Operativo:** Ubuntu 14.04 (Ubuntu 14)
 - **Versión de PHP:** 5.5.9
+- **Base de Datos:** MySQL Ver 14.14 Distrib 5.5.62
 
 ## Reglas de Codificación (Restricciones PHP 5.5.9)
 Debido a la antigüedad del servidor, **ESTÁ ESTRICTAMENTE PROHIBIDO** utilizar características, sintaxis o funciones introducidas en PHP 7.x, 8.x o superior. 
