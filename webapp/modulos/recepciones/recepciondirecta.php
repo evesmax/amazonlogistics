@@ -109,9 +109,9 @@
                         // Validar que todos los campos de texto tengan valor
                         var camposValidos = true;
                         if($('#txtcantrec1').val()*1==0 || $('#txtcantrec1').val()*1==0 ){
-                            camposValidos= false
+                            camposValidos= false;
                             alert('Debe escribir una cantidad mayor a cero');
-                            $('#txtcantrec1').val()=0;
+                            $('#txtcantrec1').val(0);
                             $('#txtcantrec1').focus(); 
                         }
                             
@@ -122,6 +122,37 @@
                         return false; // Detiene el envío del formulario
                         }
                     });
+                    
+                    // Validación de Carta Porte Duplicada
+                    function validarCartaPorte() {
+                        var cartaporte = $('#txtcartaporte').val();
+                        var idtransportista = $('#cmbtransportista').val();
+                        
+                        if (cartaporte && cartaporte.trim() !== '' && idtransportista && idtransportista.trim() !== '') {
+                            $.ajax({
+                                type: 'POST',
+                                url: 'valida_cartaporte.php',
+                                data: {
+                                    cartaporte: cartaporte,
+                                    idtransportista: idtransportista
+                                },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if(response && response.existe) {
+                                        alert('ERROR: La carta porte ' + cartaporte + ' ya fue registrada previamente para este transportista. No se puede repetir.');
+                                        $('#txtcartaporte').val('');
+                                        setTimeout(function() { $('#txtcartaporte').focus(); }, 100);
+                                    }
+                                },
+                                error: function() {
+                                    console.error('Error al validar la carta porte.');
+                                }
+                            });
+                        }
+                    }
+
+                    $('#txtcartaporte').on('blur', validarCartaPorte);
+                    $('#cmbtransportista').on('change', validarCartaPorte);
                     
             });
         </script>";	
