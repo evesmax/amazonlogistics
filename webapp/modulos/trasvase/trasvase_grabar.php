@@ -16,10 +16,20 @@
             $foliosorigenreal=$_REQUEST["txtfoliosorigenreal"];
             $foliosdestinoreal=$_REQUEST["txtfoliosdestinoreal"];
             $txtobservaciones=$_REQUEST["txtobservaciones"];      
+            
+            // Transformar la fecha que viene en formato d-m-Y H:i:s a Y-m-d H:i:s para MySQL
+            $fecharec_raw = $_REQUEST["txtfecharec"];
+            $fechadia = "";
+            $datetime = DateTime::createFromFormat('d-m-Y H:i:s', $fecharec_raw);
+            if ($datetime) {
+                $fechadia = $datetime->format('Y-m-d H:i:s');
+            } else {
+                $fechadia = date("Y-m-d H:i:s", strtotime($fecharec_raw));
+            }
 
 //Recupera valores de consulta
 
-        $sQuery = "Select *,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') 'fechadia' from inventarios_trasvase where idtrasvase=".$idtrasvase;
+        $sQuery = "Select * from inventarios_trasvase where idtrasvase=".$idtrasvase;
 		$result = $conexion->consultar($sQuery);
 		while($rs = $conexion->siguiente($result)){
                         $fabricante=$rs{"idfabricante"};
@@ -31,9 +41,15 @@
                         $cantidad1=$rs{"cantidad1"};
                         $cantidad2=$rs{"cantidad2"};
                         $productodestino=$rs{"idproductodestino"};
-                        $fechadia=$rs{"fechadia"};
+                        $idestadodocumento=$rs{"idestadodocumento"};
                 }
 		$conexion->cerrar_consulta($result);
+        
+        // Bloqueo de seguridad: Evitar procesar nuevamente si ya está procesado
+        if ($idestadodocumento == 2) {
+            header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase);
+            exit();
+        }
         //echo $sQuery."<br>";
 
         //COnsume SP para extraer Inventarios

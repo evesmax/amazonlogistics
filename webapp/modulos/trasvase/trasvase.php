@@ -138,7 +138,7 @@
                         lt.cantidaddestino1 'cantidaddestino1', lt.cantidaddestino2 'cantidaddestino2', 
                         lt.observaciones, lt.idbodega, lt.idfabricante, lt.idproducto, lt.idproductodestino,lt.foliosorigenreal,lt.foliosdestinoreal,
                         ifa1.nombrefamilia 'nombrefamiliaorigen', ifa2.nombrefamilia 'nombrefamiliadestino', now() fecha_final,lt.idmarca,lt.idloteproducto,
-                        lt.idestadoproducto, $usuario idempleado
+                        lt.idestadoproducto, $usuario idempleado, lt.idestadodocumento
                     from inventarios_trasvase lt 
                         left join operaciones_fabricantes of on of.idfabricante=lt.idfabricante
                         left join vista_marcas vm on vm.idmarca=lt.idmarca
@@ -179,6 +179,7 @@
                     $idestadoproducto=$rs{"idestadoproducto"};
                     $capturista=$rs{"idempleado"};
                     $idempleado=$rs{"idempleado"};
+                    $idestadodocumento=$rs{"idestadodocumento"};
         }
 		$conexion->cerrar_consulta($result);                        
 
@@ -827,7 +828,12 @@
                                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
 
-                if ($inventario>=$cantidad1) {
+                if ($idestadodocumento == 2) {
+                    $html_botones="	    <span style='background-color: #28a745; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
+                                            Este trasvase ya ha sido procesado.
+                                        </span>
+                                        <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
+                } else if ($inventario>=$cantidad1) {
                     $html_botones="	<INPUT id='btngrabar' name='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar'>
                                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'> ";
 
