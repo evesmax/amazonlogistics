@@ -121,7 +121,7 @@ $htmlpoliticas="
                                 of.idfabricante, ob.idbodega, vc.idcliente idcliente, 
 								lo.idproducto,ob.responsable, vm.nombremarca, 
                                 lo.idtransportista,lo.cartaporte,lo.nombreoperador,lo.licenciaoperador,lo.placastractor,lo.placasremolque,lo.referenciacliente,
-                                lo.cantidad1,lo.cantidad2,now() fecha_final,lo.idfabricante,lo.idmarca,lo.idbodega,lo.idproducto,lo.idloteproducto,lo.idestadoproducto,$usuario idempleado, ifa.nombrefamilia
+                                lo.cantidad1,lo.cantidad2,now() fecha_final,lo.idfabricante,lo.idmarca,lo.idbodega,lo.idproducto,lo.idloteproducto,lo.idestadoproducto,$usuario idempleado, ifa.nombrefamilia, ifnull(lo.multiplesviajes, 0) multiplesviajes
                              From logistica_ordenesentrega lo 
                                 inner join operaciones_fabricantes of on of.idfabricante=lo.idfabricante
 								inner join vista_marcas vm on vm.idmarca=lo.idmarca
@@ -173,8 +173,8 @@ $htmlpoliticas="
                                     $idbodega=$rs{"idbodega"};
                                     $idloteproducto=$rs{"idloteproducto"};
                                     $idestadoproducto=$rs{"idestadoproducto"};
-                                    $capturista=$rs{"idempleado"};
                                     $idempleado=$rs{"idempleado"};
+                                    $multiplesviajes=$rs{"multiplesviajes"};
 		}
 		$conexion->cerrar_consulta($result);                        
                 
@@ -204,12 +204,17 @@ $htmlpoliticas="
         //echo "<br> Inventario Disponible: ".$inventario."<br>";
         //echo "<br> Inventario - Cantidad1: ".($inventario-$cantidad1)."<br>";
 
-        if($inventario<$cantidad1){
+        if(!$multiplesviajes && $inventario<$cantidad1){
             echo "<script>
                     alert('No existe inventario suficiente para realizar el retiro. Inventario disponible: ".$inventario." TM');
                     window.close();
                   </script>";
             //exit();
+        } else if ($multiplesviajes && ($inventario <= 0 || $saldo <= 0)) {
+            echo "<script>
+                    alert('No hay saldo en la orden o inventario suficiente para realizar otro retiro.');
+                    window.close();
+                  </script>";
         }
         //Genera Datos de la Organización        
                 $sqlimagen="";
@@ -338,7 +343,7 @@ $htmlpoliticas="
 	//Escribe Politicas
     $html.=$htmlpoliticas;	
 	$html.= "<body style='font-family:helvetica'>
-                    <FORM id=envio name=envio method=post action='retiro_grabar.php' onsubmit='deshabilitarBoton()'>
+                    <FORM id=envio name=envio method=post action='retiro_grabar.php' onsubmit='return deshabilitarBoton()'>
                         <input type=hidden id='txtidordenentrega' name='txtidordenentrega' value='".$idordenentrega."'>";                
 
 	$html.=$txtcapturista;
@@ -626,8 +631,21 @@ $htmlpoliticas="
                                 //#Politica de Registro adicional
                                 $politica="";
                                 if($edita==1){
-                                    $politica= " readonly onChange='recalcula(".$factor.",".$edita.",".$saldosc.")'";
+                                    $politica= " readonly onChange='recalcula(".$factor.",".$edita.",".$saldosc.",".$inventario.")'";
                                 }
+                                
+                                $input_cantidad1 = "<input readonly type=text id='txtcantidad1' name='txtcantidad1' size=30  value='".$cantidad1."'>";
+                                $input_cantidad2 = "<input readonly type=text id='txtcantidad2' name='txtcantidad2' size=30 value='".$cantidad2."'>";
+                                
+                                if($multiplesviajes) {
+                                    $factor_calc = ($factor > 0) ? $factor : 1;
+                                    $cantidad1_calc = 0;
+                                    $cantidad2_calc = 0;
+                                    
+                                    $input_cantidad1 = "<input type=text id='txtcantidad1' name='txtcantidad1' size=30  value='".$cantidad1_calc."' onChange='recalcula(".$factor.",".$edita.",".$saldosc.",".$inventario.")'>";
+                                    $input_cantidad2 = "<input type=text id='txtcantidad2' name='txtcantidad2' size=30 value='".$cantidad2_calc."' onChange='recalcula(".$factor.",".$edita.",".$saldosc.",".$inventario.")'>";
+                                }
+
                 $temp="$nombreingenio <br> $nombremarca";
 				if($nombreingenio==$nombremarca){
 					$temp="$nombreingenio - Propia";
@@ -639,8 +657,8 @@ $htmlpoliticas="
 					$html.="<td align=center>".$zafra."</td>";
                                         $html.="<td align=center>".$nombrefamilia." ".$nombreproducto."</td>";
                                         //$html.="<td align=center>".$nombreestado."</td>";
-                                        $html.="<td align=right><input readonly type=text id='txtcantidad1' name='txtcantidad1' size=30  value='".$cantidad1."'></td>";
-					$html.="<td align=right><input readonly type=text id='txtcantidad2' name='txtcantidad2' size=30 value='".$cantidad2."'></td>";			
+                                        $html.="<td align=right>".$input_cantidad1."</td>";
+					$html.="<td align=right>".$input_cantidad2."</td>";			
 				$html.="</tr>";				
 			$html.="</table></center>";	
 		$html.="</td></tr>"; //Mega tabla
@@ -740,7 +758,7 @@ $htmlpoliticas="
                                                                                     }
                                                                                     return result;
                                                                                 }
-                                                                                function recalcula(factor,edita,saldo) {
+                                                                                function recalcula(factor,edita,saldo,inventario) {
                                                                                     var jfactor=0,jfactord=0,jedita=0,jsaldo1=0,jsaldo2=0, cant1=0, cant2=0,jsaldo=0;
                                                                                     jfactor=factor;
                                                                                     jedita=edita;
@@ -753,6 +771,14 @@ $htmlpoliticas="
                                                                                     jsaldo2=format_number(jsaldo,2);
                                                                                     cant1=format_number(valor(document.getElementById('txtcantidad1').value),2);
                                                                                     cant2=format_number(cant1*jfactor,2); 
+                                                                                    
+                                                                                    if (inventario !== undefined && cant1*1 > inventario*1) {
+                                                                                        alert('La cantidad excede el inventario disponible: ' + inventario);
+                                                                                        document.envio.txtcantidad1.value=format_number(0,2);
+                                                                                        document.envio.txtcantidad2.value=format_number(0,2);
+                                                                                        return;
+                                                                                    }
+                                                                                    
                                                                                     if((cant1*1<=jsaldo1*1) && (cant2*1<=jsaldo2*1)){
                                                                                         cant1=valor(document.getElementById('txtcantidad1').value);
                                                                                         cant2=cant1*jfactor;
@@ -764,19 +790,35 @@ $htmlpoliticas="
                                                                                     }
                                                                                 }
                                                                                 function deshabilitarBoton() {
+                                                                                    var cant1 = document.getElementById('txtcantidad1').value;
+                                                                                    cant1 = valor(cant1);
+                                                                                    if (cant1 * 1 === 0 || cant1 === '') {
+                                                                                        alert('Debe registrar una cantidad mayor a cero para avanzar.');
+                                                                                        document.getElementById('txtcantidad1').focus();
+                                                                                        return false;
+                                                                                    }
                                                                                     document.getElementById('btngrabar').disabled = true;
                                                                                     // Puedes agregar un mensaje al usuario, por ejemplo:
                                                                                     //alert('Procesando...');
                                                                                     document.getElementById('btngrabar').value = 'Procesando...'; 
+                                                                                    return true;
                                                                                 }
 									</script>";
 		//Botones
-        if ($inventario>=$cantidad1) {
+        $permitir_retiro = false;
+        if ($multiplesviajes) {
+            $permitir_retiro = ($inventario > 0 && $saldo > 0);
+        } else {
+            $permitir_retiro = ($inventario >= $cantidad1);
+        }
+
+        if ($permitir_retiro) {
             $html_botones="	<INPUT name='btngrabar' id='btngrabar' class='buttons_text' type='submit' value='Procesar' title='Haz Click Para Autorizar retiro'>
                             <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
         } else {
+            $msj_error = $multiplesviajes ? "No hay inventario o saldo suficiente para procesar otro retiro." : "No hay inventario suficiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1;
             $html_botones="	    <span style='background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;'>
-                                    No hay inventario suficiente para procesar el retiro, Disponible: ".$inventario." Requerido:".$cantidad1."
+                                    ".$msj_error."
                                 </span>
                                 <INPUT name=btnregresar type='button' onclick='redireccion()' value='Regresar'>";
         }					
