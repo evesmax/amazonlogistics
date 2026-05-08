@@ -28,9 +28,13 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Si no existe la variable de sesión accelog_idempleado, inicializarla para propósitos de prueba
-// En producción, esta variable debería ser configurada por el sistema de login
-if (!isset($_SESSION['accelog_idempleado'])) {
-    $_SESSION['accelog_idempleado'] = '2'; // Valor por defecto para pruebas
+// --- INICIO DE VALIDACIÓN DE SESIÓN ---
+// Si no existe la variable de sesión accelog_idempleado, la sesión ha caducado
+if (!isset($_SESSION['accelog_idempleado']) || empty($_SESSION['accelog_idempleado'])) {
+    echo "<script type='text/javascript'>
+            alert('Se caduco la sesion');
+            window.top.location.href = '".$url_dominio."';
+          </script>";
+    exit();
 }
 ?>
