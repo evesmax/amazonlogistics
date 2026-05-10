@@ -154,7 +154,7 @@
     $link_gestor = "catalog/gestor.php";
     $crear_tablas_organizacion_empleados = 0;
     $crear_tablas = 0;
-    $accelog_salt = "$2a$07$".$accelog_variable."aaaaaaa$";
+    $accelog_salt = "$2a$07$0000019551mlogaaaaaaa.";
     $tabla_organizacion = "organizaciones";
     $campo_idorganizacion = "idorganizacion";
     $campo_nombre_org = "nombreorganizacion";
