@@ -1876,6 +1876,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     // Agrupamos los datos para calcular subtotales
     $currentGroup = null;
     $currentSubtotal = null;
+    $firstRowGroup = null;
+    $firstRowTotal = null;
+    $isKardex = (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 2);
     
     foreach ($data as $row) {
         // Construir la clave del grupo actual
@@ -1918,6 +1921,11 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         // Si es el primer registro o un nuevo grupo, inicializar subtotales
         if ($currentGroup === null || $currentGroup !== $groupKey) {
             $currentGroup = $groupKey;
+            $firstRowGroup = $row;
+            
+            if ($firstRowTotal === null) {
+                $firstRowTotal = $row;
+            }
             
             if ($currentSubtotal === null) {
                 $currentSubtotal = array();
@@ -1937,9 +1945,25 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             $rawValue = $row[$field];
             $value = is_numeric($rawValue) ? floatval($rawValue) : 0;
             
-            // Actualizar subtotales y totales
-            $currentSubtotal[$field] += $value;
-            $grandTotals[$field] += $value;
+            if ($isKardex) {
+                $isInitial = (stripos($field, 'SaldoInicial') !== false || stripos($field, 'Saldo Inicial') !== false);
+                $isFinal = (stripos($field, 'SaldoTM') !== false || (stripos($field, 'Saldo') !== false && stripos($field, 'SaldoInicial') === false && stripos($field, 'Saldo Inicial') === false));
+                
+                if ($isInitial) {
+                    $currentSubtotal[$field] = is_numeric($firstRowGroup[$field]) ? floatval($firstRowGroup[$field]) : 0;
+                    $grandTotals[$field] = is_numeric($firstRowTotal[$field]) ? floatval($firstRowTotal[$field]) : 0;
+                } else if ($isFinal) {
+                    $currentSubtotal[$field] = $value;
+                    $grandTotals[$field] = $value;
+                } else {
+                    $currentSubtotal[$field] += $value;
+                    $grandTotals[$field] += $value;
+                }
+            } else {
+                // Actualizar subtotales y totales
+                $currentSubtotal[$field] += $value;
+                $grandTotals[$field] += $value;
+            }
         }
         
         // Guardar el último registro del grupo para referencia
