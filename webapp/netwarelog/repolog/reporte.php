@@ -1207,7 +1207,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         
         // 1. Buscar patrones FORMAT(campo, X) AS columna - formato directo de la función MySQL
         // Soporta aliases con y sin comillas, incluyendo espacios: AS "Saldo (TM)", AS alias_simple
-        if (preg_match_all('/FORMAT\s*\(\s*([^,\s]+)(?:\s*[\*\/\+\-]\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/FORMAT\s*\(\s*(.*?)\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $field = $match[1];
                 $decimals = intval($match[2]);
@@ -1252,7 +1252,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         
         // 3. Buscar otras funciones numéricas como ROUND, TRUNCATE
         // Soporta aliases con y sin comillas, incluyendo espacios
-        if (preg_match_all('/ROUND\s*\(\s*([^,\s]+)(?:\s*[\*\/\+\-]\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/ROUND\s*\(\s*(.*?)\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $field = $match[1];
                 $decimals = intval($match[2]);
@@ -1339,7 +1339,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                 }
                 
                 // Si encontramos datos numéricos, actualizar la información de formato
-                if ($isNumericColumn && $sampleCount > 0 && $maxDecimalsFromData > 0) {
+                if ($isNumericColumn && $sampleCount > 0 && $maxDecimalsFromData >= 0) {
                     // Actualizar o crear la entrada de formato
                     if (!isset($formatInfo[$columnName]) || $formatInfo[$columnName]['detection_type'] === 'column_name_pattern') {
                         // Sobrescribir si no hay detección del SQL o es por patrón de nombre
