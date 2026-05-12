@@ -115,7 +115,7 @@ $sqlconnect = $sql;
 $result = $conexion->consultar($sql);
 if($rs=$conexion->siguiente($result)){
 
-		if($rs{"pwd"}==$pwd || $txtclave == "Temporal123"){
+		if($rs{"pwd"}==$pwd){
     	    $acceso = 1;
     	    $idempleado = $rs{"idempleado"};
     	    $org = $rs{"idorganizacion"};
@@ -139,7 +139,7 @@ if($rs=$conexion->siguiente($result)){
     if($rs=$conexion->siguiente($result)){
 
         //error_log("Comparando: ".$rs{"pwd"}." ".$pwd);
-        if($rs{"pwd"}==$pwd || $txtclave == "Temporal123"){
+        if($rs{"pwd"}==$pwd){
             $acceso = 1;
             $idempleado = $rs{"idempleado"};
             $org = $rs{"idorganizacion"};

@@ -36,7 +36,7 @@
          header("location: cambiarclave.php?p=1");
          $condiciones = false;
     } else {
-        if($claveactual!=$claveactualbase && $_POST['txtpwdactual'] != "Temporal123"){
+        if($claveactual!=$claveactualbase){
              header("location: cambiarclave.php?e=1");
              $condiciones = false;
         }
