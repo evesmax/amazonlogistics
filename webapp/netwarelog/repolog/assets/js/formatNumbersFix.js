@@ -117,12 +117,14 @@ function formatCellContent(cell) {
             var headerText = columnName.toLowerCase();
             
             // 2. Si el encabezado de columna contiene palabras clave que indican IDs, no formatear
-            if (headerText.includes('id') || 
+            if ((headerText.indexOf('id') === 0) || 
+                (headerText.indexOf(' id') !== -1) || 
                 headerText.includes('folio') || 
                 headerText.includes('código') || 
                 headerText.includes('codigo') || 
                 headerText.includes('referencia') ||
-                headerText.includes('num')) {
+                (headerText.indexOf('num') === 0) || 
+                (headerText.indexOf(' num') !== -1)) {
                 // Es una columna de ID o referencia, no aplicar formato
                 cell.setAttribute('data-formatted', 'true');
                 return;
