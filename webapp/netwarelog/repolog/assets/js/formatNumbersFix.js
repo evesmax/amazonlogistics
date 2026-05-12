@@ -237,7 +237,7 @@ function formatCellContent(cell) {
         // Para columnas numéricas que deberían tener formato, verificar si es un número entero
         if (/^\d+$/.test(text)) {
             // Verificar SQL para detectar cuántos decimales usar
-            var defaultDecimals = (headerText.includes('tm') || headerText.includes('tonelada')) ? 3 : 2;
+            var defaultDecimals = (headerText.includes('tm') || headerText.includes('tonelada')) ? 3 : 0;
             applyNumberFormat(cell, parseFloat(text), defaultDecimals);
         }
     }
@@ -250,9 +250,9 @@ function formatCellContent(cell) {
 function applyNumberFormat(cell, number, decimals) {
     if (isNaN(number)) return;
     
-    // Si no se especifica, usar 2 decimales por defecto
+    // Si no se especifica, usar 0 decimales por defecto
     if (typeof decimals === 'undefined') {
-        decimals = 2;
+        decimals = 0;
     }
     
     // Conservamos el valor original

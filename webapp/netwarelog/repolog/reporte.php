@@ -2337,9 +2337,16 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             if (in_array($column, $mappedSumFields)) {
                                                 // Obtener decimales específicos de la configuración detectada
                                                 $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
-                                                $decimals = 2; // Por defecto 2 decimales
                                                 if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
                                                     $decimals = $columnFormatInfo[$column]['decimals'];
+                                                } else {
+                                                    $decimals = 0;
+                                                    if (fmod(floatval($value), 1) !== 0.0) {
+                                                        $strVal = (string)floatval($value);
+                                                        if (strpos($strVal, '.') !== false) {
+                                                            $decimals = strlen(explode('.', $strVal)[1]);
+                                                        }
+                                                    }
                                                 }
                                                 $formattedResult = number_format(floatval($value), $decimals, '.', ',');
                                                 
@@ -2459,9 +2466,16 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         // Procesamiento normal para filas regulares (subtotales/totales)
                                         // Obtener decimales específicos de la configuración detectada
                                         $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
-                                        $decimals = 2; // Por defecto 2 decimales
                                         if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
                                             $decimals = $columnFormatInfo[$column]['decimals'];
+                                        } else {
+                                            $decimals = 0;
+                                            $strValue = (string)$value;
+                                            if (strpos($strValue, '.') !== false) {
+                                                $decimals = strlen(explode('.', $strValue)[1]);
+                                            } else if (strpos($strValue, ',') !== false && !preg_match('/^\d{1,3}(,\d{3})*$/', $strValue)) {
+                                                $decimals = strlen(explode(',', $strValue)[1]);
+                                            }
                                         }
                                         
                                         // Verificar si es un número o parece un número formateado
