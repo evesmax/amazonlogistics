@@ -59,6 +59,9 @@ $objPHPExcel->getProperties()->setCreator("Amazon Logistics RepoLog")
                              ->setCategory("Reportes");
 
 $sheet = $objPHPExcel->getActiveSheet();
+// Ocultar líneas de cuadrícula de Excel (Gridlines) para un aspecto más limpio
+$sheet->setShowGridlines(false);
+
 // Título de la hoja, limitado a 31 caracteres
 $sheet->setTitle(preg_replace('/[*\:\/?\[\]]/', '', substr($reportTitle, 0, 31))); 
 
