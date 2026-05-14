@@ -2021,7 +2021,7 @@ function removeAllUnresolvedPatterns($sql) {
     }
     
     // Patrón 2: Eliminar " ORDER BY campo;@Multiselection])" o variantes
-    $residuePattern = '/\s+order\s+by\s+[a-zA-Z0-9_]+\s*;@Multiselection\]\)?/i';
+    $residuePattern = '/\s+order\s+by\s+[a-zA-Z0-9_]+\s*;@(Multiselection|KeepColumn)\]\)?/i';
     if (preg_match_all($residuePattern, $sql, $matches)) {
         foreach ($matches[0] as $residue) {
             error_log("Eliminando residuo ORDER BY;@Multiselection: " . substr($residue, 0, 50) . "...");

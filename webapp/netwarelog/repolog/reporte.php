@@ -147,10 +147,16 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
             if (preg_match('/;\s*@Multiselection\s*$/i', $sqlQueryRaw)) {
                 $isMultiselection = true;
                 // Remove ;@Multiselection from SQL for execution
-                $sqlQuery = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlQueryRaw);
-            } else {
-                $sqlQuery = $sqlQueryRaw;
+                $sqlQueryRaw = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlQueryRaw);
             }
+            
+            // Check if keep column is enabled
+            if (preg_match('/;\s*@KeepColumn\s*$/i', $sqlQueryRaw)) {
+                // Remove ;@KeepColumn from SQL for execution
+                $sqlQueryRaw = preg_replace('/;\s*@KeepColumn\s*$/i', '', $sqlQueryRaw);
+            }
+            
+            $sqlQuery = $sqlQueryRaw;
             
             // MEJORA: Imprimir el patrón completo para depuración
             error_log("Procesando patrón: $fullPattern");
@@ -516,6 +522,12 @@ function getVisibleColumns($columns, $appliedFilters) {
         // Ignorar filtros de fecha - estos no corresponden a columnas a ocultar
         if (in_array(strtolower($filterLabel), $dateFilterLabels)) {
             error_log("Filtro de fecha ignorado para ocultamiento: " . $filterLabel);
+            continue;
+        }
+        
+        // Novedad: Respetar instrucción de mantener columna visible
+        if (isset($filter['keep_column']) && $filter['keep_column']) {
+            error_log("Columna MOSTRADA por instrucción explícita @KeepColumn: " . $filterLabel);
             continue;
         }
         

@@ -222,10 +222,18 @@ function parseWhereClause($whereClause) {
         if (preg_match('/;\s*@Multiselection\s*$/i', $sqlRaw)) {
             $isMultiselection = true;
             // Remove ;@Multiselection from SQL for execution
-            $sql = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlRaw);
-        } else {
-            $sql = $sqlRaw;
+            $sqlRaw = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlRaw);
         }
+        
+        // Check if keep column is enabled
+        $keepColumn = false;
+        if (preg_match('/;\s*@KeepColumn\s*$/i', $sqlRaw)) {
+            $keepColumn = true;
+            // Remove ;@KeepColumn from SQL for execution
+            $sqlRaw = preg_replace('/;\s*@KeepColumn\s*$/i', '', $sqlRaw);
+        }
+        
+        $sql = $sqlRaw;
         
         $filters[] = [
             'type' => 'combo',
@@ -237,7 +245,8 @@ function parseWhereClause($whereClause) {
             'options' => getComboOptions($sql, $valueField, $displayField),
             'original_name' => $label, // Original name as it appears in SQL
             'sql_pattern' => $fullPattern, // SQL pattern to be replaced
-            'multiselection' => $isMultiselection // Flag to indicate if multiselection is enabled
+            'multiselection' => $isMultiselection, // Flag to indicate if multiselection is enabled
+            'keep_column' => $keepColumn // Flag to indicate if column should remain visible
         ];
     }
     
@@ -1822,7 +1831,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                     // Añadir filtro con valor descriptivo
                     $appliedFilters[] = [
                         'label' => $label,
-                        'value' => $displayValue
+                        'value' => $displayValue,
+                        'keep_column' => isset($filter['keep_column']) ? $filter['keep_column'] : false
                     ];
                 }
             }
