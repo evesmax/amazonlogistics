@@ -62,40 +62,63 @@ $sheet = $objPHPExcel->getActiveSheet();
 // Título de la hoja, limitado a 31 caracteres
 $sheet->setTitle(preg_replace('/[*\:\/?\[\]]/', '', substr($reportTitle, 0, 31))); 
 
+// Usar Calibri como fuente predeterminada
+$objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(11);
+
 // ---------------------------------------------------------
-// CABECERA DEL REPORTE (TÍTULOS Y FILTROS)
+// CABECERA DEL REPORTE (LOGO, TÍTULOS Y FILTROS)
 // ---------------------------------------------------------
 
-// Título Principal
-$sheet->setCellValue('A1', 'AMAZON LOGISTICS');
-$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16)->getColor()->setARGB('FF0066CC');
-$sheet->setCellValue('B1', $reportTitle);
-$sheet->getStyle('B1')->getFont()->setBold(true)->setSize(14);
+$numColumns = count($columns);
+$lastColLetter = PHPExcel_Cell::stringFromColumnIndex($numColumns - 1);
 
-// Fecha
-$sheet->setCellValue('B2', 'Generado el: ' . $currentDate);
-$sheet->getStyle('B2')->getFont()->getColor()->setARGB('FF666666');
+// Insertar Logo si existe localmente
+$logoPath = 'assets/img/logo.png';
+if (file_exists($logoPath)) {
+    $objDrawing = new PHPExcel_Worksheet_Drawing();
+    $objDrawing->setName('Logo');
+    $objDrawing->setDescription('Logo');
+    $objDrawing->setPath($logoPath);
+    $objDrawing->setCoordinates('A1');
+    // Ajustar tamaño del logo
+    $objDrawing->setHeight(50);
+    $objDrawing->setWorksheet($sheet);
+}
 
-// Filtros
-$currentRow = 3;
+// Título Principal - Centrado a lo largo de todas las columnas
+$sheet->setCellValue('A1', $reportTitle);
+$sheet->mergeCells('A1:' . $lastColLetter . '1');
+$styleTitle = $sheet->getStyle('A1');
+$styleTitle->getFont()->setBold(true)->setSize(20)->getColor()->setARGB('FF000000'); // Negro
+$styleTitle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$styleTitle->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+$sheet->getRowDimension(1)->setRowHeight(40); // Más espacio para el logo y título
+
+// Filtros y Fecha (en la misma fila, centrados)
+$currentRow = 2;
+$filterText = "";
 if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])) {
     $filterTexts = array();
     foreach ($_SESSION['applied_filters'] as $filter) {
         $val = is_array($filter['value']) ? implode(', ', $filter['value']) : $filter['value'];
         $filterTexts[] = $filter['label'] . ': ' . $val;
     }
-    $sheet->setCellValue('A' . $currentRow, 'Filtros aplicados: ' . implode(' | ', $filterTexts));
-    $sheet->mergeCells('A' . $currentRow . ':' . PHPExcel_Cell::stringFromColumnIndex(count($columns) - 1) . $currentRow);
-    $sheet->getStyle('A' . $currentRow)->getFont()->setItalic(true)->getColor()->setARGB('FF666666');
-    $currentRow++;
+    $filterText = 'Filtros aplicados: ' . implode('   ', $filterTexts) . '   ';
 } elseif (isset($_SESSION['user_selected_date_filter_al'])) {
-    $sheet->setCellValue('A' . $currentRow, 'Filtros aplicados: Al ' . $_SESSION['user_selected_date_filter_al']);
-    $sheet->mergeCells('A' . $currentRow . ':' . PHPExcel_Cell::stringFromColumnIndex(count($columns) - 1) . $currentRow);
-    $sheet->getStyle('A' . $currentRow)->getFont()->setItalic(true)->getColor()->setARGB('FF666666');
-    $currentRow++;
+    $filterText = 'Filtros aplicados: Al: ' . $_SESSION['user_selected_date_filter_al'] . '   ';
 }
 
-$currentRow++; // Espacio antes de la tabla
+$filterText .= 'Generado el: ' . $currentDate;
+
+$sheet->setCellValue('A' . $currentRow, $filterText);
+$sheet->mergeCells('A' . $currentRow . ':' . $lastColLetter . $currentRow);
+$styleFilter = $sheet->getStyle('A' . $currentRow);
+$styleFilter->getFont()->setSize(12)->getColor()->setARGB('FF000000');
+$styleFilter->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+$styleFilter->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+
+$currentRow++; // Espacio en blanco después de los filtros
+$currentRow++; // Inicia cabecera en fila 4
 
 // ---------------------------------------------------------
 // ENCABEZADOS DE COLUMNAS
@@ -105,11 +128,12 @@ foreach ($columns as $column) {
     $colLetter = PHPExcel_Cell::stringFromColumnIndex($colIndex);
     $sheet->setCellValue($colLetter . $currentRow, $column);
     
-    // Estilos para cabecera
+    // Estilos para cabecera (sin bordes, color lavanda/púrpura claro, centrado)
     $style = $sheet->getStyle($colLetter . $currentRow);
-    $style->getFont()->setBold(true);
-    $style->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FFF2F2F2');
-    $style->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $style->getFont()->setBold(true)->setSize(11);
+    $style->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FFE6E6FA'); // Lavanda/Púrpura claro
+    $style->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $style->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
     
     $colIndex++;
 }
@@ -122,90 +146,80 @@ $currentRow++;
 
 foreach ($results as $row) {
     $colIndex = 0;
+    
+    // Validar si es fila de subtotal o total general (generado por reporte.php)
+    $isSubtotal = isset($row['__is_subtotal']) && $row['__is_subtotal'] === true;
+    
     foreach ($columns as $column) {
+        // Ignorar campos internos de control si llegaron a colarse
+        if ($column === '__is_subtotal' || $column === '__subtotal_level') {
+            continue;
+        }
+
         $colLetter = PHPExcel_Cell::stringFromColumnIndex($colIndex);
         $value = isset($row[$column]) ? $row[$column] : '';
         
-        // 1. Limpieza de HTML
-        if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+        // Limpieza rápida de HTML
+        if (is_string($value) && preg_match('/<[a-z][\s\S]*>/i', $value)) {
             $valueLower = strtolower($value);
-            // Si es imagen
             if (strpos($valueLower, '<img') !== false) {
-                // Verificar si está dentro de un enlace
                 if (preg_match('/<a[^>]*href="([^"]*)"[^>]*>.*?<\/a>/i', $value, $matches)) {
-                    // Extraer texto del enlace
                     if (preg_match('/>([^<]*)<\/a>/i', $value, $contentMatches) && !empty($contentMatches[1]) && $contentMatches[1] != '<img') {
                         $value = trim($contentMatches[1]);
                     } else {
-                        // Intentar extraer el atributo title de la imagen
                         if (preg_match('/title="([^"]*)"/i', $value, $titleMatch)) {
                             $value = trim($titleMatch[1]);
                         } else {
-                            $value = $matches[1]; // url si todo lo demas falla
+                            $value = $matches[1];
                         }
                     }
                 } else {
-                    // Tratar de sacar el title de la imagen o alt
                     if (preg_match('/title="([^"]*)"/i', $value, $titleMatch)) {
                         $value = trim($titleMatch[1]);
                     } else {
                         $value = '[IMAGEN]';
                     }
                 }
-            } 
-            // Si es un enlace puro
-            else if (strpos($valueLower, '<a') !== false) {
+            } else if (strpos($valueLower, '<a') !== false) {
                 if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty(trim($matches[1]))) {
                     $value = trim($matches[1]);
                 } else {
                     $value = strip_tags($value);
                 }
-            } 
-            // Limpiar todo lo demás
-            else {
+            } else {
                 $value = strip_tags($value);
             }
-            
-            // Decodificar entidades HTML como &nbsp;
             $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
             $value = trim(str_replace(array("&nbsp;", "\xc2\xa0"), " ", $value));
         }
         
-        // 2. Detección y formato de números
+        // Detección y formato de números
         $isNumber = false;
         $numValue = 0;
         
-        // Caso específico mencionado en print.php
-        if ($value === '2990,58') {
+        // No parsear como número si dice "TOTAL GENERAL"
+        if ($value === 'TOTAL GENERAL') {
+            $isNumber = false;
+        } else if ($value === '2990,58') {
             $isNumber = true;
             $numValue = 2990.58;
-        } 
-        // Formatos con comas y puntos
-        else if (is_string($value) && preg_match('/^[\d.,\-]+$/', trim($value))) {
+        } else if (is_string($value) && preg_match('/^[\d.,\-]+$/', trim($value))) {
             $cleanValue = trim($value);
-            
-            // Formato europeo (2.990,58) o coma para decimal
             if (strpos($cleanValue, ',') !== false && strpos($cleanValue, '.') !== false) {
                 if (strpos($cleanValue, '.') < strpos($cleanValue, ',')) {
-                    $cleanValue = str_replace('.', '', $cleanValue); // quitar puntos de miles
-                    $cleanValue = str_replace(',', '.', $cleanValue); // coma a punto decimal
+                    $cleanValue = str_replace('.', '', $cleanValue);
+                    $cleanValue = str_replace(',', '.', $cleanValue);
                 } else {
-                    // 2,990.58
                     $cleanValue = str_replace(',', '', $cleanValue);
                 }
-            }
-            // Formato solo con coma decimal (2990,58)
-            else if (strpos($cleanValue, ',') !== false) {
+            } else if (strpos($cleanValue, ',') !== false) {
                 $cleanValue = str_replace(',', '.', $cleanValue);
             }
-            
             if (is_numeric($cleanValue) && $cleanValue != '') {
                 $isNumber = true;
                 $numValue = floatval($cleanValue);
             }
-        } 
-        else if (is_numeric(str_replace(',', '', trim($value))) && trim($value) != '') {
-            // Manejar string como "1,234.56" o "1234.56"
+        } else if (is_numeric(str_replace(',', '', trim($value))) && trim($value) != '') {
             $cleanValue = str_replace(',', '', trim($value));
             if (is_numeric($cleanValue)) {
                 $isNumber = true;
@@ -213,32 +227,38 @@ foreach ($results as $row) {
             }
         }
         
-        // 3. Asignación de celda y estilo
+        // Asignación de celda
+        $cellStyle = $sheet->getStyle($colLetter . $currentRow);
+        
         if ($isNumber) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
-            
-            // Determinar decimales según config o por defecto 2
             $decimals = 2;
             if (isset($formatInfo[$column]) && isset($formatInfo[$column]['decimals'])) {
                 $decimals = $formatInfo[$column]['decimals'];
             }
-            
             $formatCode = '#,##0.00';
             if ($decimals == 0) $formatCode = '#,##0';
+            else if ($decimals == 3) $formatCode = '#,##0.000'; // Soporte para .000 si se requiere
             
-            $sheet->getStyle($colLetter . $currentRow)->getNumberFormat()->setFormatCode($formatCode);
+            $cellStyle->getNumberFormat()->setFormatCode($formatCode);
+            // Números a la derecha
+            $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         } else {
-            // Tratar como string
-            // Si el texto parece un número muy largo (ej. códigos de barras o RFC), forzar a texto
             if (is_numeric($value) && strlen($value) > 11) {
                 $sheet->setCellValueExplicit($colLetter . $currentRow, $value, PHPExcel_Cell_DataType::TYPE_STRING);
             } else {
                 $sheet->setCellValue($colLetter . $currentRow, $value);
             }
+            // Textos a la izquierda (excepto subtotales que pondremos en bold más adelante)
+            // Según la imagen, Zafra estaba centrada, pero por defecto dejaremos a la izquierda o centro si el texto es corto
+            // Para mantener consistencia, dejaremos izquierda por defecto
+            $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
         }
-        
-        // Bordes de la celda de datos
-        $sheet->getStyle($colLetter . $currentRow)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+        // Si es subtotal o TOTAL GENERAL, aplicar negrita
+        if ($isSubtotal || $value === 'TOTAL GENERAL') {
+            $cellStyle->getFont()->setBold(true);
+        }
         
         $colIndex++;
     }
@@ -248,17 +268,15 @@ foreach ($results as $row) {
 // ---------------------------------------------------------
 // AUTOAJUSTE DE COLUMNAS
 // ---------------------------------------------------------
-// Iteramos sobre las columnas para ajustar su ancho
 for ($i = 0; $i < count($columns); $i++) {
     $colLetter = PHPExcel_Cell::stringFromColumnIndex($i);
-    // AutoSize
+    // Para que no se encoja mucho el título del filtro, usamos un ancho automático pero no forzamos el título.
     $sheet->getColumnDimension($colLetter)->setAutoSize(true);
 }
 
 // ---------------------------------------------------------
 // GUARDAR Y EXPORTAR
 // ---------------------------------------------------------
-// Limpiar buffer de salida por si algo se imprimió
 if (ob_get_length() > 0) {
     ob_end_clean();
 }
@@ -268,11 +286,11 @@ $filename = str_replace(' ', '_', $reportTitle) . '_' . date('Y-m-d_H-i-s') . '.
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment;filename="' . $filename . '"');
 header('Cache-Control: max-age=0');
-header('Cache-Control: max-age=1'); // IF IE 9
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-header('Pragma: public'); // HTTP/1.0
+header('Cache-Control: max-age=1');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: cache, must-revalidate');
+header('Pragma: public');
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 $objWriter->save('php://output');
