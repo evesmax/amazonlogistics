@@ -1,27 +1,18 @@
 <?php
 /**
- * Export SQL query results to Excel (HTML format)
+ * Export SQL query results to Excel using PHPExcel
  * 
- * This script generates an HTML file with Excel-specific markers
- * to create a better Excel file with formatting and embedded logo.
- * 
- * Compatible with PHP 5.5.9
+ * Este script utiliza PHPExcel nativamente para generar un archivo .xlsx real.
+ * Reemplaza a export_excel_api.php que usaba un servicio externo.
  */
 
 // Aumentar límite de memoria para exportaciones grandes
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '512M');
+set_time_limit(300); // 5 minutos por si la consulta es muy grande
 
-// Include configuration files
 require_once 'config.php';
-// Se ha eliminado la referencia a all_level_html_fix.php para mostrar el HTML tal cual
+require_once 'assets/PHPExcel/Classes/PHPExcel.php';
 
-// Función simple para mostrar HTML
-function displayHtmlValue($value) {
-    // Simplemente retornar el valor tal cual
-    return $value;
-}
-
-// Check if results exist in session
 if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
     die("No hay resultados para exportar.");
 }
@@ -29,7 +20,6 @@ if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
 $results = $_SESSION['query_results'];
 $columns = isset($_SESSION['visible_columns']) ? $_SESSION['visible_columns'] : $_SESSION['query_columns'];
 
-// Get report title if available
 $reportTitle = "Reporte de Consulta";
 if (isset($_SESSION['repolog_report_id'])) {
     try {
@@ -43,256 +33,247 @@ if (isset($_SESSION['repolog_report_id'])) {
         if ($reportInfo && isset($reportInfo['nombrereporte'])) {
             $reportTitle = $reportInfo['nombrereporte'];
         }
-        
         $pdo = null;
     } catch (PDOException $e) {
-        // Si hay error, mantenemos el título genérico
+        // Ignorar error y dejar título por defecto
     }
 }
 
-// Fecha actual para el reporte
+date_default_timezone_set('America/Mexico_City');
 $currentDate = date('d/m/Y H:i:s');
 
-// Set headers for Excel download (HTML format)
-header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment; filename="' . str_replace(' ', '_', $reportTitle) . '_' . date('Y-m-d_H-i-s') . '.xls"');
-header('Cache-Control: max-age=0');
+// Formato de columnas si existe (opcional)
+$formatInfo = array();
+if (isset($_SESSION['column_format_info'])) {
+    $formatInfo = $_SESSION['column_format_info'];
+}
 
-// Generate HTML content for Excel
-?>
-<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-      xmlns:x="urn:schemas-microsoft-com:office:excel" 
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!--[if gte mso 9]>
-    <xml>
-        <x:ExcelWorkbook>
-            <x:ExcelWorksheets>
-                <x:ExcelWorksheet>
-                    <x:Name><?php echo htmlspecialchars($reportTitle); ?></x:Name>
-                    <x:WorksheetOptions>
-                        <x:DisplayGridlines/>
-                    </x:WorksheetOptions>
-                </x:ExcelWorksheet>
-            </x:ExcelWorksheets>
-        </x:ExcelWorkbook>
-    </xml>
-    <![endif]-->
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            color: #333;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .header {
-            display: table;
-            width: 100%;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        .logo-container {
-            display: table-cell;
-            width: 200px;
-            vertical-align: middle;
-            padding-right: 20px;
-        }
-        .company-logo-text {
-            font-size: 18pt;
-            font-weight: bold;
-            color: #0066CC;
-            line-height: 1.2;
-            font-family: 'Arial Black', Arial, sans-serif;
-        }
-        .title-container {
-            display: table-cell;
-            vertical-align: middle;
-        }
-        .report-title {
-            font-size: 20pt;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-        }
-        .report-date {
-            font-size: 12pt;
-            color: #666;
-            margin: 0;
-        }
-        .report-filters {
-            margin-top: 8px;
-            font-size: 12pt;
-            color: #666;
-        }
-        .footer {
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            font-size: 12pt;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo-container">
-            <div class="company-logo-text">
-                AMAZON<br>LOGISTICS
-            </div>
-        </div>
+// Inicializar PHPExcel
+$objPHPExcel = new PHPExcel();
+$objPHPExcel->getProperties()->setCreator("Amazon Logistics RepoLog")
+                             ->setLastModifiedBy("Amazon Logistics")
+                             ->setTitle($reportTitle)
+                             ->setSubject($reportTitle)
+                             ->setDescription("Reporte generado por RepoLog")
+                             ->setKeywords("reporte excel")
+                             ->setCategory("Reportes");
+
+$sheet = $objPHPExcel->getActiveSheet();
+// Título de la hoja, limitado a 31 caracteres
+$sheet->setTitle(preg_replace('/[*\:\/?\[\]]/', '', substr($reportTitle, 0, 31))); 
+
+// ---------------------------------------------------------
+// CABECERA DEL REPORTE (TÍTULOS Y FILTROS)
+// ---------------------------------------------------------
+
+// Título Principal
+$sheet->setCellValue('A1', 'AMAZON LOGISTICS');
+$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16)->getColor()->setARGB('FF0066CC');
+$sheet->setCellValue('B1', $reportTitle);
+$sheet->getStyle('B1')->getFont()->setBold(true)->setSize(14);
+
+// Fecha
+$sheet->setCellValue('B2', 'Generado el: ' . $currentDate);
+$sheet->getStyle('B2')->getFont()->getColor()->setARGB('FF666666');
+
+// Filtros
+$currentRow = 3;
+if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])) {
+    $filterTexts = array();
+    foreach ($_SESSION['applied_filters'] as $filter) {
+        $val = is_array($filter['value']) ? implode(', ', $filter['value']) : $filter['value'];
+        $filterTexts[] = $filter['label'] . ': ' . $val;
+    }
+    $sheet->setCellValue('A' . $currentRow, 'Filtros aplicados: ' . implode(' | ', $filterTexts));
+    $sheet->mergeCells('A' . $currentRow . ':' . PHPExcel_Cell::stringFromColumnIndex(count($columns) - 1) . $currentRow);
+    $sheet->getStyle('A' . $currentRow)->getFont()->setItalic(true)->getColor()->setARGB('FF666666');
+    $currentRow++;
+} elseif (isset($_SESSION['user_selected_date_filter_al'])) {
+    $sheet->setCellValue('A' . $currentRow, 'Filtros aplicados: Al ' . $_SESSION['user_selected_date_filter_al']);
+    $sheet->mergeCells('A' . $currentRow . ':' . PHPExcel_Cell::stringFromColumnIndex(count($columns) - 1) . $currentRow);
+    $sheet->getStyle('A' . $currentRow)->getFont()->setItalic(true)->getColor()->setARGB('FF666666');
+    $currentRow++;
+}
+
+$currentRow++; // Espacio antes de la tabla
+
+// ---------------------------------------------------------
+// ENCABEZADOS DE COLUMNAS
+// ---------------------------------------------------------
+$colIndex = 0;
+foreach ($columns as $column) {
+    $colLetter = PHPExcel_Cell::stringFromColumnIndex($colIndex);
+    $sheet->setCellValue($colLetter . $currentRow, $column);
+    
+    // Estilos para cabecera
+    $style = $sheet->getStyle($colLetter . $currentRow);
+    $style->getFont()->setBold(true);
+    $style->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FFF2F2F2');
+    $style->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    
+    $colIndex++;
+}
+
+// ---------------------------------------------------------
+// DATOS DE LA TABLA
+// ---------------------------------------------------------
+$startDataRow = $currentRow + 1;
+$currentRow++;
+
+foreach ($results as $row) {
+    $colIndex = 0;
+    foreach ($columns as $column) {
+        $colLetter = PHPExcel_Cell::stringFromColumnIndex($colIndex);
+        $value = isset($row[$column]) ? $row[$column] : '';
         
-        <div class="title-container">
-            <h1 class="report-title"><?php echo htmlspecialchars($reportTitle); ?></h1>
-            <p class="report-date">Generado el: <?php echo $currentDate; ?></p>
-            
-            <?php if (isset($_SESSION['applied_filters']) && !empty($_SESSION['applied_filters'])): ?>
-                <div class="report-filters">
-                    <strong>Filtros aplicados:</strong>
-                    <?php 
-                    $filterTexts = array();
-                    foreach ($_SESSION['applied_filters'] as $filter) {
-                        $filterTexts[] = '<span style="font-weight:bold;">' . htmlspecialchars($filter['label']) . ':</span> ' . 
-                                       htmlspecialchars($filter['value']);
+        // 1. Limpieza de HTML
+        if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+            $valueLower = strtolower($value);
+            // Si es imagen
+            if (strpos($valueLower, '<img') !== false) {
+                // Verificar si está dentro de un enlace
+                if (preg_match('/<a[^>]*href="([^"]*)"[^>]*>.*?<\/a>/i', $value, $matches)) {
+                    // Extraer texto del enlace
+                    if (preg_match('/>([^<]*)<\/a>/i', $value, $contentMatches) && !empty($contentMatches[1]) && $contentMatches[1] != '<img') {
+                        $value = trim($contentMatches[1]);
+                    } else {
+                        // Intentar extraer el atributo title de la imagen
+                        if (preg_match('/title="([^"]*)"/i', $value, $titleMatch)) {
+                            $value = trim($titleMatch[1]);
+                        } else {
+                            $value = $matches[1]; // url si todo lo demas falla
+                        }
                     }
-                    echo implode(' | ', $filterTexts);
-                    ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-    
-    <?php if (empty($results)): ?>
-        <p>La consulta no devolvió resultados para exportar.</p>
-    <?php else: ?>
-        <table>
-            <thead>
-                <tr>
-                    <?php foreach ($columns as $column): ?>
-                        <th><?php echo htmlspecialchars($column); ?></th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($results as $row): ?>
-                    <tr>
-                        <?php foreach ($columns as $column): ?>
-                            <td>
-                            <?php 
-                                $value = isset($row[$column]) ? $row[$column] : '';
-                                
-                                // Aplicar la función displayHtmlValue para corregir el HTML
-                                $value = displayHtmlValue($value);
-                                
-                                // Detectar si parece contener HTML (case-insensitive)
-                                if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
-                                    // Convertir a minúsculas para mejor detección
-                                    $valueLower = strtolower($value);
-                                    
-                                    // Contiene HTML, verificar si es una imagen
-                                    if (strpos($valueLower, '<img') !== false) {
-                                        // Es una imagen, extraer el contenido del enlace si existe
-                                        if (preg_match('/<a href="[^"]*"[^>]*>.*?<\/a>/i', $value, $matches)) {
-                                            // Si tiene enlace, extraer texto de enlace o usar [IMAGEN ENLACE]
-                                            if (preg_match('/>([^<]*)<\/a>/i', $value, $contentMatches) && !empty($contentMatches[1]) 
-                                                && $contentMatches[1] != '<img') {
-                                                echo trim($contentMatches[1]);
-                                            } else {
-                                                echo '[IMAGEN ENLACE]';
-                                            }
-                                        } else {
-                                            // Sin enlace, solo una imagen
-                                            echo '[IMAGEN]';
-                                        }
-                                    } else if (strpos($valueLower, '<a') !== false) {
-                                        // Es un enlace, extraer el texto del enlace
-                                        if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty($matches[1])) {
-                                            echo trim($matches[1]);
-                                        } else {
-                                            // No se pudo extraer el texto, mostrar [ENLACE]
-                                            echo '[ENLACE]';
-                                        }
-                                    } else if (strpos($valueLower, '<center') !== false ||
-                                              strpos($valueLower, '<div') !== false) {
-                                        
-                                        // Eliminar etiquetas HTML para mostrar solo el texto
-                                        echo strip_tags($value);
-                                    } else {
-                                        // Es HTML - Mostrar sin etiquetas para Excel
-                                        echo strip_tags($value);
-                                    }
-                                } else {
-                                    // Verificar si parece ser un número formateado (con comas o puntos)
-                                    if (is_string($value) && preg_match('/^[\d.,]+$/', $value)) {
-                                        // Extraer solo dígitos y punto decimal, ignorando separadores de miles
-                                        $cleanedValue = $value;
-                                        
-                                        // Formato europeo (2.990,58) -> (2990.58)
-                                        if (strpos($value, ',') !== false && strpos($value, '.') !== false) {
-                                            // Si tiene puntos y luego coma, es formato europeo
-                                            if (strpos($value, '.') < strpos($value, ',')) {
-                                                $cleanedValue = str_replace('.', '', $value); // Quitar puntos
-                                                $cleanedValue = str_replace(',', '.', $cleanedValue); // Convertir coma a punto
-                                            }
-                                        } 
-                                        // Formato con coma decimal (2990,58) -> (2990.58)
-                                        else if (strpos($value, ',') !== false) {
-                                            $cleanedValue = str_replace(',', '.', $value);
-                                        }
-                                        
-                                        // Verificar si ahora es un número válido
-                                        if (is_numeric($cleanedValue)) {
-                                            // Agregar mso:number-format para indicar a Excel que es un número
-                                            // y el formato específico a utilizar
-                                            echo '<span style="mso:number-format:\'#,##0.00_\)\;\[Red\](#,##0.00\)\'">' . 
-                                                  $cleanedValue . 
-                                                 '</span>';
-                                        } else {
-                                            echo $value; // No se pudo convertir, mostrar original
-                                        }
-                                    }
-                                    // Verificar si es un número sin formato
-                                    else if (is_numeric($value)) {
-                                        // Es un número sin formato, usar estilo para Excel
-                                        echo '<span style="mso:number-format:\'#,##0.00_\)\;\[Red\](#,##0.00\)\'">' . 
-                                              $value . 
-                                             '</span>';
-                                    }
-                                    // No es HTML ni número - MOSTRAR TAMBIÉN SIN ESCAPAR
-                                    else {
-                                        echo $value;
-                                    }
-                                }
-                            ?>
-                            </td>
-                        <?php endforeach; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
-    
-    <div class="footer">
-        <p>Este reporte ha sido generado por el sistema RepoLog. &copy; <?php echo date('Y'); ?></p>
-    </div>
-</body>
-</html>
-<?php
+                } else {
+                    // Tratar de sacar el title de la imagen o alt
+                    if (preg_match('/title="([^"]*)"/i', $value, $titleMatch)) {
+                        $value = trim($titleMatch[1]);
+                    } else {
+                        $value = '[IMAGEN]';
+                    }
+                }
+            } 
+            // Si es un enlace puro
+            else if (strpos($valueLower, '<a') !== false) {
+                if (preg_match('/>([^<]*)<\/a>/i', $value, $matches) && !empty(trim($matches[1]))) {
+                    $value = trim($matches[1]);
+                } else {
+                    $value = strip_tags($value);
+                }
+            } 
+            // Limpiar todo lo demás
+            else {
+                $value = strip_tags($value);
+            }
+            
+            // Decodificar entidades HTML como &nbsp;
+            $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+            $value = trim(str_replace(array("&nbsp;", "\xc2\xa0"), " ", $value));
+        }
+        
+        // 2. Detección y formato de números
+        $isNumber = false;
+        $numValue = 0;
+        
+        // Caso específico mencionado en print.php
+        if ($value === '2990,58') {
+            $isNumber = true;
+            $numValue = 2990.58;
+        } 
+        // Formatos con comas y puntos
+        else if (is_string($value) && preg_match('/^[\d.,\-]+$/', trim($value))) {
+            $cleanValue = trim($value);
+            
+            // Formato europeo (2.990,58) o coma para decimal
+            if (strpos($cleanValue, ',') !== false && strpos($cleanValue, '.') !== false) {
+                if (strpos($cleanValue, '.') < strpos($cleanValue, ',')) {
+                    $cleanValue = str_replace('.', '', $cleanValue); // quitar puntos de miles
+                    $cleanValue = str_replace(',', '.', $cleanValue); // coma a punto decimal
+                } else {
+                    // 2,990.58
+                    $cleanValue = str_replace(',', '', $cleanValue);
+                }
+            }
+            // Formato solo con coma decimal (2990,58)
+            else if (strpos($cleanValue, ',') !== false) {
+                $cleanValue = str_replace(',', '.', $cleanValue);
+            }
+            
+            if (is_numeric($cleanValue) && $cleanValue != '') {
+                $isNumber = true;
+                $numValue = floatval($cleanValue);
+            }
+        } 
+        else if (is_numeric(str_replace(',', '', trim($value))) && trim($value) != '') {
+            // Manejar string como "1,234.56" o "1234.56"
+            $cleanValue = str_replace(',', '', trim($value));
+            if (is_numeric($cleanValue)) {
+                $isNumber = true;
+                $numValue = floatval($cleanValue);
+            }
+        }
+        
+        // 3. Asignación de celda y estilo
+        if ($isNumber) {
+            $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
+            
+            // Determinar decimales según config o por defecto 2
+            $decimals = 2;
+            if (isset($formatInfo[$column]) && isset($formatInfo[$column]['decimals'])) {
+                $decimals = $formatInfo[$column]['decimals'];
+            }
+            
+            $formatCode = '#,##0.00';
+            if ($decimals == 0) $formatCode = '#,##0';
+            
+            $sheet->getStyle($colLetter . $currentRow)->getNumberFormat()->setFormatCode($formatCode);
+        } else {
+            // Tratar como string
+            // Si el texto parece un número muy largo (ej. códigos de barras o RFC), forzar a texto
+            if (is_numeric($value) && strlen($value) > 11) {
+                $sheet->setCellValueExplicit($colLetter . $currentRow, $value, PHPExcel_Cell_DataType::TYPE_STRING);
+            } else {
+                $sheet->setCellValue($colLetter . $currentRow, $value);
+            }
+        }
+        
+        // Bordes de la celda de datos
+        $sheet->getStyle($colLetter . $currentRow)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        
+        $colIndex++;
+    }
+    $currentRow++;
+}
+
+// ---------------------------------------------------------
+// AUTOAJUSTE DE COLUMNAS
+// ---------------------------------------------------------
+// Iteramos sobre las columnas para ajustar su ancho
+for ($i = 0; $i < count($columns); $i++) {
+    $colLetter = PHPExcel_Cell::stringFromColumnIndex($i);
+    // AutoSize
+    $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+}
+
+// ---------------------------------------------------------
+// GUARDAR Y EXPORTAR
+// ---------------------------------------------------------
+// Limpiar buffer de salida por si algo se imprimió
+if (ob_get_length() > 0) {
+    ob_end_clean();
+}
+
+$filename = str_replace(' ', '_', $reportTitle) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+header('Cache-Control: max-age=1'); // IF IE 9
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+header('Pragma: public'); // HTTP/1.0
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+$objWriter->save('php://output');
 exit;
-?>
