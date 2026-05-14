@@ -302,6 +302,7 @@ $htmlpoliticas="
          //Genera Combo Transportista
          //Verifica Politica para Seleccionar a otros transportistas
             $sel="";
+            $readonly_transporte = ($multiplesviajes == 1 || $multiplesviajes == '1') ? "" : "readonly";
             $cmbtransportista="<select id=cmbtransportista name=cmbtransportista>";
                     if ($multiplesviajes) {
                         $sqltrans="Select idtransportista, razonsocial from operaciones_transportistas order by razonsocial";
@@ -516,27 +517,27 @@ $htmlpoliticas="
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>CARTA PORTE:</td>
-                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtcartaporte' name='txtcartaporte' value='".$cartaporte."' Size=20></td>
+                                                            <td align=left><input ".$readonly_transporte." type=text id='txtcartaporte' name='txtcartaporte' value='".$cartaporte."' Size=20></td>
                                                         </tr>";	
 						$html.="<tr>
                                                             <td width=30%>NOMBRE OPERADOR:</td>
-                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtoperador' name='txtoperador' value='".$nombreoperador."' Size=60></td>
+                                                            <td align=left><input ".$readonly_transporte." type=text id='txtoperador' name='txtoperador' value='".$nombreoperador."' Size=60></td>
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>LICENCIA OPERADOR:</td>
-                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtlicencia' name='txtlicencia' value='".$licenciaoperador."' Size=60></td>
+                                                            <td align=left><input ".$readonly_transporte." type=text id='txtlicencia' name='txtlicencia' value='".$licenciaoperador."' Size=60></td>
                                                         </tr>";
 														
                                                 $html.="<tr>
                                                             <td colspan=2 align=left width=30%>
-                                                                PLACAS TRACTOR:<input ".($multiplesviajes ? "" : "readonly")." type=text id='txtplacastractor' name='txtplacastractor' value='".$placastractor."' Size=20>
-                                                                PLACAS REMOLQUE:<input ".($multiplesviajes ? "" : "readonly")." type=text id='txtplacasremolque' name='txtplacasremolque' value='".$placasremolque."' Size=20>
+                                                                PLACAS TRACTOR:<input ".$readonly_transporte." type=text id='txtplacastractor' name='txtplacastractor' value='".$placastractor."' Size=20>
+                                                                PLACAS REMOLQUE:<input ".$readonly_transporte." type=text id='txtplacasremolque' name='txtplacasremolque' value='".$placasremolque."' Size=20>
                                                             </td>
                                                         </tr>";
 	                                                   
 						$html.="<tr>
                                                             <td width=30%>FOLIO CLIENTE:</td>
-                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
+                                                            <td align=left><input ".$readonly_transporte." type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
                                                         </tr>";
                                                
                                         $html.="</table>";
