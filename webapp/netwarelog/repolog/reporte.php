@@ -2232,11 +2232,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         
                                         $value = isset($row[$column]) ? $row[$column] : '';
                                         
-                                        // Pre-determinar si es texto para alinear la celda al centro (excepto si es numérico)
+                                        // Pre-determinar si es texto para alinear la celda al centro (excepto si es numérico con formato explícito)
                                         $isTextCell = true;
-                                        if (is_numeric($value)) {
-                                            $isTextCell = false;
-                                        } else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
+                                        if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
                                             $isTextCell = false;
                                         } else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', trim($value))) {
                                             $cleanCheck = str_replace(',', '', trim($value));
@@ -2248,9 +2246,11 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         $alignAttr = '';
                                         if ($value !== '') {
                                             if ($isTextCell) {
+                                                // Si es texto o número sin formato explícito, se centra
                                                 $alignAttr = ' style="text-align: center !important;" class="text-center"';
                                             } else {
-                                                $alignAttr = ' style="text-align: left !important;" class="text-left"';
+                                                // Si tiene formato de número explícito, se manda a la derecha
+                                                $alignAttr = ' style="text-align: right !important;" class="text-right"';
                                             }
                                         }
                                     ?>
@@ -2478,21 +2478,15 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                         }
                                         
-                                        // Verificar si es un número o parece un número formateado
-                                        if (is_numeric($value)) {
-                                            // Es un número, formatear con comas para miles y punto para decimales
-                                            $formattedValue = number_format(floatval($value), $decimals, '.', ',');
-                                            echo '<strong class="text-right" style="text-align: right !important;">' . $formattedValue . '</strong>';
-                                        }
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
-                                        else if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
+                                        if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
                                             $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
                                             echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato americano (1,234.56)
-                                        else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
+                                        else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value) && strpos($value, ',') !== false) {
                                             // Extraer el número sin formateo para reformatearlo
                                             $cleanValue = str_replace(',', '', $value);
                                             if (is_numeric($cleanValue)) {
@@ -2507,10 +2501,16 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 }
                                             }
                                         }
-                                        // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR)
+                                        // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR) O DEJAR SIN FORMATO SI NO VIENE CON COMAS
                                         else {
                                             // Mostrar el HTML directamente para que sea interpretado por el navegador
-                                            echo $value;
+                                            // Si es numerico sin formato, se deja tal cual (no se le agregan comas)
+                                            if (is_string($value) && strpos($value, '<') !== false && strpos($value, '>') !== false) {
+                                                echo $value;
+                                            } else {
+                                                // Si es un string numerico se mostrará tal como viene de SQL sin justificar ni alterar a number_format
+                                                echo htmlspecialchars((string)$value);
+                                            }
                                         }
                                     ?>
                                     </td>

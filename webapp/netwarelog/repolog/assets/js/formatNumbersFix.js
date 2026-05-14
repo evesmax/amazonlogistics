@@ -192,57 +192,25 @@ function formatCellContent(cell) {
         }
     }
     
-    // SOLO aplicar formato a números que realmente tienen decimales o formato numérico
+    // SOLO aplicar formato si ya viene explícitamente formateado desde el backend 
+    // con separadores de miles (comas) según solicitud del cliente
     
-    // 1. Verificar si es un número con decimales sin separador de miles (1234.56)
-    if (/^\d+\.\d+$/.test(text)) {
-        // Contar decimales existentes para preservarlos
+    // 1. Verificar si es un número con formato americano (1,234.56 o 1,234)
+    if (/^\d{1,3}(,\d{3})*(\.\d+)?$/.test(text) && text.includes(',')) {
         var parts = text.split('.');
-        var decimals = parts[1] ? parts[1].length : 2;
-        applyNumberFormat(cell, parseFloat(text), decimals);
-    }
-    // 2. Verificar si es un número con formato europeo simple con decimales (1234,56)
-    else if (/^\d+,\d+$/.test(text)) {
-        var parts = text.split(',');
-        var decimals = parts[1] ? parts[1].length : 2;
-        var number = parseFloat(text.replace(',', '.'));
-        applyNumberFormat(cell, number, decimals);
-    }
-    // 3. Verificar si es un número con formato americano CON DECIMALES (1,234.56)
-    else if (/^\d{1,3}(,\d{3})*\.\d+$/.test(text)) {
-        var parts = text.split('.');
-        var decimals = parts[1] ? parts[1].length : 2;
+        var decimals = parts[1] ? parts[1].length : 0;
         var cleanText = text.replace(/,/g, '');
         applyNumberFormat(cell, parseFloat(cleanText), decimals);
     }
-    // 4. Verificar si es un número con formato europeo completo CON DECIMALES (1.234,56)
-    else if (/^\d{1,3}(\.\d{3})*,\d+$/.test(text)) {
+    // 2. Verificar si es un número con formato europeo completo o simple (1.234,56 o 1234,56)
+    else if ((/^\d{1,3}(\.\d{3})*,\d+$/.test(text) && text.includes('.')) || /^\d+,\d+$/.test(text)) {
         var parts = text.split(',');
         var decimals = parts[1] ? parts[1].length : 2;
         var cleanText = text.replace(/\./g, '').replace(',', '.');
         applyNumberFormat(cell, parseFloat(cleanText), decimals);
     }
-    // 5. Verificar si la columna tiene un nombre que indica valores monetarios o cantidades
-    else if (headerCell && (
-        headerText.includes('cantidad') || 
-        headerText.includes('monto') || 
-        headerText.includes('total') || 
-        headerText.includes('precio') || 
-        headerText.includes('costo') || 
-        headerText.includes('valor') ||
-        headerText.includes('saldo') ||
-        headerText.includes('tm') ||
-        headerText.includes('tonelada'))) {
-        
-        // Para columnas numéricas que deberían tener formato, verificar si es un número entero
-        if (/^\d+$/.test(text)) {
-            // Verificar SQL para detectar cuántos decimales usar
-            var defaultDecimals = (headerText.includes('tm') || headerText.includes('tonelada')) ? 3 : 0;
-            applyNumberFormat(cell, parseFloat(text), defaultDecimals);
-        }
-    }
     
-    // Marcar la celda como formateada
+    // Marcar la celda como formateada sin formatear los números raw
     cell.setAttribute('data-formatted', 'true');
 }
 
