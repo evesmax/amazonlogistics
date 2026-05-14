@@ -142,18 +142,18 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
             $desField = $match[3];    // des
             $sqlQueryRaw = $match[4]; // SQL de consulta (puede incluir ;@Multiselection)
             
-            // Check if multiselection is enabled (check if SQL ends with ;@Multiselection)
+            // Check if multiselection is enabled
             $isMultiselection = false;
-            if (preg_match('/;\s*@Multiselection\s*$/i', $sqlQueryRaw)) {
+            if (preg_match('/;\s*@Multiselection/i', $sqlQueryRaw)) {
                 $isMultiselection = true;
                 // Remove ;@Multiselection from SQL for execution
-                $sqlQueryRaw = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlQueryRaw);
+                $sqlQueryRaw = preg_replace('/;\s*@Multiselection/i', '', $sqlQueryRaw);
             }
             
             // Check if keep column is enabled
-            if (preg_match('/;\s*@KeepColumn\s*$/i', $sqlQueryRaw)) {
+            if (preg_match('/;\s*@KeepColumn/i', $sqlQueryRaw)) {
                 // Remove ;@KeepColumn from SQL for execution
-                $sqlQueryRaw = preg_replace('/;\s*@KeepColumn\s*$/i', '', $sqlQueryRaw);
+                $sqlQueryRaw = preg_replace('/;\s*@KeepColumn/i', '', $sqlQueryRaw);
             }
             
             $sqlQuery = $sqlQueryRaw;

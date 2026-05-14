@@ -217,20 +217,20 @@ function parseWhereClause($whereClause) {
         $sqlRaw = $match[4]; // Puede incluir ;@Multiselection al final
         $fullPattern = $match[0]; // Full match including [@...] pattern
         
-        // Check if multiselection is enabled (check if SQL ends with ;@Multiselection)
+        // Check if multiselection is enabled (can be anywhere in the end tags)
         $isMultiselection = false;
-        if (preg_match('/;\s*@Multiselection\s*$/i', $sqlRaw)) {
+        if (preg_match('/;\s*@Multiselection/i', $sqlRaw)) {
             $isMultiselection = true;
             // Remove ;@Multiselection from SQL for execution
-            $sqlRaw = preg_replace('/;\s*@Multiselection\s*$/i', '', $sqlRaw);
+            $sqlRaw = preg_replace('/;\s*@Multiselection/i', '', $sqlRaw);
         }
         
         // Check if keep column is enabled
         $keepColumn = false;
-        if (preg_match('/;\s*@KeepColumn\s*$/i', $sqlRaw)) {
+        if (preg_match('/;\s*@KeepColumn/i', $sqlRaw)) {
             $keepColumn = true;
             // Remove ;@KeepColumn from SQL for execution
-            $sqlRaw = preg_replace('/;\s*@KeepColumn\s*$/i', '', $sqlRaw);
+            $sqlRaw = preg_replace('/;\s*@KeepColumn/i', '', $sqlRaw);
         }
         
         $sql = $sqlRaw;
