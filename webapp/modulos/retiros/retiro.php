@@ -303,12 +303,20 @@ $htmlpoliticas="
          //Verifica Politica para Seleccionar a otros transportistas
             $sel="";
             $cmbtransportista="<select id=cmbtransportista name=cmbtransportista>";
-                    $sqltrans="Select idtransportista, razonsocial 
-					from operaciones_transportistas where idtransportista=".$idtransportista." order by razonsocial";
+                    if ($multiplesviajes) {
+                        $sqltrans="Select idtransportista, razonsocial from operaciones_transportistas order by razonsocial";
+                    } else {
+                        $sqltrans="Select idtransportista, razonsocial 
+                        from operaciones_transportistas where idtransportista=".$idtransportista." order by razonsocial";
+                    }
 
                     $result = $conexion->consultar($sqltrans);
                     while($rs = $conexion->siguiente($result)){
-                            $cmbtransportista.="<Option value=".$rs{"idtransportista"}.">".$rs{"razonsocial"}."</option>";
+                            if ($rs{"idtransportista"} == $idtransportista) {
+                                $cmbtransportista.="<Option value=".$rs{"idtransportista"}." selected>".$rs{"razonsocial"}."</option>";
+                            } else {
+                                $cmbtransportista.="<Option value=".$rs{"idtransportista"}.">".$rs{"razonsocial"}."</option>";
+                            }
                     }
                     $conexion->cerrar_consulta($result);  
             $cmbtransportista.="</select>";   
@@ -508,27 +516,27 @@ $htmlpoliticas="
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>CARTA PORTE:</td>
-                                                            <td align=left><input readonly type=text id='txtcartaporte' name='txtcartaporte' value='".$cartaporte."' Size=20></td>
+                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtcartaporte' name='txtcartaporte' value='".$cartaporte."' Size=20></td>
                                                         </tr>";	
 						$html.="<tr>
                                                             <td width=30%>NOMBRE OPERADOR:</td>
-                                                            <td align=left><input readonly type=text id='txtoperador' name='txtoperador' value='".$nombreoperador."' Size=60></td>
+                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtoperador' name='txtoperador' value='".$nombreoperador."' Size=60></td>
                                                         </tr>";
 						$html.="<tr>
                                                             <td width=30%>LICENCIA OPERADOR:</td>
-                                                            <td align=left><input readonly type=text id='txtlicencia' name='txtlicencia' value='".$licenciaoperador."' Size=60></td>
+                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtlicencia' name='txtlicencia' value='".$licenciaoperador."' Size=60></td>
                                                         </tr>";
 														
                                                 $html.="<tr>
                                                             <td colspan=2 align=left width=30%>
-                                                                PLACAS TRACTOR:<input readonly type=text id='txtplacastractor' name='txtplacastractor' value='".$placastractor."' Size=20>
-                                                                PLACAS REMOLQUE:<input readonly type=text id='txtplacasremolque' name='txtplacasremolque' value='".$placasremolque."' Size=20>
+                                                                PLACAS TRACTOR:<input ".($multiplesviajes ? "" : "readonly")." type=text id='txtplacastractor' name='txtplacastractor' value='".$placastractor."' Size=20>
+                                                                PLACAS REMOLQUE:<input ".($multiplesviajes ? "" : "readonly")." type=text id='txtplacasremolque' name='txtplacasremolque' value='".$placasremolque."' Size=20>
                                                             </td>
                                                         </tr>";
 	                                                   
 						$html.="<tr>
                                                             <td width=30%>FOLIO CLIENTE:</td>
-                                                            <td align=left><input readonly type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
+                                                            <td align=left><input ".($multiplesviajes ? "" : "readonly")." type=text id='txtrefcliente' name='txtrefcliente' value='".$referenciacliente."' Size=30></td>
                                                         </tr>";
                                                
                                         $html.="</table>";
