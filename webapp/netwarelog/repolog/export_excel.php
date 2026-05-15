@@ -282,6 +282,12 @@ foreach ($results as $row) {
                 $formatCode .= '.' . str_repeat('0', $decimals);
             }
             
+            // Si es un campo identificador (folio, id, etc), no usar separador de miles ni decimales
+            if (preg_match('/(?:folio|id|remisi[oó]n|codigo|referencia)/i', $column)) {
+                $formatCode = '0';
+            }
+
+            
             $cellStyle->getNumberFormat()->setFormatCode($formatCode);
             // Números a la derecha
             $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);

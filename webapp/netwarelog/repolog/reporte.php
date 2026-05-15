@@ -1313,6 +1313,11 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         // Por ejemplo: "3.000" significa 3 decimales, NO debemos eliminar los ceros
         if (!empty($results)) {
             foreach ($columns as $columnName) {
+                // Ignorar columnas de tipo identificador (folios, IDs, etc.) para que no se formateen con decimales
+                if (preg_match('/(?:folio|id|remisi[oó]n|codigo|referencia)/i', $columnName)) {
+                    continue;
+                }
+
                 $maxDecimalsFromData = 0;
                 $isNumericColumn = false;
                 $sampleCount = 0;
