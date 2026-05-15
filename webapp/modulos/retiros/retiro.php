@@ -302,7 +302,8 @@ $htmlpoliticas="
          //Genera Combo Transportista
          //Verifica Politica para Seleccionar a otros transportistas
             $sel="";
-            $readonly_transporte = ($multiplesviajes == 1 || $multiplesviajes == '1') ? "" : "readonly";
+            // Modificado para aceptar 1 o -1 como verdaderos (ya que en base de datos puede guardarse -1 para true)
+            $readonly_transporte = ($multiplesviajes == 1 || $multiplesviajes == '1' || $multiplesviajes == -1 || $multiplesviajes == '-1') ? "" : "readonly";
             $cmbtransportista="<select id=cmbtransportista name=cmbtransportista>";
                     if ($multiplesviajes) {
                         $sqltrans="Select idtransportista, razonsocial from operaciones_transportistas order by razonsocial";
