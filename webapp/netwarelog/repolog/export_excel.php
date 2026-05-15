@@ -81,7 +81,11 @@ $numColumns = count($columns);
 $lastColLetter = PHPExcel_Cell::stringFromColumnIndex($numColumns - 1);
 
 // Insertar Logo si existe localmente
-$logoPath = __DIR__ . '/assets/img/logo.png';
+$logoPath = __DIR__ . '/../archivos/1/administracion_usuarios/logoamz.jpg';
+if (!file_exists($logoPath)) {
+    $logoPath = __DIR__ . '/assets/img/logo.png';
+}
+
 if (file_exists($logoPath)) {
     $objDrawing = new PHPExcel_Worksheet_Drawing();
     $objDrawing->setName('Logo');
@@ -213,6 +217,7 @@ foreach ($results as $row) {
         // Detección y formato de números
         $isNumber = false;
         $numValue = 0;
+        $detectedDecimals = 0; // Por defecto 0
         
         // No parsear como número si dice "TOTAL GENERAL"
         if ($value === 'TOTAL GENERAL') {
@@ -220,17 +225,29 @@ foreach ($results as $row) {
         } else if ($value === '2990,58') {
             $isNumber = true;
             $numValue = 2990.58;
+            $detectedDecimals = 2;
         } else if (is_string($value) && preg_match('/^[\d.,\-]+$/', trim($value))) {
             $cleanValue = trim($value);
             if (strpos($cleanValue, ',') !== false && strpos($cleanValue, '.') !== false) {
                 if (strpos($cleanValue, '.') < strpos($cleanValue, ',')) {
+                    // Formato europeo
+                    $decimalPart = substr($cleanValue, strpos($cleanValue, ',') + 1);
+                    $detectedDecimals = strlen($decimalPart);
                     $cleanValue = str_replace('.', '', $cleanValue);
                     $cleanValue = str_replace(',', '.', $cleanValue);
                 } else {
+                    // Formato americano
+                    $decimalPart = substr($cleanValue, strpos($cleanValue, '.') + 1);
+                    $detectedDecimals = strlen($decimalPart);
                     $cleanValue = str_replace(',', '', $cleanValue);
                 }
             } else if (strpos($cleanValue, ',') !== false) {
+                $decimalPart = substr($cleanValue, strpos($cleanValue, ',') + 1);
+                $detectedDecimals = strlen($decimalPart);
                 $cleanValue = str_replace(',', '.', $cleanValue);
+            } else if (strpos($cleanValue, '.') !== false) {
+                $decimalPart = substr($cleanValue, strpos($cleanValue, '.') + 1);
+                $detectedDecimals = strlen($decimalPart);
             }
             if (is_numeric($cleanValue) && $cleanValue != '') {
                 $isNumber = true;
@@ -238,6 +255,10 @@ foreach ($results as $row) {
             }
         } else if (is_numeric(str_replace(',', '', trim($value))) && trim($value) != '') {
             $cleanValue = str_replace(',', '', trim($value));
+            if (strpos(trim($value), '.') !== false) {
+                $decimalPart = substr(trim($value), strpos(trim($value), '.') + 1);
+                $detectedDecimals = strlen($decimalPart);
+            }
             if (is_numeric($cleanValue)) {
                 $isNumber = true;
                 $numValue = floatval($cleanValue);
@@ -249,13 +270,17 @@ foreach ($results as $row) {
         
         if ($isNumber) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
-            $decimals = 2;
+            
+            $decimals = $detectedDecimals;
+            // Solo sobreescribir si el formato está forzado globalmente para esta columna
             if (isset($formatInfo[$column]) && isset($formatInfo[$column]['decimals'])) {
                 $decimals = $formatInfo[$column]['decimals'];
             }
-            $formatCode = '#,##0.00';
-            if ($decimals == 0) $formatCode = '#,##0';
-            else if ($decimals == 3) $formatCode = '#,##0.000'; // Soporte para .000 si se requiere
+            
+            $formatCode = '#,##0';
+            if ($decimals > 0) {
+                $formatCode .= '.' . str_repeat('0', $decimals);
+            }
             
             $cellStyle->getNumberFormat()->setFormatCode($formatCode);
             // Números a la derecha
