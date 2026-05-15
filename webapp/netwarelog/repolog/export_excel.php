@@ -7,11 +7,16 @@
  */
 
 // Aumentar límite de memoria para exportaciones grandes
-ini_set('memory_limit', '512M');
-set_time_limit(300); // 5 minutos por si la consulta es muy grande
+ini_set('memory_limit', '1024M');
+set_time_limit(600); // 10 minutos por si la consulta es enorme
 
 require_once 'config.php';
 require_once 'assets/PHPExcel/Classes/PHPExcel.php';
+
+// Habilitar caché de celdas para reducir el consumo de RAM en reportes muy grandes
+$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+$cacheSettings = array('memoryCacheSize' => '32MB');
+PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
 
 if (!isset($_SESSION['query_results']) || !isset($_SESSION['query_columns'])) {
     die("No hay resultados para exportar.");
@@ -82,23 +87,29 @@ if (file_exists($logoPath)) {
     $objDrawing->setName('Logo');
     $objDrawing->setDescription('Logo');
     $objDrawing->setPath($logoPath);
+    // Colocar el logo en A1
     $objDrawing->setCoordinates('A1');
-    // Ajustar tamaño del logo para que luzca bien
-    $objDrawing->setHeight(65);
-    // Ajustar los márgenes para que no quede pegado al borde superior izquierdo
-    $objDrawing->setOffsetX(10);
+    $objDrawing->setHeight(50);
+    $objDrawing->setOffsetX(5);
     $objDrawing->setOffsetY(5);
     $objDrawing->setWorksheet($sheet);
 }
 
-// Título Principal - Centrado a lo largo de todas las columnas
-$sheet->setCellValue('A1', $reportTitle);
-$sheet->mergeCells('A1:' . $lastColLetter . '1');
-$styleTitle = $sheet->getStyle('A1');
+// Título Principal - Centrado a lo largo de las columnas (empezando en B para no chocar con logo)
+// Si solo hay 1 columna, no fusionamos, sino fusionamos de B1 hasta la última
+if ($numColumns > 1) {
+    $sheet->mergeCells('B1:' . $lastColLetter . '1');
+    $sheet->setCellValue('B1', $reportTitle);
+    $styleTitle = $sheet->getStyle('B1');
+} else {
+    $sheet->setCellValue('A1', $reportTitle);
+    $styleTitle = $sheet->getStyle('A1');
+}
+
 $styleTitle->getFont()->setBold(true)->setSize(20)->getColor()->setARGB('FF000000'); // Negro
 $styleTitle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $styleTitle->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-$sheet->getRowDimension(1)->setRowHeight(40); // Más espacio para el logo y título
+$sheet->getRowDimension(1)->setRowHeight(55); // Más espacio para el logo y título
 
 // Filtros y Fecha (en la misma fila, centrados)
 $currentRow = 2;
