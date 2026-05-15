@@ -76,15 +76,18 @@ $numColumns = count($columns);
 $lastColLetter = PHPExcel_Cell::stringFromColumnIndex($numColumns - 1);
 
 // Insertar Logo si existe localmente
-$logoPath = 'assets/img/logo.png';
+$logoPath = __DIR__ . '/assets/img/logo.png';
 if (file_exists($logoPath)) {
     $objDrawing = new PHPExcel_Worksheet_Drawing();
     $objDrawing->setName('Logo');
     $objDrawing->setDescription('Logo');
     $objDrawing->setPath($logoPath);
     $objDrawing->setCoordinates('A1');
-    // Ajustar tamaño del logo
-    $objDrawing->setHeight(50);
+    // Ajustar tamaño del logo para que luzca bien
+    $objDrawing->setHeight(65);
+    // Ajustar los márgenes para que no quede pegado al borde superior izquierdo
+    $objDrawing->setOffsetX(10);
+    $objDrawing->setOffsetY(5);
     $objDrawing->setWorksheet($sheet);
 }
 
