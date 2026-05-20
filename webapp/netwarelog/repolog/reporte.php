@@ -1969,7 +1969,7 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             <?php if (!empty($results)): ?>
                 <div class="action-buttons">
                     <a href="export.php" class="export-btn">Descargar CSV</a>
-                    <a href="export_excel.php" class="export-excel-btn">Descargar Excel</a>
+                    <a href="export_excel.php" class="export-excel-btn" onclick="var btn=this; var originalText=btn.innerHTML; btn.innerHTML='Generando Excel...'; btn.style.opacity='0.7'; btn.style.pointerEvents='none'; setTimeout(function(){ btn.innerHTML=originalText; btn.style.opacity='1'; btn.style.pointerEvents='auto'; }, 4000);">Descargar Excel</a>
                     <a href="print.php" class="print-btn">Imprimir PDF</a>
                 </div>
             <?php endif; ?>

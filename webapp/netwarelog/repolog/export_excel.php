@@ -241,7 +241,10 @@ foreach ($results as $row) {
         // Asignación de celda
         $cellStyle = $sheet->getStyle($colLetter . $currentRow);
         
-        if ($isNumber) {
+        // Determinar si es un campo de ID/Folio (basado en el nombre de la columna)
+        $isIdentifier = preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino)(?:\s|$|doc|origen|destino)/i', $column);
+        
+        if ($isNumber && !$isIdentifier) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
             
             $formatCode = '#,##0';
@@ -249,20 +252,17 @@ foreach ($results as $row) {
                 $formatCode .= '.' . str_repeat('0', $decimals);
             }
 
-
-            
             $cellStyle->getNumberFormat()->setFormatCode($formatCode);
             // Números a la derecha
             $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         } else {
-            if (is_numeric($value) && strlen($value) > 11) {
+            // Forzar a texto si es un identificador o si tiene más de 11 caracteres (para evitar notación científica)
+            if ($isIdentifier || (is_numeric($value) && strlen(trim($value)) > 11)) {
                 $sheet->setCellValueExplicit($colLetter . $currentRow, $value, PHPExcel_Cell_DataType::TYPE_STRING);
             } else {
                 $sheet->setCellValue($colLetter . $currentRow, $value);
             }
             // Textos a la izquierda (excepto subtotales que pondremos en bold más adelante)
-            // Según la imagen, Zafra estaba centrada, pero por defecto dejaremos a la izquierda o centro si el texto es corto
-            // Para mantener consistencia, dejaremos izquierda por defecto
             $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
         }
 
