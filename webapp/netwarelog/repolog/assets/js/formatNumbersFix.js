@@ -123,6 +123,8 @@ function formatCellContent(cell) {
                 headerText.includes('código') || 
                 headerText.includes('codigo') || 
                 headerText.includes('referencia') ||
+                headerText.includes('remisión') ||
+                headerText.includes('remision') ||
                 (headerText.indexOf('num') === 0) || 
                 (headerText.indexOf(' num') !== -1)) {
                 // Es una columna de ID o referencia, no aplicar formato

@@ -261,10 +261,25 @@ function renderTable() {
             // Convertir a string si no lo es
             value = String(value);
             
+            // Evaluar si es una columna identificadora (que debe ser texto siempre)
+            var columnLower = String(column).toLowerCase();
+            var isIdColumn = (columnLower.indexOf('id') === 0) || 
+                             (columnLower.indexOf(' id') !== -1) || 
+                             columnLower.includes('folio') || 
+                             columnLower.includes('código') || 
+                             columnLower.includes('codigo') || 
+                             columnLower.includes('referencia') ||
+                             columnLower.includes('remisión') ||
+                             columnLower.includes('remision') ||
+                             (columnLower.indexOf('num') === 0) || 
+                             (columnLower.indexOf(' num') !== -1);
+            
             // Evaluar de antemano si la celda es de texto
             var isTextCell = true;
             var cleanCheck = value.trim();
-            if (cleanCheck === '') {
+            if (isIdColumn) {
+                isTextCell = true;
+            } else if (cleanCheck === '') {
                 isTextCell = false;
             } else if (!isNaN(parseFloat(cleanCheck)) && isFinite(cleanCheck)) {
                 isTextCell = false;
@@ -352,7 +367,7 @@ function renderTable() {
             
             // Procesamiento normal para filas regulares
             // Verificar si parece un número en formato europeo (con coma decimal)
-            if (/^[\d]+,[\d]+$/.test(value)) {
+            if (!isIdColumn && /^[\d]+,[\d]+$/.test(value)) {
                 // Convertir de formato europeo a formato mexicano
                 var valor = parseFloat(value.replace(',', '.'));
                 if (!isNaN(valor)) {

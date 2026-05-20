@@ -2251,12 +2251,18 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         
                                         // Pre-determinar si es texto para alinear la celda al centro (excepto si es numérico con formato explícito)
                                         $isTextCell = true;
-                                        if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
-                                            $isTextCell = false;
-                                        } else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', trim($value))) {
-                                            $cleanCheck = str_replace(',', '', trim($value));
-                                            if (is_numeric($cleanCheck)) {
+                                        
+                                        // Evaluar si es una columna identificadora (que debe ser texto siempre)
+                                        $isIdColumn = preg_match('/^(?:id|folio|código|codigo|referencia|remisión|remision|num)/i', trim($column)) || preg_match('/(?: folio| código| codigo| referencia| remisión| remision| num| id)/i', $column);
+                                        
+                                        if (!$isIdColumn) {
+                                            if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
                                                 $isTextCell = false;
+                                            } else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', trim($value))) {
+                                                $cleanCheck = str_replace(',', '', trim($value));
+                                                if (is_numeric($cleanCheck)) {
+                                                    $isTextCell = false;
+                                                }
                                             }
                                         }
                                         
@@ -2496,14 +2502,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         }
                                         
                                         // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
-                                        if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
+                                        if (!$isIdColumn && is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
                                             // Es un número con formato europeo (2990,58)
                                             $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
                                             $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
                                             echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
                                         }
                                         // Verificar si parece un número en formato americano (1,234.56)
-                                        else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value) && strpos($value, ',') !== false) {
+                                        else if (!$isIdColumn && is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value) && strpos($value, ',') !== false) {
                                             // Extraer el número sin formateo para reformatearlo
                                             $cleanValue = str_replace(',', '', $value);
                                             if (is_numeric($cleanValue)) {
