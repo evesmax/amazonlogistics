@@ -1281,8 +1281,46 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                 error_log("Detectado ROUND para columna '$columnName': campo '$field', decimales: $decimals");
             }
         }
-        // La información de formato ahora depende estrictamente de las sentencias SQL FORMAT() o ROUND()
-        // Eliminados pasos 4 y 5 de heurística por regla estricta.
+        // La información de formato ahora depende de las sentencias SQL y una heurística segura sobre los datos reales
+        
+        // 4. Heurística segura: Analizar las primeras 10 filas para detectar formatos devueltos por MySQL
+        // Esto captura columnas formateadas desde subconsultas o aliases complejos que las regex no logran atrapar
+        if (!empty($results)) {
+            $rowsToCheck = min(10, count($results));
+            for ($i = 0; $i < $rowsToCheck; $i++) {
+                $row = $results[$i];
+                foreach ($row as $column => $value) {
+                    // Si ya se detectó un formato seguro por SQL, lo respetamos
+                    if (isset($formatInfo[$column])) continue;
+                    
+                    // Ignorar columnas que son claramente identificadores o fechas
+                    if (preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino|fecha|date)(?:\s|$|doc|origen|destino)/i', $column)) {
+                        continue;
+                    }
+                    
+                    if (is_string($value)) {
+                        $val = trim($value);
+                        // Buscar patrones generados por MySQL FORMAT o cualquier número válido:
+                        // Ejemplos: "1,234.50", "0.000", "-30.000", "1,000", "25", "0"
+                        if (preg_match('/^-?\d{1,3}(,\d{3})+(\.\d+)?$/', $val) || preg_match('/^-?\d+(\.\d+)?$/', $val)) {
+                            // Encontramos un número formateado!
+                            // Quitar comas para procesar la parte decimal correctamente
+                            $cleanVal = str_replace(',', '', $val);
+                            $parts = explode('.', $cleanVal);
+                            $decimals = isset($parts[1]) ? strlen($parts[1]) : 0;
+                            
+                            $formatInfo[$column] = [
+                                'field' => $column,
+                                'decimals' => $decimals,
+                                'has_format' => true,
+                                'detection_type' => 'data_heuristic'
+                            ];
+                            error_log("Heurística detectó formato para columna '$column': decimales: $decimals");
+                        }
+                    }
+                }
+            }
+        }
 
         // Guardar la información de formato detectada para usar en el cliente
         $_SESSION['column_format_info'] = $formatInfo;
