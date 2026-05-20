@@ -261,41 +261,16 @@ function renderTable() {
             // Convertir a string si no lo es
             value = String(value);
             
-            // Evaluar si es una columna identificadora (que debe ser texto siempre)
-            var columnLower = String(column).toLowerCase();
-            var isIdColumn = (columnLower.indexOf('id') === 0) || 
-                             (columnLower.indexOf(' id') !== -1) || 
-                             columnLower.includes('folio') || 
-                             columnLower.includes('código') || 
-                             columnLower.includes('codigo') || 
-                             columnLower.includes('referencia') ||
-                             columnLower.includes('remisión') ||
-                             columnLower.includes('remision') ||
-                             (columnLower.indexOf('num') === 0) || 
-                             (columnLower.indexOf(' num') !== -1);
-            
-            // Evaluar de antemano si la celda es de texto
-            var isTextCell = true;
-            var cleanCheck = value.trim();
-            if (isIdColumn) {
-                isTextCell = true;
-            } else if (cleanCheck === '') {
-                isTextCell = false;
-            } else if (!isNaN(parseFloat(cleanCheck)) && isFinite(cleanCheck)) {
-                isTextCell = false;
-            } else if (/^[\d]+,[\d]+$/.test(cleanCheck)) {
-                isTextCell = false; // Formato europeo simple
-            } else if (/^\d{1,3}(,\d{3})*(\.\d+)?$/.test(cleanCheck)) {
-                var cleanNumber = cleanCheck.replace(/,/g, '');
-                if (!isNaN(parseFloat(cleanNumber)) && isFinite(cleanNumber)) {
-                    isTextCell = false;
-                }
+            // Evaluar si es de texto comprobando si tiene un formato explícito en columnFormatInfo
+            var hasExplicitFormat = false;
+            if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].has_format) {
+                hasExplicitFormat = true;
             }
             
-            if (isTextCell) {
+            if (!hasExplicitFormat) {
                 cell.style.cssText = 'text-align: center !important;';
                 cell.className = 'text-center';
-            } else if (cleanCheck !== '') {
+            } else if (value.trim() !== '') {
                 cell.style.cssText = 'text-align: right !important;';
                 cell.className = 'text-right';
             }
@@ -366,29 +341,9 @@ function renderTable() {
             }
             
             // Procesamiento normal para filas regulares
-            // Verificar si parece un número en formato europeo (con coma decimal)
-            if (!isIdColumn && /^[\d]+,[\d]+$/.test(value)) {
-                // Convertir de formato europeo a formato mexicano
-                var valor = parseFloat(value.replace(',', '.'));
-                if (!isNaN(valor)) {
-                    // Usar decimales del SQL si están disponibles
-                    var decimalsForColumn = 2;
-                    if (typeof columnFormatInfo !== 'undefined' && columnFormatInfo[column] && columnFormatInfo[column].decimals !== undefined) {
-                        decimalsForColumn = columnFormatInfo[column].decimals;
-                    }
-                    var formateado = valor.toLocaleString('en-US', {
-                        minimumFractionDigits: decimalsForColumn,
-                        maximumFractionDigits: decimalsForColumn
-                    });
-                    cell.innerHTML = '<strong class="text-right" style="text-align: right !important;">' + formateado + '</strong>';
-                    cell.style.cssText = 'text-align: right !important;';
-                    cell.className = 'text-right';
-                } else {
-                    cell.textContent = value;
-                }
-            }
+            // Ya no se procesan conversiones europeas/americanas por la regla estricta de formato SQL
             // Detectar si parece ser contenido HTML (case-insensitive)
-            else if (
+            if (
                 value.indexOf('<') !== -1 && 
                 value.indexOf('>') !== -1
             ) {

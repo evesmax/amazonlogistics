@@ -219,50 +219,23 @@ foreach ($results as $row) {
         $numValue = 0;
         $detectedDecimals = 0; // Por defecto 0
         
-        // No parsear como número si dice "TOTAL GENERAL"
-        if ($value === 'TOTAL GENERAL') {
-            $isNumber = false;
-        } else if ($value === '2990,58') {
+        // Detección estricta de números basada en configuración SQL o si es subtotal
+        $isNumber = false;
+        $numValue = 0;
+        $decimals = 0;
+        
+        if ($value !== 'TOTAL GENERAL' && isset($formatInfo[$column]) && isset($formatInfo[$column]['has_format']) && $formatInfo[$column]['has_format']) {
             $isNumber = true;
-            $numValue = 2990.58;
-            $detectedDecimals = 2;
-        } else if (is_string($value) && preg_match('/^[\d.,\-]+$/', trim($value))) {
-            $cleanValue = trim($value);
-            if (strpos($cleanValue, ',') !== false && strpos($cleanValue, '.') !== false) {
-                if (strpos($cleanValue, '.') < strpos($cleanValue, ',')) {
-                    // Formato europeo
-                    $decimalPart = substr($cleanValue, strpos($cleanValue, ',') + 1);
-                    $detectedDecimals = strlen($decimalPart);
-                    $cleanValue = str_replace('.', '', $cleanValue);
-                    $cleanValue = str_replace(',', '.', $cleanValue);
-                } else {
-                    // Formato americano
-                    $decimalPart = substr($cleanValue, strpos($cleanValue, '.') + 1);
-                    $detectedDecimals = strlen($decimalPart);
-                    $cleanValue = str_replace(',', '', $cleanValue);
-                }
-            } else if (strpos($cleanValue, ',') !== false) {
-                $decimalPart = substr($cleanValue, strpos($cleanValue, ',') + 1);
-                $detectedDecimals = strlen($decimalPart);
-                $cleanValue = str_replace(',', '.', $cleanValue);
-            } else if (strpos($cleanValue, '.') !== false) {
-                $decimalPart = substr($cleanValue, strpos($cleanValue, '.') + 1);
-                $detectedDecimals = strlen($decimalPart);
-            }
-            if (is_numeric($cleanValue) && $cleanValue != '') {
-                $isNumber = true;
-                $numValue = floatval($cleanValue);
-            }
-        } else if (is_numeric(str_replace(',', '', trim($value))) && trim($value) != '') {
+            $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 0;
+            
+            // Limpiar el valor (que viene con comas desde el SQL FORMAT) para poder insertarlo como float en Excel
             $cleanValue = str_replace(',', '', trim($value));
-            if (strpos(trim($value), '.') !== false) {
-                $decimalPart = substr(trim($value), strpos(trim($value), '.') + 1);
-                $detectedDecimals = strlen($decimalPart);
-            }
-            if (is_numeric($cleanValue)) {
-                $isNumber = true;
-                $numValue = floatval($cleanValue);
-            }
+            $numValue = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
+        } else if ($isSubtotal && is_numeric(str_replace(',', '', trim($value)))) {
+            // Los subtotales generados por PHP siempre deben ser tratados como números
+            $isNumber = true;
+            $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 2;
+            $numValue = floatval(str_replace(',', '', trim($value)));
         }
         
         // Asignación de celda
@@ -271,21 +244,11 @@ foreach ($results as $row) {
         if ($isNumber) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
             
-            $decimals = $detectedDecimals;
-            // Solo sobreescribir si el formato está forzado globalmente para esta columna
-            if (isset($formatInfo[$column]) && isset($formatInfo[$column]['decimals'])) {
-                $decimals = $formatInfo[$column]['decimals'];
-            }
-            
             $formatCode = '#,##0';
             if ($decimals > 0) {
                 $formatCode .= '.' . str_repeat('0', $decimals);
             }
-            
-            // Si es un campo identificador (folio, id, etc), no usar separador de miles ni decimales
-            if (preg_match('/(?:folio|id|remisi[oó]n|codigo|referencia)/i', $column)) {
-                $formatCode = '0';
-            }
+
 
             
             $cellStyle->getNumberFormat()->setFormatCode($formatCode);

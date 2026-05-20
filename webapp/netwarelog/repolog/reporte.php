@@ -1281,102 +1281,8 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                 error_log("Detectado ROUND para columna '$columnName': campo '$field', decimales: $decimals");
             }
         }
-        
-        // 4. Buscar columnas con nombres que indican cantidades o valores monetarios
-        // Solo se aplicará si no se ha detectado un formato específico para esta columna
-        if (preg_match_all('/(?:AS\s+|,\s*)[\'\"]?([^\'\"(),\s]+(?:cantidad|monto|importe|total|precio|costo|valor|saldo|ton|tm))[\'\"]?(?:\s*,|\s*FROM|\s*$)/i', $query, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $columnName = $match[1];
-                
-                // Solo aplicar si no tiene ya un formato específico
-                if (!isset($formatInfo[$columnName])) {
-                    // Determinar decimales según el nombre
-                    $decimals = 2; // Por defecto 2 decimales
-                    if (stripos($columnName, 'ton') !== false || stripos($columnName, 'tm') !== false) {
-                        $decimals = 3; // Valores en toneladas suelen tener 3 decimales
-                    }
-                    
-                    $formatInfo[$columnName] = [
-                        'field' => $columnName,
-                        'decimals' => $decimals,
-                        'has_format' => true,
-                        'detection_type' => 'column_name_pattern'
-                    ];
-                    
-                    error_log("Detectado por nombre para columna '$columnName': decimales: $decimals");
-                }
-            }
-        }
-
-        // 5. NUEVO: Analizar los datos REALES para detectar decimales máximos por columna
-        // IMPORTANTE: Los datos del SQL ya vienen formateados con los decimales correctos
-        // Por ejemplo: "3.000" significa 3 decimales, NO debemos eliminar los ceros
-        if (!empty($results)) {
-            foreach ($columns as $columnName) {
-                // Ignorar columnas de tipo identificador (folios, IDs, etc.) para que no se formateen con decimales
-                if (preg_match('/(?:folio|id|remisi[oó]n|codigo|referencia)/i', $columnName)) {
-                    continue;
-                }
-
-                $maxDecimalsFromData = 0;
-                $isNumericColumn = false;
-                $sampleCount = 0;
-                
-                // Analizar un máximo de 100 filas para eficiencia
-                $rowsToCheck = array_slice($results, 0, min(100, count($results)));
-                
-                foreach ($rowsToCheck as $row) {
-                    if (isset($row[$columnName])) {
-                        $value = $row[$columnName];
-                        
-                        // Trabajar con el valor ORIGINAL como string para preservar formato
-                        $originalValue = (string)$value;
-                        
-                        // Quitar comas de miles pero PRESERVAR punto decimal
-                        $cleanValue = str_replace(',', '', $originalValue);
-                        
-                        // Verificar si es numérico (incluir valores cero)
-                        if (is_numeric($cleanValue)) {
-                            $isNumericColumn = true;
-                            $sampleCount++;
-                            
-                            // CRÍTICO: Detectar decimales del valor ORIGINAL (sin rtrim)
-                            // Los datos del SQL vienen formateados, ej: "3.000" = 3 decimales
-                            if (strpos($originalValue, '.') !== false) {
-                                $parts = explode('.', $originalValue);
-                                // NO usar rtrim - conservar la longitud completa del decimal
-                                $decimalPart = isset($parts[1]) ? $parts[1] : '';
-                                $decimalsInValue = strlen($decimalPart);
-                                if ($decimalsInValue > $maxDecimalsFromData) {
-                                    $maxDecimalsFromData = $decimalsInValue;
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Si encontramos datos numéricos, actualizar la información de formato
-                if ($isNumericColumn && $sampleCount > 0 && $maxDecimalsFromData >= 0) {
-                    // Actualizar o crear la entrada de formato
-                    if (!isset($formatInfo[$columnName]) || $formatInfo[$columnName]['detection_type'] === 'column_name_pattern') {
-                        // Sobrescribir si no hay detección del SQL o es por patrón de nombre
-                        $formatInfo[$columnName] = [
-                            'field' => $columnName,
-                            'decimals' => $maxDecimalsFromData,
-                            'has_format' => true,
-                            'detection_type' => 'data_analysis'
-                        ];
-                        error_log("Detectado por análisis de datos para columna '$columnName': decimales: $maxDecimalsFromData (muestras: $sampleCount)");
-                    } else if ($formatInfo[$columnName]['decimals'] < $maxDecimalsFromData) {
-                        // Si los datos tienen más decimales que lo detectado del SQL, usar los datos
-                        $oldDecimals = $formatInfo[$columnName]['decimals'];
-                        $formatInfo[$columnName]['decimals'] = $maxDecimalsFromData;
-                        $formatInfo[$columnName]['detection_type'] .= '+data_analysis';
-                        error_log("Actualizado formato para columna '$columnName': $oldDecimals -> $maxDecimalsFromData decimales (por datos reales)");
-                    }
-                }
-            }
-        }
+        // La información de formato ahora depende estrictamente de las sentencias SQL FORMAT() o ROUND()
+        // Eliminados pasos 4 y 5 de heurística por regla estricta.
 
         // Guardar la información de formato detectada para usar en el cliente
         $_SESSION['column_format_info'] = $formatInfo;
@@ -2249,30 +2155,17 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                         
                                         $value = isset($row[$column]) ? $row[$column] : '';
                                         
-                                        // Pre-determinar si es texto para alinear la celda al centro (excepto si es numérico con formato explícito)
-                                        $isTextCell = true;
-                                        
-                                        // Evaluar si es una columna identificadora (que debe ser texto siempre)
-                                        $isIdColumn = preg_match('/^(?:id|folio|código|codigo|referencia|remisión|remision|num)/i', trim($column)) || preg_match('/(?: folio| código| codigo| referencia| remisión| remision| num| id)/i', $column);
-                                        
-                                        if (!$isIdColumn) {
-                                            if (is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', trim($value))) {
-                                                $isTextCell = false;
-                                            } else if (is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', trim($value))) {
-                                                $cleanCheck = str_replace(',', '', trim($value));
-                                                if (is_numeric($cleanCheck)) {
-                                                    $isTextCell = false;
-                                                }
-                                            }
-                                        }
+                                        // Determinar la alineación usando ESTRICTAMENTE la información de formato del SQL
+                                        $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
+                                        $hasExplicitFormat = isset($columnFormatInfo[$column]) && $columnFormatInfo[$column]['has_format'];
                                         
                                         $alignAttr = '';
                                         if ($value !== '') {
-                                            if ($isTextCell) {
-                                                // Si es texto o número sin formato explícito, se centra
+                                            if (!$hasExplicitFormat) {
+                                                // Si no tiene formato explícito desde SQL, se centra y asume texto general
                                                 $alignAttr = ' style="text-align: center !important;" class="text-center"';
                                             } else {
-                                                // Si tiene formato de número explícito, se manda a la derecha
+                                                // Si tiene formato explícito desde SQL, se manda a la derecha
                                                 $alignAttr = ' style="text-align: right !important;" class="text-right"';
                                             }
                                         }
@@ -2346,13 +2239,6 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                     // Si todavía no encontramos coincidencia, usar el original
                                                     if (!$matchFound) {
                                                         $mappedSumFields[] = $fieldTrimmed;
-                                                        /* Depuración desactivada para ahorrar memoria
-                                                        $_SESSION['debug_field_mapping_sql_to_display'][] = array(
-                                                            'sql_field' => $fieldTrimmed,
-                                                            'mapped_to' => $fieldTrimmed,
-                                                            'via' => 'no_match_found'
-                                                        );
-                                                        */
                                                     }
                                                 }
                                             }
@@ -2360,72 +2246,17 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             if (in_array($column, $mappedSumFields)) {
                                                 // Obtener decimales específicos de la configuración detectada
                                                 $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
-                                                if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
-                                                    $decimals = $columnFormatInfo[$column]['decimals'];
-                                                } else {
-                                                    $decimals = 0;
-                                                    if (fmod(floatval($value), 1) !== 0.0) {
-                                                        $strVal = (string)floatval($value);
-                                                        if (strpos($strVal, '.') !== false) {
-                                                            $decimals = strlen(explode('.', $strVal)[1]);
-                                                        }
-                                                    }
-                                                }
-                                                $formattedResult = number_format(floatval($value), $decimals, '.', ',');
+                                                $decimals = isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals']) ? $columnFormatInfo[$column]['decimals'] : 2;
                                                 
-                                                // CRÍTICO: Asegurar alineación derecha en el atributo del TD si es numérico
-                                                $alignAttr = ' class="text-right" style="text-align: right !important;"';
-                                                
+                                                // Los subtotales generados por PHP siempre son valores numéricos crudos
                                                 // Formatear con separador de miles y decimales específicos (formato americano: #,##0.00)
-                                                if (is_numeric($value)) {
-                                                    // Es un número, formatear con coma para miles y punto para decimales
-                                                    $formattedValue = number_format(floatval($value), $decimals, '.', ',');
-                                                    echo '<strong>' . $formattedValue . '</strong>';
-                                                } else if (is_string($value)) {
-                                                    // Si ya tiene formato americano (1,234.56), asegurarse que tiene los decimales correctos
-                                                    if (preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value)) {
-                                                        // Extraer el número sin formateo para reformatearlo
-                                                        $cleanValue = str_replace(',', '', $value);
-                                                        if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                            echo '<strong>' . $formattedValue . '</strong>';
-                                                        } else {
-                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
-                                                        }
-                                                    } 
-                                                    // Si tiene formato europeo simple (1234,56), convertirlo a americano
-                                                    else if (preg_match('/^\d+,\d+$/', $value)) {
-                                                        $cleanValue = str_replace(',', '.', $value);
-                                                        if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                            echo '<strong>' . $formattedValue . '</strong>';
-                                                        } else {
-                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
-                                                        }
-                                                    }
-                                                    // Si tiene formato europeo completo (1.234,56), convertirlo a americano
-                                                    else if (preg_match('/^\d{1,3}(\.\d{3})+(,\d+)$/', $value)) {
-                                                        $cleanValue = str_replace('.', '', $value);
-                                                        $cleanValue = str_replace(',', '.', $cleanValue);
-                                                        if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                            echo '<strong>' . $formattedValue . '</strong>';
-                                                        } else {
-                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
-                                                        }
-                                                    }
-                                                    // Para cualquier otro caso, intentar convertir y formatear
-                                                    else {
-                                                        $cleanValue = preg_replace('/[^\d.-]/', '', $value);
-                                                        if (is_numeric($cleanValue)) {
-                                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                            echo '<strong>' . $formattedValue . '</strong>';
-                                                        } else {
-                                                            echo '<strong>' . htmlspecialchars($value) . '</strong>';
-                                                        }
-                                                    }
+                                                $cleanValue = is_string($value) ? str_replace(array(',', ' '), '', $value) : $value;
+                                                
+                                                if (is_numeric($cleanValue)) {
+                                                    $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
+                                                    echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
                                                 } else {
-                                                    echo '<strong>' . htmlspecialchars($value) . '</strong>';
+                                                    echo '<strong style="text-align: right !important;">' . htmlspecialchars((string)$value) . '</strong>';
                                                 }
                                                 continue;
                                             } else if ($subtotalLevel === 2) {
@@ -2486,54 +2317,13 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                             }
                                         }
                                         
-                                        // Procesamiento normal para filas regulares (subtotales/totales)
-                                        // Obtener decimales específicos de la configuración detectada
-                                        $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
-                                        if (isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals'])) {
-                                            $decimals = $columnFormatInfo[$column]['decimals'];
+                                        // Procesamiento normal para filas regulares (NO subtotales/totales)
+                                        // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR) O DEJAR SIN FORMATO
+                                        if (is_string($value) && strpos($value, '<') !== false && strpos($value, '>') !== false) {
+                                            echo $value;
                                         } else {
-                                            $decimals = 0;
-                                            $strValue = (string)$value;
-                                            if (strpos($strValue, '.') !== false) {
-                                                $decimals = strlen(explode('.', $strValue)[1]);
-                                            } else if (strpos($strValue, ',') !== false && !preg_match('/^\d{1,3}(,\d{3})*$/', $strValue)) {
-                                                $decimals = strlen(explode(',', $strValue)[1]);
-                                            }
-                                        }
-                                        
-                                        // Verificar si parece un número en formato europeo (con coma decimal, como 2990,58)
-                                        if (!$isIdColumn && is_string($value) && preg_match('/^[0-9]+,[0-9]+$/', $value)) {
-                                            // Es un número con formato europeo (2990,58)
-                                            $cleanValue = str_replace(',', '.', $value); // Convertir a formato con punto decimal
-                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ','); // Formato americano/mexicano
-                                            echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
-                                        }
-                                        // Verificar si parece un número en formato americano (1,234.56)
-                                        else if (!$isIdColumn && is_string($value) && preg_match('/^\d{1,3}(,\d{3})*(\.\d+)?$/', $value) && strpos($value, ',') !== false) {
-                                            // Extraer el número sin formateo para reformatearlo
-                                            $cleanValue = str_replace(',', '', $value);
-                                            if (is_numeric($cleanValue)) {
-                                                $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
-                                                echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
-                                            } else {
-                                                // No escapar HTML si parece contener etiquetas
-                                                if (strpos($value, '<') !== false && strpos($value, '>') !== false) {
-                                                    echo $value;
-                                                } else {
-                                                    echo htmlspecialchars($value);
-                                                }
-                                            }
-                                        }
-                                        // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR) O DEJAR SIN FORMATO SI NO VIENE CON COMAS
-                                        else {
-                                            // Mostrar el HTML directamente para que sea interpretado por el navegador
-                                            // Si es numerico sin formato, se deja tal cual (no se le agregan comas)
-                                            if (is_string($value) && strpos($value, '<') !== false && strpos($value, '>') !== false) {
-                                                echo $value;
-                                            } else {
-                                                // Si es un string numerico se mostrará tal como viene de SQL sin justificar ni alterar a number_format
-                                                echo htmlspecialchars((string)$value);
-                                            }
+                                            // Se mostrará tal como viene de SQL sin justificar ni alterar a number_format
+                                            echo htmlspecialchars((string)$value);
                                         }
                                     ?>
                                     </td>
