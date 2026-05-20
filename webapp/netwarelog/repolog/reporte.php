@@ -1447,101 +1447,10 @@ $_SESSION['visible_columns'] = $visibleColumns;  // Guardar columnas visibles pa
  * @param string $totalFields Lista de campos a totalizar, separados por comas
  * @return array Resultados procesados con filas de subtotales y totales
  */
-/**
- * Función optimizada para convertir todos los valores numéricos a formato float para cálculos
- * Esta función maneja correctamente los formatos:
- * - Americano/Mexicano: 1,234.56 (coma como separador de miles, punto como decimal)
- * - Europeo simple: 1234,56 (coma como decimal)
- * - Europeo completo: 1.234,56 (punto como separador de miles, coma como decimal)
- * - Numérico simple: 1234.56 o 1234
- */
-function fixAmericanNumberFormat(&$data) {
-    // Si no hay datos, retornar
-    if (empty($data)) {
-        return;
-    }
-    
-    // Obtener las claves de la primera fila para identificar columnas numéricas
-    $firstRow = reset($data);
-    $numericColumns = [];
-    
-    // Identificar TODAS las columnas que podrían contener valores numéricos
-    foreach ($firstRow as $key => $value) {
-        // Verificar si parece ser un campo numérico o con formato numérico
-        if (is_numeric($value) || 
-            (is_string($value) && 
-             (preg_match('/^[\d,.]+$/', $value) || 
-              preg_match('/^-[\d,.]+$/', $value)))) { // Permitir negativos también
-            $numericColumns[] = $key;
-        }
-    }
-    
-    // Procesar todas las filas y convertir explícitamente los valores
-    foreach ($data as &$row) {
-        foreach ($numericColumns as $column) {
-            if (isset($row[$column])) {
-                $originalValue = $row[$column];
-                
-                // Si ya es un número, no necesitamos convertirlo
-                if (is_numeric($originalValue) && !is_string($originalValue)) {
-                    continue;
-                }
-                
-                // Convertir a string para poder procesar
-                $stringValue = strval($originalValue);
-                
-                // 1. Detectar formato americano (1,234.56) - ESTE ES EL FORMATO OBJETIVO
-                if (preg_match('/^\d{1,3}(,\d{3})+(\.\d+)?$/', $stringValue)) {
-                    // Quitar las comas y convertir a float
-                    $cleanValue = str_replace(',', '', $stringValue);
-                    $row[$column] = floatval($cleanValue);
-                }
-                // 2. Detectar formato simple con punto decimal (1234.56)
-                else if (preg_match('/^\d+\.\d+$/', $stringValue)) {
-                    // Ya tiene el formato correcto, simplemente convertir a float
-                    $row[$column] = floatval($stringValue);
-                }
-                // 3. Detectar formato europeo simple con coma decimal (1234,56)
-                else if (preg_match('/^\d+,\d+$/', $stringValue)) {
-                    // Reemplazar coma por punto para el formato correcto
-                    $cleanValue = str_replace(',', '.', $stringValue);
-                    $row[$column] = floatval($cleanValue);
-                }
-                // 4. Detectar formato europeo completo (1.234,56)
-                else if (preg_match('/^\d{1,3}(\.\d{3})+(,\d+)$/', $stringValue)) {
-                    // Quitar puntos y reemplazar coma por punto
-                    $cleanValue = str_replace('.', '', $stringValue);
-                    $cleanValue = str_replace(',', '.', $cleanValue);
-                    $row[$column] = floatval($cleanValue);
-                }
-                // 5. Caso especial para números enteros con comas (1,234)
-                else if (preg_match('/^\d{1,3}(,\d{3})+$/', $stringValue)) {
-                    // Quitar las comas y convertir a float
-                    $cleanValue = str_replace(',', '', $stringValue);
-                    $row[$column] = floatval($cleanValue);
-                }
-                // 6. Números enteros simples
-                else if (preg_match('/^\d+$/', $stringValue)) {
-                    $row[$column] = floatval($stringValue);
-                }
-                
-                // Guardar para depuración
-                if (isset($cleanValue) && $stringValue !== $cleanValue) {
-                    $_SESSION['american_format_fixes'][] = [
-                        'column' => $column,
-                        'original' => $originalValue,
-                        'cleaned' => isset($cleanValue) ? $cleanValue : $stringValue,
-                        'fixed' => $row[$column]
-                    ];
-                }
-            }
-        }
-    }
-}
-
 function processSubtotals($data, $groupingFields, $totalFields) {
-    // PRE-PROCESAMIENTO: Corregir valores numéricos en formato americano
-    fixAmericanNumberFormat($data);
+    // ELIMINADO: Ya no llamamos a fixAmericanNumberFormat($data) aquí
+    // porque destruye el formato (comas) que viene de MySQL FORMAT() en las filas normales.
+    // En su lugar, limpiamos los valores localmente al momento de sumarlos.
     
     // Para depuración, almacenar los parámetros originales
     $_SESSION['debug_subtotals_params'] = array(
@@ -1863,18 +1772,23 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         
         // Actualizar subtotales y totales generales
         foreach ($validSumFields as $field) {
-            // Los valores ya fueron procesados por fixAmericanNumberFormat
-            // Solo necesitamos convertir a número si todavía es una cadena
-            $rawValue = $row[$field];
-            $value = is_numeric($rawValue) ? floatval($rawValue) : 0;
+            // Limpiar comas (que vienen del FORMAT de SQL) y convertir a número
+            $rawValue = isset($row[$field]) ? $row[$field] : 0;
+            $cleanValue = is_string($rawValue) ? str_replace(',', '', $rawValue) : $rawValue;
+            $value = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
             
             if ($isKardex) {
                 $isInitial = (stripos($field, 'SaldoInicial') !== false || stripos($field, 'Saldo Inicial') !== false);
                 $isFinal = (stripos($field, 'SaldoTM') !== false || (stripos($field, 'Saldo') !== false && stripos($field, 'SaldoInicial') === false && stripos($field, 'Saldo Inicial') === false));
                 
                 if ($isInitial) {
-                    $currentSubtotal[$field] = is_numeric($firstRowGroup[$field]) ? floatval($firstRowGroup[$field]) : 0;
-                    $grandTotals[$field] = is_numeric($firstRowTotal[$field]) ? floatval($firstRowTotal[$field]) : 0;
+                    $rawFirstGroup = isset($firstRowGroup[$field]) ? $firstRowGroup[$field] : 0;
+                    $cleanFirstGroup = is_string($rawFirstGroup) ? str_replace(',', '', $rawFirstGroup) : $rawFirstGroup;
+                    $currentSubtotal[$field] = is_numeric($cleanFirstGroup) ? floatval($cleanFirstGroup) : 0;
+                    
+                    $rawFirstTotal = isset($firstRowTotal[$field]) ? $firstRowTotal[$field] : 0;
+                    $cleanFirstTotal = is_string($rawFirstTotal) ? str_replace(',', '', $rawFirstTotal) : $rawFirstTotal;
+                    $grandTotals[$field] = is_numeric($cleanFirstTotal) ? floatval($cleanFirstTotal) : 0;
                 } else if ($isFinal) {
                     $currentSubtotal[$field] = $value;
                     $grandTotals[$field] = $value;
