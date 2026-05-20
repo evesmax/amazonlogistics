@@ -1238,31 +1238,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
             }
         }
 
-        // 2. También buscar casos como CASE WHEN ... THEN FORMAT
-        if (preg_match_all('/THEN\s+FORMAT\s*\(\s*([^,\s]+)(?:\s*\*\s*[^,\s]+)?\s*,\s*(\d+)\s*\)\s+(?:END|ELSE)/i', $query, $matches, PREG_SET_ORDER)) {
-            // Extraer las columnas del CASE WHEN
-            if (preg_match_all('/CASE.+?END\s+(?:AS\s+)?[\'\"]?([^\'\"(),\s]+)/is', $query, $caseMatches, PREG_SET_ORDER)) {
-                foreach ($caseMatches as $index => $caseMatch) {
-                    if (isset($matches[$index])) {
-                        $columnName = $caseMatch[1];
-                        $field = $matches[$index][1];
-                        $decimals = intval($matches[$index][2]);
-                        
-                        // Guardar información de formato para cada columna
-                        $formatInfo[$columnName] = [
-                            'field' => $field,
-                            'decimals' => $decimals,
-                            'has_format' => true,
-                            'detection_type' => 'case_when_format'
-                        ];
-                        
-                        error_log("Detectado formato CASE para columna '$columnName': campo '$field', decimales: $decimals");
-                    }
-                }
-            }
-        }
-        
-        // 3. Buscar otras funciones numéricas como ROUND, TRUNCATE
+        // 2. Buscar otras funciones numéricas como ROUND, TRUNCATE
         // Soporta aliases con y sin comillas, incluyendo espacios
         if (preg_match_all('/ROUND\s*\(\s*(.*?)\s*,\s*(\d+)\s*\)\s+AS\s+(?:\"([^\"]+)\"|\'([^\']+)\'|([^\s,\)]+))/i', $query, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
