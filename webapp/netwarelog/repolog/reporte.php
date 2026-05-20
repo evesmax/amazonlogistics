@@ -1709,6 +1709,9 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     // Si no hay campos de agrupación válidos, permitir calcular solo totales generales
     $calculateOnlyGrandTotals = empty($validGroupFields);
     
+    // Guardar validGroupFields en la sesión para uso del frontend
+    $_SESSION['valid_group_fields_for_js'] = $validGroupFields;
+    
     // Procesamos los subtotales y totales
     $isKardex = (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 2) || 
                 (isset($_SESSION['repolog_sql_from']) && stripos($_SESSION['repolog_sql_from'], 'inventarios_kardex') !== false) ||
@@ -2245,8 +2248,8 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                                                 }
                                                 
                                                 if (in_array($column, $mappedGroupFields)) {
-                                                    if ($column === reset($mappedGroupFields)) {
-                                                        echo '<strong style="text-align: center !important;">Subtotal: ' . htmlspecialchars($value) . '</strong>';
+                                                    if ($column === reset($mappedGroupFields) && trim($value) !== '') {
+                                                        echo '<strong style="text-align: center !important;">Total: ' . htmlspecialchars($value) . '</strong>';
                                                     } else {
                                                         echo '<strong style="text-align: center !important;">' . htmlspecialchars($value) . '</strong>';
                                                     }
@@ -2279,6 +2282,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
             // Store data for JavaScript processing (usando var en lugar de const para compatibilidad)
             var tableData = <?php echo json_encode($results); ?>;
             var tableColumns = <?php echo json_encode($visibleColumns); ?>;  // Usar solo columnas visibles
+            
+            <?php if (isset($_SESSION['column_format_info']) && !empty($_SESSION['column_format_info'])): ?>
+            var columnFormatInfo = <?php echo json_encode($_SESSION['column_format_info']); ?>;
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['valid_group_fields_for_js'])): ?>
+            var validGroupFields = <?php echo json_encode($_SESSION['valid_group_fields_for_js']); ?>;
+            <?php endif; ?>
             
             // ELIMINADO: La llamada a formatNumbersInTable() se maneja desde formatNumbersFix.js
             // para evitar ejecuciones múltiples que pueden causar duplicación de datos

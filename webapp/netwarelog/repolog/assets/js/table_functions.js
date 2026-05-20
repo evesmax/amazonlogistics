@@ -320,20 +320,28 @@ function renderTable() {
                 } else if (subtotalLevel === 1) {
                     // Para filas de subtotal, verificar si es un campo de agrupación
                     var isGroupField = false;
+                    var isFirstGroupField = false;
                     
-                    if (typeof subtotalesAgrupaciones !== 'undefined') {
+                    if (typeof validGroupFields !== 'undefined' && validGroupFields && validGroupFields.length > 0) {
+                        isGroupField = validGroupFields.indexOf(column) !== -1;
+                        isFirstGroupField = (column === validGroupFields[0]);
+                    } else if (typeof subtotalesAgrupaciones !== 'undefined') {
+                        // Fallback por si validGroupFields no está definido
                         var groupFields = subtotalesAgrupaciones.split(',').map(function(item) { 
                             return item.trim(); 
                         });
                         isGroupField = groupFields.indexOf(column) !== -1;
+                        isFirstGroupField = (column === groupFields[0]);
                     }
                     
                     if (isGroupField) {
-                        if (column === groupFields[0]) {
-                            cell.innerHTML = '<strong style="text-align: center !important;">Subtotal: ' + escapeHtml(value) + '</strong>';
-                        } else {
-                            cell.innerHTML = '<strong style="text-align: center !important;">' + escapeHtml(value) + '</strong>';
+                        // Solo agregar la palabra "Total: " si hay un valor que mostrar
+                        var textToShow = escapeHtml(value);
+                        if (isFirstGroupField && textToShow.trim() !== '') {
+                            textToShow = 'Total: ' + textToShow;
                         }
+                        
+                        cell.innerHTML = '<strong style="text-align: center !important;">' + textToShow + '</strong>';
                         row.appendChild(cell);
                         return;
                     }
