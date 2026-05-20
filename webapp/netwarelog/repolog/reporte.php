@@ -1696,6 +1696,10 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     $calculateOnlyGrandTotals = empty($validGroupFields);
     
     // Procesamos los subtotales y totales
+    $isKardex = (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 2) || 
+                (isset($_SESSION['repolog_sql_from']) && stripos($_SESSION['repolog_sql_from'], 'inventarios_kardex') !== false) ||
+                (isset($_SESSION['debug_sql_query']) && stripos($_SESSION['debug_sql_query'], 'inventarios_kardex') !== false);
+    
     $result = array();
     $subtotals = array();
     $grandTotals = array();
@@ -1710,7 +1714,8 @@ function processSubtotals($data, $groupingFields, $totalFields) {
     $currentSubtotal = null;
     $firstRowGroup = null;
     $firstRowTotal = null;
-    $isKardex = (isset($_SESSION['repolog_report_id']) && $_SESSION['repolog_report_id'] == 2);
+    error_log("KARDEX_DEBUG: Start processSubtotals. isKardex = " . ($isKardex ? 'true' : 'false') . ", ReportID = " . (isset($_SESSION['repolog_report_id']) ? $_SESSION['repolog_report_id'] : 'null'));
+    error_log("KARDEX_DEBUG: validSumFields = " . implode(', ', $validSumFields));
     
     foreach ($data as $row) {
         // Construir la clave del grupo actual
@@ -1772,14 +1777,16 @@ function processSubtotals($data, $groupingFields, $totalFields) {
         
         // Actualizar subtotales y totales generales
         foreach ($validSumFields as $field) {
-            // Limpiar comas (que vienen del FORMAT de SQL) y convertir a número
+            // Limpiar comas y espacios (que vienen del FORMAT de SQL) y convertir a número
             $rawValue = isset($row[$field]) ? $row[$field] : 0;
-            $cleanValue = is_string($rawValue) ? str_replace(',', '', $rawValue) : $rawValue;
+            $cleanValue = is_string($rawValue) ? str_replace(array(',', ' '), '', $rawValue) : $rawValue;
             $value = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
             
             if ($isKardex) {
-                $isInitial = (stripos($field, 'SaldoInicial') !== false || stripos($field, 'Saldo Inicial') !== false);
-                $isFinal = (stripos($field, 'SaldoTM') !== false || (stripos($field, 'Saldo') !== false && stripos($field, 'SaldoInicial') === false && stripos($field, 'Saldo Inicial') === false));
+                // Ampliamos la detección para manejar espacios, alias variados y caracteres inesperados
+                $fieldLower = str_replace(' ', '', strtolower($field));
+                $isInitial = (strpos($fieldLower, 'saldoinicial') !== false);
+                $isFinal = (strpos($fieldLower, 'saldotm') !== false || (strpos($fieldLower, 'saldo') !== false && strpos($fieldLower, 'saldoinicial') === false));
                 
                 if ($isInitial) {
                     $rawFirstGroup = isset($firstRowGroup[$field]) ? $firstRowGroup[$field] : 0;
@@ -1789,9 +1796,12 @@ function processSubtotals($data, $groupingFields, $totalFields) {
                     $rawFirstTotal = isset($firstRowTotal[$field]) ? $firstRowTotal[$field] : 0;
                     $cleanFirstTotal = is_string($rawFirstTotal) ? str_replace(',', '', $rawFirstTotal) : $rawFirstTotal;
                     $grandTotals[$field] = is_numeric($cleanFirstTotal) ? floatval($cleanFirstTotal) : 0;
+                    
+                    error_log("KARDEX_DEBUG: INITIAL - Field: $field, rawFirstGroup: $rawFirstGroup, cleanFirstGroup: $cleanFirstGroup, value set: " . $currentSubtotal[$field]);
                 } else if ($isFinal) {
                     $currentSubtotal[$field] = $value;
                     $grandTotals[$field] = $value;
+                    error_log("KARDEX_DEBUG: FINAL - Field: $field, value set: " . $currentSubtotal[$field]);
                 } else {
                     $currentSubtotal[$field] += $value;
                     $grandTotals[$field] += $value;
