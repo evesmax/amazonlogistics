@@ -1262,6 +1262,71 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         // 4. Heurística segura: Analizar las primeras 10 filas para detectar formatos devueltos por MySQL
         // Esto captura columnas formateadas desde subconsultas o aliases complejos que las regex no logran atrapar
         if (!empty($results)) {
+            // Analizar dinámicamente qué columnas deben ser tratadas estrictamente como texto/identificadores
+            // Esto evita usar nombres de columnas fijos y se basa puramente en los datos
+            $sumFields = array();
+            $subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+            if (!empty($subtotalesSubtotal)) {
+                $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
+            }
+
+            $textColumns = array();
+            foreach ($columns as $column) {
+                // Si es un campo de suma configurado, definitivamente es numérico
+                if (in_array($column, $sumFields)) {
+                    continue;
+                }
+                
+                $hasLeadingZeros = false;
+                $hasLongIntegers = false;
+                $hasNonNumeric = false;
+                $totalCount = 0;
+                
+                foreach ($results as $row) {
+                    // Ignorar filas de subtotal
+                    if (isset($row['__is_subtotal']) && $row['__is_subtotal'] === true) {
+                        continue;
+                    }
+                    
+                    if (!isset($row[$column])) {
+                        continue;
+                    }
+                    
+                    $val = trim($row[$column]);
+                    if ($val === '') {
+                        continue;
+                    }
+                    
+                    $totalCount++;
+                    
+                    // 1. Detectar si tiene ceros a la izquierda (ej: "000123") y no es decimal (ej: "0.5")
+                    if (preg_match('/^0\d+$/', $val) && strlen($val) > 1) {
+                        $hasLeadingZeros = true;
+                    }
+                    
+                    // 2. Detectar si es un entero largo (longitud > 6, ej: carta porte "20260521") sin puntos decimales o miles
+                    if (preg_match('/^\d+$/', $val) && strlen($val) > 6) {
+                        $hasLongIntegers = true;
+                    }
+                    
+                    // 3. Si contiene caracteres que no son de un número (letras, espacios en medio, guiones extra, etc.)
+                    // pero permitimos comas, puntos y signo negativo
+                    $cleanVal = str_replace(array(',', '.', '-'), '', $val);
+                    if (!ctype_digit($cleanVal) && $cleanVal !== '') {
+                        $hasNonNumeric = true;
+                    }
+                    
+                    if ($totalCount >= 50) {
+                        break; // Solo analizar una muestra representativa
+                    }
+                }
+                
+                // Si detectamos patrones de identificador/texto, guardamos la columna
+                if ($hasLeadingZeros || $hasLongIntegers || $hasNonNumeric) {
+                    $textColumns[$column] = true;
+                }
+            }
+
             $rowsToCheck = min(10, count($results));
             for ($i = 0; $i < $rowsToCheck; $i++) {
                 $row = $results[$i];
@@ -1269,8 +1334,8 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                     // Si ya se detectó un formato seguro por SQL, lo respetamos
                     if (isset($formatInfo[$column])) continue;
                     
-                    // Ignorar columnas que son claramente identificadores o fechas
-                    if (preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino|fecha|date)(?:\s|$|doc|origen|destino)/i', $column)) {
+                    // Ignorar columnas que son claramente identificadores o fechas, o detectadas dinámicamente como texto
+                    if (isset($textColumns[$column]) || preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino|fecha|date)(?:\s|$|doc|origen|destino)/i', $column)) {
                         continue;
                     }
                     

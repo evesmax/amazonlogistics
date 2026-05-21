@@ -165,6 +165,71 @@ foreach ($columns as $column) {
 $startDataRow = $currentRow + 1;
 $currentRow++;
 
+// Analizar dinámicamente qué columnas deben ser tratadas estrictamente como texto/identificadores
+// Esto evita usar nombres de columnas fijos y se basa puramente en los datos
+$sumFields = array();
+$subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+if (!empty($subtotalesSubtotal)) {
+    $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
+}
+
+$textColumns = array();
+foreach ($columns as $column) {
+    // Si es un campo de suma configurado, definitivamente es numérico
+    if (in_array($column, $sumFields)) {
+        continue;
+    }
+    
+    $hasLeadingZeros = false;
+    $hasLongIntegers = false;
+    $hasNonNumeric = false;
+    $totalCount = 0;
+    
+    foreach ($results as $row) {
+        // Ignorar filas de subtotal
+        if (isset($row['__is_subtotal']) && $row['__is_subtotal'] === true) {
+            continue;
+        }
+        
+        if (!isset($row[$column])) {
+            continue;
+        }
+        
+        $val = trim($row[$column]);
+        if ($val === '') {
+            continue;
+        }
+        
+        $totalCount++;
+        
+        // 1. Detectar si tiene ceros a la izquierda (ej: "000123") y no es decimal (ej: "0.5")
+        if (preg_match('/^0\d+$/', $val) && strlen($val) > 1) {
+            $hasLeadingZeros = true;
+        }
+        
+        // 2. Detectar si es un entero largo (longitud > 6, ej: carta porte "20260521") sin puntos decimales o miles
+        if (preg_match('/^\d+$/', $val) && strlen($val) > 6) {
+            $hasLongIntegers = true;
+        }
+        
+        // 3. Si contiene caracteres que no son de un número (letras, espacios en medio, guiones extra, etc.)
+        // pero permitimos comas, puntos y signo negativo
+        $cleanVal = str_replace(array(',', '.', '-'), '', $val);
+        if (!ctype_digit($cleanVal) && $cleanVal !== '') {
+            $hasNonNumeric = true;
+        }
+        
+        if ($totalCount >= 50) {
+            break; // Solo analizar una muestra representativa
+        }
+    }
+    
+    // Si detectamos patrones de identificador/texto, guardamos la columna
+    if ($hasLeadingZeros || $hasLongIntegers || $hasNonNumeric) {
+        $textColumns[$column] = true;
+    }
+}
+
 foreach ($results as $row) {
     $colIndex = 0;
     
@@ -224,25 +289,28 @@ foreach ($results as $row) {
         $numValue = 0;
         $decimals = 0;
         
-        if ($value !== 'TOTAL GENERAL' && isset($formatInfo[$column]) && isset($formatInfo[$column]['has_format']) && $formatInfo[$column]['has_format']) {
-            $isNumber = true;
-            $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 0;
-            
-            // Limpiar el valor (que viene con comas desde el SQL FORMAT) para poder insertarlo como float en Excel
-            $cleanValue = str_replace(',', '', trim($value));
-            $numValue = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
-        } else if ($isSubtotal && is_numeric(str_replace(',', '', trim($value)))) {
-            // Los subtotales generados por PHP siempre deben ser tratados como números
-            $isNumber = true;
-            $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 2;
-            $numValue = floatval(str_replace(',', '', trim($value)));
+        // El valor no debe ser vacío para ser tratado como número
+        if ($value !== 'TOTAL GENERAL' && $value !== '' && $value !== null && trim($value) !== '' && !isset($textColumns[$column])) {
+            if (isset($formatInfo[$column]) && isset($formatInfo[$column]['has_format']) && $formatInfo[$column]['has_format']) {
+                $isNumber = true;
+                $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 0;
+                
+                // Limpiar el valor (que viene con comas desde el SQL FORMAT) para poder insertarlo como float en Excel
+                $cleanValue = str_replace(',', '', trim($value));
+                $numValue = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
+            } else if ($isSubtotal && is_numeric(str_replace(',', '', trim($value)))) {
+                // Los subtotales generados por PHP siempre deben ser tratados como números
+                $isNumber = true;
+                $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 2;
+                $numValue = floatval(str_replace(',', '', trim($value)));
+            }
         }
         
         // Asignación de celda
         $cellStyle = $sheet->getStyle($colLetter . $currentRow);
         
-        // Determinar si es un campo de ID/Folio (basado en el nombre de la columna)
-        $isIdentifier = preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino)(?:\s|$|doc|origen|destino)/i', $column);
+        // Determinar si es un campo de ID/Folio o detectado dinámicamente como texto
+        $isIdentifier = preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino)(?:\s|$|doc|origen|destino)/i', $column) || isset($textColumns[$column]);
         
         if ($isNumber && !$isIdentifier) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
