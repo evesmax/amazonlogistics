@@ -1335,7 +1335,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                     if (isset($formatInfo[$column])) continue;
                     
                     // Ignorar columnas que son claramente identificadores o fechas, o detectadas dinámicamente como texto
-                    if (isset($textColumns[$column]) || preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino|fecha|date)(?:\s|$|doc|origen|destino)/i', $column)) {
+                    if (isset($textColumns[$column]) || preg_match('/\bid|id\b|folio|código|codigo|remisión|remision|factura|referencia|\bdoc|documento|origen|destino|fecha|date/i', $column)) {
                         continue;
                     }
                     

@@ -310,7 +310,7 @@ foreach ($results as $row) {
         $cellStyle = $sheet->getStyle($colLetter . $currentRow);
         
         // Determinar si es un campo de ID/Folio o detectado dinámicamente como texto
-        $isIdentifier = preg_match('/(?:^|\s)(id|folio|código|codigo|remisión|remision|factura|referencia|doc|documento|origen|destino)(?:\s|$|doc|origen|destino)/i', $column) || isset($textColumns[$column]);
+        $isIdentifier = preg_match('/\bid|id\b|folio|código|codigo|remisión|remision|factura|referencia|\bdoc|documento|origen|destino/i', $column) || isset($textColumns[$column]);
         
         if ($isNumber && !$isIdentifier) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);
