@@ -173,10 +173,16 @@ if (!empty($subtotalesSubtotal)) {
     $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
 }
 
+// Obtener también los campos de suma ya mapeados de la sesión para evitar problemas de nombres SQL vs nombres de columnas
+$mappedSumFields = array();
+if (isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['valid_sum_fields'])) {
+    $mappedSumFields = $_SESSION['debug_column_mapping']['valid_sum_fields'];
+}
+
 $textColumns = array();
 foreach ($columns as $column) {
-    // Si es un campo de suma configurado, definitivamente es numérico
-    if (in_array($column, $sumFields)) {
+    // Si es un campo de suma configurado o mapeado, definitivamente es numérico
+    if (in_array($column, $sumFields) || in_array($column, $mappedSumFields)) {
         continue;
     }
     
@@ -196,6 +202,14 @@ foreach ($columns as $column) {
         }
         
         $val = trim($row[$column]);
+        
+        // Limpiar HTML si existe antes de detectar si es un número
+        if (preg_match('/<[a-z][\s\S]*>/i', $val)) {
+            $val = strip_tags($val);
+            $val = html_entity_decode($val, ENT_QUOTES, 'UTF-8');
+            $val = trim(str_replace(array("&nbsp;", "\xc2\xa0"), " ", $val));
+        }
+        
         if ($val === '') {
             continue;
         }

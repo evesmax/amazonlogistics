@@ -1293,6 +1293,14 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                     }
                     
                     $val = trim($row[$column]);
+                    
+                    // Limpiar HTML si existe antes de detectar si es un número
+                    if (preg_match('/<[a-z][\s\S]*>/i', $val)) {
+                        $val = strip_tags($val);
+                        $val = html_entity_decode($val, ENT_QUOTES, 'UTF-8');
+                        $val = trim(str_replace(array("&nbsp;", "\xc2\xa0"), " ", $val));
+                    }
+                    
                     if ($val === '') {
                         continue;
                     }
