@@ -296,27 +296,41 @@ foreach ($results as $row) {
         // Detección y formato de números
         $isNumber = false;
         $numValue = 0;
-        $detectedDecimals = 0; // Por defecto 0
-        
-        // Detección estricta de números basada en configuración SQL o si es subtotal
-        $isNumber = false;
-        $numValue = 0;
         $decimals = 0;
         
-        // El valor no debe ser vacío para ser tratado como número
-        if ($value !== 'TOTAL GENERAL' && $value !== '' && $value !== null && trim($value) !== '' && !isset($textColumns[$column])) {
-            if (isset($formatInfo[$column]) && isset($formatInfo[$column]['has_format']) && $formatInfo[$column]['has_format']) {
-                $isNumber = true;
-                $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 0;
-                
-                // Limpiar el valor (que viene con comas desde el SQL FORMAT) para poder insertarlo como float en Excel
-                $cleanValue = str_replace(',', '', trim($value));
-                $numValue = is_numeric($cleanValue) ? floatval($cleanValue) : 0;
-            } else if ($isSubtotal && is_numeric(str_replace(',', '', trim($value)))) {
-                // Los subtotales generados por PHP siempre deben ser tratados como números
-                $isNumber = true;
-                $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 2;
-                $numValue = floatval(str_replace(',', '', trim($value)));
+        // Determinar si la columna es numérico verificada
+        $isVerifiedNumericColumn = false;
+        if (isset($formatInfo[$column]) && isset($formatInfo[$column]['has_format']) && $formatInfo[$column]['has_format']) {
+            $isVerifiedNumericColumn = true;
+            $decimals = isset($formatInfo[$column]['decimals']) ? $formatInfo[$column]['decimals'] : 0;
+        } else {
+            $normalizedColumn = strtolower(trim($column));
+            foreach ($sumFields as $sf) {
+                if (strtolower(trim($sf)) === $normalizedColumn) {
+                    $isVerifiedNumericColumn = true;
+                    $decimals = 2;
+                    break;
+                }
+            }
+            if (!$isVerifiedNumericColumn) {
+                foreach ($mappedSumFields as $msf) {
+                    if (strtolower(trim($msf)) === $normalizedColumn) {
+                        $isVerifiedNumericColumn = true;
+                        $decimals = 2;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // El valor no debe ser vacío ni 'TOTAL GENERAL' para ser tratado como número
+        if ($value !== 'TOTAL GENERAL' && $value !== '' && $value !== null && trim($value) !== '') {
+            if ($isVerifiedNumericColumn) {
+                $cleanValue = str_replace(array(',', ' '), '', trim($value));
+                if (is_numeric($cleanValue)) {
+                    $isNumber = true;
+                    $numValue = floatval($cleanValue);
+                }
             }
         }
         
@@ -338,13 +352,11 @@ foreach ($results as $row) {
             // Números a la derecha
             $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         } else {
-            // Forzar a texto si es un identificador o si tiene más de 11 caracteres (para evitar notación científica)
-            if ($isIdentifier || (is_numeric($value) && strlen(trim($value)) > 11)) {
-                $sheet->setCellValueExplicit($colLetter . $currentRow, $value, PHPExcel_Cell_DataType::TYPE_STRING);
-            } else {
-                $sheet->setCellValue($colLetter . $currentRow, $value);
-            }
-            // Textos a la izquierda (excepto subtotales que pondremos en bold más adelante)
+            // Forzar a TEXTO si NO es un número verificado o si es un identificador
+            // Esto evita que PHPExcel o Excel conviertan strings numéricos (como folios, códigos o cartas porte) 
+            // a números con comas, notación científica o que eliminen ceros a la izquierda
+            $sheet->setCellValueExplicit($colLetter . $currentRow, $value, PHPExcel_Cell_DataType::TYPE_STRING);
+            // Textos a la izquierda
             $cellStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
         }
 
