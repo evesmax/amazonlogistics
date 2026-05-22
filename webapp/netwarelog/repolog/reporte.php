@@ -1343,15 +1343,15 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
                     if (isset($formatInfo[$column])) continue;
                     
                     // Ignorar columnas que son claramente identificadores o fechas, o detectadas dinámicamente como texto
-                    if (isset($textColumns[$column]) || preg_match('/\bid|id\b|folio|código|codigo|remisión|remision|factura|referencia|\bdoc|documento|origen|destino|fecha|date/i', $column)) {
+                    if (isset($textColumns[$column]) || preg_match('/\bid|id\b|folio|código|codigo|remisión|remision|factura|referencia|\bdoc|documento|origen|destino|fecha|date|porte|carta|placa|operador|transportista|chofer|ruta|vehiculo|vehículo|contenedor|sello|guia|guía|ticket/i', $column)) {
                         continue;
                     }
                     
                     if (is_string($value)) {
                         $val = trim($value);
-                        // Buscar patrones generados por MySQL FORMAT o cualquier número válido:
-                        // Ejemplos: "1,234.50", "0.000", "-30.000", "1,000", "25", "0"
-                        if (preg_match('/^-?\d{1,3}(,\d{3})+(\.\d+)?$/', $val) || preg_match('/^-?\d+(\.\d+)?$/', $val)) {
+                        // Buscar patrones generados por MySQL FORMAT o cualquier número válido con decimales o comas:
+                        // Ejemplos: "1,234.50", "0.000", "-30.000", "1,000", "12.34" (excluye enteros puros como "25", "380343", "0")
+                        if (preg_match('/^-?\d{1,3}(,\d{3})+(\.\d+)?$/', $val) || preg_match('/^-?\d+\.\d+$/', $val)) {
                             // Encontramos un número formateado!
                             // Quitar comas para procesar la parte decimal correctamente
                             $cleanVal = str_replace(',', '', $val);
