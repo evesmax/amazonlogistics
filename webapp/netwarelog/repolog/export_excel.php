@@ -325,11 +325,17 @@ foreach ($results as $row) {
 
         // El valor no debe ser vacío ni 'TOTAL GENERAL' para ser tratado como número
         if ($value !== 'TOTAL GENERAL' && $value !== '' && $value !== null && trim($value) !== '') {
-            if ($isVerifiedNumericColumn) {
-                $cleanValue = str_replace(array(',', ' '), '', trim($value));
-                if (is_numeric($cleanValue)) {
-                    $isNumber = true;
-                    $numValue = floatval($cleanValue);
+            $cleanValue = str_replace(array('$', ',', ' ', '%'), '', trim($value));
+            if (is_numeric($cleanValue)) {
+                $isNumber = true;
+                $numValue = floatval($cleanValue);
+                if (!$isVerifiedNumericColumn) {
+                    // Si no está verificado pero es numérico, intentamos detectar decimales
+                    if (strpos($cleanValue, '.') !== false) {
+                        $decimals = strlen(substr(strrchr($cleanValue, "."), 1));
+                    } else {
+                        $decimals = 0;
+                    }
                 }
             }
         }
@@ -337,8 +343,8 @@ foreach ($results as $row) {
         // Asignación de celda
         $cellStyle = $sheet->getStyle($colLetter . $currentRow);
         
-        // Determinar si es un campo de ID/Folio o detectado dinámicamente como texto
-        $isIdentifier = preg_match('/\bid|id\b|folio|código|codigo|remisión|remision|factura|referencia|\bdoc|documento|origen|destino|porte|carta|placa|operador|transportista|chofer|ruta|vehiculo|vehículo|contenedor|sello|guia|guía|ticket/i', $column) || isset($textColumns[$column]);
+        // Determinar si es detectado dinámicamente como texto basándose puramente en los datos
+        $isIdentifier = isset($textColumns[$column]);
         
         if ($isNumber && !$isIdentifier) {
             $sheet->setCellValueExplicit($colLetter . $currentRow, $numValue, PHPExcel_Cell_DataType::TYPE_NUMERIC);

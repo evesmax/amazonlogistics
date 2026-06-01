@@ -261,6 +261,84 @@ $currentDate = date('d/m/Y H:i:s');
             <p>La consulta no devolvió resultados para imprimir.</p>
         </div>
     <?php else: ?>
+        <?php
+        // Analizar dinámicamente qué columnas deben ser tratadas estrictamente como texto/identificadores
+        // basándose puramente en los datos (sin importar el nombre de la columna)
+        $textColumns = array();
+        $sumFields = array();
+        $subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+        if (!empty($subtotalesSubtotal)) {
+            $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
+        }
+        $mappedSumFields = array();
+        if (isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['valid_sum_fields'])) {
+            $mappedSumFields = $_SESSION['debug_column_mapping']['valid_sum_fields'];
+        }
+
+        foreach ($columns as $column) {
+            // Si es un campo de suma configurado o mapeado, definitivamente es numérico
+            if (in_array($column, $sumFields) || in_array($column, $mappedSumFields)) {
+                continue;
+            }
+            
+            $hasLeadingZeros = false;
+            $hasLongIntegers = false;
+            $hasNonNumeric = false;
+            $totalCount = 0;
+            
+            foreach ($results as $row) {
+                // Ignorar filas de subtotal
+                if (isset($row['__is_subtotal']) && $row['__is_subtotal'] === true) {
+                    continue;
+                }
+                
+                if (!isset($row[$column])) {
+                    continue;
+                }
+                
+                $val = trim($row[$column]);
+                
+                // Limpiar HTML si existe antes de detectar si es un número
+                if (preg_match('/<[a-z][\s\S]*>/i', $val)) {
+                    $val = strip_tags($val);
+                    $val = html_entity_decode($val, ENT_QUOTES, 'UTF-8');
+                    $val = trim(str_replace(array("&nbsp;", "\xc2\xa0"), " ", $val));
+                }
+                
+                if ($val === '') {
+                    continue;
+                }
+                
+                $totalCount++;
+                
+                // 1. Detectar si tiene ceros a la izquierda (ej: "000123") y no es decimal (ej: "0.5")
+                if (preg_match('/^0\d+$/', $val) && strlen($val) > 1) {
+                    $hasLeadingZeros = true;
+                }
+                
+                // 2. Detectar si es un entero largo (longitud > 6, ej: carta porte "20260521") sin puntos decimales o miles
+                if (preg_match('/^\d+$/', $val) && strlen($val) > 6) {
+                    $hasLongIntegers = true;
+                }
+                
+                // 3. Si contiene caracteres que no son de un número (letras, espacios en medio, guiones extra, etc.)
+                // pero permitimos comas, puntos y signo negativo
+                $cleanVal = str_replace(array(',', '.', '-'), '', $val);
+                if (!ctype_digit($cleanVal) && $cleanVal !== '') {
+                    $hasNonNumeric = true;
+                }
+                
+                if ($totalCount >= 50) {
+                    break; // Solo analizar una muestra representativa
+                }
+            }
+            
+            // Si detectamos patrones de identificador/texto, guardamos la columna
+            if ($hasLeadingZeros || $hasLongIntegers || $hasNonNumeric) {
+                $textColumns[$column] = true;
+            }
+        }
+        ?>
         <table class="print-table">
             <thead>
                 <tr>
@@ -273,10 +351,28 @@ $currentDate = date('d/m/Y H:i:s');
                 <?php foreach ($results as $row): ?>
                     <tr>
                         <?php foreach ($columns as $column): ?>
-                            <td>
                             <?php 
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
+                                // Detectar si el valor es numérico
+                                $cleanValue = strip_tags($value);
+                                $cleanValue = html_entity_decode($cleanValue, ENT_QUOTES, 'UTF-8');
+                                $cleanValue = str_replace(array("&nbsp;", "\xc2\xa0"), " ", $cleanValue);
+                                $cleanValue = trim($cleanValue);
+                                $cleanValue = str_replace(array('$', ',', ' ', '%'), '', $cleanValue);
+                                
+                                $isNumeric = ($cleanValue !== '' && is_numeric($cleanValue));
+                                
+                                // Identificar si la columna es detectada dinámicamente como texto/identificador
+                                $isIdentifier = isset($textColumns[$column]);
+                                
+                                $alignStyle = '';
+                                if ($isNumeric && !$isIdentifier) {
+                                    $alignStyle = ' style="text-align: right;"';
+                                }
+                            ?>
+                            <td<?php echo $alignStyle; ?>>
+                            <?php 
                                 // Detectar si parece contener HTML (case-insensitive)
                                 if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
                                     // Convertir etiquetas comunes a minúsculas para detección consistente
