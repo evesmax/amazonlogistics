@@ -127,6 +127,22 @@ $currentDate = date('d/m/Y H:i:s');
             background-color: #f9f9f9;
         }
         
+        /* Estilos para filas de subtotales y totales */
+        .subtotal-row {
+            background-color: #f0f0f0 !important;
+            font-weight: bold;
+            border-top: 1px solid #ccc;
+        }
+        .total-row {
+            background-color: #e0e0e0 !important;
+            font-weight: bold;
+            border-top: 2px solid #999;
+            border-bottom: 2px solid #999;
+        }
+        .subtotal-row td, .total-row td {
+            padding: 8px 10px;
+        }
+        
         .no-results, 
         .error-message {
             padding: 15px;
@@ -203,6 +219,18 @@ $currentDate = date('d/m/Y H:i:s');
             
             .print-table tr:nth-child(even) {
                 background-color: #f9f9f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .subtotal-row {
+                background-color: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .total-row {
+                background-color: #e0e0e0 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -349,32 +377,178 @@ $currentDate = date('d/m/Y H:i:s');
             </thead>
             <tbody>
                 <?php foreach ($results as $row): ?>
-                    <tr>
+                    <?php 
+                    // Determinar si es una fila de subtotal o total
+                    $isSubtotal = isset($row['__is_subtotal']) && $row['__is_subtotal'] === true;
+                    $subtotalLevel = isset($row['__subtotal_level']) ? intval($row['__subtotal_level']) : 0;
+                    
+                    // Definir clases CSS según el tipo de fila
+                    $rowClass = '';
+                    if ($isSubtotal) {
+                        $rowClass = $subtotalLevel === 1 ? 'subtotal-row no-format' : 'total-row no-format';
+                    }
+                    ?>
+                    <tr class="<?php echo $rowClass; ?>">
                         <?php foreach ($columns as $column): ?>
                             <?php 
+                                // Ignorar campos especiales de control
+                                if ($column === '__is_subtotal' || $column === '__subtotal_level') {
+                                    echo '<td></td>';
+                                    continue;
+                                }
+                                
                                 $value = isset($row[$column]) ? $row[$column] : '';
                                 
-                                // Detectar si el valor es numérico
-                                $cleanValue = strip_tags($value);
-                                $cleanValue = html_entity_decode($cleanValue, ENT_QUOTES, 'UTF-8');
-                                $cleanValue = str_replace(array("&nbsp;", "\xc2\xa0"), " ", $cleanValue);
-                                $cleanValue = trim($cleanValue);
-                                $cleanValue = str_replace(array('$', ',', ' ', '%'), '', $cleanValue);
+                                // Determinar la alineación usando ESTRICTAMENTE la información de formato del SQL
+                                $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
+                                $hasExplicitFormat = isset($columnFormatInfo[$column]) && $columnFormatInfo[$column]['has_format'];
                                 
-                                $isNumeric = ($cleanValue !== '' && is_numeric($cleanValue));
-                                
-                                // Identificar si la columna es detectada dinámicamente como texto/identificador
-                                $isIdentifier = isset($textColumns[$column]);
-                                
-                                $alignStyle = '';
-                                if ($isNumeric && !$isIdentifier) {
-                                    $alignStyle = ' style="text-align: right;"';
+                                $alignAttr = '';
+                                if ($value !== '') {
+                                    // Detectar si el valor es numérico
+                                    $cleanValue = strip_tags($value);
+                                    $cleanValue = html_entity_decode($cleanValue, ENT_QUOTES, 'UTF-8');
+                                    $cleanValue = str_replace(array("&nbsp;", "\xc2\xa0"), " ", $cleanValue);
+                                    $cleanValue = trim($cleanValue);
+                                    $cleanValue = str_replace(array('$', ',', ' ', '%'), '', $cleanValue);
+                                    
+                                    $isNumeric = ($cleanValue !== '' && is_numeric($cleanValue));
+                                    
+                                    // Identificar si la columna es detectada dinámicamente como texto/identificador
+                                    $isIdentifier = isset($textColumns[$column]);
+                                    
+                                    if ($isNumeric && !$isIdentifier) {
+                                        $alignAttr = ' style="text-align: right !important;"';
+                                    } else if ($hasExplicitFormat) {
+                                        $alignAttr = ' style="text-align: right !important;"';
+                                    } else {
+                                        // Si no es numérico ni tiene formato explícito, se centra y asume texto general
+                                        $alignAttr = ' style="text-align: center !important;"';
+                                    }
                                 }
                             ?>
-                            <td<?php echo $alignStyle; ?>>
+                            <td<?php echo $alignAttr; ?>>
                             <?php 
-                                // Detectar si parece contener HTML (case-insensitive)
-                                if (preg_match('/<[a-z][\s\S]*>/i', $value)) {
+                                // Si es una fila de subtotal o total, dar formato especial
+                                if ($isSubtotal) {
+                                    // Si es un campo numérico (aparece en los campos a totalizar)
+                                    $subtotalesSubtotal = isset($_SESSION['subtotales_subtotal']) ? $_SESSION['subtotales_subtotal'] : '';
+                                    $sumFields = array_map('trim', explode(',', $subtotalesSubtotal));
+                                    
+                                    $columnMapping = isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['column_mapping']) ? 
+                                                      $_SESSION['debug_column_mapping']['column_mapping'] : [];
+                                    $mappedSumFields = [];
+                                    
+                                    // Convertir los campos SQL a campos de visualización
+                                    foreach ($sumFields as $field) {
+                                        $fieldTrimmed = trim($field);
+                                        
+                                        if (isset($columnMapping[$fieldTrimmed])) {
+                                            $mapped = $columnMapping[$fieldTrimmed];
+                                            $mappedSumFields[] = $mapped;
+                                        } else {
+                                            // Intentar buscar por coincidencia parcial
+                                            $matchFound = false;
+                                            $fieldBase = $fieldTrimmed;
+                                            if (strpos($fieldTrimmed, '.') !== false) {
+                                                $parts = explode('.', $fieldTrimmed);
+                                                $fieldBase = end($parts);
+                                            }
+                                            
+                                            // Intentar mapeo directo si coincide nombre con una columna disponible
+                                            foreach ($columns as $col) {
+                                                if (stripos($col, $fieldBase) !== false || 
+                                                    (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
+                                                    $mappedSumFields[] = $col;
+                                                    $matchFound = true;
+                                                    break;
+                                                }
+                                            }
+                                            
+                                            // Si todavía no encontramos coincidencia, usar el original
+                                            if (!$matchFound) {
+                                                $mappedSumFields[] = $fieldTrimmed;
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (in_array($column, $mappedSumFields)) {
+                                        // Obtener decimales específicos de la configuración detectada
+                                        $columnFormatInfo = isset($_SESSION['column_format_info']) ? $_SESSION['column_format_info'] : [];
+                                        $decimals = isset($columnFormatInfo[$column]) && isset($columnFormatInfo[$column]['decimals']) ? $columnFormatInfo[$column]['decimals'] : 2;
+                                        
+                                        // Los subtotales generados por PHP siempre son valores numéricos crudos
+                                        // Formatear con separador de miles y decimales específicos (formato americano: #,##0.00)
+                                        $cleanValue = is_string($value) ? str_replace(array(',', ' '), '', $value) : $value;
+                                        
+                                        if (is_numeric($cleanValue)) {
+                                            $formattedValue = number_format(floatval($cleanValue), $decimals, '.', ',');
+                                            echo '<strong style="text-align: right !important;">' . $formattedValue . '</strong>';
+                                        } else {
+                                            echo '<strong style="text-align: right !important;">' . htmlspecialchars((string)$value) . '</strong>';
+                                        }
+                                        continue;
+                                    } else if ($subtotalLevel === 2) {
+                                        // Para la fila de total general, mostrar "TOTAL GENERAL" en la primera columna
+                                        if ($column === reset($columns)) {
+                                            echo '<strong style="text-align: center !important;">TOTAL GENERAL</strong>';
+                                            continue;
+                                        }
+                                    } else if ($subtotalLevel === 1) {
+                                        // Para filas de subtotal, mostrar "Subtotal:" y el valor del campo
+                                        $subtotalesAgrupaciones = isset($_SESSION['subtotales_agrupaciones']) ? $_SESSION['subtotales_agrupaciones'] : '';
+                                        $groupFields = array_map('trim', explode(',', $subtotalesAgrupaciones));
+                                        
+                                        $columnMapping = isset($_SESSION['debug_column_mapping']) && isset($_SESSION['debug_column_mapping']['column_mapping']) ? 
+                                                          $_SESSION['debug_column_mapping']['column_mapping'] : [];
+                                        $mappedGroupFields = [];
+                                        
+                                        // Convertir los campos SQL a campos de visualización usando el mismo enfoque mejorado
+                                        foreach ($groupFields as $field) {
+                                            $fieldTrimmed = trim($field);
+                                            
+                                            // Verificar mapeo directo
+                                            if (isset($columnMapping[$fieldTrimmed])) {
+                                                $mappedGroupFields[] = $columnMapping[$fieldTrimmed];
+                                            } 
+                                            // Buscar por coincidencia parcial
+                                            else {
+                                                $fieldBase = $fieldTrimmed;
+                                                if (strpos($fieldTrimmed, '.') !== false) {
+                                                    $parts = explode('.', $fieldTrimmed);
+                                                    $fieldBase = end($parts);
+                                                }
+                                                
+                                                $matchFound = false;
+                                                foreach ($columns as $col) {
+                                                    if (stripos($col, $fieldBase) !== false || 
+                                                        (function_exists('levenshtein') && levenshtein(strtolower($col), strtolower($fieldBase)) <= 3)) {
+                                                        $mappedGroupFields[] = $col;
+                                                        $matchFound = true;
+                                                        break;
+                                                    }
+                                                }
+                                                
+                                                if (!$matchFound) {
+                                                    $mappedGroupFields[] = $fieldTrimmed;
+                                                }
+                                            }
+                                        }
+                                        
+                                        if (in_array($column, $mappedGroupFields)) {
+                                            if ($column === reset($mappedGroupFields) && trim($value) !== '') {
+                                                echo '<strong style="text-align: center !important;">Total: ' . htmlspecialchars($value) . '</strong>';
+                                            } else {
+                                                echo '<strong style="text-align: center !important;">' . htmlspecialchars($value) . '</strong>';
+                                            }
+                                            continue;
+                                        }
+                                    }
+                                }
+                                
+                                // Procesamiento normal para filas regulares (NO subtotales/totales)
+                                // INTERPRETAR HTML DIRECTAMENTE (SIN ESCAPAR) O DEJAR SIN FORMATO
+                                if (is_string($value) && strpos($value, '<') !== false && strpos($value, '>') !== false) {
                                     // Convertir etiquetas comunes a minúsculas para detección consistente
                                     $valueLower = strtolower($value);
                                     
@@ -400,14 +574,9 @@ $currentDate = date('d/m/Y H:i:s');
                                     if ($value === '2990,58') {
                                         echo '2,990.58';
                                     }
-                                    // Verificar si es un número en formato europeo
-                                    else if (is_string($value) && preg_match('/^[\d]+,[\d]+$/', $value)) {
-                                        $numValue = floatval(str_replace(',', '.', $value));
-                                        echo number_format($numValue, 2, '.', ',');
-                                    }
                                     // No es HTML ni un caso especial, escapar como texto normal
                                     else {
-                                        echo htmlspecialchars($value);
+                                        echo htmlspecialchars((string)$value);
                                     }
                                 }
                             ?>
