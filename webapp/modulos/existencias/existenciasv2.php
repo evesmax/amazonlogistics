@@ -91,10 +91,17 @@ if (isset($_SESSION['applied_filters']) && is_array($_SESSION['applied_filters']
 
             }    
             if ($etiqueta=="Nombre Bodega") {
-                    $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '%".$valor."%' limit 1";
+                    $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega = '".$valor."' limit 1";
                     $resultado = $conexion->consultar($sqlAux);
-                    while($rs = $conexion->siguiente($resultado)){
-                        $idbodega=$rs{"id"};
+                    if ($rs = $conexion->siguiente($resultado)) {
+                        $idbodega = $rs["id"];
+                    } else {
+                        $conexion->cerrar_consulta($resultado);
+                        $sqlAux="select idbodega id from operaciones_bodegas where nombrebodega like '%".$valor."%' limit 1";
+                        $resultado = $conexion->consultar($sqlAux);
+                        while($rs = $conexion->siguiente($resultado)){
+                            $idbodega=$rs["id"];
+                        }
                     }
                     $conexion->cerrar_consulta($resultado);
 
