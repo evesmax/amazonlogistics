@@ -638,6 +638,21 @@ function cleanSqlQuery($sql) {
 }
 
 /**
+ * Auxiliar para extraer el nombre de una columna SQL ignorando su alias (ej. "id AS val" o "id val")
+ */
+function getColumnNameWithoutAlias($col) {
+    $col = trim($col);
+    if (preg_match('/(.+?)\s+AS\s+(.+)/i', $col, $m)) {
+        return trim($m[1]);
+    }
+    if (strpos($col, ' ') !== false && strpos($col, '(') === false) {
+        $parts = preg_split('/\s+/', $col);
+        return trim($parts[0]);
+    }
+    return $col;
+}
+
+/**
  * Función para reemplazar patrones de combo no sustituidos en la consulta SQL
  * Esta solución es efectiva cuando hay múltiples filtros combinados y algunos 
  * patrones [@Filtro;val;des;...] permanecen en la consulta sin ser sustituidos
@@ -858,15 +873,22 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                 // CRÍTICO: Detectar si es multiselección y convertir array a formato IN
                 $isMultiselection = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
                 
-                if ($isMultiselection && is_array($filterValue)) {
-                    // Convertir array a formato IN solo los valores, SIN paréntesis externos
-                    // Los paréntesis ya están en el SQL como IN ([@...])
-                    // IMPORTANTE: Usar comillas simples para MySQL 5.5 compatibility
+                if ($isMultiselection) {
+                    if (!is_array($filterValue)) {
+                        $filterValue = ($filterValue === '') ? [] : explode(',', $filterValue);
+                    }
+                    $filterValue = array_map(function($val) {
+                        return trim($val, "'\" ");
+                    }, $filterValue);
+                    $filterValue = array_filter($filterValue, function($val) {
+                        return $val !== '';
+                    });
+                    
                     $inValues = array_map(function($val) {
                         return "'" . addslashes($val) . "'";
                     }, $filterValue);
                     $filterValue = implode(',', $inValues);  // SIN paréntesis externos
-                    error_log("Multiselección detectada - Valores para IN: $filterValue");
+                    error_log("Multiselección detectada y normalizada - Valores para IN: $filterValue");
                 } else if (is_array($filterValue)) {
                     // Si es array pero NO multiselección, tomar el primer valor
                     $filterValue = $filterValue[0];
@@ -978,7 +1000,7 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                         // Si es multiselección y el patrón incluye IN, construir replacement correcto
                         $replacement = $filterValue;
                         if ($isMultiselection && stripos($pattern, 'IN') !== false) {
-                            $replacement = 'IN ' . $filterValue;
+                            $replacement = 'IN (' . $filterValue . ')';
                         }
                         
                         $newSql = str_replace($pattern, $replacement, $sql);
@@ -1780,9 +1802,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                                     $singleDisplayValue = $singleValue; // Valor por defecto
                                     
                                     // Analizar si el query tiene estructura value,text o es una consulta completa
-                                    if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
-                                        $valueColumn = trim($matches[1]);
-                                        $textColumn = trim($matches[2]);
+                                    if (preg_match('/SELECT\s+(.+?),\s*(.+?)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
+                                        $valueColumn = getColumnNameWithoutAlias($matches[1]);
+                                        $textColumn = getColumnNameWithoutAlias($matches[2]);
                                         $tableName = trim($matches[3]);
                                         
                                         // Construir consulta para buscar el valor descriptivo
@@ -1803,9 +1825,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($report)) {
                             // LÓGICA ORIGINAL: Para filtros individuales
                             else {
                                 // Analizar si el query tiene estructura value,text o es una consulta completa
-                                if (preg_match('/SELECT\s+([^,]+),\s*([^,\s]+)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
-                                    $valueColumn = trim($matches[1]);
-                                    $textColumn = trim($matches[2]);
+                                if (preg_match('/SELECT\s+(.+?),\s*(.+?)\s+FROM\s+([^\s;]+)/i', $query, $matches)) {
+                                    $valueColumn = getColumnNameWithoutAlias($matches[1]);
+                                    $textColumn = getColumnNameWithoutAlias($matches[2]);
                                     $tableName = trim($matches[3]);
                                     
                                     // Construir consulta para buscar el valor descriptivo

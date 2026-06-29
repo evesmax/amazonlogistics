@@ -2514,13 +2514,27 @@ function evaluateFilters($filterDefinitions, $filterValues, $filters) {
             // Filtro activo - preparar valor de reemplazo según tipo
             $replacementValue = '';
             
-            if ($def['is_multiselection'] && is_array($value)) {
-                // Construir IN clause: IN ('val1','val2','val3') - MySQL 5.5 compatible
-                $quotedValues = array_map(function($v) {
-                    return "'" . addslashes($v) . "'";
+            if ($def['is_multiselection']) {
+                if (!is_array($value)) {
+                    $value = ($value === '') ? [] : explode(',', $value);
+                }
+                // Limpiar comillas si vienen en los elementos
+                $value = array_map(function($v) {
+                    return trim($v, "'\" ");
                 }, $value);
-                $replacementValue = 'IN (' . implode(',', $quotedValues) . ')';
-                error_log("Filter '$filterKey' activo (multiselección): " . $replacementValue);
+                $value = array_filter($value, function($v) {
+                    return $v !== '';
+                });
+                
+                if (!empty($value)) {
+                    $quotedValues = array_map(function($v) {
+                        return "'" . addslashes($v) . "'";
+                    }, $value);
+                    $replacementValue = 'IN (' . implode(',', $quotedValues) . ')';
+                    error_log("Filter '$filterKey' activo (multiselección normalizado): " . $replacementValue);
+                } else {
+                    $hasValue = false;
+                }
             } elseif ($def['type'] == 'text' && $def['operator'] == 'LIKE') {
                 // Texto con LIKE - agregar wildcards si no los tiene
                 if (strpos($value, '%') === false) {

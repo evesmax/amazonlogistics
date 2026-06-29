@@ -342,9 +342,23 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                         }
                     }
                 }
-                else {
                     // Para otros filtros, verificar si es multiselección
-                    $isFilterMultiselection = is_array($filterValue);
+                    $isMultiselectionPattern = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
+                    
+                    if ($isMultiselectionPattern) {
+                        if (!is_array($filterValue)) {
+                            $filterValue = ($filterValue === '') ? [] : explode(',', $filterValue);
+                        }
+                        $filterValue = array_map(function($v) {
+                            return trim($v, "'\" ");
+                        }, $filterValue);
+                        $filterValue = array_filter($filterValue, function($v) {
+                            return $v !== '';
+                        });
+                        $isFilterMultiselection = true;
+                    } else {
+                        $isFilterMultiselection = is_array($filterValue);
+                    }
                     
                     if ($isFilterMultiselection) {
                         // Para multiselección, crear una condición IN con los valores seleccionados
