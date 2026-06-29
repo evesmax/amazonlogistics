@@ -2089,6 +2089,14 @@ function processSubtotals($data, $groupingFields, $totalFields) {
 </head>
 <body>
 <?php 
+// Print SQL query in HTML comment for debugging
+if (isset($query)) {
+    echo "\n<!-- DEBUG SQL:\n" . htmlspecialchars($query) . "\n-->\n";
+}
+if (isset($error)) {
+    echo "\n<!-- DEBUG ERROR:\n" . htmlspecialchars($error) . "\n-->\n";
+}
+?>
 // Ocultar completamente el div de carga para el ambiente productivo
 // No incluimos el div para evitar cargar imágenes inexistentes
 // El script al final de la página también buscará este div y lo ocultará si existiera
