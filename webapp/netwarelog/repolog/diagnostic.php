@@ -2,6 +2,10 @@
 session_start();
 header('Content-Type: text/plain');
 
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 echo "=== DIAGNOSTIC REPORT ===\n";
 echo "Session DB: " . (isset($_SESSION['bd']) ? $_SESSION['bd'] : 'Not Set') . "\n";
 echo "Accelog variable: " . (isset($_SESSION['accelog_variable']) ? $_SESSION['accelog_variable'] : 'Not Set') . "\n";
