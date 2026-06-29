@@ -255,6 +255,36 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                 }
             }
             
+            // Validar si el valor encontrado es de hecho vacío o un array de valores vacíos (no seleccionado)
+            if ($filterFound && $filterValue !== null) {
+                $isMultiselection = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
+                if ($isMultiselection) {
+                    if (!is_array($filterValue)) {
+                        $filterValue = ($filterValue === '') ? array() : explode(',', $filterValue);
+                    }
+                    $filterValue = array_map(function($val) {
+                        return trim($val, "'\" ");
+                    }, $filterValue);
+                    $filterValue = array_filter($filterValue, function($val) {
+                        return $val !== '';
+                    });
+                    if (empty($filterValue)) {
+                        $filterFound = false;
+                    }
+                } else if (is_array($filterValue)) {
+                    $filterValue = array_filter($filterValue, function($val) {
+                        return $val !== '';
+                    });
+                    if (empty($filterValue)) {
+                        $filterFound = false;
+                    }
+                } else {
+                    if (trim($filterValue) === '') {
+                        $filterFound = false;
+                    }
+                }
+            }
+            
             // Si hemos encontrado un valor, reemplazar el patrón en la consulta con más variantes
             if ($filterFound && $filterValue !== null) {
                 // MEJORA: Intentar más variantes de reemplazo para el patrón

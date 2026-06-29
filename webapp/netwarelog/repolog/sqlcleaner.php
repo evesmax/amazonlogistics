@@ -160,10 +160,10 @@ function removeCompleteClause($sql, $pattern) {
         }
         // Detectar fin de patrón o variable ]
         elseif ($sql[$i] == ']') {
-            if ($insidePattern) {
-                $insidePattern = false;
-            } elseif ($insideVariable) {
+            if ($insideVariable) {
                 $insideVariable = false;
+            } elseif ($insidePattern) {
+                $insidePattern = false;
             }
         }
         // Solo contar paréntesis si NO estamos dentro de un patrón o variable
@@ -195,28 +195,16 @@ function removeCompleteClause($sql, $pattern) {
     
     for ($k = 0; $k < $len && $k < 250; $k++) {
         if ($remainingSQL[$k] == '[') {
-            $bracketCount++;
-            $foundBracket = true;
+            // Si encontramos un nuevo corchete de apertura antes de cualquier corchete de cierre huérfano,
+            // significa que estamos ante un nuevo patrón/variable, no ante un residuo. Paramos la búsqueda.
+            break;
         } elseif ($remainingSQL[$k] == ']') {
-            if ($bracketCount > 0) {
-                $bracketCount--;
-                if ($bracketCount == 0) {
-                    // Encontramos el cierre del patrón, extender hasta aquí + espacios
-                    $extendTo = $k + 1;
-                    // Consumir espacios en blanco después del ]
-                    while ($extendTo < $len && ctype_space($remainingSQL[$extendTo])) {
-                        $extendTo++;
-                    }
-                    break;
-                }
-            } else {
-                // ] sin [ previo - es el cierre del patrón
-                $extendTo = $k + 1;
-                while ($extendTo < $len && ctype_space($remainingSQL[$extendTo])) {
-                    $extendTo++;
-                }
-                break;
+            // Encontramos un corchete de cierre huérfano (residuo del patrón actual)
+            $extendTo = $k + 1;
+            while ($extendTo < $len && ctype_space($remainingSQL[$extendTo])) {
+                $extendTo++;
             }
+            break;
         }
     }
     
@@ -2549,10 +2537,18 @@ function evaluateFilters($filterDefinitions, $filterValues, $filters) {
                 error_log("Filter '$filterKey' activo (simple): " . $replacementValue);
             }
             
-            $evaluated[] = array_merge($def, array(
-                'is_active' => true,
-                'replacement_value' => $replacementValue
-            ));
+            if ($hasValue) {
+                $evaluated[] = array_merge($def, array(
+                    'is_active' => true,
+                    'replacement_value' => $replacementValue
+                ));
+            } else {
+                error_log("Filter '$filterKey' INACTIVO después de normalizar multiselección - será eliminado");
+                $evaluated[] = array_merge($def, array(
+                    'is_active' => false,
+                    'replacement_value' => ''
+                ));
+            }
         } else {
             // Filtro inactivo - no se incluirá en el WHERE final
             error_log("Filter '$filterKey' INACTIVO - será eliminado");
