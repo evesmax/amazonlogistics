@@ -341,7 +341,7 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                             }
                         }
                     }
-                }
+                else {
                     // Para otros filtros, verificar si es multiselección
                     $isMultiselectionPattern = (strpos($fullPattern, ';@Multiselection') !== false || strpos($fullPattern, '@Multiselection') !== false);
                     
