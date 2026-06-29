@@ -2097,10 +2097,6 @@ if (isset($error)) {
     echo "\n<!-- DEBUG ERROR:\n" . htmlspecialchars($error) . "\n-->\n";
 }
 ?>
-// Ocultar completamente el div de carga para el ambiente productivo
-// No incluimos el div para evitar cargar imágenes inexistentes
-// El script al final de la página también buscará este div y lo ocultará si existiera
-?>
     <div class="sql-results-container">
         <div class="header-actions">
             <div class="back-container">
