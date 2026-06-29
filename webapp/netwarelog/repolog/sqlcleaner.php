@@ -2516,7 +2516,7 @@ function evaluateFilters($filterDefinitions, $filterValues, $filters) {
             
             if ($def['is_multiselection']) {
                 if (!is_array($value)) {
-                    $value = ($value === '') ? [] : explode(',', $value);
+                    $value = ($value === '') ? array() : explode(',', $value);
                 }
                 // Limpiar comillas si vienen en los elementos
                 $value = array_map(function($v) {

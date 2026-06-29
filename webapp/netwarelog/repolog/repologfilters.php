@@ -875,7 +875,7 @@ function reemplazarPatronesComboNoSustituidos($sql, $filters, $filterValues) {
                 
                 if ($isMultiselection) {
                     if (!is_array($filterValue)) {
-                        $filterValue = ($filterValue === '') ? [] : explode(',', $filterValue);
+                        $filterValue = ($filterValue === '') ? array() : explode(',', $filterValue);
                     }
                     $filterValue = array_map(function($val) {
                         return trim($val, "'\" ");
