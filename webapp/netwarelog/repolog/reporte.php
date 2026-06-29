@@ -1239,6 +1239,7 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         
         // LOG CRÍTICO: Ver el SQL exacto que se va a ejecutar
         error_log("SQL QUE SE VA A EJECUTAR: " . $query);
+        file_put_contents('sql_debug.txt', "[" . date('Y-m-d H:i:s') . "] SQL:\n" . $query . "\n\n", FILE_APPEND);
         
         // Prepare and execute the query
         $stmt = $pdo->query($query);
@@ -1424,8 +1425,10 @@ if (isset($_SESSION['sql_consulta']) && !empty($_SESSION['sql_consulta'])) {
         
     } catch (PDOException $e) {
         $error = "Database Error: " . $e->getMessage();
+        file_put_contents('sql_debug.txt', "[" . date('Y-m-d H:i:s') . "] PDOException: " . $e->getMessage() . "\n\n", FILE_APPEND);
     } catch (Exception $e) {
         $error = $e->getMessage();
+        file_put_contents('sql_debug.txt', "[" . date('Y-m-d H:i:s') . "] Exception: " . $e->getMessage() . "\n\n", FILE_APPEND);
     }
 } else {
     $error = "No SQL query found in session.";
