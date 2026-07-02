@@ -91,151 +91,198 @@
             exit();
         }
 //FIN POLITICAS
-                                       
+                                       try {
+    $conexion->consultar("START TRANSACTION");
 
-//Grabando Documento
-         $sql="Insert Into logistica_recepciones 
-                    (idtraslado,idenvio,fecharecepcion,banco,estiba,
-                    ticketbascula,referencia,observaciones,almacenista,supervisor,
-                    cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
-                    idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
-                    ) VALUES 
-                    ('".$idtraslado."','".$idenvio."','".$fecharecepcion."','".$banco."','".$estiba."','".
-                    $ticketbascula."','".$referencia."','".$observaciones."','".$almacenista."','".$supervisor."','".
-                    $cabocuadrilla."','".$cantidadenviada1."','".$cantidadenviada2."','".$cantidadrecibida1."','".$cantidadrecibida2."','".
-                    $idbodega."','".$diferencia1."','".$diferencia2."','".$folios."','".$capturista."','".$pbruto."','".$ptara."','".$pneto."')";
-        echo $sql;
+    //Grabando Documento
+    $sql="Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ('".$idtraslado."','".$idenvio."','".$fecharecepcion."','".$banco."','".$estiba."','".
+                $ticketbascula."','".$referencia."','".$observaciones."','".$almacenista."','".$supervisor."','".
+                $cabocuadrilla."','".$cantidadenviada1."','".$cantidadenviada2."','".$cantidadrecibida1."','".$cantidadrecibida2."','".
+                $idbodega."','".$diferencia1."','".$diferencia2."','".$folios."','".$capturista."','".$pbruto."','".$ptara."','".$pneto."')";
+    echo $sql;
 
-        $conexion->consultar($sql);
-        $idrecepcion=$conexion->insert_id();
+    $res = $conexion->consultar($sql);
+    if ($res === false) {
+        throw new Exception("Error al registrar la recepción en logistica_recepciones: " . mysql_error());
+    }
+    $idrecepcion=$conexion->insert_id();
+
+    // Registrar transaccion
+    $conexion->transaccion("RECEPCION: " . $idrecepcion, $sql);
+
+    //Afectando Inventario con Documento.
+    //Consulta Politicas el Tipo de movimiento que afecta
+    //# POLITICA Consulta Politicas el Tipo de movimiento que afecta
+    $tipomovimiento="17";
+    $sqlbodega="select * from logistica_politicas where idpolitica=7";
+    $result = $conexion->consultar($sqlbodega);
+    if ($result === false) {
+        throw new Exception("Error al consultar logistica_politicas: " . mysql_error());
+    }
+    while($rs = $conexion->siguiente($result)){
+        $tipomovimiento=$rs{"valor1"};
+    }
+    $conexion->cerrar_consulta($result);
         
+    include("../inventarios/clases/clinventarios.php");
+    $movimientos = new clinventarios();
+    
+    //Consulta Detalle
+    $sQuery = "select b.idfabricante 'fabricante',b.idbodegaorigen 'bodega',b.idproducto 'producto',
+                    b.idloteproducto 'lote', b.idestadoproducto 'estadoproducto', 
+                    ifnull(b.cantidadretirada1,0) 'cantidadretirada1',
+                    ifnull(b.cantidadretirada2,0) 'cantidadretirada2',
+                    ifnull(b.cantidadrecibida1,0) 'cantidadrecibida1',
+                    ifnull(b.cantidadrecibida2,0) 'cantidadrecibida2'
+                from logistica_traslados b 
+                    inner join logistica_envios a on a.idtraslado=b.idtraslado
+                Where b.idtraslado=".$idtraslado." And a.idenvio=".$idenvio;
+    echo $sQuery."<br>";
+    $result = $conexion->consultar($sQuery);
+    if ($result === false) {
+        throw new Exception("Error al obtener detalle del traslado: " . mysql_error());
+    }
+    while($rs = $conexion->siguiente($result)){
+        $fabricante=$rs{"fabricante"};
+        $marca=$rs{"fabricante"};
+        //$bodega=$rs{"bodega"};
+        $producto=$rs{"producto"};
+        $lote=$rs{"lote"};
+        $estadoproducto=$rs{"estadoproducto"};  
+        //Datos para afectar
+        $scantidadrecibida1=$rs{"cantidadrecibida1"}+$cantidadrecibida1;
+        $scantidadrecibida2=$rs{"cantidadrecibida2"}+$cantidadrecibida2;
+
+        //Agrega Movimiento Almacen
+        $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidadrecibida1,$cantidadrecibida2,$fecharecepcion,$doctoorigen,$idrecepcion,$conexion);
         
-//Afectando Inventario con Documento.
-            //Consulta Politicas el Tipo de movimiento que afecta
-            //# POLITICA Consulta Politicas el Tipo de movimiento que afecta
-                $tipomovimiento="17";
-                $sqlbodega="select * from logistica_politicas where idpolitica=7";
-                $result = $conexion->consultar($sqlbodega);
-                while($rs = $conexion->siguiente($result)){
-                    $tipomovimiento=$rs{"valor1"};
-                }
-                $conexion->cerrar_consulta($result);
-            
-            include("../inventarios/clases/clinventarios.php");
-            $movimientos = new clinventarios();
-            
-            //Consulta Detalle
-		$sQuery = "select b.idfabricante 'fabricante',b.idbodegaorigen 'bodega',b.idproducto 'producto',
-                                b.idloteproducto 'lote', b.idestadoproducto 'estadoproducto', 
-                                ifnull(b.cantidadretirada1,0) 'cantidadretirada1',
-                                ifnull(b.cantidadretirada2,0) 'cantidadretirada2',
-                                ifnull(b.cantidadrecibida1,0) 'cantidadrecibida1',
-                                ifnull(b.cantidadrecibida2,0) 'cantidadrecibida2'
-                            from logistica_traslados b 
-                                inner join logistica_envios a on a.idtraslado=b.idtraslado
-                            Where b.idtraslado=".$idtraslado." And a.idenvio=".$idenvio;
-                echo $sQuery."<br>";
-		$result = $conexion->consultar($sQuery);
-		while($rs = $conexion->siguiente($result)){
-                        $fabricante=$rs{"fabricante"};
-                        $marca=$rs{"fabricante"};
-                        //$bodega=$rs{"bodega"};
-                        $producto=$rs{"producto"};
-                        $lote=$rs{"lote"};
-                        $estadoproducto=$rs{"estadoproducto"};  
-                        //Datos para afectar
-                        $scantidadrecibida1=$rs{"cantidadrecibida1"}+$cantidadrecibida1;
-                        $scantidadrecibida2=$rs{"cantidadrecibida2"}+$cantidadrecibida2;
-
-                        //Agrega Movimiento Almacen
-                                    $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidadrecibida1,$cantidadrecibida2,$fecharecepcion,$doctoorigen,$idrecepcion,$conexion);
-                        //Afecta Cantidades en Traslados
-                                    $sqlafecta="UPDATE logistica_traslados set cantidadrecibida1=".$scantidadrecibida1.",cantidadrecibida2=".$scantidadrecibida2." Where idtraslado=".$idtraslado;
-                                    echo $sqlafecta;
-                                    $conexion->consultar($sqlafecta);
-                        //Afecta estado en envios
-                                    $sqlafecta="UPDATE logistica_envios set idestadodocumento=3 Where idenvio=".$idenvio;
-                                    echo $sqlafecta;
-                                    $conexion->consultar($sqlafecta);                                    
-                        //Afecta Estatus en Envio
-                                    $sqlafecta="UPDATE logistica_recepciones set idestadodocumento=1 where idrecepcion=".$idrecepcion;
-                                    echo $sqlafecta;
-                                    $conexion->consultar($sqlafecta);
-                }
-		$conexion->cerrar_consulta($result);
-
-                            //Agregando Devoluciones y Faltantes
+        //Afecta Cantidades en Traslados
+        $sqlafecta="UPDATE logistica_traslados set cantidadrecibida1=".$scantidadrecibida1.",cantidadrecibida2=".$scantidadrecibida2." Where idtraslado=".$idtraslado;
+        echo $sqlafecta;
+        $res = $conexion->consultar($sqlafecta);
+        if ($res === false) {
+            throw new Exception("Error al actualizar cantidades recibidas en logistica_traslados: " . mysql_error());
+        }
         
-            if ($cantdev1*1>0){
-                        //Obtiene datos devolucion
-                                $idtransportista="";
-                                $cartaporte="";
-                                $nombreoperador="";
-                                $placastractor="";
-                                $placasremolque="";
-                                
-                                $sqlenv="select * from logistica_envios where idenvio=$idenvio";
-                                $result = $conexion->consultar($sqlenv);
-                                while($rs = $conexion->siguiente($result)){
-                                    $idtransportista=$rs{"idtransportista"};
-                                    $cartaporte=$rs{"cartaporte"};
-                                    $nombreoperador=$rs{"nombreoperador"};
-                                    $placastractor=$rs{"placastractor"};
-                                    $placasremolque=$rs{"placasremolque"};
-                                }
-                                $conexion->cerrar_consulta($result);                
-                        
-                        $sql = "Insert Into logistica_devoluciones (idtraslado,idenvio,idrecepcion,fechadevolucion,idtransportista,
-                                                cartaporte,operador,placastractor,placasremolque,cantidad1,
-                                                cantidad2,folios,observaciones,cantidadrecibida1,cantidadrecibida2,
-                                                diferencia1,diferencia2,idestadodocumento
-                                            ) VALUES 
-                                ('" . $idtraslado . "','" . $idenvio . "','" . $idrecepcion . "','" . $fecharecepcion . "','" . $idtransportista . "','" .
-                                $cartaporte . "','" . $nombreoperador . "','" . $placastractor . "','" . $placasremolque . "','" . $cantdev1 . "','" .
-                                $cantdev2 . "','" . $folios . "','" . $observaciones . "','0','0','".
-                                $cantdev1."','".$cantdev2."','1')";
+        //Afecta estado en envios
+        $sqlafecta="UPDATE logistica_envios set idestadodocumento=3 Where idenvio=".$idenvio;
+        echo $sqlafecta;
+        $res = $conexion->consultar($sqlafecta);
+        if ($res === false) {
+            throw new Exception("Error al actualizar idestadodocumento en logistica_envios: " . mysql_error());
+        }
+        
+        //Afecta Estatus en Envio
+        $sqlafecta="UPDATE logistica_recepciones set idestadodocumento=1 where idrecepcion=".$idrecepcion;
+        echo $sqlafecta;
+        $res = $conexion->consultar($sqlafecta);
+        if ($res === false) {
+            throw new Exception("Error al actualizar idestadodocumento en logistica_recepciones: " . mysql_error());
+        }
+    }
+    $conexion->cerrar_consulta($result);
 
-                        $conexion->consultar($sql);
-                        $iddevolucion = $conexion->insert_id();
-            } 
+    //Agregando Devoluciones y Faltantes
 
-            if ($cantfalt1*1>0){
-                        //Obtiene datos faltantes                
-                        
-                        $sql = "Insert Into logistica_faltantestraslados (idrecepcion,cantfalt1,cantfalt2,idestadodocumento
-                                            ) VALUES 
-                                ('" . $idrecepcion . "','" . $cantfalt1 . "','" . $cantfalt2 . "','1')";
+    if ($cantdev1*1>0){
+        //Obtiene datos devolucion
+        $idtransportista="";
+        $cartaporte="";
+        $nombreoperador="";
+        $placastractor="";
+        $placasremolque="";
+        
+        $sqlenv="select * from logistica_envios where idenvio=$idenvio";
+        $result = $conexion->consultar($sqlenv);
+        if ($result === false) {
+            throw new Exception("Error al consultar logistica_envios: " . mysql_error());
+        }
+        while($rs = $conexion->siguiente($result)){
+            $idtransportista=$rs{"idtransportista"};
+            $cartaporte=$rs{"cartaporte"};
+            $nombreoperador=$rs{"nombreoperador"};
+            $placastractor=$rs{"placastractor"};
+            $placasremolque=$rs{"placasremolque"};
+        }
+        $conexion->cerrar_consulta($result);                
+        
+        $sql = "Insert Into logistica_devoluciones (idtraslado,idenvio,idrecepcion,fechadevolucion,idtransportista,
+                                cartaporte,operador,placastractor,placasremolque,cantidad1,
+                                cantidad2,folios,observaciones,cantidadrecibida1,cantidadrecibida2,
+                                diferencia1,diferencia2,idestadodocumento
+                            ) VALUES 
+                ('" . $idtraslado . "','" . $idenvio . "','" . $idrecepcion . "','" . $fecharecepcion . "','" . $idtransportista . "','" .
+                $cartaporte . "','" . $nombreoperador . "','" . $placastractor . "','" . $placasremolque . "','" . $cantdev1 . "','" .
+                $cantdev2 . "','" . $folios . "','" . $observaciones . "','0','0','".
+                $cantdev1."','".$cantdev2."','1')";
+        $res = $conexion->consultar($sql);
+        if ($res === false) {
+            throw new Exception("Error al registrar la devolución: " . mysql_error());
+        }
+        $iddevolucion = $conexion->insert_id();
+    } 
 
-                        $conexion->consultar($sql);
-                        $idfaltante = $conexion->insert_id();
-            }  
+    if ($cantfalt1*1>0){
+        //Obtiene datos faltantes                
+        
+        $sql = "Insert Into logistica_faltantestraslados (idrecepcion,cantfalt1,cantfalt2,idestadodocumento
+                            ) VALUES 
+                ('" . $idrecepcion . "','" . $cantfalt1 . "','" . $cantfalt2 . "','1')";
 
-						//Consecutivo Interno Bodega 
-				$consecutivobodega=-1;
-				//Afecta Folio Interno
-				$sqlcon="select ifnull(consecutivobodega,0) consecutivobodega from logistica_consecutivosbodega where idbodega=$bodega";
-				$result = $conexion->consultar($sqlcon);
-				while ($rs = $conexion->siguiente($result)) {
-					$consecutivobodega = $rs{"consecutivobodega"};
-				}
-				$conexion->cerrar_consulta($result);
+        $res = $conexion->consultar($sql);
+        if ($res === false) {
+            throw new Exception("Error al registrar faltante: " . mysql_error());
+        }
+        $idfaltante = $conexion->insert_id();
+    }  
 
-				if($consecutivobodega>0){
-					$sqlafecta="Update logistica_consecutivosbodega set consecutivobodega=($consecutivobodega+1) where idbodega=$bodega";
-					$consecutivobodega++;
-				}else{
-					$consecutivobodega=1;
-					$sqlafecta="Insert Into logistica_consecutivosbodega (idbodega,doctoorigen,consecutivobodega) Values ('$bodega','0',1)";
-				}
-				$conexion->consultar($sqlafecta);
-			
-				$sqlafecta="update logistica_recepciones set consecutivobodega=$consecutivobodega where idrecepcion=$idrecepcion";
-				$conexion->consultar($sqlafecta);
-                //echo "Proceso Finalizado con Exito";
-                
+    //Consecutivo Interno Bodega 
+    $consecutivobodega=-1;
+    //Afecta Folio Interno
+    $sqlcon="select ifnull(consecutivobodega,0) consecutivobodega from logistica_consecutivosbodega where idbodega=$bodega";
+    $result = $conexion->consultar($sqlcon);
+    if ($result === false) {
+        throw new Exception("Error al consultar consecutivobodega: " . mysql_error());
+    }
+    while ($rs = $conexion->siguiente($result)) {
+        $consecutivobodega = $rs{"consecutivobodega"};
+    }
+    $conexion->cerrar_consulta($result);
 
-                //exit();
-                
-                header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion) 
+    if($consecutivobodega>0){
+        $sqlafecta="Update logistica_consecutivosbodega set consecutivobodega=($consecutivobodega+1) where idbodega=$bodega";
+        $consecutivobodega++;
+    }else{
+        $consecutivobodega=1;
+        $sqlafecta="Insert Into logistica_consecutivosbodega (idbodega,doctoorigen,consecutivobodega) Values ('$bodega','0',1)";
+    }
+    $res = $conexion->consultar($sqlafecta);
+    if ($res === false) {
+        throw new Exception("Error al actualizar consecutivobodega: " . mysql_error());
+    }
+
+    $sqlafecta="update logistica_recepciones set consecutivobodega=$consecutivobodega where idrecepcion=$idrecepcion";
+    $res = $conexion->consultar($sqlafecta);
+    if ($res === false) {
+        throw new Exception("Error al actualizar consecutivobodega en logistica_recepciones: " . mysql_error());
+    }
+
+    $conexion->consultar("COMMIT");
+
+    header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion);
+
+} catch (Exception $e) {
+    $conexion->consultar("ROLLBACK");
+    echo "<div style='color:red; font-family:helvetica; font-size:14px; font-weight:bold; margin:20px; text-align:center;'>";
+    echo "Error al registrar la recepción: " . htmlspecialchars($e->getMessage());
+    echo "</div>";
+    exit();
+}
          
 ?>

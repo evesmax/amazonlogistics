@@ -58,6 +58,18 @@ class clinventarios{
 
     /* Documentación clase */
     function agregarmovimiento($tipomovimiento,$fabricante,$marca,$bodega,$producto,$lote,$estadoproducto,$cantidad,$cantidadsecundaria,$fecha,$doctoorigen,$foliodoctoorigen,$conexion){
+        // Validar que los parámetros numéricos requeridos no estén vacíos o nulos
+        if ($tipomovimiento === "" || $tipomovimiento === null ||
+            $fabricante === "" || $fabricante === null ||
+            $marca === "" || $marca === null ||
+            $bodega === "" || $bodega === null ||
+            $producto === "" || $producto === null ||
+            $lote === "" || $lote === null ||
+            $estadoproducto === "" || $estadoproducto === null ||
+            $foliodoctoorigen === "" || $foliodoctoorigen === null) {
+            
+            throw new Exception("Error: Uno o más parámetros requeridos están vacíos o son nulos en agregarmovimiento.");
+        }
 
         //Agrega Movimiento Detallado a Kardex
         $sql = "
@@ -65,7 +77,10 @@ class clinventarios{
 				(idtipomovimiento, idfabricante, idmarca, idbodega, idproducto, idloteproducto, idestadoproducto, cantidad, cantidadsecundaria, fecha, doctoorigen, foliodoctoorigen)
 				 values
 				(".$tipomovimiento.",".$fabricante.",".$marca.",".$bodega.",".$producto.",".$lote.",".$estadoproducto.",".$cantidad.",".$cantidadsecundaria.",'".$fecha."','".$doctoorigen."',".$foliodoctoorigen.")";
-        $conexion->consultar($sql);
+        $res = $conexion->consultar($sql);
+        if ($res === false) {
+            throw new Exception("Error al insertar en inventarios_movimientos: " . mysql_error());
+        }
 
         echo "<br><br>Linea 70 - clinventario:  $sql<br><br>";
 
@@ -81,6 +96,9 @@ class clinventarios{
                 $sQuery = "SELECT idtipomovimiento, efectoinventario FROM inventarios_tiposmovimiento i where idtipomovimiento=".$tipomovimiento;
 					//c.nombrecliente, t.nombremovimiento, l.descripcionlote, e.descripcionestado, b.nombrebodega
 		$result = $conexion->consultar($sQuery);
+        if ($result === false) {
+            throw new Exception("Error al consultar inventarios_tiposmovimiento: " . mysql_error());
+        }
 		while($rs = $conexion->siguiente($result)){
 			$efectoinventario = $rs['efectoinventario'];
 		}
@@ -107,6 +125,9 @@ class clinventarios{
                             " And idloteproducto=".$lote." And idestadoproducto=".$estadoproducto;
 
                 $result = $conexion->consultar($sQuery);
+                if ($result === false) {
+                    throw new Exception("Error al consultar inventarios_saldos: " . mysql_error());
+                }
 		while($rs = $conexion->siguiente($result)){
 			$agregasaldo = 0;
 		}
@@ -130,7 +151,10 @@ class clinventarios{
                 //echo $sql;
 
                 echo "<br><br>Linea 130 - clinventario:  $sql<br><br>";
-                $conexion->consultar($sql);
+                $res = $conexion->consultar($sql);
+                if ($res === false) {
+                    throw new Exception("Error al afectar inventarios_saldos: " . mysql_error());
+                }
 
 
     }

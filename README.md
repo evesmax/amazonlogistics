@@ -37,3 +37,16 @@ Para garantizar que el código funcione en producción, recuerda siempre estas r
    - No están soportadas en PHP 5.5 (se introdujeron en PHP 7.0).
 
 Antes de plantear o integrar cualquier cambio, verifica y comprueba en la documentación de PHP si la función a usar existe y es compatible con PHP ^5.5.9.
+
+## 🔒 Estrategia de Consistencia Transaccional (Bugfix 2026-07)
+Para prevenir que ocurran inconsistencias en la base de datos (por ejemplo, registrar recepciones o envíos sin su correspondiente afectación de movimientos de inventario en `inventarios_movimientos`):
+
+1. **Uso de Transacciones en PHP:**
+   - Todos los flujos de grabación complejos (como [recepcion_grabar.php](file:///Users/evesmax/projects/personal/amazonlogistics/webapp/modulos/recepciones/recepcion_grabar.php) y [recepciondirecta_grabar.php](file:///Users/evesmax/projects/personal/amazonlogistics/webapp/modulos/recepciones/recepciondirecta_grabar.php)) deben encapsular sus consultas dentro de un bloque `try-catch` y ejecutar una transacción de base de datos (`START TRANSACTION` / `COMMIT` / `ROLLBACK`).
+   - El resultado de cada llamada a `$conexion->consultar()` debe ser estrictamente verificado. Si retorna `false`, se debe lanzar una excepción para abortar y revertir toda la transacción.
+
+2. **Validación de Parámetros de Inventario:**
+   - La función `agregarmovimiento` de la clase [clinventarios](file:///Users/evesmax/projects/personal/amazonlogistics/webapp/modulos/inventarios/clases/clinventarios.php) debe validar de manera estricta que todos los identificadores y valores numéricos requeridos no sean nulos o vacíos antes de ejecutar sentencias SQL sin comillas, previniendo fallos sintácticos silenciosos.
+
+3. **Bitácora de Transacciones:**
+   - Cada flujo de registro de recepciones debe invocar la función de auditoría `$conexion->transaccion($nombreproceso, $sql)` para registrar la operación en las tablas dinámicas por año y semestre (`netwarelog_transacciones_{año}_{semestre}`).
