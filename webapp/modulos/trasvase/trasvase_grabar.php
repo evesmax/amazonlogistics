@@ -29,89 +29,97 @@
 
 //Recupera valores de consulta
 
-        $sQuery = "Select * from inventarios_trasvase where idtrasvase=".$idtrasvase;
-		$result = $conexion->consultar($sQuery);
-		while($rs = $conexion->siguiente($result)){
-                        $fabricante=$rs{"idfabricante"};
-                        $marca=$rs{"idmarca"};
-                        $idbodega=$rs{"idbodega"};
-                        $producto=$rs{"idproducto"};
-                        $lote=$rs{"idloteproducto"};
-                        $estadoproducto=$rs{"idestadoproducto"};
-                        $cantidad1=$rs{"cantidad1"};
-                        $cantidad2=$rs{"cantidad2"};
-                        $productodestino=$rs{"idproductodestino"};
-                        $idestadodocumento=$rs{"idestadodocumento"};
-                }
-		$conexion->cerrar_consulta($result);
-        
-        // Bloqueo de seguridad: Evitar procesar nuevamente si ya está procesado
-        if ($idestadodocumento == 2) {
-            header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase);
-            exit();
-        }
-        //echo $sQuery."<br>";
+try {
+    $conexion->consultar("START TRANSACTION");
 
-        //COnsume SP para extraer Inventarios
+    $sQuery = "Select * from inventarios_trasvase where idtrasvase=".$idtrasvase." FOR UPDATE";
+    $result = $conexion->consultar($sQuery);
+    if ($result === false) {
+        throw new Exception("Error al consultar el trasvase original: " . mysql_error());
+    }
+    
+    $idestadodocumento = null;
+    while($rs = $conexion->siguiente($result)){
+        $fabricante=$rs{"idfabricante"};
+        $marca=$rs{"idmarca"};
+        $idbodega=$rs{"idbodega"};
+        $producto=$rs{"idproducto"};
+        $lote=$rs{"idloteproducto"};
+        $estadoproducto=$rs{"idestadoproducto"};
+        $cantidad1=$rs{"cantidad1"};
+        $cantidad2=$rs{"cantidad2"};
+        $productodestino=$rs{"idproductodestino"};
+        $idestadodocumento=$rs{"idestadodocumento"};
+    }
+    $conexion->cerrar_consulta($result);
+    
+    if ($idestadodocumento === null) {
+        throw new Exception("No se encontró el registro de trasvase especificado.");
+    }
+    
+    // Bloqueo de seguridad: Evitar procesar nuevamente si ya está procesado
+    if ($idestadodocumento == 2) {
+        $conexion->consultar("ROLLBACK");
+        header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase);
+        exit();
+    }
 
-        //Consulta el inventario
-                //SOlo aplica los movimientos si hay inventario si no regresa y da error
+    //trasvase
+    $doctoorigen=6;       
+    //Afectando Inventario con Documento.
+    if ($cantidad1>0) {
+        //Agrega Movimiento Almacen Salida de Producto Origen
+        $tipomovimiento=22;
+        $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidad1,$cantidad2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+    }
 
-//trasvase
-$doctoorigen=6;       
-//Afectando Inventario con Documento.
-        if ($cantidad1>0) {
-            //Agrega Movimiento Almacen Salida de Producto Origen
-            $tipomovimiento=22;
-            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$producto,$lote,$estadoproducto,$cantidad1,$cantidad2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
-            //echo "Actualiza inventario Salida TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,IdBodega:$idbodega,Producto:$producto,Lote:$lote,EstadoProducto:$estadoproducto,Cantidad1:$cantidad1,Cantidad2:$cantidad2,Fecha:$fechadia,DoctOrigen:$doctoorigen,FolioOrigen:$idtrasvase<br>";
-        }
-
-        if ($cantidaddestino1>0) { 
-            //Agrega Movimiento Almacen Entrada de Nuevo Producto
-            $tipomovimiento=23;
-            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidaddestino1,$cantidaddestino2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
-            //echo "Actualiza inventario Entrad PResultado TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,LOte:$lote,EstadoProducto:$estadoproducto,Cantidad1:$cantidaddestino1,Cantidad2:$cantidaddestino2,Fecha:$fechadia,DoctoOrigen:$doctoorigen,Folio:$idtrasvase <br>";
-        }
-        
-        if ($cantidadpnc1>0) { 
-            $tipomovimiento=23;
-            $estadopnc=4;
-            //Agrega Movimiento Almacen Producto No Conforme
-            $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadopnc,$cantidadpnc1,$cantidadpnc2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
-            //echo "Actualiza inventario Entrada NConforme TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,Lote:$lote,EstadoProducto:$estadopnc,Cantidad1:$cantidadpnc1,Cantidad2:$cantidadpnc2,Fecha:$fechadia,Doctoorigen:$doctoorigen,Folio:$idtrasvase, <br>";
-
-        }
-
-        //Ya no aplica esta salida por que ya la hizo en el movimiento de origen con la totalidad de la cantidad
-        //if ($cantidadmerma1>0) { 
-            //Agrega Movimiento Almacen Producto No Conforme
-            //$tipomovimiento=24;
-            //$movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidadmerma1,$cantidadmerma2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
-            //echo "Actualiza inventario Salida por Merma TipoMovimiento:$tipomovimiento,Fabricante:$fabricante,Marca:$marca,Bodega:$idbodega,Producto:$productodestino,Lote:$lote,Estado:$estadoproducto,Cantidad1:$cantidadmerma1,Cantidad2:$cantidadmerma2,Fecha:$fechadia,DoctoOrigen:$doctoorigen,Folio:$idtrasvase <br>";
-        //}
-
+    if ($cantidaddestino1>0) { 
+        //Agrega Movimiento Almacen Entrada de Nuevo Producto
+        $tipomovimiento=23;
+        $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadoproducto,$cantidaddestino1,$cantidaddestino2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+    }
+    
+    if ($cantidadpnc1>0) { 
+        $tipomovimiento=23;
+        $estadopnc=4;
+        //Agrega Movimiento Almacen Producto No Conforme
+        $movimientos->agregarmovimiento($tipomovimiento,$fabricante,$marca,$idbodega,$productodestino,$lote,$estadopnc,$cantidadpnc1,$cantidadpnc2,$fechadia,$doctoorigen,$idtrasvase,$conexion);
+    }
 
     //Afecta Cantidades en Logistica_Trasvase
-        $sqlafecta="UPDATE inventarios_trasvase 
-                        set cantidaddestinoreal1=$cantidaddestino1,
-                            cantidaddestinoreal2=$cantidaddestino2,
-                            cantidadpnc1=$cantidadpnc1,
-                            cantidadpnc2=$cantidadpnc2,
-                            cantidadmerma1=$cantidadmerma1,
-                            cantidadmerma2=$cantidadmerma2,
-                            idcapturista=$capturista,
-                            idestadodocumento=2,
-                            foliosorigenreal='$foliosorigenreal',
-                            foliosdestinoreal='$foliosdestinoreal',
-                            fechaop='$fechadia',
-                            obsproceso='$txtobservaciones'
-                        Where idtrasvase=".$idtrasvase;
-        //echo $sqlafecta;
-        $conexion->consultar($sqlafecta);
-        
+    $sqlafecta="UPDATE inventarios_trasvase 
+                    set cantidaddestinoreal1=$cantidaddestino1,
+                        cantidaddestinoreal2=$cantidaddestino2,
+                        cantidadpnc1=$cantidadpnc1,
+                        cantidadpnc2=$cantidadpnc2,
+                        cantidadmerma1=$cantidadmerma1,
+                        cantidadmerma2=$cantidadmerma2,
+                        idcapturista=$capturista,
+                        idestadodocumento=2,
+                        foliosorigenreal='$foliosorigenreal',
+                        foliosdestinoreal='$foliosdestinoreal',
+                        fechaop='$fechadia',
+                        obsproceso='$txtobservaciones'
+                    Where idtrasvase=".$idtrasvase;
+    
+    $res = $conexion->consultar($sqlafecta);
+    if ($res === false) {
+        throw new Exception("Error al actualizar inventarios_trasvase: " . mysql_error());
+    }
 
+    // Registrar transaccion
+    $conexion->transaccion("GRABAR TRASVASE: " . $idtrasvase, $sqlafecta);
 
-        header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase) 
+    $conexion->consultar("COMMIT");
+
+    header("Location: trasvase_imprimir.php?idtrasvase=" .$idtrasvase);
+
+} catch (Exception $e) {
+    $conexion->consultar("ROLLBACK");
+    echo "<div style='color:red; font-family:helvetica; font-size:14px; font-weight:bold; margin:20px; text-align:center;'>";
+    echo "Error al registrar el trasvase: " . htmlspecialchars($e->getMessage());
+    echo "</div>";
+    exit();
+} 
          
 ?>
