@@ -144,6 +144,16 @@ $fechaenvio=$fecharecepcion;
 try {
     $conexion->consultar("START TRANSACTION");
 
+    // DEBUG CONEXIÓN
+    if (is_object($conexion) && method_exists($conexion, 'regresa_base')) {
+        $link = $conexion->regresa_base();
+        if ($link) {
+            $main_thread = mysql_thread_id($link);
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] START TRANSACTION (directa): Enlace principal Thread ID: " . $main_thread . "\n";
+            @file_put_contents(dirname(__FILE__) . '/connection_debug.log', $log_msg, FILE_APPEND);
+        }
+    }
+
     //Grabando Documento Envio
     $sql="Insert Into logistica_envios (idtraslado,fechaenvio,idtransportista,cartaporte,nombreoperador,
                                         placastractor,placasremolque,horallegada,ticketbascula,banco,
