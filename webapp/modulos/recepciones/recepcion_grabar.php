@@ -94,16 +94,6 @@
                                        try {
     $conexion->consultar("START TRANSACTION");
 
-    // DEBUG CONEXIÓN
-    if (is_object($conexion) && method_exists($conexion, 'regresa_base')) {
-        $link = $conexion->regresa_base();
-        if ($link) {
-            $main_thread = mysql_thread_id($link);
-            $log_msg = "[" . date('Y-m-d H:i:s') . "] START TRANSACTION (normal): Enlace principal Thread ID: " . $main_thread . "\n";
-            @file_put_contents(dirname(__FILE__) . '/connection_debug.log', $log_msg, FILE_APPEND);
-        }
-    }
-
     //Grabando Documento
     $sql="Insert Into logistica_recepciones 
                 (idtraslado,idenvio,fecharecepcion,banco,estiba,

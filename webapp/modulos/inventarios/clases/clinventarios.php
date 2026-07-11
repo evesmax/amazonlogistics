@@ -58,16 +58,6 @@ class clinventarios{
 
     /* Documentación clase */
     function agregarmovimiento($tipomovimiento,$fabricante,$marca,$bodega,$producto,$lote,$estadoproducto,$cantidad,$cantidadsecundaria,$fecha,$doctoorigen,$foliodoctoorigen,$conexion){
-        // DEBUG CONEXIÓN
-        if (is_object($conexion) && method_exists($conexion, 'regresa_base')) {
-            $link = $conexion->regresa_base();
-            if ($link) {
-                $inv_thread = mysql_thread_id($link);
-                $log_msg = "[" . date('Y-m-d H:i:s') . "] agregarmovimiento: Enlace inventario Thread ID: " . $inv_thread . " (Folio docto: " . $foliodoctoorigen . ")\n";
-                @file_put_contents(dirname(dirname(__DIR__)) . '/recepciones/connection_debug.log', $log_msg, FILE_APPEND);
-            }
-        }
-
         // Validar que los parámetros numéricos requeridos no estén vacíos o nulos
         if ($tipomovimiento === "" || $tipomovimiento === null ||
             $fabricante === "" || $fabricante === null ||
