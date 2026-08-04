@@ -360,9 +360,104 @@ try {
 
 } catch (Exception $e) {
     $conexion->consultar("ROLLBACK");
-    echo "<div style='color:red; font-family:helvetica; font-size:14px; font-weight:bold; margin:20px; text-align:center;'>";
-    echo "Error al registrar la recepción directa: " . htmlspecialchars($e->getMessage());
-    echo "</div>";
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Error al registrar la recepción directa</title>
+        <style>
+            body {
+                background-color: #f7fafc;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+            }
+            .error-container {
+                max-width: 600px;
+                width: 90%;
+                padding: 40px 30px;
+                background-color: #fff;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+                text-align: center;
+                border: 1px solid #f5c2c2;
+            }
+            .error-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 64px;
+                height: 64px;
+                background-color: #fde8e8;
+                color: #e53e3e;
+                border-radius: 50%;
+                font-size: 32px;
+                margin-bottom: 24px;
+            }
+            .error-title {
+                color: #2d3748;
+                font-size: 22px;
+                font-weight: 700;
+                margin-top: 0;
+                margin-bottom: 12px;
+            }
+            .error-message {
+                color: #4a5568;
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 32px;
+                white-space: pre-line;
+            }
+            .button-group {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+            }
+            .btn {
+                display: inline-block;
+                padding: 12px 24px;
+                font-weight: 600;
+                font-size: 14px;
+                border-radius: 6px;
+                text-decoration: none;
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+            .btn-primary {
+                background-color: #3182ce;
+                color: white;
+                border: none;
+            }
+            .btn-primary:hover {
+                background-color: #2b6cb0;
+            }
+            .btn-secondary {
+                background-color: #edf2f7;
+                color: #4a5568;
+                border: none;
+            }
+            .btn-secondary:hover {
+                background-color: #e2e8f0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h2 class="error-title">Error de Grabación</h2>
+            <div class="error-message">Error al registrar la recepción directa:<br><?php echo htmlspecialchars($e->getMessage()); ?></div>
+            <div class="button-group">
+                <a href="javascript:history.back();" class="btn btn-primary">Regresar y Corregir</a>
+                <a href="recepciondirecta.php" class="btn btn-secondary">Nueva Captura</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    <?php
     exit();
 } 
          
