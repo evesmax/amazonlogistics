@@ -66,7 +66,10 @@ class clinventarios{
             $producto === "" || $producto === null ||
             $lote === "" || $lote === null ||
             $estadoproducto === "" || $estadoproducto === null ||
-            $foliodoctoorigen === "" || $foliodoctoorigen === null) {
+            $foliodoctoorigen === "" || $foliodoctoorigen === null ||
+            $doctoorigen === "" || $doctoorigen === null ||
+            $cantidad === "" || $cantidad === null ||
+            $cantidadsecundaria === "" || $cantidadsecundaria === null) {
             
             throw new Exception("Error: Uno o más parámetros requeridos están vacíos o son nulos en agregarmovimiento.");
         }
