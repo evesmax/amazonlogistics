@@ -354,6 +354,84 @@ try {
         throw new Exception("Error al actualizar consecutivobodega en logistica_recepciones: " . mysql_error());
     }
 
+    // --- CHECKLIST & AUTO-HEALING VALIDATION ---
+    $sql_check = "SELECT COUNT(*) as cnt FROM inventarios_movimientos WHERE doctoorigen = 4 AND foliodoctoorigen = " . $idrecepcion;
+    $res_check = $conexion->consultar($sql_check);
+    $row_check = $conexion->siguiente($res_check);
+    $mov_cnt = $row_check ? intval($row_check['cnt']) : 0;
+    $conexion->cerrar_consulta($res_check);
+
+    $expected_cnt = ($cantdev1 > 0) ? 2 : 1;
+
+    if ($mov_cnt < $expected_cnt) {
+        // Validation failed: movements were not registered. Let's auto-heal!
+        // 1. Clean up any partial movements to prevent duplicates
+        $sql_cleanup = "DELETE FROM inventarios_movimientos WHERE doctoorigen = 4 AND foliodoctoorigen = " . $idrecepcion;
+        $conexion->consultar($sql_cleanup);
+
+        // 2. Fetch the metadata directly from logistica_recepciones and logistica_traslados
+        $sql_rec_info = "SELECT idtraslado, idenvio, cantidadrecibida1, cantidadrecibida2, fecharecepcion, idbodega 
+                         FROM logistica_recepciones WHERE idrecepcion = " . $idrecepcion;
+        $res_rec_info = $conexion->consultar($sql_rec_info);
+        $rec_info = $conexion->siguiente($res_rec_info);
+        $conexion->cerrar_consulta($res_rec_info);
+
+        if ($rec_info) {
+            $h_idtraslado = $rec_info['idtraslado'];
+            $h_cantidadrecibida1 = $rec_info['cantidadrecibida1'];
+            $h_cantidadrecibida2 = $rec_info['cantidadrecibida2'];
+            $h_fecharecepcion = $rec_info['fecharecepcion'];
+            $h_idbodega = $rec_info['idbodega'];
+
+            // Fetch traslado details
+            $sql_tras_info = "SELECT idfabricante, idmarca, idproducto, idloteproducto, idestadoproducto 
+                              FROM logistica_traslados WHERE idtraslado = " . $h_idtraslado;
+            $res_tras_info = $conexion->consultar($sql_tras_info);
+            $tras_info = $conexion->siguiente($res_tras_info);
+            $conexion->cerrar_consulta($res_tras_info);
+
+            if ($tras_info) {
+                $h_fabricante = $tras_info['idfabricante'];
+                $h_marca = !empty($tras_info['idmarca']) ? $tras_info['idmarca'] : $h_fabricante;
+                $h_producto = $tras_info['idproducto'];
+                $h_lote = $tras_info['idloteproducto'];
+                $h_estadoproducto = $tras_info['idestadoproducto'];
+
+                // Re-run the main movement creation
+                $movimientos->agregarmovimiento($tipomovimiento, $h_fabricante, $h_marca, $h_idbodega, $h_producto, $h_lote, $h_estadoproducto, $h_cantidadrecibida1, $h_cantidadrecibida2, $h_fecharecepcion, $doctoorigen, $idrecepcion, $conexion);
+
+                // Re-run the devolution movement creation if applicable
+                if ($cantdev1 > 0) {
+                    $h_idestadoproducto = 0;
+                    $sql_dev_info = "SELECT idestadoproducto FROM logistica_devoluciones WHERE idrecepcion = " . $idrecepcion;
+                    $res_dev_info = $conexion->consultar($sql_dev_info);
+                    $dev_info = $conexion->siguiente($res_dev_info);
+                    $conexion->cerrar_consulta($res_dev_info);
+                    if ($dev_info) {
+                        $h_idestadoproducto = $dev_info['idestadoproducto'];
+                    } else {
+                        $h_idestadoproducto = isset($idestadoproducto) ? $idestadoproducto : 1;
+                    }
+                    $movimientos->agregarmovimiento($tipomovimiento, $h_fabricante, $h_marca, $h_idbodega, $h_producto, $h_lote, $h_idestadoproducto, $cantdev1, $cantdev2, $h_fecharecepcion, $doctoorigen, $idrecepcion, $conexion);
+                }
+            } else {
+                throw new Exception("Checklist Error: No se encontraron los datos del traslado asociado ID: " . $h_idtraslado);
+            }
+        } else {
+            throw new Exception("Checklist Error: No se encontraron los datos de la recepción ID: " . $idrecepcion);
+        }
+
+        // Final verification check after auto-healing
+        $res_final = $conexion->consultar($sql_check);
+        $row_final = $conexion->siguiente($res_final);
+        $final_cnt = $row_final ? intval($row_final['cnt']) : 0;
+        $conexion->cerrar_consulta($res_final);
+
+        if ($final_cnt < $expected_cnt) {
+            throw new Exception("Checklist Error: Falló la validación final del movimiento en inventarios_movimientos.");
+        }
+    }
+
     $conexion->consultar("COMMIT");
 
     header("Location: recepcion_imprimir.php?idrecepcion=".$idrecepcion);
