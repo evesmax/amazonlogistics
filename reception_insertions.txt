@@ -1,0 +1,1309 @@
+==================================================================
+ALL RECEP INSERTIONS IN AUGUST 2026: 144
+==================================================================
+- Logged at: 2026-08-01 10:11:08 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5748","2026-08-01 09:02:45","TRASBORDO","-","51143","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2443532-2443522-2443551-2443545-2443521-2443519-2443539-2443212-2443186-2443189","42","40.750 TM","15.560 TM","25.080 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 10:23:37 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5749","2026-08-01 09:20:16","PUCTE","1","ISRP-513496","ISRP-1062","SE DA ENTRDA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1383462-1383465-1391791-1337615-5236615-1489967-1319286-1367127-6083353-1252121-8051642-1373907-1326616-1248276-0070495-1394720-1350467-1339581-1490483-1357276","20","45,77 TM","15,77 TM","30 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 10:36:41 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5750","2026-08-01 09:27:20","N","2","51169","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","8681-1474-215-1421-0690-9028-3253-9847-4078-3908-5316-25631-16186-12147-23424-4154-16499-1439-09717-1495","42","46.410 TM","16.290 TM","30.120 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 11:12:38 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5751","2026-08-01 09:53:38","TRAS=200","E4=800","51138","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2442328-2442351-2442354-2442334-2442313-2442316-2442299-2441863-2441856-2441846","42","41.990 TM","16.820 TM","25.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 11:38:19 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5752","2026-08-01 10:31:08","N","2","51146","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","016413-8738-02364-11076-01152-05531-5288-3839-001117-015448-021617-08160-4353-28237-0190-2670-0304-00092-020708","42","46.400 TM","16.270 TM","30.130 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 12:10:12 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5753","2026-08-01 11:02:27","E","4","51159","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2445437-2445423-2445422-2445346-2445358-2445433-2445375-2445367-2445373-2445358","42","40.640 TM","15.560 TM","25.080 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 13:03:05 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5754","2026-08-01 11:56:35","E","4","51144","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2444172-2444149-2444148-2444139-2444138-2444128-2444162-2444143-2444140-2444132","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 13:34:32 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5755","2026-08-01 12:27:28","F","7","600407234","-","SE RECIBEN 920 BULTOS DE DEVOLUCIÓN.","Joshue Hernández Hernández","","RAUL/MARTIN","920","23.000","920","23.000","6","0","0","1133337-1164184-1183351-1167417-1166161-1171628-1166191-1167448-1180015-1171133","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 13:53:40 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("75","5756","2026-08-01 12:38:55","N","2","","","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","08094-08027-6540-24358-9301-6366-1670-9368-8069-06695-1835-000202-08010-06684-23513-7784-08313-06622-7026-4455","42","45.870 TM","15.760 TM","30.110 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 14:09:56 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("75","5757","2026-08-01 12:59:15","N","2","51168","","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","07905-0964-04091-31045-8606-1780-8049-09192-08602-19552-01221-00830-07050-02093-07847-00402-1390-2224-21892-4065","42","45.740 TM","15.610 TM","30.130 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 15:32:58 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5758","2026-08-01 14:15:07","E","4","51140","","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1200","30.000","1200","30.000","6","0","0","1069892-1069198-1069153-1068076-1068242-1068279-1068177-1072127-1071594-1071054","42","46.220 TM","16.070 TM","30.150 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 15:56:01 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5759","2026-08-01 14:48:33","E","4","51173","","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1200","30.000","1200","30.000","6","0","0","0966096-0964838-0963648-0963911-0961960-0961362-0959370-0959004-0959670-0967654","42","46.190 TM","16.020 TM","30.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 16:40:18 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5760","2026-08-01 15:34:18","E","4","51145","-","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1200","30.000","1200","30.000","6","0","0","1070238-0963821-0964990-0862885-0966006-0964356-0962484-0961325-0964631-0965418","42","46.230 TM","16.070 TM","30.160 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 17:01:59 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("75","5761","2026-08-01 15:58:17","E","4","51167","-","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1200","1800.000","1","1.500","6","1199.00","1798.500","1","42","46.190 TM","16.010 TM","30.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-01 17:16:29 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5762","2026-08-01 16:04:14","E","4","51167","-","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1200","30.000","1200","30.000","6","0","0","1070238-1068943-1070275-1069209-1068536-0968089-0965989-1069706-1068145","42","46.190 TM","16.010 TM","30.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 09:21:37 | User: Cristian | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("75","5763","2026-08-01 13:20:19","N","2","51168","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","07905-0964-04091-31045-8606-1780-8049-09192-08602-19552-01221-00830-07050-02093-07847-00402-1390-2224-21892-4065","16","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 09:52:56 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5764","2026-08-03 08:51:25","TRAS=800","F4=200","51170","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2436550-2436541-2436680-2436644-2436883-2441140-2441355-2441269-2441043-2441251","42","40.790 TM","15.620 TM","25.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 10:20:42 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5765","2026-08-03 09:18:12","PUCTE","1","ISRP-514810","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1494311-1492503-1390376-1389395-1489325-1383533-1491301-1491678-1488852-9076938-1494376-1350868-1488476-1492372-5333319-1481070-5351528-2556102-1356328-1273847","20","46,01 TM","15,98 TM","30,03 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 10:46:06 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5766","2026-08-03 09:43:23","ROSALIA","1","SRCH-513407","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139616-6130861-6130960-6141263-6130862-6139603-6139639-6139637-6136735-6136734-6136733-6136732-6136731-6136730-6136729-6136728-6136727-6136726-6136725-6136724","20","46,31 TM","15,82 TM ","30,49 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 10:52:11 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5767","2026-08-03 09:50:05","ROSALIA","1","SRCH-514865","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6130882-6130881-6130880-6130878-6141269-6141270-6130876-6130872-6130884-6130896-6141261-6141265-6141266-6141267-6141262-6141264-6130892-6130888-6130898-6130893","20","46,66 TM ","16,1 TM","30,56")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 10:59:53 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5768","2026-08-03 09:56:34","ROSALIA","1","SRCH-514880","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6130886-6130879-6130875-6130890-6130891-6130883-6130887-6130897-6130871-6130873-6130868-6130870-6130865-6130869-6130867-6130864-6130866-6130863-6141272-6141268","20","46,67 TM","16,3 TM","30,37 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 11:12:14 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5769","2026-08-03 10:11:07","F","4","51187","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2448635-2448593-2448644-2448404-2448567-2448591-2448555-2448575-2448654-2448538","42","40.750 TM","15.610 TM","25.140 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 11:17:14 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5770","2026-08-03 10:14:52","PUCTE","1","ISRP-514808","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1330645-9036739-14959888-1495887-1494752-13613198-8019082-4067520-1343586-1386643-0278695-1381937-1353632-1303799-5249587-2656352-1278833-1329490-1385050-1492700","20","45,64 TM ","15,78 TM","29,86")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 11:31:56 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5771","2026-08-03 10:29:43","ROSALIA","1","SRCH-514939","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6141315-6141291-6141292-6141287-6141271-6141286-6141273-6141285-6141284-6141283-6141282-6141281-6141300-6141299-6141298-6141297-6141295-6141296-6141294-6141293","20","46,99 TM","16,38 TM","30,61 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 11:44:32 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5772","2026-08-03 10:43:11","N","4","IBJ20927","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","	
+0560003970-0560003647-0560003532-0560003969-0560003606-0560003558-0560003884-0560003568-0560003428-0560007204-0560003511-0560003483-0560003508-0560003514-0560004041-0560003809-0560003906-0560004896-0560003882-0560003518
+","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 11:53:45 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5773","2026-08-03 10:51:33","F","4","51160","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO, DE LOS CUALES EL 30% DEL EMBARQUE LLEGO ATERRONADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","0986576-0986470-0987625-0988271-0985260-0980506-0981116-0942505-0968365-0984117","42","40.800 TM","15.670 TM","25.130 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 12:21:11 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5774","2026-08-03 11:17:49","F","4","51186","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2450236-2450266-2450264-2450245-2450228-2450226-2450233-2450210-2450242-2450232","42","40.770 TM","15.590 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 12:42:52 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5775","2026-08-03 11:38:27","ROSALIA","1","SRCH-514820","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139064-6139061-6139062-6139063-6139067-6139069-6139066-6139065-6139068-6139070-6139074-6139071-6139072-6139073-6139082-6139081-6139079-6139080-6139078-6139077","20","46,53 TM","16,23 TM","30,3 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 12:48:51 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5776","2026-08-03 11:45:50","N","4","IBJ20926","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","50003642-50003814-50003666-50003692-50003723-50003663-50003900-50003985-50003515-50003588-50003520-50003513-50003427-50007186-50003966-50004192-50003478-500038902-50003979-50004027","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 13:11:20 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5777","2026-08-03 12:09:35","ROSALIA","1","SRCH-514940","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6141318-6141319-6141320-6139486-6139469-6139472-6139471-6139470-6139477-6139478-6139461-6139501-6139547-6139548-6139549-6139556-6141314-6141288-6141290-6141289","20","46,6 TM","16,36 TM","30,24 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 13:29:11 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5778","2026-08-03 12:24:02","F","4","51195","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2451442-2451424-2451448-2451438-2451426-2451435-2451400-2451390-22451381-2451378","42","40.820 TM","15.650 TM","25.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 15:27:32 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5779","2026-08-03 14:26:17","F","4","51197-51200","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","0953456-0953591-0953729-0953150-0953161-0956030-0953107-0955422-0955492-0955562","42","40.880 TM","15.770 TM","25.110 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 16:18:17 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5780","2026-08-03 15:17:09","F","4","51194","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2445514-2445540-2445546-2445544-2445526-2445476-2445525-2445497-2445478-2445511","42","40.940 TM","15.770 TM","25.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-03 17:04:52 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5781","2026-08-03 16:03:45","F","4","51202","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2451569-2451560-2451464-2451640-2451400-2450370-2450450-2450579-2450329-2450333","42","40.930 TM","15.740 TM","25.190 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 10:11:04 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5782","2026-08-04 09:06:56","PUCTE","1","ISRP-513522","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","5352087-1322725-1324131-1354397-5346856-1251472-1261140-1274751-4149378-1321980-1245077-1379464-5216489-8011869-1246922-5303147-5199852-1249827-5327046-1385354","20","46,03 TM","16 TM","30,03 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 10:27:11 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5783","2026-08-04 09:24:09","ROSALIA","1","SRCH-515110","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139487-6139039-6139031-6139023-6139040-6139474-6139483-6139481-6139480-6139475-6139476-6139465-6139552-6139555-6139550-6139553-6139554-6139493-6139495-6139468","20","46,2 TM","15,98 TM","30,22 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 11:17:20 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5784","2026-08-04 10:16:03","F","4","51207","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO. LAS PLACAS DEL TRACTO Y NOMBRE DEL OPERADOR NO COINCIDEN CON LO DOCUMENTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2453954-2453943-2453938-2453941-2453912-2453940-2453900-2453942-2453931-2453935","42","41.510 TM","16.350 TM","25.160 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 11:25:10 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5785","2026-08-04 10:19:54","PUCTE","1","ISRP-513505","ISRP-1062","SE DA ENTRDA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1357321-1371353-1252510-1283430-1252505-1326134-1351707-5288702-1316757-1356475-1301704-1393616-1244341-1285093-1354490-1326415-1314071-1386698-1391240-8018659","20","46,04 TM","16,96 TM","30,08 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 11:28:57 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("65","5786","2026-08-04 10:25:47","F","4","51206","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO. LAS PLACAS DEL TRACTO Y NOMBRE DEL OPERADOR NO COINCIDEN CON LO DOCUMENTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2453171-2453151-2453022-2453134-2453117-2453062-2453042-2453172-2453152-2453107","42","41.570 TM","16.410 TM","25.160 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 12:04:34 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5787","2026-08-04 11:02:14","ROSALIA","1","SRCH-515183","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO ","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139018-6140667-6140668-6139019-6140666-6140682-6140681-6140680-6140676-6140675-6140674-6140673-6140672-6140671-6140670-6140697-6140696-6140695-6140694-6140693","20","47,61 TM","17,44 TM","30,17 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 12:32:34 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5788","2026-08-04 11:29:57","ROSALIA","1","SRCH-515155","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139056-6139053-6139029-6139060-6139054-6139020-6139029-6139027-6140683-6140684-6139026-6139025-6139047-6139046-6139043-6139033-6139038-6139021-6139022-6139032","20","46,67 TM","16,44 TM","30,23 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 14:02:46 | User: CAP.VILLAHERMOSA | IP: 189.238.82.131
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("19","5789","2026-08-04 12:59:57","A","1","IBJ20955","168214","SE RECIBIERON 20 SS DE AZUCAR REFINADA DE 1.5 TM ZAFRA 25/26 EN BUEN ESTADO.","Mariana Cordoba Almeida","","CABO MONTACARGAS","20","30.000","20","30.000","9","0","0","0260005839	0260005843	0260005829 0260005857	0260005834	0260005828 0260005841	0260005832	0260005826 0260005831	0260005827	0260005861 0260005844	0260005837	 0260005823	0260005865	 0260005838	0260005840	 0260005810	0260005842	","23","45.10","15.08","30.02")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 15:10:59 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5790","2026-08-04 14:10:02","N","4","IBJ20943","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004320-560004322-560004298-560004629-560004163-560004659-560004225-560005008-560003587-560003427-560004319-560004062-560004361-560004271-560004457-560004336-560004251-560002162-560004060-560002136","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 16:32:18 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5791","2026-08-04 15:30:54","N","4","IBJ20942","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004057-560003510-560004260-560003431-560004061-560004198-560003436-560003437-560004241-560003451-560003668-560004018-560004122-560004234-560004055-560003432-560003433-560004235-560003439-560004197","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 16:39:55 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("20","5792","2026-08-04 15:34:09","B","1","CSM-515320","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600","40.000","1600","40.000","1","0","0","1703738159-1703840054-1703735151-1703640188-1703648599-1703793204-1703786044-1703580775-1703794374-1703648594-1703845379-1703832251-1703624650-1703624651-1703848204","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 16:54:25 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("20","5793","2026-08-04 15:47:38","C","1","CSM-515335","CSM-10","SE RECIBEN 1400 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1400","35.000","1400","35.000","1","0","0","1703797057-1703791602-1703828309-1703727446-1703735018-1703845500-1703725094-1703736064-1703770065-1703759792-1703794364-1703730041-1703730047-1703735196-1703769935","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 19:11:14 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5794","2026-08-04 18:01:39","A","19","CSM-515433","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600","40.000","1600","40.000","1","0","0","1703790674-1703727455-1703830292-1703651075-1703832206-1703754976-1703735229-1703796455-1703770164-1703770185-1703640200-1703755514-1703819359-1703791647-1703805011","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 19:31:22 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5795","2026-08-04 18:21:28","C","1","CSM-515335","CSM-10","SE RECIBEN 1400 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1400","35.000","1400","35.000","1","0","0","1703797057-1703791602-1703828309-1703727446-1703735018-1703845500-1703725094-1703736064-1703770065-1703759792-1703794364-1703730041-1703730047-1703735196-1703769935","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 19:36:58 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5796","2026-08-04 18:32:09","B","1","CSM-515320","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600","40.000","1600","40.000","1","0","0","1703738159-1703840054-1703735151-1703640188-1703648599-1703793204-1703786044-1703580775-1703794374-1703648594-1703845379-1703832251-1703624650-1703624651-1703848204","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 20:01:28 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5797","2026-08-04 18:56:35","C","1","CSM-515460","CSM-10","SE RECIBEN 1200 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1200","30.000","1200","30.000","1","0","0","1703790689-1703627707-1703832435-1703745437-1703756821-1703830290-1703835943-1703832349-1703798451-1703832348-1703727411-1703832766-1703794334-1703759924-1703730018","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 20:15:55 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5798","2026-08-04 19:08:02","A","20","CSM-515467","CSM-10","SE RECIBEN 1200 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1200","30.000","1200","30.000","1","0","0","1703752749-1703828395-1703624629-1703769868-1703763726-1703754869-1703741384-1703746918-1703791574-1703791577-1703832302-1703786080-1703748340-1703762197-1703745443","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-04 20:22:48 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5799","2026-08-04 19:18:36","C","1","CSM-515344","CSM-10","SE RECIBEN 1000 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1000","25.000","1000","25.000","1","0","0","1703763249-1703763248-1703769861-1703763225-1703750463-1703750445-1703752905-1703745440-1703786183-1703832268-1703770114-1703454157-1703745434-1703770091-1703759768","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:00:38 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5800","2026-08-05 08:58:19","N","4","IBJ20927","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","0560003970-0560003647-0560003532-0560003969-0560003606-0560003558-0560003884-0560003568-0560003428-0560007204-0560003511-0560003483-0560003508-0560003514-0560004041-0560003809-0560003906-0560004896-0560003882-0560003518","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:03:37 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5801","2026-08-05 09:01:40","N","4","IBJ20926","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","50003642-50003814-50003666-50003692-50003723-50003663-50003900-50003985-50003515-50003588-50003520-50003513-50003427-50007186-50003966-50004192-50003478-500038902-50003979-50004027","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:07:02 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5802","2026-08-05 09:04:54","N","4","IBJ20942","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004057-560003510-560004260-560003431-560004061-560004198-560003436-560003437-560004241-560003451-560003668-560004018-560004122-560004234-560004055-560003432-560003433-560004235-560003439-560004197","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:11:21 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5803","2026-08-05 09:10:29","N","4","IBJ20943","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004320-560004322-560004298-560004629-560004163-560004659-560004225-560005008-560003587-560003427-560004319-560004062-560004361-560004271-560004457-560004336-560004251-560002162-560004060-560002136","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:19:03 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5804","2026-08-05 09:14:52","ROSALIA","1","SRCH-515173","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6140685-6140686-6140679-6140678-6140677-6140688-6140663-6140687-6140661-6140662-6140664-6140665-6140669-6139463-6139051-6139050-6139037-6139034-6139041-6139057","20","46,27 TM","16,04 TM","30,23 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:24:59 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5805","2026-08-05 09:22:22","E","4","51213","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2455504-2454683-2454659-2454709-2454731-2454733-2454712-2454684-2454685-2454639","42","41.300 TM","16.100 TM","25.200 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 10:44:03 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5806","2026-08-05 09:41:35","ROSALIA","1","SRCH-515324","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6140717-6140712-6140713-6140709-6140710-6140751-6140728-6140746-6140739-6140743-6140738-6140737-6140735-6140725-6140734-6140733-6140760-6140754-6140758-6140759","20","47,06 TM","16,23 TM","30,83 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 11:11:05 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5807","2026-08-05 10:06:56","F","4","51217","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2457345-2457302-2457291-2457268-2457282-2457251-2457246-2457252-2457243-2457253","42","40.680 TM","15.500 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 11:27:32 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5808","2026-08-05 10:24:26","ROSALIA","1","SRCH-515276","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6140691-6140723-6140724-6140726-6140721-6140730-6140727-6140731-6140732-6140736-6140740-6140742-6140745-6140750-6140741-6140708-6140707-6140711-6140706-6140714","20","47,14 TM","16,22 TM","30,92 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 12:10:57 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5809","2026-08-05 11:09:46","F","4","51216","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2456282-2456519-2456259-2456220-2456229-2456487-2456286-2456222-2456247-2456213","42","41.280 TM","16.100 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 13:09:31 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5810","2026-08-05 12:08:28","G","4","51214","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO. (DE LOS CUALES EL 10% DEL EMBARQUE LLEGO ATERRONADO).","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","0986528-0987310-0986493-0985717-0942411-0986528-0988221-0988595-0987530-0987817","42","40.610 TM","15.510 TM","25.100 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 16:03:42 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5811","2026-08-05 15:01:27","PUCTE","1","ISRP-515096","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1353039-1321683-1363244-6099204-5306513-1320166-5325677-1363788-5320309-1315248-1265118-1388321-1348188-1385953-6081625-1274559-1279518-1321075-1489796-5319834","20","46,74 TM","16,7 TM","30,04 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 16:17:49 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5812","2026-08-05 15:15:43","PUCTE","1","ISRP-515072","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1389059-1315128-8004859-1248362-1248381-1386440-1316752-1310846-1355700-6051346-1378246-6114167-4249872-1287405-1287421-1256617-1345939-1339184-1301437-6099156","20","46,39 TM","16,28 TM","30,11 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 17:10:31 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5813","2026-08-05 16:06:43","PUCTE","1","ISRP-514909","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1382915-1487646-1384087-1486481-1384837-1487096-1487681-2431627-1252457-1366133-1324596-1489772-1307668-1371875-1354590-1259784-8040558-1396898-1327218-1306245","20","45,71 TM","15,67 TM","30,04 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 17:37:13 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5814","2026-08-05 16:35:05","PUCTE","1","ISRP-514874","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1364155-4208111-1382133-1486293-1394728-2621479-2451537-1487097-1383338-1382748-1385157-1243553-1391323-1356824-1379548-1394895-1374376-1278814-1395913-1381229","20","45,72 TM","15,64 TM","30,08 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 19:39:59 | User: CAP.AMATLAN | IP: 187.189.242.254
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5815","2026-08-05 18:36:40","B","12","CSM-515647","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO FIRMANDO DE TOTAL CONFORMIDAD EL OPERADOR  PRESENTE EN SU CARGA
+","Erick Marcelino Solis","","CARLOS CARRILLO","1600.00","40.000","1600.00","40.000","1","0","0","1703403127-1703408137-1703407670-1703663227-1703676870-1703638158-1703195522-1703657712-1703667825-1703406841-1703674633-1703693366-1703414596-1703335533-1703681198","19","N/A","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 19:49:02 | User: CAP.AMATLAN | IP: 187.189.242.254
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5816","2026-08-05 18:47:16","A","","CSM-515546","CSM-10","SE RECIBEN 1200 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1200.00","30.000","1200.00","30.000","1","0","0","1703696465-1703676811-1703668628-1703660950-1703666736-1703675386-1703696473-1703657641-1703640814-1703640873-1703710813-1703638012-1703677511-1703702118-1703654231","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 21:55:02 | User: CAP.AMATLAN | IP: 187.189.242.254
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5817","2026-08-05 20:52:45","B","12","CSM-515532","CSM-10","	
+SE RECIBEN 1400 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD
+","Erick Marcelino Solis","","CARLOS CARRILLO","1400","35.000","1400","35.000","1","0","0","1703676933-1703672089-1703696372-1703676918-1703664119-1703675425-1703681422-1703741331-1703674215-1703676452-17036338220-1703334762-1703334913-1703665079-1703670075","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 22:07:49 | User: CAP.AMATLAN | IP: 187.189.242.254
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5818","2026-08-05 21:05:19","B","12"," CSM-515664"," CSM-515664","SE RECIBEN 1200 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD
+","Erick Marcelino Solis","","CARLOS CARRILLO","1200.00","30.000","1200.00","30.000","1","0","0","1703666506-1703666508-1703666517-1703666519-1703666521-1703661000-1703661005-1703661011-1703661017-1703661025-1703710767-1703710769-1703710771-1703641568-1703641571","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-05 22:15:17 | User: CAP.AMATLAN | IP: 187.189.242.254
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5819","2026-08-05 21:14:50","B","12","CSM-515584","CSM-10","SE RECIBEN 996 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD
+","Erick Marcelino Solis","","CARLOS CARRILLO","1000","25.000","996","24.900","1","4.00","0.100","SE RECIBEN 996 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 10:30:02 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("18","5820","2026-08-06 09:22:20","C","1","IC-515585","IC-1081","SE RECIBEN 20 S.S. EN BUEN ESTADO FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","20","30.000","20","30.000","1","0","0","5309726-5294386-5364050-5363692-5329804-5368942-5363408-5271526-5362863-5262650-5341960-5332065-5328155-5342281-5327199-5335374-5363462-5325240-5367747-5310582","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 11:29:24 | User: CAP.AMATLAN | IP: 187.190.164.190
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("18","5821","2026-08-06 10:23:26","C","1","IC-515598","IC-1081","SE RECIBEN 20 S.S. EN BUEN ESTADO FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CABO MONTACARGAS","20","30.000","20","30.000","1","0","0","5354318-5354311-5345434-5354301-5350705-5350726-5350749-5350750-5350739-5350737-5350779-5350758-5345426-5350748-5350743-5345410-5354329-5354314-5354302-5357383","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 13:36:39 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5822","2026-08-06 12:34:46","TRASBORDO","1200","51243","-","SE RECIBEN 1200 BULTOS DE 25KG EN BUEN ESTADO. ","Joshue Hernández Hernández","","RAUL/MARTIN","1200.00","30.000","1200.00","30.000","6","0","0","2463816-2463795-2463825-2463818-2463805-2463827-2463815-2463873-2463838-2463575","42","47.270 TM","17.090 TM","30.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 15:09:34 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5823","2026-08-06 14:08:08","N","2","51193","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","14139-13436-11750-18520-14812-16394-8459-41847-19991-4740-5048-15822-9363-7929-31117-4536-2502-16397-1067-1037","42","46.420 TM","16.260 TM","30.160 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 15:55:52 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5824","2026-08-06 14:52:06","D","15","CEP-515652","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:LAURA CABO:ANTONIO CASTILLO","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","9005510585-9005197368-9005197392-9005197359-9005197372-9005510592-9005510626-9005510604-9005510623-900510634-9005510628-9005510595-9005510581-9005510572-9005510576","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 16:03:44 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5825","2026-08-06 15:01:42","D","15","CEP515576","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:LAURA CABO:ANTONIO CASTILLO","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","9005453566-9005441134-9005354619-9005453565-9005453568-9005441144-9005453635-9005204230-9005204007-9005204166-9005526323-9005526369-9005204088-9005204077-9005453705","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 16:06:27 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5826","2026-08-06 15:04:41","N","4","IBJ20957","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004640-560004304-560004614-560004290-560004678-560004476-560005003-560004636-560004294-560004445-560004681-560004667-560004635-560004437-560004634-560004541-560004581-560004654-560004671","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 16:43:34 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5827","2026-08-06 15:42:05","N","2","51185","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. LAS PLACAS DEL TRACTO Y NOMBRE DEL OPERADOR NO COINCIDEN CON LO DOCUMENTADO.","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","9146-16426-30362-9110-22285-0775-0318-17495-16135-8205-10071-13980-18323-14426-14121-30978-2570-8053-30018-18323","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:02:29 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5828","2026-08-06 16:00:48","D","15","CEP-515572","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:YURIDIA CABO:ANTONIO CASTILLO","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","2555916-2555959-2555980-2565212-2565217-2555982-2555958-2565171-2555920-2565191-2565140-2565061-2565084-2565105-2565247","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:33:36 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5829","2026-08-06 16:32:49","N","4","IBJ20958","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004429-560004427-560004434-560004275-560004303-560004291-560004489-560004348-560004299-560004482-560004468-560004293-560004354-560004439-560004355-560004360-560004631-560004444-560004295-560004359","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:34:11 | User: CAP.AMATLAN | IP: 187.190.204.116
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5830","2026-08-06 16:33:04","A","19","CSM-515740","CSM-10","SE RECIBEN 1599 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1599","39.975","1599","39.975","1","0","0","1703680335-1703654167-1703654171-1703658099-1703654405-1703654386-1703657655-1703652768-1703656876-1703652761-1703654338-1703638147-1703648485-1703688052-1703688054","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:37:02 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5831","2026-08-06 16:35:17","ROSALIA","1","SRCH-515367","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6140756-6140755-6140716-6140715-6140720-6139032-6140718-6139016-6140719-6139006-6139008-6139007-6139009-6139011-6139010-6140744-6139015-6139014-6139013-6139012","20","47,31 TM","16,73 TM","30,58 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:42:37 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5832","2026-08-06 16:40:41","ROSALIA","1","SRCH-515411","SRCH-44","SE DA ENTRDA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6138987-6138988-6138992-6138990-6138991-6138993-6138994-6138995-6138996-6138997-6140757-6140753-6140748-6140752-6140747-6140749-6139000-6138998-6138999-6139003","20","47,03 TM","16,57 TM","30,46 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:46:41 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5833","2026-08-06 16:45:10","D","15","CEP-515684","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:YURIDIA CABO:ANTONIO CASTILLO","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","5262244-5262167-5262226-5262230-5262180-5262208-5262100-5262244-5262244-5262187-5262207-5262222-5262235-5262212-5262244-5262159","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 17:47:41 | User: CAP.AMATLAN | IP: 187.190.204.116
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5834","2026-08-06 16:46:37","B","12","CSM-515806","CSM-10","SE RECIBEN 1400 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1400","35.000","1400","35.000","1","0","0","1703712085-1703672221-1703672231-1703712087-1703646176-1703662431-1703276603-1703675339-1703675341-1703675345-1703659422-1703659435-1703696297-1703656532-1703656534","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 18:35:21 | User: CAP.PURIFICACION2 | IP: 189.144.42.178
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5835","2026-08-06 17:33:26","ROSALIA","1","SRCH-515426","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6138972-6138973-6138975-6138976-6138974-6138977-6138969-6138971-6138967-6138978-6138979-6139980-61389982-6138981-6139001-6139005-6139004-6139002-6138989-6138986","20","46,98 TM ","16,81 TM","30,17 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 19:14:12 | User: CAP.AMATLAN | IP: 187.190.204.116
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5836","2026-08-06 18:10:52","B","12","CSM-515929","CSM-10","	
+SE RECIBEN 1000 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1000.00","25.000","1000.00","25.000","1","0","0","1703694321-1703694322-1703694323-1703694324-173694325-1703694326-1703694327-1703694328-1703694329-1703710766-1703710767-1703710768-1703710769-1703710770-1703710771","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-06 19:36:07 | User: CAP.AMATLAN | IP: 187.190.204.116
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5837","2026-08-06 18:34:12","B","12","CSM-515903","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600.00","40.000","1600.00","40.000","1","0","0","1703700392-1703700393-1703720411-1703705007-1703696387-1703690683-1703641322-1703694291-1703659389-1703692117-1703656495-1703670716-1703670751-1703670718-1703670721","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 09:11:04 | User: CAP.AMATLAN | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5838","2026-08-05 21:14:50","B","12","CSM-515584","CSM-10","SE RECIBEN 996 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1000","25.000","996","24.900","1","4.00","0.100","1703635312-1703710830-1703660850-1703660850-1703676643-1703676131-1703412674-1703408882-1703680221-1703672892-1703406629-1703660895-1703412882-1703641658-1703641554-1703838134","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 10:19:53 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5839","2026-08-07 09:16:17","N","4","IBJ20990","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004509-560004524-560004652-560004928-560004583-560004607-560004725-560004712-560004957-560004988-560004627-560004962-560004953-560004493-560004926-560004970-560004371-560005012-560004993-560004515","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 10:35:44 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5840","2026-08-07 09:33:50","ROSALIA","1","SRCH-515621","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139120-6139119-6139118-6139116-6139113-6139112-6139114-6139115-6139117-6139109-6139106-6139110-6139108-6139111-6139102-6139104-6139105-6139107-6139103-6139101","20","46,72 TM","16,74 TM","29,98 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 10:44:00 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5841","2026-08-07 09:41:34","PUCTE","1","ISRP-515271","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1325811-1373974-1326228-2707478-1304192-1268564-1310360-1337204-1321937-6084257-1323157-1346793-1354980-1293937-1244226-1253429-1218176-1273282-1378834-9058122","20","45,79 TM","15,8 TM","29,99 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:05:36 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5842","2026-08-07 10:04:07","N","4","IBJ20991","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004608-560004683-560004701-560004584-560004710-560004977-560004522-560004716-560004588-560004722-560004693-560004705-560004981-560004523-560004514-560004595-560004491-560004496-560004963-560004300","42","-","-","-")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:17:31 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5843","2026-08-07 10:15:35","PUCTE","1","ISRP-515153","ISRP-1062","SE DA ENTRADA A 220 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","2120528-1345875-1317418-1354040-1373482-6025532-1487157-1357760-1487518-1389992-1381849-2331050-1105172-6091068-1345887-1346025-1486452-4213230-1334850-1346629","20","45,93 TM","15,83 TM","30,1 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:29:22 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5844","2026-08-07 10:22:07","TRASBORDO","-","51222","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2458580-2458598-2458280-2458237-2458266-2458213-2458203-2458173-2458204-2458179","42","41.050 TM","15.870 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:48:37 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5845","2026-08-07 10:42:12","TRASBORDO","-","51230","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2460419-2460424-2460333-2459875-2460061-2460421-2459690-2459718-2459876-2460152","42","41.150 TM","15.950 TM","25.200 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:49:44 | User: CAP.VILLAHERMOSA | IP: 189.238.82.131
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("19","5846","2026-08-07 10:45:22","A","1","IBJ21035","168215","SE RECIBEN 20 SS DE AZUCAR REFINADA DE 1.5 TM ZAFRA 25/26.","Mariana Cordoba Almeida","","CABO MONTACARGAS","20","30.000","20","30.000","9","0","0","0260005817	0260005820	0260005825 0260005815	0260005866	0260005812 0260005813	0260005821	0260005864 0260005818	0260005819	0260005811 0260005816	0260005860	 0260005862	0260005814	 0260005824	0260005822	 0260005859	0260005867	
+","23","45.18","15.09","30.09")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 11:57:30 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5847","2026-08-07 10:54:30","ROSALIA","1","SRCH-515136","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO ","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139551-6139485-6139479-6139473-6139035-6139484-6139046-6139052-6139044-6139466-6139055-6139482-6139024-6139049-6139489-6139048-6139030-6139488-6139059-6139058","20","48,37 TM","18,14 TM","30,23")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 12:28:42 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5848","2026-08-07 11:23:50","A","19","CSM-515981","CSM-10","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600","40.000","1600","40.000","1","0","0","1703692234-1703662423-1703688188-1703866681-1703693454-1703648471-1703696116-1703688109-1703680341-1703700274-1703680408-1703697734-1703694985-1703697741-1703694686","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 12:31:28 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5849","2026-08-07 11:29:30","ROSALIA","1","SRCH-515629","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6138964-6138963-6138962-6138961-6129678-6129677-6129689-6129688-6129687-6129686-6129691-6129695-6129694-6129693-6129692-6129690-6129701-6129706-6138988-6138965","20","46,2","16,07","30,13")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 12:39:42 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5850","2026-08-07 11:37:44","PUCTE","1","ISRP-515077","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","5272512-1360094-1350368-1230044-1373614-1261240-6111136-1366722-1489566-1393319-1389316-1343713-2673671-1490172-1490179-1319646--1391415-1388930-1211824-1313487-","20","45,76","15,74","30,02")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 13:33:35 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5851","2026-08-07 12:30:28","PUCTE","1","ISRP-515118","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1329261-1311333-4164532-1284280-1342037-1367915-1336822-1271147-1272689-1271168-1247017-1279267-1299695-1350704-1288531-1391636-1380921-5199749-2494257-1249050","20","46,27","16,25","30,02")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 13:45:11 | User: CAP.PURIFICACION2 | IP: 189.144.7.21
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5852","2026-08-07 12:43:12","PUCTE","1","ISRP-515107","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","5198230-1315082-1331078-5152018-1260821-5299752-1217472-1302288-1364906-1342930-1259980-1388066-1357301-1388666-1489021-1350306-1385652-1342878-1378567-1244048","20","45,62","15,65","29,97 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 16:43:27 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5853","2026-08-07 15:40:50","D","14","CEP-515788","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:YURIDIA CABO: ANTONIO CASTILLO
+","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","5363548-5363505-5363518-5363574-5363581-5363561-5363587-5363539-5363570-563635110-5433410-5363711-5433411-5433415-5359453","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 16:52:14 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("82","5854","2026-08-07 15:46:57","D","14","CEP-515868","N/A","SE RECIBEN 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP:YURIDIA CABO: ANTONIO CASTILLO","Laura Celeste Gonzalez Badillo","","ANTONIO CASTILLO","1200","30.000","1200","30.000","5","0","0","5396218-5396163-5396201-5389560-5389556-5524298-5389566-5389616-5389617-5389391-5389566-5389591-5396230-5389573-5230787","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 17:03:36 | User: AMZ.SANTAINES | IP: 189.226.36.229
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("83","5855","2026-08-07 16:00:41","C","1","80689331","84021554-","SE DA INGRESO A 40 KG SOLICITADO POR CLIENTE  YA QUE LOS BULTOS LLEGARON INCOMPLETOS","Laura Celeste Gonzalez Badillo","","NA","40","0.040","40","0.040","5","0","0","53414169-53414222","10","NA","NA","NA")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 19:26:45 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5856","2026-08-07 18:24:51","B","1","CSM-516084","CSM-11","SE RECIBEN 1600 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1600","40.000","1600","40.000","1","0","0","1703847382-1703878603-1703864988-1703855788-1703736515-1703724570-1703865860-1703738641-1703841670-1703727367-1703845714-1703733241-1703856815-1703734293-1703732393","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 19:57:13 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5857","2026-08-07 18:48:51","B","12","CSM-515998","CSM-10","SE RECIBEN 203 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","203.00","5.075","203.00","5.075","1","0","0","1703864436-1703841257-1703865833-1703671797-1703671736-1703864438-1703841259-1703697707-1703671812-1703734862-1703701933-1703697715-1703663004-170371637-1703716978","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 20:00:55 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5858","2026-08-07 18:58:29","B","12","CSM-516132","CSM-11","SE RECIBEN 1400 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1400","35.000","1400","35.000","1","0","0","1703738625-1703841401-1703732363-1703731084-1703731204-1703845706-1703863796-1703854449-1703856991-1703847489-1703855176-1703731197-1703864775-1703856854-1703732422","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-07 20:01:44 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5859","2026-08-07 18:57:40","B","12","CSM-516004","CSM-11","SE RECIBEN 997 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","997.00","24.925","997.00","24.925","1","0","0","1703866726-1703716991-1703707973-1703710243-1703701056-1703710206-1703691658-1703702215-1703694651-1703716902-1703691551-1703707798-1703866644-1703701890-1703707906","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 10:08:25 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5860","2026-08-08 09:01:03","TRASBORDO","-","51247","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2464839-2464791-2464814-2464711-2464722-2464779-2464710-2464648-2464607-2464610","42","41.590 TM","16.410 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 10:17:02 | User: CAP.PURIFICACION2 | IP: 189.144.38.42
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5861","2026-08-08 09:14:30","ROSALIA","1","SRCH-515649","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN  BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6129813-6129825-6129812-6129811-6128808-6129815-6129734-6129745-6129708-6129707-6129709-6129731-6129732-6129746-6129747-6129742-6129744-6129733-6129711-6129713","20","46,18 TM","15,92 TM ","30,26 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 10:32:53 | User: CAP.PURIFICACION2 | IP: 189.144.38.42
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5862","2026-08-08 09:30:51","ROSALIA","1","SRCH-515637","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6138985-6138983-6138984-6129698-6129699-6129820-6129807-6129919-6129814-6129697-6129700-6129704-6139970-6138968-6129703-6129702-6129696-6129712-6129714","20","46,09","15,89","30,2")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 11:18:47 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5863","2026-08-08 10:12:57","TRAS=200","G4=800","51227","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000","25.000","1000","25.000","6","0","0","2459323-2459359-2459273-2459283-2459127-2459378-2459242-2459186-2459163-2459113","42","41.860 TM","16.650 TM","25.210 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 11:48:47 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5864","2026-08-08 10:43:41","G","4","51246","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","MARTIN","1000","25.000","1000","25.000","6","0","0","2462641-2462618-2462560-2462564-2462655-2462566-2462607-2462548-2462550-2462525","42","41.650 TM","16.470 TM","25.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 12:07:59 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5865","2026-08-08 11:06:45","B","12","CSM-516138","CSM-11","SE RECIBEN 524 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","524","13.100","524","13.100","1","0","0","1703864835-1703846647-1703846651-1703846672-1703856768-1703855187-1703736993-1703736981-1703856768-1703856771-1703727558-1703856344-1703700060-1703848596-1703848597-","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 12:39:09 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5866","2026-08-08 11:36:19","A","19","CSM-516165","CSM-11","SE RECIBEN 1602 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1602","40.050","1602","40.050","1","0","0","1703734369-1703846502-1703738658-1703734354-1703738664-1703846508-1703732431-1703855014-1703736965-1703864924-1703856282-1703724551-1703727680-1703725436-1703846665","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:04:28 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5867","2026-08-08 12:58:34","N","4","IBJ20961","21-13741","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","560004428-560004471-560004250-560004431-560004472-560003521-560004484-560004265-560004063-560004352-560004296-560004624-560004481-560004483-560004474-560004331-560004473-560004364-560004488-560004456","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:08:55 | User: CAP.AMATLAN | IP: 187.190.156.180
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("84","5868","2026-08-08 13:05:08","A","20","CSM-516095","CSM-11","SE RECIBEN 1200 BULTOS EN BUEN ESTADO OPERADOR FIRMANDO DE TOTAL CONFORMIDAD","Erick Marcelino Solis","","CARLOS CARRILLO","1200","30.000","1200","30.000","1","0","0","1703700047-1703734439-1703846662-1703841502-1703878668-1703731040-1703864784-1703856577-1703734702-1703731025-1703731021-1703738744-1703738744-1703864871-1703714750","19","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:13:03 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("81","5869","2026-08-08 13:07:51","N","4","IBJ20960","21-13741","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","560004680-560004668-560004292-560007673-560004309-560004633-560004649-560004669-560004438-560004615-560004302-560004423-560004639-560004459-560004657-560004465-560004660-560004450-560004630-560004288","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:20:46 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5870","2026-08-08 13:16:59","G","4","51237","-","SE RECIBEN 1000 BULTOS DE 25 KG EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","1000","25.000","1000","25.000","6","0","0","2461102-2461109-2461106-2461080-2461078-2461050-2461013-2461046-2461997-2461085","42","41.410 TM","16.240 TM","25.170 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:32:01 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5871","2026-08-08 13:27:10","F","7","-","11395977","SE RECIBEN 27 BULTOS DE DEVOLUCIÓN.","Joshue Hernández Hernández","","RAUL/MARTIN","27","0.675","27","0.675","6","0","0","1040270-1034956-1041734-1032217-1036668-1035561-1039916-1036669-1031156-1036135","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 14:34:58 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5872","2026-08-08 13:32:21","F","7","-","11405105","SE RECIBEN 487 BULTOS DE DEVOLUCIÓN.","Joshue Hernández Hernández","","RAUL/MARTIN","487","12.175","487","12.175","6","0","0","1040270-1034956-1041734-1032217-1036668-1035561-1039916-1036669-1031156-1036135","42","","","")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 15:38:59 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5873","2026-08-08 14:32:18","N","2","242656","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","9875-4383-20265-0058-0531-15774-9488-03521-7101-5563-8452-4726-29481-5606-4183-24934-9922-22450-8897","42","46.680 TM","16.500 TM","30.180 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 15:46:23 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5874","2026-08-08 14:43:02","P","2","51229","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","0473-0370-24543-8035-0031-0558-5565-33272-3173-17593-17717-21190-08057-014409-017132-0428-3286-22413-2691-9169","42","46.860 TM","16.740 TM","30.120 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 16:00:31 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5875","2026-08-08 14:55:49","N","2","51215","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","13458-33240-64327-2141-6315-8042-8628-19400-7165-15011-11456-05000-9735-2363-0037-5390-67015-6786-3288-14207","42","45.780 TM","15.670 TM","30.110 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-08 16:25:25 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5876","2026-08-08 15:21:57","N","2","51218","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","3074-6116-6491-2417-3138-3575-2049-1551-1151-11238-41800-158183-9571-1811-03237-1688-15487-4298-0038","42","46.530 TM","16.420 TM","30.110 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-09 11:30:42 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5877","2026-08-09 10:23:18","N","2","51245","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","0443-34237-10234-15527-2246-4164-1510-5602-4111-2006-4630-3129-03001-4074-7745-4355-9590-4058-22499-3182","42","47.060 TM","16.870 TM","30.190 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-09 11:43:38 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5878","2026-08-09 10:38:21","N","2","51254","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","00366-3600-1231-3258-21792-0347-48962442-3343-5270-4189-8773-5220-1106-003168-20419-1344-1053-4938-20498","42","45.850 TM","15.790 TM","30.060 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-09 11:51:32 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("53","5879","2026-08-09 10:47:11","N","2","51255","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","8841-3992-2645-0345-4540-1343-8469-2910-5263-6553-5174-3696-3333-1272-4139-4846-0909-7267-S/F-S/F","42","46.180 TM","16.070 TM","30.110 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 10:32:16 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5880","2026-08-10 09:30:23","ROSALIA","1","SRCH-515857","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139141-6139147-6139144-6139145-6139142-6139143-6139146-6139148-6139150-6139149-6139154-6139157-6139153-6139155-6139160-6139158-6139156-6139152-6139159-6139151","20","46,39 TM","16,32 TM","30,07 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 10:42:17 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5881","2026-08-10 09:37:31","ROSALIA","1","SRCH-515926","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6129809-6129810-6129816-6140766-6129763-6129671-6129818-6129762-6129766-6140765-6129823-6129764-6129767-6129768-6129775-6140764-6129769-6129826-6129765-6129770","20","46,31","16,07","30,24 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 10:44:18 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5882","2026-08-10 09:43:00","TRASBORDO","-","51251","-","SE RECIBEN 1200 BULTOS DE 25KG EN BUEN ESTADO. ","Joshue Hernández Hernández","","RAUL/MARTIN","1200.00","30.000","1200.00","30.000","6","0","0","2467068-2467064-2467092-2467101-2467072-2466507-2466428-2466351-2466386-2466325","42","46.070 TM","15.870 TM","30.200 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 10:57:17 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5883","2026-08-10 09:55:03","PUCTE","1","ISRP-515791","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1383410-1385025-1489929-1488368-8067599-6125551-1389194-1380857-1383275-1384873-1322142-1490883-1489307-1384015-1385875-8003463-1366247-1346749-1355444-1487598","20","46,31","16,24","30,07")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 11:05:46 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5884","2026-08-10 10:03:32","ROSALIA","1","SRCH-516028","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139161-6139162-6139164-6139166-6139163-6139165-6139170-6139172-6139167-6139174-6139168-6139181-6139171-6139176-6139178-6139187-6139184-6139182-6139180-6129774","20","46,95","16,81","30,14")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 11:24:10 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5885","2026-08-10 10:22:13","TRASBORDO","-","51264","-","SE RECIBEN 1200 BULTOS DE 25KG EN BUEN ESTADO. ","Joshue Hernández Hernández","","RAUL/MARTIN","1200.00","30.000","1200.00","30.000","6","0","0","0955501-0955872-0955492-0954156-0949084-0950392-2436822-2441388-0950023-2441431","42","46.250 TM","16.050 TM","30.200 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 11:35:31 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5886","2026-08-10 10:33:09","ROSALIA","1","SRCH-515934","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6129827-6129772-6140763-6129771-6129776-6129773-6129821-6129830-6129828-6129829-6129824-6129822-6129817-6129805-6129834-6129750-6129751-6129749-6129748-6129741-","20","46,49","16,17","30,32")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 11:42:03 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("74","5887","2026-08-10 10:40:09","ROSALIA","1","SRCH-515825","SRCH-44","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6139121-6139127-6139124-6139122-6139126-6139128-6139129-6139123-6139125-6139130-6139131-6139132-6139137-6139135-6139134-6139133-6139136-6139138-6139139-6139140-","20","46,46 ","16,58","29,88")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 12:20:36 | User: CAP.PURIFICACION2 | IP: 189.144.61.92
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5888","2026-08-10 11:17:24","PUCTE","1","ISRP-515859","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","6112529-5293085-1377695-4264658-1360939-1309251-1488645-1484530-1490802-1351988-1379721-1489991-1386447-1366566-1303416-1374747-6123844-1292477-1495295-1489304-","20","46,23 ","16,21","30,02")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 12:35:35 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5889","2026-08-10 11:33:55","G","4","51270","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2471575-2471578-2741600-2471555-2471581-2471578-2471554-2471587-2471571-2471558","42","40.430 TM","15.240 TM","25.190 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 13:21:42 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5890","2026-08-10 12:20:21","G","4","51253-51252","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2465788-2465812-2465784-2465814-2465803-2465818-2465757-2465760-2465766-2465724","42","40.550 TM","15.400 TM","25.150 TM")
+--------------------------------------------------------------------------------
+- Logged at: 2026-08-10 13:59:49 | User: CAP.TULTEPEC | IP: 187.190.238.127
+  SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("3","5891","2026-08-10 12:58:35","G","4","51269","-","SE RECIBEN 1000 BULTOS DE 25KG EN BUEN ESTADO.","Joshue Hernández Hernández","","RAUL/MARTIN","1000.00","25.000","1000.00","25.000","6","0","0","2467733-2467730-2467710-2467686-2467688-2467678-2467682-2467664-2467674-2467656","42","40.440 TM","15.220 TM","25.220 TM")
+--------------------------------------------------------------------------------

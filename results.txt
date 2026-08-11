@@ -1,0 +1,237 @@
+==================================================================
+TRANSACTIONS MATCHING TARGET IDs: 17
+==================================================================
+FECHA: 2026-08-10 10:57:17 | USUARIO: CAP.PURIFICACION2 | PROCESO: RECEPCION DIRECTA: 5887 | IP: 189.144.61.92
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("14","5883","2026-08-10 09:55:03","PUCTE","1","ISRP-515791","ISRP-1062","SE DA ENTRADA A 20 SS DE 1.5 TM EN BUEN ESTADO","Bodega Purificación","","MONTACARGAS","20","30.000","20","30.000","12","0","0","1383410-1385025-1489929-1488368-8067599-6125551-1389194-1380857-1383275-1384873-1322142-1490883-1489307-1384015-1385875-8003463-1366247-1346749-1355444-1487598","20","46,31","16,24","30,07")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-08 14:56:39 | USUARIO: CAP.VILLAHERMOSA | PROCESO: RETIRO: 4456 | IP: 189.238.82.131
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4532","2026-08-08 13:55:51","48","2571","JOSE DIMAS LOPEZ LAZARO","86BA1A","15UH5G","","SRCH-516229","A","1","1200","30","1503157850		1503241901		1503163960	 1503166286		1503257566		1503166301	 1503163378		1503169878		1503178619	 1503158853		1503175669		1503178739	 1503166545		1503157903			 1503173094		1503172697			 1503203996		1503175608			 1503178750		1503175694		","		
+SE ENTREGAN 1200 BULTOS DE AZUCAR ESTANDAR DE 25 KG ZAFRA 25/26.",1,"NA","23","64413226/64413227	","DARVELIO DE LA CRUZ")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-08 11:01:13 | USUARIO: AMZ.SANTAINES | PROCESO: RETIRO: 4424 | IP: 189.226.36.229
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4522","2026-08-08 10:00:02","1","5440","MIGUEL ANGEL ZEPEDA GARDUÑO","33AS9W","819XS9","","80921964","A","8","1200","30","2570948-2572049-2521141-2520485-2577829-2577823-2579129-2570292-2571180-2577768-2571181-257769","SE CARGARON 1200 BULTOS DE 25 KG EN BUEN ESTADO SUP;YURIDIA CABO;ANTONIO CASTILLO",1,"NA","10","343100","ANTONIO CASTILLO")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-08 10:52:11 | USUARIO: CAP.VILLAHERMOSA | PROCESO: RETIRO: 4419 | IP: 189.238.82.131
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4516","2026-08-08 09:50:24","28","297698A148889 ","CESAR PEREZ QUINTANA ","64AX1S","44TX7W","","IBJ21047","A","1","20","30","			
+260005821		260005824		260005817	 260005860		260005820		260005813	 260005819		260005859		260005815	 260005814		260005862		260005816	 260005867		260005811			 260005818		260005812			 260005866		260005822			 260005864		260005825	","SE ENTREGAN 20 SS DE AZUCAR REFINADA DE 1.5 TM ZAFRA 25/26",1,"NA","23","	
+285181/285182","CABO MONTACARGAS")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-08 10:42:32 | USUARIO: CAP.VILLAHERMOSA | PROCESO: GRABAR TRASVASE: 740 | IP: 189.238.82.131
+SQL: UPDATE inventarios_trasvase 
+                    set cantidaddestinoreal1=20,
+                        cantidaddestinoreal2=30,
+                        cantidadpnc1=0,
+                        cantidadpnc2=0,
+                        cantidadmerma1=0,
+                        cantidadmerma2=0,
+                        idcapturista=23,
+                        idestadodocumento=2,
+                        foliosorigenreal="0260005822	0260005864	0260005816
+0260005825	0260005866	0260005818
+0260005812	0260005867	0260005813
+0260005811	0260005814	0260005817
+0260005862	0260005860	
+0260005859	0260005819	
+0260005824	0260005821	
+0260005820	0260005818	
+
+",
+                        foliosdestinoreal="0260005822	0260005864	0260005816
+0260005825	0260005866	0260005818
+0260005812	0260005867	0260005813
+0260005811	0260005814	0260005817
+0260005862	0260005860	
+0260005859	0260005819	
+0260005824	0260005821	
+0260005820	0260005818	
+
+",
+                        fechaop="2026-08-08 09:39:13",
+                        obsproceso="SE TRASVAZAN 20 SS DE AZUCAR REFINADA DE 1.5 TM ZAFRA 25/26 A SS DE 1.5 TM AUTORIZADO POR EL INGENIO TRASVASE REALIAZADO PERSONAL DE AMZ VHSA"
+                    Where idtrasvase=740
+--------------------------------------------------------------------------------
+FECHA: 2026-08-07 11:49:44 | USUARIO: CAP.VILLAHERMOSA | PROCESO: RECEPCION DIRECTA: 5850 | IP: 189.238.82.131
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("19","5846","2026-08-07 10:45:22","A","1","IBJ21035","168215","SE RECIBEN 20 SS DE AZUCAR REFINADA DE 1.5 TM ZAFRA 25/26.","Mariana Cordoba Almeida","","CABO MONTACARGAS","20","30.000","20","30.000","9","0","0","0260005817	0260005820	0260005825 0260005815	0260005866	0260005812 0260005813	0260005821	0260005864 0260005818	0260005819	0260005811 0260005816	0260005860	 0260005862	0260005814	 0260005824	0260005822	 0260005859	0260005867	
+","23","45.18","15.09","30.09")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-07 10:46:13 | USUARIO: CAP.TULTEPEC | PROCESO: RETIRO: 4356 | IP: 187.190.238.127
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4447","2026-08-07 09:44:39","12","9207","ANDRÉS CRUZ MARTÍNEZ","16BJ7S","294UM7","11514270","","I","5","920","23","0257312-0258573-0258718-0258596-0257916-0258321-0255780-0257865-0258226-0258307","SE ENTREGAN 920 BULTOS DE 25 KG EN BUEN ESTADO.",1,"NA","42","50159-50196","RAUL/MARTIN")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-06 12:37:54 | USUARIO: CAP.VILLAHERMOSA | PROCESO: RETIRO: 4296 | IP: 189.238.77.231
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4390","2026-08-06 11:37:04","48","2568","ISIDRO ALDECOA CUPIDO","625ES6","264VZ6","","SRCH-515795","A","1","1200","30","1503178601		1503177656		1503259759	 1503239308		1503250028		1503243104	 1503257687		1503248698		1503239087	 1503157916		1503178664		1503252589	 1503257553		1503237914			 1503163771		1503239134			 1503158756		1503259721			 1503173036		1503239235		","SE ENTREGAN 1200 BULTOS DE AZUCAR ESTANDAR DE 25 KG ZAFRA 25/26",1,"NA","23","64413219/64413231","DARVELIO DE LA CRUZ ")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-05 22:15:17 | USUARIO: CAP.AMATLAN | PROCESO: RECEPCION DIRECTA: 5823 | IP: 187.189.242.254
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("80","5819","2026-08-05 21:14:50","B","12","CSM-515584","CSM-10","SE RECIBEN 996 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD
+","Erick Marcelino Solis","","CARLOS CARRILLO","1000","25.000","996","24.900","1","4.00","0.100","SE RECIBEN 996 BULTOS EN BUEN ESTADO OPERADOR PRESENTE EN SU DESCARGA FIRMANDO DE TOTAL CONFORMIDAD","19","","","")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-05 17:16:02 | USUARIO: CAP.VILLAHERMOSA | PROCESO: RETIRO: 4259 | IP: 189.238.82.131
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4355","2026-08-05 16:14:43","30","66897635","REYNALDO ZARATE REY ","954AF6","27UD2L","","IBJ20998","A","1","1200","30","			
+31-97019		31-97091		31-95829	 31-179892		31-97101		31-179784	 31-97148		31-95729		31-95636	 31-97144		31-97051		31-95621	 31-97047		31-95766			 31-97140		31-179742			 31-97179		31-95963			 31-95772		31-95901		","		
+SE ENTREGAN 1200 BULTOS DE AZUCAR BLANCO ESPECIAL DE 25 KG ZAFRA 25/26 ",1,"NA","23","285155 285156	 285157","DARVELIO DE LA CRUZ ")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-04 17:42:57 | USUARIO: CAP.AMATLAN | PROCESO: GRABAR TRASVASE: 702 | IP: 187.190.164.190
+SQL: UPDATE inventarios_trasvase 
+                    set cantidaddestinoreal1=1200,
+                        cantidaddestinoreal2=30,
+                        cantidadpnc1=0,
+                        cantidadpnc2=0,
+                        cantidadmerma1=0,
+                        cantidadmerma2=0,
+                        idcapturista=19,
+                        idestadodocumento=2,
+                        foliosorigenreal="9107169		
+9107696		
+9108165		
+9107718		
+9107715		
+9107468		
+9107780		
+9107952		
+9107473		
+9107674		
+9107775		
+9107285		
+9107771		
+9107680		
+9108166		
+9107956		
+",
+                        foliosdestinoreal="5363261-5363320					
+5363321-5363380					
+5363381-5363440					
+5363441-5363500					
+5378751-5378810					
+5378811-5378870					
+5378871-5378930					
+5378931-5378990					
+5378991-5379000, 5371001-5371050					
+5371051-5371110					
+5371111-5371170					
+5371171-5371230					
+5371231-5371250, 5305751-5305790					
+5305791-5305850					
+5305851-5305910					
+5305911-5305970					
+",
+                        fechaop="2026-08-04 16:41:23",
+                        obsproceso="TRASVASE DE POTRERO 1.5 A 25 KG A CAMION "
+                    Where idtrasvase=702
+--------------------------------------------------------------------------------
+FECHA: 2026-08-04 16:32:18 | USUARIO: CAP.TULTEPEC | PROCESO: RECEPCION DIRECTA: 5795 | IP: 187.190.238.127
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5791","2026-08-04 15:30:54","N","4","IBJ20942","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004057-560003510-560004260-560003431-560004061-560004198-560003436-560003437-560004241-560003451-560003668-560004018-560004122-560004234-560004055-560003432-560003433-560004235-560003439-560004197","42","-","-","-")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-04 15:15:53 | USUARIO: CAP.CELSUR | PROCESO: RETIRO: 4190 | IP: 200.68.180.66
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4268","2026-08-04 14:14:02","1","6094","JONATHAN DOMINGUEZ AGUILAR ","26AB7U","131WC8","","		 IBJ20968","A","1","1200","30","31-911311	 31-233472	 31-597420	 31-597476	 31-595793	 31-597914	 31-079738	 31-596286	31-595849	 31-595790	 31-595728	 31-595643	 31-593421	 31-097637	 31-567978	 31-569513	31-596107	 31-520643	 31-595736	 31-096075","SE ENTREGA 1200 BULTOS DE AZUCAR REFINADA DE 25KG ZAFRA 25/26",1,"NA","22","CK-499233 CK-499234	","DARVELIO DE LA CRUZ")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-04 15:10:59 | USUARIO: CAP.TULTEPEC | PROCESO: RECEPCION DIRECTA: 5794 | IP: 187.190.238.127
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5790","2026-08-04 14:10:02","N","4","IBJ20943","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","560004320-560004322-560004298-560004629-560004163-560004659-560004225-560005008-560003587-560003427-560004319-560004062-560004361-560004271-560004457-560004336-560004251-560002162-560004060-560002136","42","-","-","-")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-03 11:44:32 | USUARIO: CAP.TULTEPEC | PROCESO: RECEPCION DIRECTA: 5776 | IP: 187.190.238.127
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("5","5772","2026-08-03 10:43:11","N","4","IBJ20927","-","SE RECIBEN 20 SUPER SACOS DE 1.5TM EN BUEN ESTADO. ","Joshue Hernández Hernández","","MONTACARGAS","20.00","30.000","20.00","30.000","6","0","0","	
+0560003970-0560003647-0560003532-0560003969-0560003606-0560003558-0560003884-0560003568-0560003428-0560007204-0560003511-0560003483-0560003508-0560003514-0560004041-0560003809-0560003906-0560004896-0560003882-0560003518
+","42","-","-","-")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-03 09:21:37 | USUARIO: Cristian | PROCESO: RECEPCION DIRECTA: 5767 | IP: 187.190.238.127
+SQL: Insert Into logistica_recepciones 
+                (idtraslado,idenvio,fecharecepcion,banco,estiba,
+                ticketbascula,referencia,observaciones,almacenista,supervisor,
+                cabocuadrilla,cantidadenviada1,cantidadenviada2,cantidadrecibida1,cantidadrecibida2,
+                idbodega, diferencia1,diferencia2,folios,idempleado,pbruto,ptara,pneto
+                ) VALUES 
+                ("75","5763","2026-08-01 13:20:19","N","2","51168","-","SE RECIBEN 20 SUPER SACOS DE 1.5 TM EN BUEN ESTADO.","Joshue Hernández Hernández","","MONTACARGAS","20","30.000","20","30.000","6","0","0","07905-0964-04091-31045-8606-1780-8049-09192-08602-19552-01221-00830-07050-02093-07847-00402-1390-2224-21892-4065","16","","","")
+--------------------------------------------------------------------------------
+FECHA: 2026-08-01 10:47:31 | USUARIO: AMZ.SANTAINES | PROCESO: RETIRO: 4081 | IP: 201.102.205.118
+SQL: Insert Into logistica_retiros (idordenentrega,fechasalida,idtransportista,cartaporte,nombreoperador,
+                                                    placastractor,placasremolque,referencia1,ticketbascula,banco,estiba,
+                                                    cantidad1,cantidad2,folios,observaciones,
+                                                    idestadodocumento,licenciaoperador,idempleado,sellos,cuadrilla
+                                                ) VALUES 
+                                                ("4168","2026-08-01 09:44:35","1","5422-A","CARLOS MARTINEZ AVAROA","401UF9","401UF9","","80915358","A","8","1200","30","2593269-2596684-2577840-2579374-2578552-2593664-2579178-2593802-2579368-2577936","SE ENTREGAN 1200 BULTOS DE 25 KG EN BUEN ESTADO ",1,"NA","10","343463","JOSE LUIS")
+--------------------------------------------------------------------------------
+
+
+
+==================================================================
+logistica_recepciones ROWS: 5
+==================================================================
+{'idrecepcion': 5763, 'consecutivobodega': 1612, 'fecharecepcion': datetime.datetime(2026, 8, 1, 14, 48, 33), 'idbodega': 6, 'folios': '0966096-0964838-0963648-0963911-0961960-0961362-0959370-0959004-0959670-0967654', 'referencia': '', 'idestadodocumento': 1}
+--------------------------------------------------------------------------------
+{'idrecepcion': 5772, 'consecutivobodega': 2662, 'fecharecepcion': datetime.datetime(2026, 8, 3, 9, 56, 34), 'idbodega': 12, 'folios': '6130886-6130879-6130875-6130890-6130891-6130883-6130887-6130897-6130871-6130873-6130868-6130870-6130865-6130869-6130867-6130864-6130866-6130863-6141272-6141268', 'referencia': 'SRCH-44', 'idestadodocumento': 1}
+--------------------------------------------------------------------------------
+{'idrecepcion': 5790, 'consecutivobodega': 1629, 'fecharecepcion': datetime.datetime(2026, 8, 4, 10, 25, 47), 'idbodega': 6, 'folios': '2453171-2453151-2453022-2453134-2453117-2453062-2453042-2453172-2453152-2453107', 'referencia': '-', 'idestadodocumento': 1}
+--------------------------------------------------------------------------------
+{'idrecepcion': 5791, 'consecutivobodega': 2681, 'fecharecepcion': datetime.datetime(2026, 8, 4, 11, 2, 14), 'idbodega': 12, 'folios': '6139018-6140667-6140668-6139019-6140666-6140682-6140681-6140680-6140676-6140675-6140674-6140673-6140672-6140671-6140670-6140697-6140696-6140695-6140694-6140693', 'referencia': 'SRCH-44', 'idestadodocumento': 1}
+--------------------------------------------------------------------------------
+{'idrecepcion': 5819, 'consecutivobodega': 1091, 'fecharecepcion': datetime.datetime(2026, 8, 5, 18, 36, 40), 'idbodega': 1, 'folios': '1703403127-1703408137-1703407670-1703663227-1703676870-1703638158-1703195522-1703657712-1703667825-1703406841-1703674633-1703693366-1703414596-1703335533-1703681198', 'referencia': 'CSM-10', 'idestadodocumento': 1}
+--------------------------------------------------------------------------------
