@@ -1416,7 +1416,7 @@
     // ========================================
 
     // Construir URL con parámetros de usuario
-    let iframeUrl = 'https://qssintelligence.replit.app/embed/f747306c-ccd1-4e16-9a58-0d8ceff959ac';
+    let iframeUrl = 'https://intelligent.qsoftwaresolutions.com/embed/bc03cd86-1fd4-486d-ae26-1a4f59a06ba5';
     const params = new URLSearchParams();
     if (USER_DATA.userId) params.append('userId', USER_DATA.userId);
     if (USER_DATA.userName) params.append('userName', USER_DATA.userName);
@@ -1471,6 +1471,7 @@
     const iframe = document.createElement('iframe');
     iframe.id = 'gemini-chat-iframe';
     iframe.src = iframeUrl;
+    iframe.allow = 'microphone; camera';
     document.body.appendChild(iframe);
 
     // 3. Crear el Botón flotante
